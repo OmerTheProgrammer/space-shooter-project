@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>Space_Shooter_DB_Runner</Name>
+    <Name>Space_Shooter_DB Creator</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{4c323bb1-6a32-49e9-86f1-b83b4740f0fc}</ProjectGuid>

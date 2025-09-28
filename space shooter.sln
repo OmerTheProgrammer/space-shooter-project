@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "ViewModel\ViewModel.csproj", "{9D431267-6430-4086-9C8E-DEEFE2C795D6}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Space_Shooter_DB_Runner", "Space_Shooter_DB_Runner\Space_Shooter_DB_Runner.sqlproj", "{4C323BB1-6A32-49E9-86F1-B83B4740F0FC}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Space_Shooter_DB Creator", "Space_Shooter_DB_Runner\Space_Shooter_DB Creator.sqlproj", "{4C323BB1-6A32-49E9-86F1-B83B4740F0FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
