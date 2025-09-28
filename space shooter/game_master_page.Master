@@ -1,0 +1,427 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="game_master_page.master.cs" Inherits="space_shooter.game_master_page" %>
+
+<!DOCTYPE html>
+
+<html data-bs-theme=dark>
+    <head runat="server">
+        <title>game master page</title>
+
+        <!-- library links: -->
+        <!-- bootstrap - CSS: -->
+        <link href="libraries/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+        <!-- fontawesome - CSS: -->
+        <link href="libraries/fontawesome/css/all.css" rel="stylesheet" />
+
+        <!-- bootstrap - JS: -->
+        <script src="../libraries/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="../libraries/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../libraries/bootstrap/js/popper.min.js"></script>
+
+        <asp:ContentPlaceHolder ID="head" runat="server">
+        </asp:ContentPlaceHolder>
+        <style>
+            /*shows all objects
+            *{
+                border :1px solid red;
+            }
+            */
+
+            /*master page style: */
+            #navbar{
+                height:20%;
+            }
+
+            #nav_player_pic{
+                width:5vw;
+                margin-left:1%;
+            }
+
+            #life_bar{
+                width:200px;
+            }
+
+            #level_select_button {
+                background-color:transparent;
+                border:hidden;
+            }
+
+            .top_button_pic{
+                height:7.5vh;
+                width:4vw;
+            }
+
+            #icon{
+                margin-left: 10px;
+                height: 7.5vh;
+                width: 4vw;
+            }
+
+            #header{
+                margin-left: 10px;
+                width: 220px;
+                height: 80px;
+            }
+
+            #settings {
+                position: fixed;  /* Ensures the popup stays in place when scrolling */
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);  /* Positions the popup in the center */
+                padding: 20px;
+                border: 1px solid #ccc;
+                display: none;  /* Hide the popup initially */
+                height:52vh;
+            }
+
+            .top.button{
+                padding:0.2%;
+                padding-top:0.7%;
+                height:8vh;
+                width:4.6vw;
+            }
+
+            .pic_text{
+                width:50%;
+                height:50%;
+            }
+
+            .pic_button{
+                height:12vh;
+                width:6vw;
+            }
+
+            .level_select{
+                height:10vh;
+                width:10vw;
+            }
+
+            .level_select.button{
+                height:10vh;
+                width:10vw;
+            }
+
+            /*proggres bar*/
+            .progress-bar-container {
+                margin-top:1.5%;
+                width: 48vw;
+                height: 30px;
+                background-color: rgba(242, 255, 255, 0.85);
+                border-radius: 5px;
+                overflow: hidden; /* Added for clipping child elements */
+            }
+
+            #progress-bar {
+                width: 100%; /* Represents progress */
+                height: inherit;
+                background-color: aqua; /* Progress bar color */
+                border-radius: inherit;
+                transition: width 1s ease-in-out; /* Add smooth transition */
+                font-weight: bold;
+                font-size:20px;
+                color:rgb(5, 58, 61);
+                padding:0.1%;
+                padding-left:2%;
+            }
+
+            /*general*/
+            .popup{
+                background-image:url("/Assets/Backgrounds/blue.png");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+                z-index:15;
+            }
+
+            .popup.title{
+                margin-top:1%;
+                margin-bottom:1%;
+                margin-left:20%;
+                /*
+                    12 = base font size
+                    16 = min font size
+                    24 = max font size
+                    24 - 16 = range of changable fonts
+                    100vw = window width
+                    400px = needed width
+                    1280 = max width
+                */
+                font-size: calc(24px + (24 - 16) * (100vw - 400px) / (1280 - 400));
+            }
+
+            .popup.text {
+                margin-top:1%;
+                margin-bottom:1%;
+                margin-left:10%;
+                /*
+                    16 = min font size
+                    24 = max font size
+                    24 - 16 = range of changable fonts
+                    100vw = window width
+                    300px = needed width
+                    1280 = max width
+                */
+                font-size: calc(16px + (24 - 16) * (100vw - 300px) / (1280 - 300));
+            }
+
+            .popup.title.with_button{
+                margin-left:10%;
+            }
+
+            .button{
+                color:#DEF8F6;
+                background-color:#3B5088;
+                border-color:#88DBD8;
+                margin:1%;
+                margin-left:3%;
+                font-size:20px;
+            }
+
+            .button:hover{
+                color:rgba(238, 248, 246, 0.85);
+            }
+
+            .m_container{
+                justify-content:center;
+                align-content:center;
+                flex-direction: column;
+                height:15vh;
+            }
+
+            .m_card{
+                margin:1%;
+                padding : 0 1%;
+            }
+        
+            body{
+                background-image:url("/Assets/Backgrounds/black.png");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+            }
+
+            /*nav: */
+            .nav_text{
+                font-size: calc(16px + (40 - 16) * (100vh - 450px) / (1280 - 450));
+            }
+
+            nav {
+                color: #DEF8F6;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: #333333a6;
+                width: 125%;
+                z-index: 10;
+                padding: 10px;
+            }
+
+            nav ul {
+                list-style-type: none; /* Remove default bullet points */
+                margin: 0; /* Remove default margins */
+                padding: 0; /* Remove default paddings */
+            }
+
+            nav ul {
+                list-style-type: none; /* Remove default bullet points */
+                margin: 0; /* Remove default margins */
+                padding: 0; /* Remove default paddings */
+            }
+
+            nav li {
+                display: inline-block; /* Display list items inline */
+                margin-right: 2%; /* Add space between links */
+            }
+
+            nav a {
+                text-decoration: none; /* Remove underline from links */
+            }
+        </style>
+
+        <script>
+            //let is_sound_on = user.is_sound_on,is_music_on = user.is_music_on;
+            let is_sound_on = true, is_music_on = true, paused = true;
+            function music() {
+                is_music_on = !is_music_on;
+                const music_pic = document.getElementById('music_button_pic');
+                if (is_music_on) {
+                    music_pic.src = "/Assets/Main_Menu/BTNs_Active/Music_BTN.png";
+                    music_pic.alt = "active_sound_button";
+                }
+                else {
+                    music_pic.src = "/Assets/Main_Menu/Setting/Music_BTN.png";
+                    music_pic.alt = "inactive_sound_button";
+                }
+                //user.is_music_on = is_music_on
+            }
+
+            function sound() {
+                is_sound_on = !is_sound_on;
+                const sound_pic = document.getElementById('sound_button_pic');
+                if (is_sound_on) {
+                    sound_pic.src = "/Assets/Main_Menu/BTNs_Active/Sound_BTN.png";
+                    sound_pic.alt = "active_sound_button";
+                }
+                else {
+                    sound_pic.src = "/Assets/Main_Menu/Setting/Sound_BTN.png";
+                    sound_pic.alt = "unactive_sound_button";
+                }
+                //user.is_sound_on = is_sound_on
+            }
+
+            function hidePopUp(text) {
+                element = document.getElementById(text);
+                if (element) {
+                    const back_buttons_pics = document.querySelectorAll(".back");
+                    back_buttons_pics.forEach(pic => {
+                        pic.src = "/Assets/Main_Menu/BTNs_Active/Backward_BTN.png";
+                    });
+                    setTimeout(() => {
+                        element.style.display = 'none';
+                        back_buttons_pics.forEach(pic => {
+                            pic.src = "/Assets/Main_Menu/Setting/Backward_BTN.png";
+                        });
+                        show_all();//paused = f
+                    }, 450);
+                }
+            }
+
+            function open_settings() {
+                settings.style.display = 'block';
+                paused = hide_all(false);
+            }
+
+            function close_settings(){
+                hidePopUp('settings');
+            }
+
+        </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="Home.aspx">
+                    <img src="\Assets\icon.png" id="icon" class="nav_text logo"/>
+                    <img src="\Assets\Main_Menu\Header.png" id="header" class="nav_text"/>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav" style="width:100vw">
+                    <ul class="navbar-nav" style="width:80vw">
+                        <li class="nav-item nav_text">
+                            <button type="button" class="top button" onclick="open_settings()">
+                                <img
+                                    aria-hidden="true" alt="settings" crossorigin="anonymous" 
+                                    src="\Assets\UI\cogwheel.png" class="top_button_pic"
+                                />
+                            </button>
+                        </li>
+                        <li class="nav-item nav_text">
+                            <div class="m_card" id="life_bar">
+                                <img src="\Assets\player.png" alt="Player Avatar" class="top_button_pic"
+                                    id ="nav_player_pic"/>
+                                <span id="life_text" class="nav_text">x005</span>
+                            </div>
+                        </li>
+                        <li class="nav-item nav_text">
+                            <div class="progress-bar-container">
+                                <div id="progress-bar">0%</div>
+                            </div>
+                        </li>
+                        <li class="nav-item nav_text">
+                            <span id="score_board" class="nav_text">000000</span>
+                        </li>
+                        <li class="nav-item nav_text">
+                            <span id="level" class="nav_text">level 01</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <script>
+            function update_progress_bar(killed, created, is_endless) {
+                if (killed === null || created === null) {
+                    killed = 1;
+                created = 1;
+                }
+                let living_precent = 1;
+                living_precent = (1 - (killed / created)).toFixed(2);//precent left to kill to win in 0.00 fromat
+                if (living_precent === undefined || living_precent === null) {
+                    living_precent = 1;
+                }
+
+                if (!is_endless) {
+                    document.getElementById("progress-bar").style.width = living_precent * 100 + "%";
+                    document.getElementById("progress-bar").textContent = Math.floor(living_precent * 100) + "%";
+                }
+                else {
+                    document.getElementById("progress-bar").style.width = "100%";
+                    document.getElementById("progress-bar").style.fontSize = "18px";
+                    document.getElementById("progress-bar").textContent = "endless!";
+                }
+
+                if (living_precent == 0) {
+                    document.getElementById("progress-bar").textContent = "won!";
+                }
+            }
+            function update_help_bar(health) {
+                document.getElementById("life_text").textContent = " x " + health.toString().padStart(3, "0");
+            }
+            function update_score(score) {
+                document.getElementById("score_board").textContent = score.toString().padStart(6, "0");
+            }
+            function update_level(level) {
+                document.getElementById("level").textContent = "level " + level.toString().padStart(2, "0");
+            }
+        </script>
+        <div class="popup" id="settings">
+            <div class="m_container">
+                <div class="m_card">
+                    <button type="button" class="button top" onclick="hidePopUp('settings')">
+                            <img
+                                aria-hidden="true" alt="back" crossorigin="anonymous" 
+                                src="\Assets\Main_Menu\Setting\Backward_BTN.png" class="top_button_pic back"
+                            />
+                        </button>
+                    <img alt="Settings" class="pic_text" src="../Assets/Main_Menu/Setting/Header.png"/>
+                </div>
+                    <div class="m_card">
+                        <button type="button" class="button" id="music_button" onclick="music()">
+                            <img 
+                                aria-hidden="true" alt="unactive music button" crossorigin="anonymous" 
+                                class="pic_button" src="../Assets/Main_Menu/BTNs_Active/Music_BTN.png" id="music_button_pic"
+                            />
+                        </button>
+                        <img
+                            alt="Music" 
+                            class="pic_text" src="../Assets/Main_Menu/Setting/Music.png"
+                        />
+                    </div>
+                    <div class="m_card">
+                        <button type="button" class="button" id="sound_button" onclick="sound()">
+                            <img 
+                                aria-hidden="true" alt="unactive sound button" crossorigin="anonymous"
+                                class="pic_button" src="../Assets/Main_Menu/BTNs_Active/Sound_BTN.png" id="sound_button_pic"
+                            />
+                        </button>
+                        <img alt="Sound" class="pic_text" src="../Assets/Main_Menu/Setting/Sound.png"/><br />
+                    </div>
+                    <div class="m_card">
+                    <button type="button" onclick="close_settings();" class="button back"
+                        style="margin-left:30%;">Close</button>
+                    <button type="button" onclick="window.location.href = 'Level selection.aspx';" 
+                        class="level_select button" id="level_select_button">
+                    <img class="level_select" src="/Assets/Main_Menu/level_select_button.png"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+        </asp:ContentPlaceHolder>
+    </body>
+</html>

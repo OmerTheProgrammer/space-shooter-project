@@ -1,0 +1,379 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="website_master_page.Master.cs" Inherits="space_shooter.master_page" %>
+<!DOCTYPE html>
+
+<html data-bs-theme=dark>
+    <head runat="server">
+        <title>website master page</title>
+
+        <!-- library links: -->
+        <!-- bootstrap - CSS: -->
+        <link href="libraries/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+        <!-- fontawesome - CSS: -->
+        <link href="libraries/fontawesome/css/all.css" rel="stylesheet" />
+
+        <!-- bootstrap - JS: -->
+        <script src="../libraries/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="../libraries/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../libraries/bootstrap/js/popper.min.js"></script>
+
+        <!-- jquery - JS: -->
+        <script src="../libraries/jquery/jquery.min.js"></script>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <asp:ContentPlaceHolder ID="head" runat="server">
+        </asp:ContentPlaceHolder>
+        <style>
+            /*shows all objects
+            *{
+                border :1px solid red;
+            }
+            */
+
+            /*master page style: */
+            body{
+                background-image:url("/Assets/Backgrounds/black.png");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            #icon{
+                margin-left: 10px;
+            }
+
+            #header{
+                width: 220px;
+                height: 80px;
+            }
+
+            /*general: */
+        
+            #error_text{
+                color: #EBDCDC;
+                background-color: #663333;
+                border: 1px solid #ff0000;
+                padding: 5px 10px;
+                border-radius: 4px;
+                display: none;
+                margin:3%;
+                text-align: center;
+                margin-left:-7vw;
+                width:28vw;
+            }
+
+            .entering_button{
+                font-size:30px;
+                margin:3%;
+            }
+
+            .logo{
+                width: 80px;
+                height: 80px;
+            }
+
+            .logo.small{
+                height:30px;
+                width:30px;
+                margin:8px;
+                margin-bottom:-5px;
+            }
+
+            .m_container{
+                display:10px;
+                justify-content:center;
+                align-content:center;
+                flex-direction: column;
+                height:50vh;
+            }
+
+            .m_card{
+                margin:1%;
+                padding : 0 1%;
+            }
+
+            .popup{
+                background-image:url("/Assets/Backgrounds/blue.png");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+                z-index:15;
+            }
+
+            .back.button{
+                margin-left:40%;
+                margin-bottom:10%;
+            }
+
+            .popup.title{
+                margin-top:1%;
+                margin-bottom:1%;
+                margin-left:20%;
+                /*
+                    12 = base font size
+                    16 = min font size
+                    24 = max font size
+                    24 - 16 = range of changable fonts
+                    100vw = window width
+                    400px = needed width
+                    1280 = max width
+                */
+                font-size: calc(24px + (24 - 16) * (100vw - 400px) / (1280 - 400));
+            }
+
+            .popup.text {
+                margin-top:1%;
+                margin-bottom:1%;
+                margin-left:10%;
+                /*
+                    16 = min font size
+                    24 = max font size
+                    24 - 16 = range of changable fonts
+                    100vw = window width
+                    300px = needed width
+                    1280 = max width
+                */
+                font-size: calc(16px + (24 - 16) * (100vw - 300px) / (1280 - 300));
+            }
+
+            .popup.title.with_button{
+                margin-left:10%;
+            }
+
+            .text{
+                margin-left:30%;
+                color:aqua;
+                font-size: 30px;
+            }
+
+            .link{
+                color:green;
+                font-size: 25px;
+            }
+
+            .link:hover {
+                color: rgba(10,250,10,0.9);
+            }
+
+            .title{
+                text-decoration: underline;
+                color:aquamarine;
+                font-size: 45px;
+            }
+
+            .button{
+                color:#DEF7F6;
+                background-color:#3B5087;
+                border-color:#88DBD8;
+                margin:1%;
+                margin-left:3%;
+                width:110px;
+                font-size:20px;
+            }
+
+            .button:hover{
+                color:rgba(237, 247, 246, 0.75);
+            }
+
+            /*input: */
+            .input_box{
+                margin-left:1%;
+                font-size:18px;
+                margin:3%;
+            }
+
+            .input.text{
+                font-size:20px;
+                margin-left: 0;
+            }
+
+            .input.button{
+                font-size:30px;
+                margin-top:3%;
+                margin-left:8%;
+            }
+
+            /*footer: */
+            footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 1rem;
+                text-align: center;
+                z-index:10;
+                background-color:rgba(48, 58, 63,0.6);
+            }
+
+            /*nav: */
+            #navbar{
+                height:20%;
+            }
+
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: rgba(48, 54, 63,0.6);
+                width: 100%;
+                z-index: 10;
+                padding: 20px;
+            }
+
+            .nav_text{
+                font-size: calc(16px + (40 - 16) * (100vh - 450px) / (1280 - 450));
+            }
+
+            nav ul {
+                list-style-type: none; /* Remove default bullet points */
+                margin: 0; /* Remove default margins */
+                padding: 0; /* Remove default paddings */
+            }
+
+            nav li {
+                display: inline-block; /* Display list items inline */
+                margin-right: 2%; /* Add space between links */
+            }
+
+            nav a {
+                text-decoration: none; /* Remove underline from links */
+            }
+
+        </style>
+        <script>
+            /*function sendData(page,data) {
+                let dataToSend = "";
+                for (let i = 0; i < data.length; i++) {
+                    dataToSend += `value${i+1}=${data[i][1]}&`;
+                }
+                dataToSend = dataToSend.slice(0, -1);// Remove the end &
+
+                window.location.href = `${page}.aspx?` + dataToSend;
+            }*/
+
+            function hidePopUp(text) {
+                element = document.getElementById(text);
+                if (element) { // Check if element exists to avoid potential errors
+                    const back_buttons_pics = document.querySelectorAll(".back");
+                    back_buttons_pics.forEach(pic => {
+                        pic.src = "/Assets/Main_Menu/BTNs_Active/Backward_BTN.png";
+                    });
+                    setTimeout(() => {
+                        element.style.display = 'none';
+                        back_buttons_pics.forEach(pic => {
+                            pic.src = "/Assets/Main_Menu/Setting/Backward_BTN.png";
+                        });
+                    }, 400);
+                }
+            }
+
+            function print_error(msg) {
+                var text = document.getElementById("error_text");
+                if (text) {
+                    if (msg != "") {
+                        text.textContent = msg;
+                        text.style.display = 'Block';
+                        return true;
+                    }
+                    else {
+                        text.style.display = 'None';
+                    }
+                }
+                return false;
+            }
+
+        </script>
+    </head>
+    <body>
+        <!-- top of every page 
+            all asp:... tags need to be in a form run_at="server" (withount _) tag -->
+        <form id="big_main_form" runat="server">
+            <nav class="navbar m_container navbar-expand-lg" id="navbar">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="Home.aspx">
+                        <img src="\Assets\icon.png" id="icon" class="logo"/>
+                        <img src="\Assets\Main_Menu\Header.png" id="header"/>
+                    </a>
+
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav" style="width:75vw">
+                        <ul class="navbar-nav" style="width:70vw">
+                            <li class="nav-item">
+                                <a class="nav-link nav_text" aria-current="page" href="Home.aspx">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav_text" href="Credits.aspx">Credits</a>
+                            </li>
+                            <%
+                                //if(user.IsLoggedIn){
+                                Response.Write(
+                                    "<li class=\"nav-item\">\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"Level selection.aspx\">Levels </a>\r\n" +
+                                    "</li>"
+                                );
+                                //if(user.IsAdmin){
+                                Response.Write(
+                                    "<li class=\"nav-item\">\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"Admin View.aspx\">Data</a>\r\n" +
+                                    "</li>"
+                                );
+                                //}else{
+                                Response.Write(
+                                    "<li class=\"nav-item\">\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"Admin Connection.aspx\"><i class=\"fa-solid fa-user-tie fa-xs\"></i> Admin Connection</a>\r\n" +
+                                    "</li>"
+                                );
+                                //}
+                                Response.Write(
+                                    "<li class=\"nav-item\">\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"User Profile.aspx\">Hello </a>\r\n" +
+                                    "</li>"
+                                );
+                                //}
+                                //else{
+                                Response.Write(
+                                    "<li class=\"nav-item\">\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"Register.aspx\"><i class=\"fa-solid fa-user fa-xs\"></i> Register</a>\r\n" +
+                                    "</li>"
+                                );
+                                Response.Write(
+                                    "<li class=\"nav-item\">\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"Log In.aspx\"><i class=\"fa-regular fa-user fa-xs\"></i></i> Log In</a>\r\n" +
+                                    "</li>"
+                                );
+                                //}
+                            %>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div style="margin-top:40px;"></div>
+
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+
+            <!-- bottom of every page -->
+            <footer class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a href="https://github.com/OmerTheProgrammer" target="_blank" class="link">
+                            <i class="fa-brands fa-github"></i>
+                            Git Hub
+                        </a>
+                    </div>
+                </div>
+            </footer>
+        </form>
+    </body>
+</html>
