@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace Model.Entitys
 {
     public class PLayer : User
     {
@@ -21,9 +21,9 @@ namespace Model
         public override string ToString()
         {
             return $"{base.ToString()}" +
-                $"Max level : {this.MaxLevel},Total Score:{this.TotalScore}, " +
-                $"Sound is {this.IsSoundOn}ly on, " +
-                $"Music is {this.IsMusicOn}ly on.\n";
+                $"Max level : {MaxLevel},Total Score:{TotalScore}, " +
+                $"Sound is {IsSoundOn}ly on, " +
+                $"Music is {IsMusicOn}ly on.\n";
         }
     }
 }

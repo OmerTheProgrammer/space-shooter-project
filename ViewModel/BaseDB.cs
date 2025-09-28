@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Data;
-using Model;
 using Microsoft.Data.SqlClient;
+using Model.Entitys;
 
 namespace ViewModel
 {

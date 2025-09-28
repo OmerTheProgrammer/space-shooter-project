@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace Model.Entitys
 {
     public class Manager : User
     {
@@ -14,7 +14,7 @@ namespace Model
 
         public override string ToString()
         {
-            return $"{base.ToString()} Start Date: {this.StartDate}.\n";
+            return $"{base.ToString()} Start Date: {StartDate}.\n";
         }
     }
 }

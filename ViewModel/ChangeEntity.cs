@@ -1,5 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
-using Model;
+using Model.Entitys;
 using System.Data.Sql;
 using System.Text;
 

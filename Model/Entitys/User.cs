@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Model
+namespace Model.Entitys
 {
     public class User : BaseEntity
     {
@@ -21,11 +21,11 @@ namespace Model
         public override string ToString()
         {
             return $"{base.ToString()}, " +
-                $" {this.Username}, ID: {this.Id}, " +
-                $"With password Hased: {this.Password}, " +
-                $"With Birthday: {this.Birthday}, " +
-                $"Is {this.isLoggedIn}ly logged in, " +
-                $"email: {this.Email}.\n";
+                $" {Username}, ID: {Id}, " +
+                $"With password Hased: {Password}, " +
+                $"With Birthday: {Birthday}, " +
+                $"Is {isLoggedIn}ly logged in, " +
+                $"email: {Email}.\n";
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Model
+namespace Model.Entitys
 {
     public class BaseEntity
     {
@@ -10,7 +10,7 @@ namespace Model
 
         public override string ToString()
         {
-            return $"idx: {this.Idx}";
+            return $"idx: {Idx}";
         }
     }
 }
