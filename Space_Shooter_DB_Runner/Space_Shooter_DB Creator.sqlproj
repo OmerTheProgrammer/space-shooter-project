@@ -72,4 +72,7 @@
     <Build Include="dbo\Tables\Managers.sql" />
     <PostDeploy Include="Scripts\Script.Inserts.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Space_Shooter_DB Creator.publish.xml" />
+  </ItemGroup>
 </Project>
