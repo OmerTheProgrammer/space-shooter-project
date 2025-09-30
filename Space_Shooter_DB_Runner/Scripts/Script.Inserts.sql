@@ -1,4 +1,17 @@
-﻿-- Insert 10 new Users (who will also be managers)
+﻿/*
+Post-Deployment Script Template							
+--------------------------------------------------------------------------------------
+ This file contains SQL statements that will be appended to the build script.		
+ Use SQLCMD syntax to include a file in the post-deployment script.			
+ Example:      :r .\myfile.sql								
+ Use SQLCMD syntax to reference a variable in the post-deployment script.		
+ Example:      :setvar TableName MyTable							
+               SELECT * FROM [$(TableName)]					
+--------------------------------------------------------------------------------------
+*/
+
+
+-- Insert 10 new Users (who will also be managers)
 INSERT INTO dbo.Users (ID, Password, Username, Birthday, Email) VALUES
 -- Manager 1: idx will be 1
 ('111222333', '063b4991196144e54a01c801e85579f1807d93425f187707e152003c267793d5', 'ManagerAlpha', '1985-06-15', 'manager.alpha@spaceshooter.com'),
@@ -20,7 +33,6 @@ INSERT INTO dbo.Users (ID, Password, Username, Birthday, Email) VALUES
 ('111333444', '66f81e330536c4b9d0344d5a1538356f91722881a7051412b1897e930f73b885', 'ManagerIota', '1996-02-28', 'manager.iota@spaceshooter.com'),
 -- Manager 10: idx will be 10
 ('111333555', '0e7225c567e7223b20468e64c3c3cc79c882141528659b85c345377f0c11f71a', 'ManagerKappa', '1987-10-10', 'manager.kappa@spaceshooter.com');
-GO
 
 INSERT INTO dbo.Managers (idx, StartDate) VALUES
 (1, '2024-01-01 09:00:00'),
@@ -33,15 +45,11 @@ INSERT INTO dbo.Managers (idx, StartDate) VALUES
 (8, '2024-07-18 09:45:00'),
 (9, '2024-08-22 13:00:00'),
 (10, '2024-09-05 11:15:00');
-GO
 
-/*
-select * from Managers
-SELECT *
-FROM dbo.Users AS U
-INNER JOIN dbo.Managers AS M ON U.idx = M.idx
-*/
-
+--select * from Managers
+--SELECT *
+--FROM dbo.Users AS U
+--INNER JOIN dbo.Managers AS M ON U.idx = M.idx
 
 -- Insert 10 new Users (these will become Players)
 INSERT INTO dbo.Users (ID, Password, Username, Birthday, Email) VALUES
@@ -78,15 +86,6 @@ INSERT INTO dbo.Players (idx, MaxLevel, TotalScore, IsSoundOn, IsMusicOn) VALUES
 (18,2, 3100, 1, 1),
 (19,9, 60000, 1, 1),
 (20,5, 14500, 0, 0);
-GO
-
-/*
-select * from Players
-SELECT *
-FROM dbo.Users AS U
-INNER JOIN dbo.Players AS P ON U.idx = P.idx
-*/
-
 
 INSERT INTO dbo.ProfileEditRequests 
     (PlayerIdx, RequestDateTime, Status, ReviewDate, ManagerIdx)
@@ -120,7 +119,6 @@ VALUES
 
 -- Request 10: Player 13 (Pending), assigned to Manager 10
 (13, '2025-09-29 14:15:00', 0, NULL, 10);
-GO
 
 INSERT INTO dbo.RequestData 
     (RequestIdx, Field, OldValue, NewValue) 
@@ -154,7 +152,6 @@ VALUES
 
 -- Request 10 (Player 13, Pending): Changing Birthday
 (10, 'Birthday', '2003-12-03', '2003-12-04');
-GO
 
 INSERT INTO dbo.Groups (GroupScore, LeadBoardPos) VALUES
 -- Group 1: idx will be 1
@@ -167,7 +164,6 @@ INSERT INTO dbo.Groups (GroupScore, LeadBoardPos) VALUES
 ( 380000, 8),   
 -- Group 5: idx will be 5
 ( 1050000, 1);
-GO
 
 INSERT INTO dbo.PlayersAndGroups (PlayerIdx, GroupIdx) VALUES
 -- Group 1 (Leaderboard Pos 5)
@@ -192,12 +188,7 @@ INSERT INTO dbo.PlayersAndGroups (PlayerIdx, GroupIdx) VALUES
 
 -- Player with multiple groups (Showing the N:M relationship)
 (11, 5), -- StarPilot_Ace is ALSO in Group 5
-(14, 3);
-GO
-
--- ZeroGravity is ALSO in Group 3
-
-
+(14, 3); -- ZeroGravity is ALSO in Group 3
 
 INSERT INTO dbo.RunsInfo (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, ShieldLevel, BlasterCount, HP) VALUES
 -- Player 11 (StarPilot_Ace)
@@ -221,11 +212,7 @@ INSERT INTO dbo.RunsInfo (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, Sh
 -- Player 20 (OrbitalOutlaw)
 (20, 12500, 5, '2025-09-25', 2, 4, 45);
 
-/*
--- n:n check
-SELECT *
-FROM dbo.Players AS U
-INNER JOIN dbo.PlayersAndGroups AS P ON U.idx = P.PlayerIdx
-INNER JOIN dbo.Groups as G ON G.idx = P.GroupIdx
-*/
-GO
+--SELECT *
+--FROM dbo.Players AS U
+--INNER JOIN dbo.PlayersAndGroups AS P ON U.idx = P.PlayerIdx
+--INNER JOIN dbo.Groups as G ON G.idx = P.GroupIdx

@@ -70,6 +70,6 @@
     <Build Include="dbo\Tables\ProfileEditRequests.sql" />
     <Build Include="dbo\Tables\RequestData.sql" />
     <Build Include="dbo\Tables\Managers.sql" />
-    <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
+    <PostDeploy Include="Scripts\Script.Inserts.sql" />
   </ItemGroup>
 </Project>
