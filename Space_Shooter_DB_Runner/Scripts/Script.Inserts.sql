@@ -11,38 +11,38 @@ Post-Deployment Script Template
 */
 
 -- IMPORTANT: The order matters due to foreign key constraints.
--- Users must be inserted before Managers, Players, or RequestData.
+-- Users must be inserted before Admins, Players, or RequestData.
 -- Players must be inserted before PlayersAndGroups or RunsInfo.
 
 ---------------------------------------------------------------------------------
--- USERS TABLE BLOCK (Parents for Managers and Players)
+-- USERS TABLE BLOCK (Parents for Admins and Players)
 ---------------------------------------------------------------------------------
 IF NOT EXISTS (SELECT 1 FROM dbo.Users)
 BEGIN
     PRINT 'Inserting initial data into dbo.Users...'
 
-    -- Insert 10 new Users (who will also be managers) and 10 more (who will be players)
+    -- Insert 10 new Users (who will also be Admins) and 10 more (who will be players)
     INSERT INTO dbo.Users (ID, Password, Username, Birthday, Email) VALUES
-    -- Manager 1: idx will be 1
-    ('111222333', '063b4991196144e54a01c801e85579f1807d93425f187707e152003c267793d5', 'ManagerAlpha', '1985-06-15', 'manager.alpha@spaceshooter.com'),
-    -- Manager 2: idx will be 2
-    ('111222444', '24043b3512a382c7104f98553641151df2ce1648a37f5978a632822c7a40b991', 'ManagerBeta', '1990-01-20', 'manager.beta@spaceshooter.com'),
-    -- Manager 3: idx will be 3
-    ('111222555', 'a33d455d3e07089ff528c7c9e1c25ff968222a7f5a9e32e85084930be6287c7e', 'ManagerGamma', '1988-11-05', 'manager.gamma@spaceshooter.com'),
-    -- Manager 4: idx will be 4
-    ('111222666', '6d506d34b419430c7cc89988a82c61099df3d85429a1b6422d1b70d4722513c0', 'ManagerDelta', '1995-03-25', 'manager.delta@spaceshooter.com'),
-    -- Manager 5: idx will be 5
-    ('111222777', '6100908b8d9c57843472be68e4f16a9a08a46b08ccf865f17a943a41113c242a', 'ManagerEpsilon', '1992-09-30', 'manager.epsilon@spaceshooter.com'),
-    -- Manager 6: idx will be 6
-    ('111333111', '652309f19379659b9a6704b281f6d33878b209d81d295982e01b44b92b679a83', 'ManagerZeta', '1983-04-12', 'manager.zeta@spaceshooter.com'),
-    -- Manager 7: idx will be 7
-    ('111333222', 'f5463768160021b36952e46b0e8b26120e2cc5f3b7d188331168532f507b973a', 'ManagerEta', '1998-07-01', 'manager.eta@spaceshooter.com'),
-    -- Manager 8: idx will be 8
-    ('111333333', '91f1816f1c713b6329e46a59992f15309d4367f08b77684df6d5024213791244', 'ManagerTheta', '1981-12-19', 'manager.theta@spaceshooter.com'),
-    -- Manager 9: idx will be 9
-    ('111333444', '66f81e330536c4b9d0344d5a1538356f91722881a7051412b1897e930f73b885', 'ManagerIota', '1996-02-28', 'manager.iota@spaceshooter.com'),
-    -- Manager 10: idx will be 10
-    ('111333555', '0e7225c567e7223b20468e64c3c3cc79c882141528659b85c345377f0c11f71a', 'ManagerKappa', '1987-10-10', 'manager.kappa@spaceshooter.com'),
+    -- Admin 1: idx will be 1
+    ('111222333', '063b4991196144e54a01c801e85579f1807d93425f187707e152003c267793d5', 'AdminAlpha', '1985-06-15', 'Admin.alpha@spaceshooter.com'),
+    -- Admin 2: idx will be 2
+    ('111222444', '24043b3512a382c7104f98553641151df2ce1648a37f5978a632822c7a40b991', 'AdminBeta', '1990-01-20', 'Admin.beta@spaceshooter.com'),
+    -- Admin 3: idx will be 3
+    ('111222555', 'a33d455d3e07089ff528c7c9e1c25ff968222a7f5a9e32e85084930be6287c7e', 'AdminGamma', '1988-11-05', 'Admin.gamma@spaceshooter.com'),
+    -- Admin 4: idx will be 4
+    ('111222666', '6d506d34b419430c7cc89988a82c61099df3d85429a1b6422d1b70d4722513c0', 'AdminDelta', '1995-03-25', 'Admin.delta@spaceshooter.com'),
+    -- Admin 5: idx will be 5
+    ('111222777', '6100908b8d9c57843472be68e4f16a9a08a46b08ccf865f17a943a41113c242a', 'AdminEpsilon', '1992-09-30', 'Admin.epsilon@spaceshooter.com'),
+    -- Admin 6: idx will be 6
+    ('111333111', '652309f19379659b9a6704b281f6d33878b209d81d295982e01b44b92b679a83', 'AdminZeta', '1983-04-12', 'Admin.zeta@spaceshooter.com'),
+    -- Admin 7: idx will be 7
+    ('111333222', 'f5463768160021b36952e46b0e8b26120e2cc5f3b7d188331168532f507b973a', 'AdminEta', '1998-07-01', 'Admin.eta@spaceshooter.com'),
+    -- Admin 8: idx will be 8
+    ('111333333', '91f1816f1c713b6329e46a59992f15309d4367f08b77684df6d5024213791244', 'AdminTheta', '1981-12-19', 'Admin.theta@spaceshooter.com'),
+    -- Admin 9: idx will be 9
+    ('111333444', '66f81e330536c4b9d0344d5a1538356f91722881a7051412b1897e930f73b885', 'AdminIota', '1996-02-28', 'Admin.iota@spaceshooter.com'),
+    -- Admin 10: idx will be 10
+    ('111333555', '0e7225c567e7223b20468e64c3c3cc79c882141528659b85c345377f0c11f71a', 'AdminKappa', '1987-10-10', 'Admin.kappa@spaceshooter.com'),
 
     -- Player 1: idx will be 11
     ('111375655', '948f98c92a95c46b5d233869279a024c08e5e7f1e78453535efd24d9c750e3ce', 'StarPilot_Ace', '2000-05-10', 'pilot.ace@game.com'),
@@ -68,12 +68,12 @@ END
 GO -- End of dbo.Users IF block
 
 ---------------------------------------------------------------------------------
--- MANAGERS TABLE BLOCK (Depends on Users)
+-- ADMINS TABLE BLOCK (Depends on Users)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.Managers)
+IF NOT EXISTS (SELECT 1 FROM dbo.Admins)
 BEGIN
-    PRINT 'Inserting initial data into dbo.Managers...'
-    INSERT INTO dbo.Managers (idx, StartDate) VALUES
+    PRINT 'Inserting initial data into dbo.Admins...'
+    INSERT INTO dbo.Admins (idx, StartDate) VALUES
     (1, '2024-01-01 09:00:00'),
     (2, '2024-01-15 10:30:00'),
     (3, '2024-02-20 11:00:00'),
@@ -85,7 +85,7 @@ BEGIN
     (9, '2024-08-22 13:00:00'),
     (10, '2024-09-05 11:15:00');
 END
-GO -- End of dbo.Managers IF block
+GO -- End of dbo.Admins IF block
 
 ---------------------------------------------------------------------------------
 -- PLAYERS TABLE BLOCK (Depends on Users)
@@ -109,42 +109,42 @@ END
 GO -- End of dbo.Players IF block
 
 ---------------------------------------------------------------------------------
--- PROFILE EDIT REQUESTS TABLE BLOCK (Depends on Players and Managers)
+-- PROFILE EDIT REQUESTS TABLE BLOCK (Depends on Players and Admins)
 ---------------------------------------------------------------------------------
 IF NOT EXISTS (SELECT 1 FROM dbo.ProfileEditRequests)
 BEGIN
     PRINT 'Inserting initial data into dbo.ProfileEditRequests...'
     INSERT INTO dbo.ProfileEditRequests
-        (PlayerIdx, RequestDateTime, Status, ReviewDate, ManagerIdx)
+        (PlayerIdx, RequestDateTime, Status, ReviewDate, AdminIdx)
     VALUES
-    -- Request 1: Player 11 (Pending), assigned to Manager 1
+    -- Request 1: Player 11 (Pending), assigned to Admin 1
     (11, '2025-09-29 10:00:00', 0, NULL, 1),
 
-    -- Request 2: Player 14 (Approved), assigned to Manager 2
+    -- Request 2: Player 14 (Approved), assigned to Admin 2
     (14, '2025-09-28 15:30:00', 1, '2025-09-29 09:00:00', 2),
 
-    -- Request 3: Player 15 (Rejected), assigned to Manager 3
+    -- Request 3: Player 15 (Rejected), assigned to Admin 3
     (15, '2025-09-29 11:45:00', 2, '2025-09-29 14:00:00', 3),
 
-    -- Request 4: Player 19 (Pending), assigned to Manager 4
+    -- Request 4: Player 19 (Pending), assigned to Admin 4
     (19, '2025-09-30 09:10:00', 0, NULL, 4),
 
-    -- Request 5: Player 12 (Canceled), assigned to Manager 5
+    -- Request 5: Player 12 (Canceled), assigned to Admin 5
     (12, '2025-09-25 08:00:00', 3, NULL, 5),
 
-    -- Request 6: Player 18 (Approved), assigned to Manager 6
+    -- Request 6: Player 18 (Approved), assigned to Admin 6
     (18, '2025-09-26 13:00:00', 1, '2025-09-27 15:00:00', 6),
 
-    -- Request 7: Player 17 (Pending), assigned to Manager 7
+    -- Request 7: Player 17 (Pending), assigned to Admin 7
     (17, '2025-09-30 11:30:00', 0, NULL, 7),
 
-    -- Request 8: Player 20 (Rejected), assigned to Manager 8
+    -- Request 8: Player 20 (Rejected), assigned to Admin 8
     (20, '2025-09-28 16:00:00', 2, '2025-09-29 10:00:00', 8),
 
-    -- Request 9: Player 16 (Approved), assigned to Manager 9
+    -- Request 9: Player 16 (Approved), assigned to Admin 9
     (16, '2025-09-27 09:40:00', 1, '2025-09-27 10:05:00', 9),
 
-    -- Request 10: Player 13 (Pending), assigned to Manager 10
+    -- Request 10: Player 13 (Pending), assigned to Admin 10
     (13, '2025-09-29 14:15:00', 0, NULL, 10);
 END
 GO -- End of dbo.ProfileEditRequests IF block
