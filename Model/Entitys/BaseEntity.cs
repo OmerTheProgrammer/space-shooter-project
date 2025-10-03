@@ -10,7 +10,7 @@ namespace Model.Entitys
 
         public override string ToString()
         {
-            return $"idx: {Idx}";
+            return $"idx: {this.Idx}";
         }
     }
 }

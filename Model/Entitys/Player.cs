@@ -21,9 +21,9 @@ namespace Model.Entitys
         public override string ToString()
         {
             return $"{base.ToString()}" +
-                $"Max level : {MaxLevel},Total Score:{TotalScore}, " +
-                $"Sound is {IsSoundOn}ly on, " +
-                $"Music is {IsMusicOn}ly on.\n";
+                $"Max level : {this.MaxLevel},Total Score:{this.TotalScore}, " +
+                $"Sound is {this.IsSoundOn}ly on, " +
+                $"Music is {this.IsMusicOn}ly on.\n";
         }
     }
 }

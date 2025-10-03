@@ -21,11 +21,11 @@ namespace Model.Entitys
         public override string ToString()
         {
             return $"{base.ToString()}, " +
-                $" {Username}, ID: {Id}, " +
-                $"With password Hased: {Password}, " +
-                $"With Birthday: {Birthday}, " +
-                $"Is {isLoggedIn}ly logged in, " +
-                $"email: {Email}.\n";
+                $" {this.Username}, ID: {this.Id}, " +
+                $"With password Hased: {this.Password}, " +
+                $"With Birthday: {this.Birthday}, " +
+                $"Is {this.isLoggedIn}ly logged in, " +
+                $"email: {this.Email}.\n";
         }
     }
 }
