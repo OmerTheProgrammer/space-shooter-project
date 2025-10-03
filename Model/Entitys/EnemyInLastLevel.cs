@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Entitys
 {
-    enum Enemy
+    public enum Enemy
     {
         space_ship=0,//the basic green
         space_destroyer=1, // red - not implemnted yet

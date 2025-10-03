@@ -2,7 +2,7 @@
 
 namespace Model.Entitys
 {
-    enum Status
+    public enum Status
     {
         Pending=0,
         Approved=1,
