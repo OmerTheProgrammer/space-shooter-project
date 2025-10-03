@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Entitys
 {
-    public class PLayer : User
+    public class Player : User
     {
         private int maxLevel;
         private int totalScore;

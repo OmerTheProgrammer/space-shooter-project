@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Model.Tables
 {
-    public class PlayersTable : List<PLayer>
+    public class PlayersTable : List<Player>
     {
         public PlayersTable() { }
-        public PlayersTable(IEnumerable<PLayer> list) : base(list) { }
-        public PlayersTable(IEnumerable<BaseEntity> list) : base(list.Cast<PLayer>().ToList()) { }
+        public PlayersTable(IEnumerable<Player> list) : base(list) { }
+        public PlayersTable(IEnumerable<BaseEntity> list) : base(list.Cast<Player>().ToList()) { }
     }
 }
