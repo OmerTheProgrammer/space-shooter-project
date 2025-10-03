@@ -11,12 +11,12 @@ CREATE TABLE ProfileEditRequests (
     -- Status values: 0=Pending, 1=Approved, 2=Rejected, 3=Canceled
     Status INT NOT NULL CHECK (Status IN (0, 1, 2, 3)) DEFAULT 0, 
     ReviewDate DATETIME NULL, -- NULL if still Pending
-    ManagerIdx INT NULL,    -- New field based on your image (Foreign Key to Managers table)
+    AdminIdx INT NULL,    -- New field based on your image (Foreign Key to Admins table)
 
     -- Define Foreign Key: PlayerIdx links to the Player's ID in the Players table
     FOREIGN KEY (PlayerIdx) REFERENCES Players(idx),
 
-    -- Define Foreign Key: ManagerIdx links to the Manager's ID in the Managers table
+    -- Define Foreign Key: AdminIdx links to the Admin's ID in the Admins table
     -- I've made this NULLable (NULL) since a request might not be assigned immediately.
-    FOREIGN KEY (ManagerIdx) REFERENCES Managers(idx)
+    FOREIGN KEY (AdminIdx) REFERENCES Admins(idx)
 );

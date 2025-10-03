@@ -1,10 +1,10 @@
 ﻿----------------------------------------------------
--- 6. CREATE MANAGERS TABLE
+-- 6. CREATE ADMINS TABLE
 ----------------------------------------------------
 
 
--- Table 8: Managers (1:1 with Users)
-CREATE TABLE Managers (
+-- Table 8: Admins (1:1 with Users)
+CREATE TABLE Admins (
     idx INT PRIMARY KEY, -- Use the Users' idx as the Primary Key and Foreign Key
     StartDate DATETIME NOT NULL,
 

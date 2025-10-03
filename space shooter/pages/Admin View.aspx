@@ -31,7 +31,7 @@
                             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Users</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Managers</button>
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Admins</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Players</button>
@@ -126,7 +126,7 @@
                                               <div class="row">
                                                  <div class="col">
                                                     <center>
-                                                       <h4>Managers</h4>
+                                                       <h4>Admins</h4>
                                                     </center>
                                                  </div>
                                               </div>
@@ -139,7 +139,7 @@
                                               </div>
                                               <div class="row">
                                                  <div class="col-md-4">
-                                                    <label>Manager ID</label>
+                                                    <label>Admin ID</label>
                                                     <div class="form-group">
                                                        <div class="input-group">
                                                           <asp:TextBox CssClass="form-control" ID="TextBox3" runat="server" placeholder="ID"></asp:TextBox>
@@ -148,9 +148,9 @@
                                                     </div>
                                                  </div>
                                                  <div class="col-md-8">
-                                                    <label>Manager Name</label>
+                                                    <label>Admin Name</label>
                                                     <div class="form-group">
-                                                       <asp:TextBox CssClass="form-control" ID="TextBox4" runat="server" placeholder="Manager Name"></asp:TextBox>
+                                                       <asp:TextBox CssClass="form-control" ID="TextBox4" runat="server" placeholder="Admin Name"></asp:TextBox>
                                                     </div>
                                                  </div>
                                               </div>
@@ -176,7 +176,7 @@
                                               <div class="row">
                                                  <div class="col">
                                                     <center>
-                                                       <h4>Manager List</h4>
+                                                       <h4>Admin List</h4>
                                                     </center>
                                                  </div>
                                               </div>
@@ -227,7 +227,7 @@
                                                  <div class="col-md-8">
                                                     <label>Player Name</label>
                                                     <div class="form-group">
-                                                       <asp:TextBox CssClass="form-control" ID="TextBox6" runat="server" placeholder="Manager Name"></asp:TextBox>
+                                                       <asp:TextBox CssClass="form-control" ID="TextBox6" runat="server" placeholder="Admin Name"></asp:TextBox>
                                                     </div>
                                                  </div>
                                               </div>

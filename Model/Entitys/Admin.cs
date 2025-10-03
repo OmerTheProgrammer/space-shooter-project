@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Entitys
 {
-    public class Manager : User
+    public class Admin : User
     {
         private DateTime startDate;
 
