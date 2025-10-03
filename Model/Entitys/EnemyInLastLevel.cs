@@ -8,10 +8,10 @@ namespace Model.Entitys
 {
     enum Enemy
     {
-        space_ship,//the basic green
-        space_destroyer, // red - not implemnted yet
-        mini_boss, // not implemnted yet
-        boss, // not implemnted yet
+        space_ship=0,//the basic green
+        space_destroyer=1, // red - not implemnted yet
+        mini_boss=2, // not implemnted yet
+        boss=3, // not implemnted yet
     }
 
     public class EnemyInLastLevel : BaseEntity
