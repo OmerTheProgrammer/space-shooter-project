@@ -12,6 +12,7 @@ CREATE TABLE RunsInfo (
     ShieldLevel INT NOT NULL CHECK (ShieldLevel >= 0) DEFAULT 0,
     BlasterCount INT NOT NULL CHECK (BlasterCount >= 1 AND BlasterCount <= 9) DEFAULT 1,
     HP INT NOT NULL CHECK (HP >= 0) DEFAULT 100,
+    IsRunOver BIT NOT NULL DEFAULT 1
     
     -- Define Foreign Key
     FOREIGN KEY (PlayerIdx) REFERENCES Players(idx)

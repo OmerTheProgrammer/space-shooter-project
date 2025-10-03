@@ -249,26 +249,39 @@ GO -- End of dbo.PlayersAndGroups IF block
 IF NOT EXISTS (SELECT 1 FROM dbo.RunsInfo)
 BEGIN
     PRINT 'Inserting initial data into dbo.RunsInfo...'
-    INSERT INTO dbo.RunsInfo (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, ShieldLevel, BlasterCount, HP) VALUES
-    -- Player 11 (StarPilot_Ace)
-    (11, 15000, 5, '2025-09-27', 2, 4, 85),
-    -- Player 12 (GalaxyRunner)
-    (12, 5500, 3, '2025-09-26', 1, 2, 50),
-    -- Player 13 (CosmicDrifter)
-    (13, 1000, 1, '2025-09-25', 0, 1, 100),
-    -- Player 14 (ZeroGravity)
-    (14, 45000, 8, '2025-09-28', 5, 9, 10),
-    -- Player 15 (CometChaser)
-    (15, 8200, 4, '2025-09-27', 3, 3, 75),
-    -- Player 16 (NebulaNomad)
-    (16, 22000, 6, '2025-09-28', 4, 5, 60),
-    -- Player 17 (HyperDriveHero)
-    (17, 33000, 7, '2025-09-27', 6, 7, 95),
-    -- Player 18 (AstroBlaster)
-    (18, 2500, 2, '2025-09-26', 1, 2, 30),
-    -- Player 19 (VoidVagabond)
-    (19, 61000, 9, '2025-09-28', 7, 8, 20),
-    -- Player 20 (OrbitalOutlaw)
-    (20, 12500, 5, '2025-09-25', 2, 4, 45);
+    -- NOTE: Added IsRunOver to the column list.
+    INSERT INTO dbo.RunsInfo (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, ShieldLevel, BlasterCount, HP, IsRunOver) VALUES
+    -- Run 1 - Player 11 (StarPilot_Ace) -> True (1)
+    (11, 15000, 5, '2025-09-27', 2, 4, 85, 1),
+    -- Run 2 - Player 12 (GalaxyRunner) -> True (1)
+    (12, 5500, 3, '2025-09-26', 1, 2, 50, 1),
+    -- Run 3 - Player 13 (CosmicDrifter) -> True (1)
+    (13, 1000, 1, '2025-09-25', 0, 1, 100, 1),
+    -- Run 4 - Player 14 (ZeroGravity) -> True (1)
+    (14, 45000, 8, '2025-09-28', 5, 9, 10, 1),
+    -- Run 5 - Player 15 (CometChaser) -> False (0)
+    (15, 8200, 4, '2025-09-27', 3, 3, 75, 0),
+    -- Run 6 - Player 16 (NebulaNomad) -> True (1)
+    (16, 22000, 6, '2025-09-28', 4, 5, 60, 1),
+    -- Run 7 - Player 17 (HyperDriveHero) -> True (1)
+    (17, 33000, 7, '2025-09-27', 6, 7, 95, 1),
+    -- Run 8 - Player 18 (AstroBlaster) -> True (1)
+    (18, 2500, 2, '2025-09-26', 1, 2, 30, 1),
+    -- Run 9 - Player 19 (VoidVagabond) -> False (0)
+    (19, 61000, 9, '2025-09-28', 7, 8, 20, 0),
+    -- Run 10 - Player 20 (OrbitalOutlaw) -> True (1)
+    (20, 12500, 5, '2025-09-25', 2, 4, 45, 1);
 END
 GO -- End of dbo.RunsInfo IF block
+
+IF NOT EXISTS (SELECT 1 FROM dbo.EnemiesInLastLevel)
+BEGIN
+    PRINT 'Inserting initial data into dbo.EnemiesInLastLevel...'
+    -- Inserting records to match the specific data shown in the picture:
+    INSERT INTO dbo.EnemiesInLastLevel (RunIdx, Name, Amount) VALUES
+    -- Run 5 had 2 'basic' enemies
+    (5, 'basic', 2),
+    -- Run 9 had 6 'basic' enemies
+    (9, 'basic', 6);
+END
+GO -- End of dbo.EnemiesInLastLevel IF block

@@ -71,6 +71,7 @@
     <Build Include="dbo\Tables\RequestData.sql" />
     <Build Include="dbo\Tables\Admins.sql" />
     <PostDeploy Include="Scripts\Script.Inserts.sql" />
+    <Build Include="dbo\Tables\EnemiesInLastLevel.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Space_Shooter_DB Creator.publish.xml" />
