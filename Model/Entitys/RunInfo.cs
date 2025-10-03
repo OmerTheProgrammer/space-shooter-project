@@ -22,6 +22,7 @@ namespace Model.Entitys
         public int CurrentHp { get => currentHp; set => currentHp = value; }
         public bool IsRunOver { get => isRunOver; set => isRunOver = value; }
 
+
         public override string ToString()
         {
             return $"{base.ToString()}, " +
