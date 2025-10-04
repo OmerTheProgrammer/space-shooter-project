@@ -22,8 +22,15 @@ namespace Model.Entitys
 
         public override string ToString()
         {
-            return $"{base.ToString()} In run: {this.runInfo}.\n" +
-                $"there are {this.Amount} Enemy {this.name} ";
+            string output = $"{base.ToString()} In run: {this.runInfo}.\n";
+            if (this.Amount == 1){
+                output += $"there is 1 Enemy {this.name} ";
+            }
+            else
+            {
+                output += $"there are {this.Amount} Enemy {this.name}s ";
+            }
+            return output;
         }
     }
 }

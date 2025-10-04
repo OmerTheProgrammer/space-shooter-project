@@ -280,8 +280,8 @@ BEGIN
     -- Inserting records to match the specific data shown in the picture:
     INSERT INTO dbo.EnemiesInLastLevel (RunIdx, Name, Amount) VALUES
     -- Run 5 had 2 'basic' enemies
-    (5, 'basic', 2),
+    (5, 0, 2),
     -- Run 9 had 6 'basic' enemies
-    (9, 'basic', 6);
+    (9, 0, 6);
 END
 GO -- End of dbo.EnemiesInLastLevel IF block

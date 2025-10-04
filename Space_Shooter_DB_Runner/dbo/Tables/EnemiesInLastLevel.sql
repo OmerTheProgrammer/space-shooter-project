@@ -17,5 +17,10 @@ CREATE TABLE [dbo].[EnemiesInLastLevel] (
     CONSTRAINT [PK_EnemiesInLastLevel] PRIMARY KEY CLUSTERED ([idx] ASC),
 
     -- Foreign Key Constraint to RunsInfo
-    CONSTRAINT [FK_EnemiesInLastLevel_RunsInfo] FOREIGN KEY ([RunIdx]) REFERENCES [dbo].[RunsInfo] ([idx])
+    CONSTRAINT [FK_EnemiesInLastLevel_RunsInfo] FOREIGN KEY ([RunIdx]) REFERENCES [dbo].[RunsInfo] ([idx]),
+
+    CONSTRAINT [CK_ValidEnemyValue] CHECK ([Name] = (3)
+                                               OR [Name] = (2)
+                                               OR [Name] = (1)
+                                               OR [Name] = (0))
 );
