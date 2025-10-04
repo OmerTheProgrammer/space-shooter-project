@@ -7,37 +7,66 @@ namespace ViewModel
 {
     public abstract class BaseDB
     {
-        protected static string connectionString = @"Provider=Microsoft.ACE.Sql.12.0;Data Source="
-                      + System.IO.Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
-                      + "/../../../../../ViewModel/SpaceShooterDB.accdb");
+        protected static string connectionString = GetConnectionString();
+            //@"Provider=Microsoft.ACE.Sql.12.0;Data Source="
+            //          + System.IO.Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
+            //          + "/../../../../../ViewModel/SpaceShooterDB.accdb")
+
         protected static SqlConnection connection;
         protected SqlCommand command;
         protected SqlDataReader reader;
 
-        public static string Path()
+        private static string GetConnectionString()
         {
-            String[] args = Environment.GetCommandLineArgs();
-            string s;
-            if (args.Length == 1)
-            {
-                s = args[0];
-            }
-            else
-            {
-                s = args[1];
-                s = s.Replace("/service:", "");
-            }
-            string[] st = s.Split('\\');
-            int x = st.Length - 6;
-            st[x] = "ViewModel";
-            Array.Resize(ref st, x + 1);
-            string str = String.Join('\\', st);
-            return str;
+            // 1. Get the directory of the executing assembly (e.g., bin/Debug/net8.0/)
+            string assemblyPath = Path.GetDirectoryName(
+                System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            // 2. Navigate UP to the project root (assuming standard structure)
+            // This might need adjustment based on your specific solution structure (e.g., 3 levels up: \bin\Debug\net8.0\)
+            // Let's assume the DB file is in a known location relative to the solution file.
+            // A more robust approach: Find the project path.
+
+            // This navigates up three levels from the running DLL:
+            // ViewModel.dll <- bin <- Debug <- net8.0 (1) <- ProjectName (2) <- SolutionFolder (3)
+            string projectRoot = Path.GetFullPath(
+                Path.Combine(assemblyPath, @"..\..\..\.."));
+
+            // Assuming your .mdf file is located in the root of your ViewModel project folder:
+            string dbFilePath = Path.Combine(
+                projectRoot, "ViewModel", "Space_Shooter_DB.mdf");
+
+            // 3. Construct the connection string using the correct, fully qualified path
+            return "Data Source=(LocalDB)\\MSSQLLocalDB;" +
+                   "AttachDbFilename=\"" + dbFilePath + "\";" +
+                   "Integrated Security=True;" +
+                   "Connect Timeout=30;";
         }
+
+        //public static string Path()
+        //{
+        //    String[] args = Environment.GetCommandLineArgs();
+        //    string s;
+        //    if (args.Length == 1)
+        //    {
+        //        s = args[0];
+        //    }
+        //    else
+        //    {
+        //        s = args[1];
+        //        s = s.Replace("/service:", "");
+        //    }
+        //    string[] st = s.Split('\\');
+        //    int x = st.Length - 6;
+        //    st[x] = "ViewModel";
+        //    Array.Resize(ref st, x + 1);
+        //    string str = String.Join('\\', st);
+        //    return str;
+        //}
 
         public BaseDB()
         {
-            var x = Path();
+            //var x = Path();
             connection ??= new SqlConnection(connectionString);
             command = new SqlCommand();
             command.Connection = connection;
@@ -188,7 +217,9 @@ namespace ViewModel
                     records_affected += command.ExecuteNonQuery();
 
                     command.CommandText = "Select @@Identity";
-                    entity.Entity.Idx = (int)command.ExecuteScalar();
+
+                    var v = Convert.ToInt32(command.ExecuteScalar());
+                    entity.Entity.Idx = v;
                 }
 
                 foreach (var entity in updated)

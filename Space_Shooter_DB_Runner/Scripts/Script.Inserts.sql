@@ -22,7 +22,7 @@ BEGIN
     PRINT 'Inserting initial data into dbo.Users...'
 
     -- Insert 10 new Users (who will also be Admins) and 10 more (who will be players)
-    INSERT INTO dbo.Users (ID, Password, Username, Birthday, Email) VALUES
+    INSERT INTO dbo.Users (ID, [Password], Username, Birthday, Email) VALUES
     -- Admin 1: idx will be 1
     ('111222333', '063b4991196144e54a01c801e85579f1807d93425f187707e152003c267793d5', 'AdminAlpha', '1985-06-15', 'Admin.alpha@spaceshooter.com'),
     -- Admin 2: idx will be 2
