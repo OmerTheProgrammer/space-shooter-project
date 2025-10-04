@@ -4,8 +4,7 @@ namespace Model.Entitys
 {
     public class BaseEntity
     {
-        private int idx = 3;// smallest defult value in all tables
-
+        private int idx;
         public int Idx { get => idx; set => idx = value; }
 
         public override string ToString()
