@@ -14,27 +14,42 @@ namespace Test
     {
         public static void Main(string[] args)
         {
-            //UserDB userDB = new UserDB();
+            //UsersDB UserDB = new UsersDB();
+            //UsersTable ut = UserDB.SelectAll();
+            //foreach (var t in ut)
+            //{
+            //    Console.WriteLine(t);
+            //}
             //User user = new User() { Id = "122431414" };
-            //userDB.Insert(user);
-            //userDB.Delete(user);
-            //Console.WriteLine($"{userDB.SaveChanges()} affected rows.");
-            //UsersTable ut = userDB.SelectAll();
+            //UserDB.Insert(user);
+            //Console.WriteLine($"{UserDB.SaveChanges()} affected rows.");
+            //ut = UserDB.SelectAll();
             //foreach (var t in ut)
             //{
             //    Console.WriteLine(t);
             //}
 
-            //PlayersDB PlayerDB = new PlayersDB();
-            //Player Player = new Player() { Id = "135431414" };
-            //PlayerDB.Insert(Player);
-            //PlayerDB.Delete(Player);
-            //Console.WriteLine($"{PlayerDB.SaveChanges()} affected rows.");
-            //PlayersTable ut = PlayerDB.SelectAll();
+            //user = ut.Last();
+            //user.Username = "user245";
+            //UserDB.Update(user);
+            //Console.WriteLine($"{UserDB.SaveChanges()} affected rows.");
+            //ut = UserDB.SelectAll();
             //foreach (var t in ut)
             //{
             //    Console.WriteLine(t);
             //}
+
+            //user = ut.Last();
+            //user.Username = "user245";
+            //UserDB.Delete(ut.Last());
+            //Console.WriteLine($"{UserDB.SaveChanges()} affected rows.");
+            //ut = UserDB.SelectAll();
+            //foreach (var t in ut)
+            //{
+            //    Console.WriteLine(t);
+            //}
+
+            
         }
     }
 }

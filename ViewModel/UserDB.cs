@@ -11,7 +11,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ViewModel
 {
-    public class UserDB : BaseDB
+    public class UsersDB : BaseDB
     {
         public UsersTable SelectAll()
         {
@@ -40,7 +40,7 @@ namespace ViewModel
         static private UsersTable list = new UsersTable();
         public static User SelectById(int id)
         {
-            UserDB db = new UserDB();
+            UsersDB db = new UsersDB();
             list = db.SelectAll();
 
             User g = list.Find(item => (item.Idx == id));

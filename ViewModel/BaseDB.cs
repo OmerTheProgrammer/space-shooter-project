@@ -129,6 +129,14 @@ namespace ViewModel
         protected abstract void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd);
         public static List<ChangeEntity> deleted = new List<ChangeEntity>();
 
+        /// <summary>
+        /// Deletes a record based on a *FOUND* idx in the table!
+        /// </summary>
+        /// <param name="entity">the entity to delete *WITH* his Idx</param>
+        /// <returns>Nothing</returns>
+        /// <remarks>
+        /// starts the delete process.
+        /// </remarks>
         public virtual void Delete(BaseEntity entity)
         {
             BaseEntity reqEntity = this.NewEntity();
@@ -144,7 +152,14 @@ namespace ViewModel
         protected abstract void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd);
         public static List<ChangeEntity> inserted = new List<ChangeEntity>();
 
-
+        /// <summary>
+        /// Inserts a record inyo the table!
+        /// </summary>
+        /// <param name="entity">the entity to insert (no idx)</param>
+        /// <returns>Nothing</returns>
+        /// <remarks>
+        /// starts the insert process.
+        /// </remarks>
         public virtual void Insert(BaseEntity entity)
         {
             BaseEntity reqEntity = this.NewEntity();
@@ -157,7 +172,14 @@ namespace ViewModel
         protected abstract void CreateUpdatedSQL(BaseEntity entity, SqlCommand cmd);
         public static List<ChangeEntity> updated = new List<ChangeEntity>();
 
-
+        /// <summary>
+        /// Updates a record based on a *FOUND* idx in the table!
+        /// </summary>
+        /// <param name="entity">the entity to update *WITH* his Idx</param>
+        /// <returns>Nothing</returns>
+        /// <remarks>
+        /// starts the update process.
+        /// </remarks>
         public virtual void Update(BaseEntity entity)
         {
             BaseEntity reqEntity = this.NewEntity();
@@ -167,6 +189,13 @@ namespace ViewModel
             }
         }
 
+        /// <summary>
+        /// actully CHANGES the DB, does the actul inserting/updating/deleting
+        /// </summary>
+        /// <returns>amount of lines he changed</returns>
+        /// <remarks>
+        /// finishes the update/insert/delete processes.
+        /// </remarks>
         public int SaveChanges()
         {
             SqlTransaction trans = null;

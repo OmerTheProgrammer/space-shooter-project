@@ -12,7 +12,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ViewModel
 {
-    public class PlayersDB : UserDB
+    public class PlayersDB : UsersDB
     {
         public PlayersTable SelectAll()
         {
