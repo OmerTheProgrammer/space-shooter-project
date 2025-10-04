@@ -196,17 +196,17 @@ GO -- End of dbo.RequestData IF block
 IF NOT EXISTS (SELECT 1 FROM dbo.Groups)
 BEGIN
     PRINT 'Inserting initial data into dbo.Groups...'
-    INSERT INTO dbo.Groups (GroupScore, LeadBoardPos) VALUES
+    INSERT INTO dbo.Groups (GroupScore) VALUES
     -- Group 1: idx will be 1
-    (550000, 5),
+    (550000),
     -- Group 2: idx will be 2
-    ( 920000, 2),
+    ( 920000),
     -- Group 3: idx will be 3
-    ( 120000, 15),
+    ( 120000),
     -- Group 4: idx will be 4
-    ( 380000, 8),
+    ( 380000),
     -- Group 5: idx will be 5
-    ( 1050000, 1);
+    ( 1050000);
 END
 GO -- End of dbo.Groups IF block
 
