@@ -9,7 +9,7 @@ CREATE TABLE ProfileEditRequests (
     RequestDateTime DATETIME NOT NULL,
     
     -- Status values: 0=Pending, 1=Approved, 2=Rejected, 3=Canceled
-    Status INT NOT NULL CHECK (Status IN (0, 1, 2, 3)) DEFAULT 0, 
+    [Status] INT NOT NULL CHECK ([Status] IN (0, 1, 2, 3)) DEFAULT 0, 
     ReviewDate DATETIME NULL, -- NULL if still Pending
     AdminIdx INT NULL,    -- New field based on your image (Foreign Key to Admins table)
 
