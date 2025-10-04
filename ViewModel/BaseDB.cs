@@ -153,7 +153,7 @@ namespace ViewModel
         public static List<ChangeEntity> inserted = new List<ChangeEntity>();
 
         /// <summary>
-        /// Inserts a record inyo the table!
+        /// Inserts a record into the table!
         /// </summary>
         /// <param name="entity">the entity to insert (no idx)</param>
         /// <returns>Nothing</returns>
@@ -219,7 +219,7 @@ namespace ViewModel
                     entity.CreateSql(entity.Entity, command); //cmd.CommandText = CreateInsertSQL(entity.Entity);
                     records_affected += command.ExecuteNonQuery();
 
-                    command.CommandText = "SELECT SCOPE_IDENTITY()";
+                    command.CommandText = "SELECT @@IDENTITY";
 
                     object result = command.ExecuteScalar();
                     if(result != null && result.GetType().ToString() != "System.DBNull")
