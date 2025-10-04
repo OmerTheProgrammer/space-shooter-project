@@ -17,12 +17,12 @@ Post-Deployment Script Template
 ---------------------------------------------------------------------------------
 -- USERS TABLE BLOCK (Parents for Admins and Players)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.Users)
+IF NOT EXISTS (SELECT 1 FROM dbo.UsersTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.Users...'
+    PRINT 'Inserting initial data into dbo.UsersTbl...'
 
     -- Insert 10 new Users (who will also be Admins) and 10 more (who will be players)
-    INSERT INTO dbo.Users (ID, [Password], Username, Birthday, Email) VALUES
+    INSERT INTO dbo.UsersTbl (ID, [Password], Username, Birthday, Email) VALUES
     -- Admin 1: idx will be 1
     ('111222333', '063b4991196144e54a01c801e85579f1807d93425f187707e152003c267793d5', 'AdminAlpha', '1985-06-15', 'Admin.alpha@spaceshooter.com'),
     -- Admin 2: idx will be 2
@@ -65,15 +65,15 @@ BEGIN
     -- Player 10: idx will be 20
     ('348197562', 'f626605d51e70e59a41981e4b8686e589df4641d406a4666f07b469502b48e42', 'OrbitalOutlaw', '1996-03-21', 'outlaw.o@game.com');
 END
-GO -- End of dbo.Users IF block
+GO -- End of dbo.UsersTbl IF block
 
 ---------------------------------------------------------------------------------
 -- ADMINS TABLE BLOCK (Depends on Users)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.Admins)
+IF NOT EXISTS (SELECT 1 FROM dbo.AdminsTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.Admins...'
-    INSERT INTO dbo.Admins (idx, StartDate) VALUES
+    PRINT 'Inserting initial data into dbo.AdminsTbl...'
+    INSERT INTO dbo.AdminsTbl (idx, StartDate) VALUES
     (1, '2024-01-01 09:00:00'),
     (2, '2024-01-15 10:30:00'),
     (3, '2024-02-20 11:00:00'),
@@ -85,16 +85,16 @@ BEGIN
     (9, '2024-08-22 13:00:00'),
     (10, '2024-09-05 11:15:00');
 END
-GO -- End of dbo.Admins IF block
+GO -- End of dbo.AdminsTbl IF block
 
 ---------------------------------------------------------------------------------
 -- PLAYERS TABLE BLOCK (Depends on Users)
 ---------------------------------------------------------------------------------
 -- Note: User inserts for players (idx 11-20) are done in the dbo.Users block above.
-IF NOT EXISTS (SELECT 1 FROM dbo.Players)
+IF NOT EXISTS (SELECT 1 FROM dbo.PlayersTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.Players...'
-    INSERT INTO dbo.Players (idx, MaxLevel, TotalScore, IsSoundOn, IsMusicOn) VALUES
+    PRINT 'Inserting initial data into dbo.PlayersTbl...'
+    INSERT INTO dbo.PlayersTbl (idx, MaxLevel, TotalScore, IsSoundOn, IsMusicOn) VALUES
     (11, 5, 12500, 1, 1),
     (12, 3, 5800, 1, 0),
     (13, 1, 1500, 0, 0),
@@ -106,15 +106,15 @@ BEGIN
     (19,9, 60000, 1, 1),
     (20,5, 14500, 0, 0);
 END
-GO -- End of dbo.Players IF block
+GO -- End of dbo.PlayersTbl IF block
 
 ---------------------------------------------------------------------------------
 -- PROFILE EDIT REQUESTS TABLE BLOCK (Depends on Players and Admins)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.ProfileEditRequests)
+IF NOT EXISTS (SELECT 1 FROM dbo.ProfileEditRequestsTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.ProfileEditRequests...'
-    INSERT INTO dbo.ProfileEditRequests
+    PRINT 'Inserting initial data into dbo.ProfileEditRequestsTbl...'
+    INSERT INTO dbo.ProfileEditRequestsTbl
         (PlayerIdx, RequestDateTime, Status, ReviewDate, AdminIdx)
     VALUES
     -- Request 1: Player 11 (Pending), assigned to Admin 1
@@ -147,15 +147,15 @@ BEGIN
     -- Request 10: Player 13 (Pending), assigned to Admin 10
     (13, '2025-09-29 14:15:00', 0, NULL, 10);
 END
-GO -- End of dbo.ProfileEditRequests IF block
+GO -- End of dbo.ProfileEditRequestsTbl IF block
 
 ---------------------------------------------------------------------------------
 -- REQUEST DATA TABLE BLOCK (Depends on ProfileEditRequests)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.RequestData)
+IF NOT EXISTS (SELECT 1 FROM dbo.RequestDataTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.RequestData...'
-    INSERT INTO dbo.RequestData
+    PRINT 'Inserting initial data into dbo.RequestDataTbl...'
+    INSERT INTO dbo.RequestDataTbl
         (RequestIdx, Field, OldValue, NewValue)
     VALUES
     -- Request 1 (Player 11, Pending): Changing Username
@@ -188,15 +188,15 @@ BEGIN
     -- Request 10 (Player 13, Pending): Changing Birthday
     (10, 'Birthday', '2003-12-03', '2003-12-04');
 END
-GO -- End of dbo.RequestData IF block
+GO -- End of dbo.RequestDataTbl IF block
 
 ---------------------------------------------------------------------------------
 -- GROUPS TABLE BLOCK (Independent)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.Groups)
+IF NOT EXISTS (SELECT 1 FROM dbo.GroupsTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.Groups...'
-    INSERT INTO dbo.Groups (GroupScore) VALUES
+    PRINT 'Inserting initial data into dbo.GroupsTbl...'
+    INSERT INTO dbo.GroupsTbl (GroupScore) VALUES
     -- Group 1: idx will be 1
     (550000),
     -- Group 2: idx will be 2
@@ -208,15 +208,15 @@ BEGIN
     -- Group 5: idx will be 5
     ( 1050000);
 END
-GO -- End of dbo.Groups IF block
+GO -- End of dbo.GroupsTbl IF block
 
 ---------------------------------------------------------------------------------
 -- PLAYERS AND GROUPS TABLE BLOCK (Depends on Players and Groups)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.PlayersAndGroups)
+IF NOT EXISTS (SELECT 1 FROM dbo.PlayersAndGroupsTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.PlayersAndGroups...'
-    INSERT INTO dbo.PlayersAndGroups (PlayerIdx, GroupIdx) VALUES
+    PRINT 'Inserting initial data into dbo.PlayersAndGroupsTbl...'
+    INSERT INTO dbo.PlayersAndGroupsTbl (PlayerIdx, GroupIdx) VALUES
     -- Group 1 (Leaderboard Pos 5)
     (11, 1), -- StarPilot_Ace is in Group 1
     (12, 1), -- GalaxyRunner is in Group 1
@@ -241,16 +241,16 @@ BEGIN
     (11, 5), -- StarPilot_Ace is ALSO in Group 5
     (14, 3); -- ZeroGravity is ALSO in Group 3
 END
-GO -- End of dbo.PlayersAndGroups IF block
+GO -- End of dbo.PlayersAndGroupsTbl IF block
 
 ---------------------------------------------------------------------------------
 -- RUNS INFO TABLE BLOCK (Depends on Players)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.RunsInfo)
+IF NOT EXISTS (SELECT 1 FROM dbo.RunsInfoTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.RunsInfo...'
+    PRINT 'Inserting initial data into dbo.RunsInfoTbl...'
     -- NOTE: Added IsRunOver to the column list.
-    INSERT INTO dbo.RunsInfo (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, ShieldLevel, BlasterCount, HP, IsRunOver) VALUES
+    INSERT INTO dbo.RunsInfoTbl (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, ShieldLevel, BlasterCount, HP, IsRunOver) VALUES
     -- Run 1 - Player 11 (StarPilot_Ace) -> True (1)
     (11, 15000, 5, '2025-09-27', 2, 4, 85, 1),
     -- Run 2 - Player 12 (GalaxyRunner) -> True (1)
@@ -272,16 +272,16 @@ BEGIN
     -- Run 10 - Player 20 (OrbitalOutlaw) -> True (1)
     (20, 12500, 5, '2025-09-25', 2, 4, 45, 1);
 END
-GO -- End of dbo.RunsInfo IF block
+GO -- End of dbo.RunsInfoTbl IF block
 
-IF NOT EXISTS (SELECT 1 FROM dbo.EnemiesInLastLevel)
+IF NOT EXISTS (SELECT 1 FROM dbo.EnemiesInLastLevelTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.EnemiesInLastLevel...'
+    PRINT 'Inserting initial data into dbo.EnemiesInLastLevelTbl...'
     -- Inserting records to match the specific data shown in the picture:
-    INSERT INTO dbo.EnemiesInLastLevel (RunIdx, Name, Amount) VALUES
+    INSERT INTO dbo.EnemiesInLastLevelTbl (RunIdx, Name, Amount) VALUES
     -- Run 5 had 2 'basic' enemies
     (5, 0, 2),
     -- Run 9 had 6 'basic' enemies
     (9, 0, 6);
 END
-GO -- End of dbo.EnemiesInLastLevel IF block
+GO -- End of dbo.EnemiesInLastLevelTbl IF block

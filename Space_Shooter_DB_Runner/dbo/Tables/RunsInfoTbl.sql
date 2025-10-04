@@ -2,8 +2,8 @@
 -- 4. CREATE GAME/RUNS INFO TABLES
 ----------------------------------------------------
 
--- Table 5: RunsInfo
-CREATE TABLE RunsInfo (
+-- Table 5: RunsInfoTbl
+CREATE TABLE RunsInfoTbl (
     idx INT IDENTITY(1,1) PRIMARY KEY,
     PlayerIdx INT NOT NULL, -- Foreign Key to Players table
     CurrentScore INT NOT NULL DEFAULT 0,
@@ -15,5 +15,5 @@ CREATE TABLE RunsInfo (
     IsRunOver BIT NOT NULL DEFAULT 1
     
     -- Define Foreign Key
-    FOREIGN KEY (PlayerIdx) REFERENCES Players(idx)
+    FOREIGN KEY (PlayerIdx) REFERENCES PlayersTbl(idx)
 );

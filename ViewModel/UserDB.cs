@@ -15,7 +15,7 @@ namespace ViewModel
     {
         public UsersTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM Users";
+            command.CommandText = $"SELECT * FROM UsersTbl";
             UsersTable pList = new UsersTable(base.Select());
             return pList;
         }
@@ -53,7 +53,7 @@ namespace ViewModel
             User c = entity as User;
             if (c != null)
             {
-                string sqlStr = $"DELETE FROM Users where Idx=@pid";
+                string sqlStr = $"DELETE FROM UsersTbl where Idx=@pid";
 
                 command.CommandText = sqlStr;
                 command.Parameters.Add(new SqlParameter("@pid", c.Idx));
@@ -65,7 +65,7 @@ namespace ViewModel
             User c = entity as User;
             if (c != null)
             {
-                string sqlStr = $"INSERT INTO dbo.Users(ID, Password, Username, Birthday, Email, IsLoggedIn) " +
+                string sqlStr = $"INSERT INTO dbo.UsersTbl(ID, Password, Username, Birthday, Email, IsLoggedIn) " +
                         $"VALUES (@ID, @Password, @Username, @Birthday, @Email, @IsLoggedIn)";
                 command.CommandText = sqlStr;
 
@@ -83,7 +83,7 @@ namespace ViewModel
             User c = entity as User;
             if (c != null)
             {
-                string sqlStr = $"UPDATE dbo.Users SET Username=@Username, Birthday=@Birthday, IsLoggedIn=@IsLoggedIn, " +
+                string sqlStr = $"UPDATE dbo.UsersTbl SET Username=@Username, Birthday=@Birthday, IsLoggedIn=@IsLoggedIn, " +
                     $"Email=@Email, ID=@ID, Password=@Password WHERE Idx=@Idx";
                 cmd.CommandText = sqlStr;
 

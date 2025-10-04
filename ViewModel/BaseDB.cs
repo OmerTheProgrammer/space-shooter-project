@@ -8,9 +8,6 @@ namespace ViewModel
     public abstract class BaseDB
     {
         protected static string connectionString = GetConnectionString();
-            //@"Provider=Microsoft.ACE.Sql.12.0;Data Source="
-            //          + System.IO.Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
-            //          + "/../../../../../ViewModel/SpaceShooterDB.accdb")
 
         protected static SqlConnection connection;
         protected SqlCommand command;
@@ -43,30 +40,8 @@ namespace ViewModel
                    "Connect Timeout=30;";
         }
 
-        //public static string Path()
-        //{
-        //    String[] args = Environment.GetCommandLineArgs();
-        //    string s;
-        //    if (args.Length == 1)
-        //    {
-        //        s = args[0];
-        //    }
-        //    else
-        //    {
-        //        s = args[1];
-        //        s = s.Replace("/service:", "");
-        //    }
-        //    string[] st = s.Split('\\');
-        //    int x = st.Length - 6;
-        //    st[x] = "ViewModel";
-        //    Array.Resize(ref st, x + 1);
-        //    string str = String.Join('\\', st);
-        //    return str;
-        //}
-
         public BaseDB()
         {
-            //var x = Path();
             connection ??= new SqlConnection(connectionString);
             command = new SqlCommand();
             command.Connection = connection;
@@ -105,10 +80,10 @@ namespace ViewModel
                 {
                     reader.Close();
                 }
-                //if (connection.State == ConnectionState.Open) //גורם לקריסה
-                //{
-                //    connection.Close();
-                //}
+                if (connection.State == ConnectionState.Open) //גורם לקריסה?
+                {
+                    connection.Close();
+                }
             }
             return list;
         }
@@ -252,8 +227,10 @@ namespace ViewModel
 
                 deleted.Clear();
 
-                //if (connection.State == System.Data.ConnectionState.Open)
-                //    connection.Close();
+                if (connection.State == System.Data.ConnectionState.Open)
+                {//גורם לקריסה?
+                    connection.Close();
+                }
             }
 
             return records_affected;

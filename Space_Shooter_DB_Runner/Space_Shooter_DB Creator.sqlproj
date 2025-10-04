@@ -62,16 +62,16 @@
     <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\Users.sql" />
-    <Build Include="dbo\Tables\Players.sql" />
-    <Build Include="dbo\Tables\Groups.sql" />
-    <Build Include="dbo\Tables\PlayersAndGroups.sql" />
-    <Build Include="dbo\Tables\RunsInfo.sql" />
-    <Build Include="dbo\Tables\ProfileEditRequests.sql" />
-    <Build Include="dbo\Tables\RequestData.sql" />
-    <Build Include="dbo\Tables\Admins.sql" />
+    <Build Include="dbo\Tables\UsersTbl.sql" />
+    <Build Include="dbo\Tables\PlayersTbl.sql" />
+    <Build Include="dbo\Tables\GroupsTbl.sql" />
+    <Build Include="dbo\Tables\PlayersAndGroupsTbl.sql" />
+    <Build Include="dbo\Tables\RunsInfoTbl.sql" />
+    <Build Include="dbo\Tables\ProfileEditRequestsTbl.sql" />
+    <Build Include="dbo\Tables\RequestDataTbl.sql" />
+    <Build Include="dbo\Tables\AdminsTbl.sql" />
     <PostDeploy Include="Scripts\Script.Inserts.sql" />
-    <Build Include="dbo\Tables\EnemiesInLastLevel.sql" />
+    <Build Include="dbo\Tables\EnemiesInLastLevelTbl.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Space_Shooter_DB Creator.publish.xml" />

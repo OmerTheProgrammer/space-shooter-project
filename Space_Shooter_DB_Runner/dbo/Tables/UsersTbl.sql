@@ -2,9 +2,9 @@
 -- 2. CREATE CORE TABLES
 ----------------------------------------------------
 
--- Table 1: Users (Parent Table)
+-- Table 1: UsersTbl (Parent Table)
 
-CREATE TABLE Users (
+CREATE TABLE UsersTbl (
     idx INT IDENTITY(1,1) PRIMARY KEY,
     ID VARCHAR(50) UNIQUE NOT NULL, -- The unique user identifier (e.g., UUID or other system ID)
     Password VARCHAR(256) NOT NULL, -- Store as a Hashed string (recommended)
