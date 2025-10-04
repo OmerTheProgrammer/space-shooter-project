@@ -1,7 +1,6 @@
-﻿using System.Text;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Model.Entitys;
+using System.Data;
 
 namespace ViewModel
 {
@@ -191,10 +190,13 @@ namespace ViewModel
                     entity.CreateSql(entity.Entity, command); //cmd.CommandText = CreateInsertSQL(entity.Entity);
                     records_affected += command.ExecuteNonQuery();
 
-                    command.CommandText = "Select @@Identity";
+                    command.CommandText = "SELECT SCOPE_IDENTITY()";
 
-                    var v = Convert.ToInt32(command.ExecuteScalar());
-                    entity.Entity.Idx = v;
+                    object result = command.ExecuteScalar();
+                    if(result != null && result.GetType().ToString() != "System.DBNull")
+                    {
+                        entity.Entity.Idx = Convert.ToInt32(result);
+                    }
                 }
 
                 foreach (var entity in updated)

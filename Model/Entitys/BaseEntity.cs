@@ -4,7 +4,7 @@ namespace Model.Entitys
 {
     public class BaseEntity
     {
-        private int idx;
+        private int idx = 3;//fixes itself in 1:1
         public int Idx { get => idx; set => idx = value; }
 
         public override string ToString()

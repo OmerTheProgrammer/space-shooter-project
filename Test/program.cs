@@ -25,7 +25,16 @@ namespace Test
             //    Console.WriteLine(t);
             //}
 
-
+            //PlayersDB PlayerDB = new PlayersDB();
+            //Player Player = new Player() { Id = "135431414" };
+            //PlayerDB.Insert(Player);
+            //PlayerDB.Delete(Player);
+            //Console.WriteLine($"{PlayerDB.SaveChanges()} affected rows.");
+            //PlayersTable ut = PlayerDB.SelectAll();
+            //foreach (var t in ut)
+            //{
+            //    Console.WriteLine(t);
+            //}
         }
     }
 }
