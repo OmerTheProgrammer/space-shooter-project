@@ -33,7 +33,6 @@ namespace Model.Entitys
                 }
             }
         }
-
         public int CurrentBlasterCount {
             get
             {
@@ -51,7 +50,6 @@ namespace Model.Entitys
                 }
             }
         }
-
         public DateTime RunStopDate { get => runStopDate; set => runStopDate = value; }
         public int CurrentHp
         {
