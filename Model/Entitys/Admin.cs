@@ -8,9 +8,9 @@ namespace Model.Entitys
 {
     public class Admin : User
     {
-        private DateTime startDate;
+        private DateTime? startDate = new DateTime(1753, 1, 1, 12, 0, 0);
 
-        public DateTime StartDate { get => startDate; set => startDate = value; }
+        public DateTime? StartDate { get => startDate; set => startDate = value; }
 
         public override string ToString()
         {

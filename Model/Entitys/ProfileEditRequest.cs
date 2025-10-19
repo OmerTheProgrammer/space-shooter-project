@@ -22,7 +22,7 @@ namespace Model.Entitys
         public DateTime RequestDate { get => requestDate; set => requestDate = value; }
         public DateTime ReviewDate { get => reviewDate; set => reviewDate = value; }
         public Admin AdressingAdmin { get => adressingAdmin; set => adressingAdmin = value; }
-        internal Status Status { get => status; set => status = value; }
+        public Status Status { get => status; set => status = value; }
 
         public override string ToString()
         {
