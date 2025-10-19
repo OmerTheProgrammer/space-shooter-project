@@ -6,7 +6,7 @@
 CREATE TABLE ProfileEditRequestsTbl (
     idx INT IDENTITY(1,1) PRIMARY KEY,
     PlayerIdx INT NOT NULL, -- Changed from UserID to PlayerIdx (Foreign Key to Players table)
-    RequestDateTime DATETIME NOT NULL,
+    RequestDate DATETIME NOT NULL,
     
     -- Status values: 0=Pending, 1=Approved, 2=Rejected, 3=Canceled
     [Status] INT NOT NULL CHECK ([Status] IN (0, 1, 2, 3)) DEFAULT 0, 

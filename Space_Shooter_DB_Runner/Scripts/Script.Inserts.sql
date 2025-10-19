@@ -115,7 +115,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.ProfileEditRequestsTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.ProfileEditRequestsTbl...'
     INSERT INTO dbo.ProfileEditRequestsTbl
-        (PlayerIdx, RequestDateTime, Status, ReviewDate, AdminIdx)
+        (PlayerIdx, RequestDate, Status, ReviewDate, AdminIdx)
     VALUES
     -- Request 1: Player 11 (Pending), assigned to Admin 1
     (11, '2025-09-29 10:00:00', 0, NULL, 1),

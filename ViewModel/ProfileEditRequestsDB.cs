@@ -22,11 +22,19 @@ namespace ViewModel
         protected override BaseEntity CreateModel(BaseEntity entity)
         {
             ProfileEditRequest p = entity as ProfileEditRequest;
+            DateTime date = new DateTime(1753, 1, 1, 12, 0, 0);
+            if(DateTime.TryParse(reader["ReviewDate"].ToString(), out date))
+            {
+                p.ReviewDate = date;
+            }
+            date = new DateTime(1753, 1, 1, 12, 0, 0);
+            if (DateTime.TryParse(reader["RequestDate"].ToString(), out date))
+            {
+                p.ReviewDate = date;
+            }
+            p.Status = (Status)((int)reader["Status"]);
             p.RequestingPlayer = PlayersDB.SelectById((int)reader["PlayerIdx"]);
             p.AdressingAdmin = AdminsDB.SelectById((int)reader["AdminIdx"]);
-            p.ReviewDate = DateTime.Parse(reader["ReviewDate"].ToString());
-            p.RequestDate = DateTime.Parse(reader["RequestDate"].ToString());
-            p.Status = (Status)((int)reader["Status"]);
             base.CreateModel(entity);
             return p;
         }
