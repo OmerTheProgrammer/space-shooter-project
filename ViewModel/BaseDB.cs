@@ -36,7 +36,8 @@ namespace ViewModel
             return "Data Source=(LocalDB)\\MSSQLLocalDB;" +
                    "AttachDbFilename=\"" + dbFilePath + "\";" +
                    "Integrated Security=True;" +
-                   "Connect Timeout=30;";
+                   "Connect Timeout=30;" +
+                   "MultipleActiveResultSets=True;";
         }
 
         public BaseDB()
