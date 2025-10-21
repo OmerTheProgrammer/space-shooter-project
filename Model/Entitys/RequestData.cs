@@ -9,9 +9,9 @@ namespace Model.Entitys
     public class RequestData :BaseEntity
     {
         private ProfileEditRequest request;
-        private string field;
-        private string oldValue;
-        private string newValue;
+        private string field = "";
+        private string oldValue = "";
+        private string newValue = "";
 
         public ProfileEditRequest Request { get => request; set => request = value; }
         public string Field { get => field; set => field = value; }
