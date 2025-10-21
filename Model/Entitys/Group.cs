@@ -8,7 +8,7 @@ namespace Model.Entitys
 {
     public class Group : BaseEntity
     {
-        private int groupsScore;
+        private int groupsScore = 0;
 
         public int GroupsScore { get => groupsScore; set => groupsScore = value; }
 
