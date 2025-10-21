@@ -47,7 +47,7 @@ namespace ViewModel
             command.Connection = connection;
         }
 
-        public abstract BaseEntity NewEntity();
+        protected abstract BaseEntity NewEntity();
 
         protected List<BaseEntity> Select()
         {

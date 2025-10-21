@@ -39,7 +39,7 @@ namespace ViewModel
             return p;
         }
 
-        public override BaseEntity NewEntity()
+        protected override BaseEntity NewEntity()
         {
             return new ProfileEditRequest();
         }
