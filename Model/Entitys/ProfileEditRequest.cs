@@ -14,7 +14,7 @@ namespace Model.Entitys
     {
         private Player requestingPlayer;
         private DateTime? requestDate = new DateTime(1753, 1, 1, 12, 0, 0);
-        private Status status;
+        private Status status = 0;
         private DateTime? reviewDate = new DateTime(1753, 1, 1, 12, 0, 0);
         private Admin adressingAdmin;
 
