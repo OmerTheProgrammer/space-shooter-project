@@ -14,7 +14,7 @@ namespace Test
     {
         public static void Main(string[] args)
         {
-            //users:
+            #region users
             //UsersDB UserDB = new UsersDB();
             //UsersTable ut = UserDB.SelectAll();
             //foreach (var t in ut)
@@ -47,8 +47,9 @@ namespace Test
             //{
             //    Console.WriteLine(t);
             //}
+            #endregion
 
-            //players:
+            #region players
             //PlayersDB PlayerDB = new PlayersDB();
             //PlayersTable pt = PlayerDB.SelectAll();
 
@@ -96,7 +97,9 @@ namespace Test
             //{
             //    Console.WriteLine(t);
             //}
+            #endregion
 
+            #region ProfileEditRequests
             ProfileEditRequestsDB ProfileEditRequestDB = new ProfileEditRequestsDB();
             ProfileEditRequestsTable pt = ProfileEditRequestDB.SelectAll();
             foreach (var item in pt)
@@ -124,6 +127,7 @@ namespace Test
             //{
             //    Console.WriteLine(t);
             //}
+            #endregion
         }
     }
 }
