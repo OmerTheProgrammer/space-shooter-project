@@ -8,10 +8,10 @@ namespace Model.Entitys
 {
     public class Player : User
     {
-        private int maxLevel;
-        private int totalScore;
-        private bool isSoundOn;
-        private bool isMusicOn;
+        private int maxLevel = 1;
+        private int totalScore = 0;
+        private bool isSoundOn = true;
+        private bool isMusicOn = true;
 
         public int MaxLevel { get => maxLevel; set => maxLevel = value; }
         public int TotalScore { get => totalScore; set => totalScore = value; }
