@@ -16,9 +16,9 @@ namespace Model.Entitys
 
     public class EnemyInLastLevel : BaseEntity
     {
-        private RunInfo runInfo;
-        private Enemy name;
-        private int Amount;
+        private RunInfo runInfo = null;
+        private Enemy name = Enemy.space_ship;
+        private int Amount = 1;
 
         public RunInfo RunInfo { get => runInfo; set => runInfo = value; }
         public Enemy Name { get => name; set => name = value; }
