@@ -73,10 +73,9 @@ namespace ViewModel
             if (c != null)
             {
 
-                string sqlStr = $"INSERT INTO dbo.ProfileEditRequestsTbl(PlayerIdx, RequestDate, Status, Birthday, Email, IsLoggedIn) " +
+                string sqlStr = $"INSERT INTO dbo.ProfileEditRequestsTbl(PlayerIdx, RequestDate, Status, ReviewDate, AdminIdx) " +
                         $"VALUES (@PlayerIdx, @RequestDate, @Status, @ReviewDate, @AdminIdx)";
                 command.CommandText = sqlStr;
-                int playerIdx = 3;
                 if (c.RequestingPlayer != null)
                 {
                     command.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));

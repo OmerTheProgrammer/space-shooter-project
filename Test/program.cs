@@ -107,18 +107,18 @@ namespace Test
                 Console.WriteLine(item);
             }
 
-            ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() { Status = Status.Pending };
-            ProfileEditRequestDB.Insert(ProfileEditRequest);
-            Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            pt = ProfileEditRequestDB.SelectAll();
-            Console.WriteLine(pt.Last());
+            //ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() {RequestingPlayer=new Player() {Idx = 3 }, Status = Status.Pending };
+            //ProfileEditRequestDB.Insert(ProfileEditRequest);
+            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
+            //pt = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(pt.Last());
 
-            ProfileEditRequest = pt.Last();
-            ProfileEditRequest.Status = Status.Approved;
-            ProfileEditRequestDB.Update(ProfileEditRequest);
-            Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            pt = ProfileEditRequestDB.SelectAll();
-            Console.WriteLine(pt.Last());
+            //ProfileEditRequest = pt.Last();
+            //ProfileEditRequest.Status = Status.Approved;
+            //ProfileEditRequestDB.Update(ProfileEditRequest);
+            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
+            //pt = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(pt.Last());
 
             ProfileEditRequestDB.Delete(pt.Last());
             Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
