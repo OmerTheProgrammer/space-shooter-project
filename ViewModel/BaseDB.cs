@@ -80,10 +80,10 @@ namespace ViewModel
                 {
                     reader.Close();
                 }
-                if (connection.State == ConnectionState.Open) //גורם לקריסה?
-                {
-                    connection.Close();
-                }
+                //if (connection.State == ConnectionState.Open) //גורם לקריסה
+                //{
+                //    connection.Close();
+                //}
             }
             return list;
         }
@@ -115,7 +115,7 @@ namespace ViewModel
             finally
             {
                 if (reader != null) reader.Close();
-                if (connection.State == ConnectionState.Open) connection.Close();
+                //if (connection.State == ConnectionState.Open) connection.Close();
             }
             return list;
         }
