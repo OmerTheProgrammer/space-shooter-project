@@ -18,22 +18,22 @@ namespace Model.Entitys
     {
         private RunInfo runInfo;
         private Enemy name = Enemy.space_ship;
-        private int Amount = 1;
+        private int amount = 1;
 
         public RunInfo RunInfo { get => runInfo; set => runInfo = value; }
         public Enemy Name { get => name; set => name = value; }
-        public int Amount1 { get => Amount; set => Amount = value; }
+        public int Amount { get => amount; set => amount = value; }
 
         public override string ToString()
         {
-            string output = $"{base.ToString()} In run: {this.RunInfo}.\n";
-            if (this.Amount1 == 1)
+            string output = $"{base.ToString()} In run: {this.RunInfo}\n";
+            if (this.Amount == 1)
             {
                 output += $"there is 1 Enemy {this.Name} ";
             }
             else
             {
-                output += $"there are {this.Amount1} Enemy {this.Name}s ";
+                output += $"there are {this.Amount} Enemy {this.Name}s ";
             }
             return output;
         }

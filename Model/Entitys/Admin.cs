@@ -14,7 +14,7 @@ namespace Model.Entitys
 
         public override string ToString()
         {
-            return $"{base.ToString()} Start Date: {this.StartDate}.\n";
+            return $"{base.ToString()} Start Date: {this.StartDate}\n";
         }
     }
 }
