@@ -16,7 +16,7 @@ namespace Model.Entitys
 
         public override string ToString()
         {
-            return $"{base.ToString()} Group: {this.Group}.\n" +
+            return $"{base.ToString()} Group: {this.Group}\n" +
                 $"Player: {this.Player}";
         }
     }

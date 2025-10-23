@@ -81,7 +81,7 @@ namespace Model.Entitys
                 $"Current Shield Level: {this.CurrentShieldLevel}, " +
                 $"Current Blaster Count: {this.CurrentBlasterCount}, " +
                 $"Current health: {this.currentHp}, and is {this.IsRunOver}ly over. " +
-                $"The Run Stopped at: {this.RunStopDate}.\n";
+                $"The Run Stopped at: {this.RunStopDate}";
         }
     }
 }

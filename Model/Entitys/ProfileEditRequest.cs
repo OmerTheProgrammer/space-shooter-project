@@ -31,7 +31,7 @@ namespace Model.Entitys
                 $"Request Date: {this.RequestDate}, " +
                 $"Review Date: {this.ReviewDate}, " +
                 $"Adressing Admin: {this.AdressingAdmin}, " +
-                $"Status: {this.Status}.\n";
+                $"Status: {this.Status}\n";
         }
     }
 }

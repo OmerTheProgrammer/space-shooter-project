@@ -14,7 +14,7 @@ namespace Model.Entitys
 
         public override string ToString()
         {
-            return $"{base.ToString()} Groups score: {this.GroupsScore}.\n";
+            return $"{base.ToString()} Groups score: {this.GroupsScore}";
         }
     }
 }

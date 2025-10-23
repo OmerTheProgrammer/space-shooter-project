@@ -23,7 +23,7 @@ namespace ViewModel
         {
             ProfileEditRequest p = entity as ProfileEditRequest;
             DateTime date = new DateTime(1753, 1, 1, 12, 0, 0);
-            if(DateTime.TryParse(reader["ReviewDate"].ToString(), out date))
+            if (DateTime.TryParse(reader["ReviewDate"].ToString(), out date))
             {
                 p.ReviewDate = date;
             }
@@ -72,18 +72,31 @@ namespace ViewModel
             ProfileEditRequest c = entity as ProfileEditRequest;
             if (c != null)
             {
-                /*
-                string sqlStr = $"INSERT INTO dbo.ProfileEditRequestsTbl(ID, Password, ProfileEditRequestname, Birthday, Email, IsLoggedIn) " +
-                        $"VALUES (@ID, @Password, @ProfileEditRequestname, @Birthday, @Email, @IsLoggedIn)";
-                command.CommandText = sqlStr;
 
-                command.Parameters.Add(new SqlParameter("@ID", c.Id));
-                command.Parameters.Add(new SqlParameter("@Password", c.Password));
-                command.Parameters.Add(new SqlParameter("@ProfileEditRequestname", c.ProfileEditRequestname));
-                command.Parameters.Add(new SqlParameter("@Birthday", c.Birthday));
-                command.Parameters.Add(new SqlParameter("@Email", c.Email));
-                command.Parameters.Add(new SqlParameter("@IsLoggedIn", c.IsLoggedIn));
-                */
+                string sqlStr = $"INSERT INTO dbo.ProfileEditRequestsTbl(PlayerIdx, RequestDate, Status, Birthday, Email, IsLoggedIn) " +
+                        $"VALUES (@PlayerIdx, @RequestDate, @Status, @ReviewDate, @AdminIdx)";
+                command.CommandText = sqlStr;
+                int playerIdx = 3;
+                if (c.RequestingPlayer != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Need RequestingPlayer!\n");
+                    throw new Exception(message: "Need RequestingPlayer!");
+                }
+                if (c.AdressingAdmin != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));
+                }
+                else
+                {
+                    command.Parameters.Add(new SqlParameter("@AdminIdx", DBNull.Value));
+                }
+                command.Parameters.Add(new SqlParameter("@RequestDate", c.RequestDate));
+                command.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
+                command.Parameters.Add(new SqlParameter("@ReviewDate", c.ReviewDate));
             }
         }
 
@@ -92,19 +105,17 @@ namespace ViewModel
             ProfileEditRequest c = entity as ProfileEditRequest;
             if (c != null)
             {
-                /*
-                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET ProfileEditRequestname=@ProfileEditRequestname, Birthday=@Birthday, IsLoggedIn=@IsLoggedIn, " +
-                    $"Email=@Email, ID=@ID, Password=@Password WHERE Idx=@Idx";
+                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, RequestDate=@RequestDate, Status=@Status, " +
+                    $"ReviewDate=@ReviewDate, ID=@ID, Password=@Password WHERE Idx=@Idx";
                 cmd.CommandText = sqlStr;
 
-                cmd.Parameters.Add(new SqlParameter("@ProfileEditRequestname", c.ProfileEditRequestname));
-                cmd.Parameters.Add(new SqlParameter("@Birthday", c.Birthday));
-                cmd.Parameters.Add(new SqlParameter("@IsLoggedIn", c.IsLoggedIn));
-                cmd.Parameters.Add(new SqlParameter("@Email", c.Email));
-                cmd.Parameters.Add(new SqlParameter("@ID", c.Id));
-                cmd.Parameters.Add(new SqlParameter("@Password", c.Password));
+                cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
+                cmd.Parameters.Add(new SqlParameter("@RequestDate", c.RequestDate));
+                cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
+                cmd.Parameters.Add(new SqlParameter("@ReviewDate", c.ReviewDate));
+                cmd.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));
                 cmd.Parameters.Add(new SqlParameter("@Idx", c.Idx));
-                */
+
             }
         }
     }

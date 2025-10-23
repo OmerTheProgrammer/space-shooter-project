@@ -22,10 +22,10 @@ namespace Model.Entitys
         {
             return $"{base.ToString()}, " +
                 $" {this.Username}, ID: {this.Id}, " +
-                $"With password Hased: {this.Password}, " +
+                $"With password Hased: {this.Password},\n " +
                 $"With Birthday: {this.Birthday}, " +
                 $"Is {this.isLoggedIn}ly logged in, " +
-                $"email: {this.Email}.\n";
+                $"email: {this.Email}";
         }
     }
 }

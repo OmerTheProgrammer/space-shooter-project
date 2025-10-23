@@ -23,7 +23,7 @@ namespace Model.Entitys
             return $"{base.ToString()}" +
                 $"Max level : {this.MaxLevel},Total Score:{this.TotalScore}, " +
                 $"Sound is {this.IsSoundOn}ly on, " +
-                $"Music is {this.IsMusicOn}ly on.\n";
+                $"Music is {this.IsMusicOn}ly on";
         }
     }
 }
