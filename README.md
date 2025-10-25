@@ -1,4 +1,4 @@
-** - this readme is under development - v1 without any substance and fixes, it's on the front page becouse I need to save it.**
+**this readme is under development - v1 without any substance and fixes, it's on the front page becouse I need to save it.**
 
 Space Shooter Project 🚀
 Overview
