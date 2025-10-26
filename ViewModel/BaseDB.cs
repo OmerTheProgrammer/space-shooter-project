@@ -259,10 +259,10 @@ namespace ViewModel
 
                 deleted.Clear();
 
-                if (connection.State == System.Data.ConnectionState.Open)
-                {//גורם לקריסה?
-                    connection.Close();
-                }
+                //if (connection.State == System.Data.ConnectionState.Open)
+                //{
+                //    connection.Close();
+                //}
             }
 
             return records_affected;

@@ -99,6 +99,40 @@ namespace Test
             //}
             #endregion
 
+            #region RequestData
+            //RequestsDataDB RequestsDataDB = new RequestsDataDB();
+            //RequestsDataTable pt = RequestsDataDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
+
+            //RequestData RequestsData = new RequestData()
+            //{
+            //    Request = new ProfileEditRequest { Idx = 1 },
+            //    Field = "3654"
+            //};
+            //RequestsDataDB.Insert(RequestsData);
+            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
+            //pt = RequestsDataDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //RequestsData = pt.Last();
+            //RequestsData.NewValue = "111";
+            //RequestsDataDB.Update(RequestsData);
+            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
+            //pt = RequestsDataDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //RequestsDataDB.Delete(pt.Last());
+            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
+            //pt = RequestsDataDB.SelectAll();
+            //foreach (var t in pt)
+            //{
+            //    Console.WriteLine(t);
+            //}
+            #endregion
+
             #region ProfileEditRequests
             ProfileEditRequestsDB ProfileEditRequestDB = new ProfileEditRequestsDB();
             ProfileEditRequestsTable pt = ProfileEditRequestDB.SelectAll();
@@ -107,7 +141,7 @@ namespace Test
                 Console.WriteLine(item);
             }
 
-            //ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() {RequestingPlayer=new Player() {Idx = 3 }, Status = Status.Pending };
+            ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() { RequestingPlayer = new Player() { Idx = 3 }, Status = Status.Pending };
             //ProfileEditRequestDB.Insert(ProfileEditRequest);
             //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
             //pt = ProfileEditRequestDB.SelectAll();
@@ -128,6 +162,7 @@ namespace Test
                 Console.WriteLine(t);
             }
             #endregion
+
         }
     }
 }

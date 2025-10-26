@@ -55,6 +55,25 @@ namespace ViewModel
         }
 
         //שלב ב
+        public virtual void Delete(BaseEntity entity)
+        {
+            BaseEntity reqEntity = this.NewEntity();
+            if (entity != null)
+            {
+                if (entity.GetType() == reqEntity.GetType())
+                {
+
+                    RequestsDataDB requestsDataDB = new RequestsDataDB();
+                    RequestsDataTable requestDatas = requestsDataDB.SelectAll();
+                    requestDatas = (RequestsDataTable)requestDatas.FindAll(item => item.Request.Idx == entity.Idx);
+                    foreach (var item in requestDatas)
+                    {
+                        requestsDataDB.Delete(item);
+                    }
+                    deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
+                }
+            }
+        }
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)
         {
             ProfileEditRequest c = entity as ProfileEditRequest;
@@ -105,7 +124,7 @@ namespace ViewModel
             if (c != null)
             {
                 string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, RequestDate=@RequestDate, Status=@Status, " +
-                    $"ReviewDate=@ReviewDate, ID=@ID, Password=@Password WHERE Idx=@Idx";
+                    $"ReviewDate=@ReviewDate WHERE Idx=@Idx";
                 cmd.CommandText = sqlStr;
 
                 cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));

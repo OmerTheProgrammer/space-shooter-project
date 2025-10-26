@@ -20,8 +20,8 @@ namespace Model.Entitys
 
         public override string ToString()
         {
-            return $"{base.ToString()}" +
-                $"Connected Request : {this.Request}, \n" +
+            return $"{base.ToString()} " +
+                $"Connected Request : {this.Request}," +
                 $"Field: {this.Field}, " +
                 $"Old Value: {this.OldValue}, " +
                 $"New Value: {this.NewValue},";
