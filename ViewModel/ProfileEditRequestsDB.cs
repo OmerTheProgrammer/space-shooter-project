@@ -34,7 +34,13 @@ namespace ViewModel
             }
             p.Status = (Status)((int)reader["Status"]);
             p.RequestingPlayer = PlayersDB.SelectById((int)reader["PlayerIdx"]);
-            p.AdressingAdmin = AdminsDB.SelectById((int)reader["AdminIdx"]);
+            if(reader["AdminIdx"] != DBNull.Value) {
+                p.AdressingAdmin = AdminsDB.SelectById((int)reader["AdminIdx"]);
+            }
+            else
+            {
+                p.AdressingAdmin = null;
+            }
             base.CreateModel(entity);
             return p;
         }
@@ -64,12 +70,15 @@ namespace ViewModel
                 {
 
                     RequestsDataDB requestsDataDB = new RequestsDataDB();
-                    RequestsDataTable requestDatas = requestsDataDB.SelectAll();
-                    requestDatas = (RequestsDataTable)requestDatas.FindAll(
-                        item => item.Request.Idx == entity.Idx);
-                    foreach (var item in requestDatas)
+                    RequestsDataTable allRequestDatas = requestsDataDB.SelectAll();
+                    List<RequestData> relatedRequestDatas = allRequestDatas.FindAll(item => item.Request.Idx == entity.Idx);
+                    relatedRequestDatas = relatedRequestDatas as RequestsDataTable;
+                    if(relatedRequestDatas != null)
                     {
-                        requestsDataDB.Delete(item);
+                        foreach (var item in relatedRequestDatas)
+                        {
+                            requestsDataDB.Delete(item);
+                        }
                     }
                     deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
                 }
@@ -132,7 +141,14 @@ namespace ViewModel
                 cmd.Parameters.Add(new SqlParameter("@RequestDate", c.RequestDate));
                 cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
                 cmd.Parameters.Add(new SqlParameter("@ReviewDate", c.ReviewDate));
-                cmd.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));
+                if (c.AdressingAdmin != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));
+                }
+                else
+                {
+                    command.Parameters.Add(new SqlParameter("@AdminIdx", DBNull.Value));
+                }
                 cmd.Parameters.Add(new SqlParameter("@Idx", c.Idx));
 
             }

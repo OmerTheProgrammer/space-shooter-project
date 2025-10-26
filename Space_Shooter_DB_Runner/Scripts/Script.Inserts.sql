@@ -152,10 +152,10 @@ GO -- End of dbo.ProfileEditRequestsTbl IF block
 ---------------------------------------------------------------------------------
 -- REQUEST DATA TABLE BLOCK (Depends on ProfileEditRequests)
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM dbo.RequestDataTbl)
+IF NOT EXISTS (SELECT 1 FROM dbo.RequestsDataTbl)
 BEGIN
-    PRINT 'Inserting initial data into dbo.RequestDataTbl...'
-    INSERT INTO dbo.RequestDataTbl
+    PRINT 'Inserting initial data into dbo.RequestsDataTbl...'
+    INSERT INTO dbo.RequestsDataTbl
         (RequestIdx, Field, OldValue, NewValue)
     VALUES
     -- Request 1 (Player 11, Pending): Changing Username
@@ -188,7 +188,7 @@ BEGIN
     -- Request 10 (Player 13, Pending): Changing Birthday
     (10, 'Birthday', '2003-12-03', '2003-12-04');
 END
-GO -- End of dbo.RequestDataTbl IF block
+GO -- End of dbo.RequestsDataTbl IF block
 
 ---------------------------------------------------------------------------------
 -- GROUPS TABLE BLOCK (Independent)
