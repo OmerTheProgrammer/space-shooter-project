@@ -73,7 +73,9 @@ namespace Test
             //{
             //    Console.WriteLine(t);
             //}
+            #endregion
 
+            #region admins
             //AdminsDB AdminDB = new AdminsDB();
             //AdminsTable pt = AdminDB.SelectAll();
 
@@ -154,13 +156,13 @@ namespace Test
             //pt = ProfileEditRequestDB.SelectAll();
             //Console.WriteLine(pt.Last());
 
-            ProfileEditRequestDB.Delete(pt.Last());
-            Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            pt = ProfileEditRequestDB.SelectAll();
-            foreach (var t in pt)
-            {
-                Console.WriteLine(t);
-            }
+            //ProfileEditRequestDB.Delete(pt.Last());
+            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
+            //pt = ProfileEditRequestDB.SelectAll();
+            //foreach (var t in pt)
+            //{
+            //    Console.WriteLine(t);
+            //}
             #endregion
 
         }

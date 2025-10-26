@@ -65,7 +65,8 @@ namespace ViewModel
 
                     RequestsDataDB requestsDataDB = new RequestsDataDB();
                     RequestsDataTable requestDatas = requestsDataDB.SelectAll();
-                    requestDatas = (RequestsDataTable)requestDatas.FindAll(item => item.Request.Idx == entity.Idx);
+                    requestDatas = (RequestsDataTable)requestDatas.FindAll(
+                        item => item.Request.Idx == entity.Idx);
                     foreach (var item in requestDatas)
                     {
                         requestsDataDB.Delete(item);
