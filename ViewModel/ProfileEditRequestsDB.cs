@@ -71,7 +71,9 @@ namespace ViewModel
 
                     RequestsDataDB requestsDataDB = new RequestsDataDB();
                     RequestsDataTable allRequestDatas = requestsDataDB.SelectAll();
+                    // Find all RequestData related to this ProfileEditRequest
                     List<RequestData> relatedRequestDatas = allRequestDatas.FindAll(item => item.Request.Idx == entity.Idx);
+                    //cast to RequestsDataTable becouse can't in one line
                     relatedRequestDatas = relatedRequestDatas as RequestsDataTable;
                     if(relatedRequestDatas != null)
                     {
