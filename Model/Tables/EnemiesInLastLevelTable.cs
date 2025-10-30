@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Model.Tables
 {
-    public class EnemiesInLastLevelTableTable : List<EnemyInLastLevel>
+    public class EnemiesInLastLevelTable : List<EnemyInLastLevel>
     {
-        public EnemiesInLastLevelTableTable() { }
-        public EnemiesInLastLevelTableTable(IEnumerable<EnemyInLastLevel> list) : base(list) { }
-        public EnemiesInLastLevelTableTable(IEnumerable<BaseEntity> list) : base(list.Cast<EnemyInLastLevel>().ToList()) { }
+        public EnemiesInLastLevelTable() { }
+        public EnemiesInLastLevelTable(IEnumerable<EnemyInLastLevel> list) : base(list) { }
+        public EnemiesInLastLevelTable(IEnumerable<BaseEntity> list) : base(list.Cast<EnemyInLastLevel>().ToList()) { }
     }
 }

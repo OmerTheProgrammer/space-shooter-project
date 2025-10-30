@@ -136,30 +136,57 @@ namespace Test
             #endregion
 
             #region ProfileEditRequests
-            ProfileEditRequestsDB ProfileEditRequestDB = new ProfileEditRequestsDB();
-            ProfileEditRequestsTable pt = ProfileEditRequestDB.SelectAll();
-            foreach (var item in pt)
-            {
-                Console.WriteLine(item);
-            }
+            //ProfileEditRequestsDB ProfileEditRequestDB = new ProfileEditRequestsDB();
+            //ProfileEditRequestsTable pt = ProfileEditRequestDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
 
-            ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() { RequestingPlayer = new Player() { Idx = 3 }, Status = Status.Pending };
-            ProfileEditRequestDB.Insert(ProfileEditRequest);
-            Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            pt = ProfileEditRequestDB.SelectAll();
-            Console.WriteLine(pt.Last());
+            //ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() { RequestingPlayer = new Player() { Idx = 3 }, Status = Status.Pending };
+            //ProfileEditRequestDB.Insert(ProfileEditRequest);
+            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
+            //pt = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(pt.Last());
 
-            ProfileEditRequest = pt.Last();
-            ProfileEditRequest.Status = Status.Approved;
-            ProfileEditRequestDB.Update(ProfileEditRequest);
-            Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            pt = ProfileEditRequestDB.SelectAll();
-            Console.WriteLine(pt.Last());
+            //ProfileEditRequest = pt.Last();
+            //ProfileEditRequest.Status = Status.Approved;
+            //ProfileEditRequestDB.Update(ProfileEditRequest);
+            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
+            //pt = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(pt.Last());
 
-            ProfileEditRequestDB.Delete(pt.Last());
-            Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            pt = ProfileEditRequestDB.SelectAll();
-            Console.WriteLine(pt.Last());
+            //ProfileEditRequestDB.Delete(pt.Last());
+            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
+            //pt = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+            #endregion
+
+            #region Groups
+            //GroupsDB GroupDB = new GroupsDB();
+            //GroupsTable pt = GroupDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
+
+            //Group group = new Group() { GroupScore = 1 };
+            //GroupDB.Insert(group);
+            //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
+            //pt = GroupDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //group = pt.Last();
+            //group.GroupScore += 100;
+            //GroupDB.Update(group);
+            //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
+            //pt = GroupDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //GroupDB.Delete(pt.Last());
+            //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
+            //pt = GroupDB.SelectAll();
+            //Console.WriteLine(pt.Last());
             #endregion
 
 

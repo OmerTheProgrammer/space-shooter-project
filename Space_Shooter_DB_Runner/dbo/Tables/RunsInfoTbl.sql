@@ -9,9 +9,9 @@ CREATE TABLE RunsInfoTbl (
     CurrentScore INT NOT NULL DEFAULT 0,
     CurrentLevel INT NOT NULL DEFAULT 1,
     RunStopDate DATE NOT NULL,
-    ShieldLevel INT NOT NULL CHECK (ShieldLevel >= 0) DEFAULT 0,
-    BlasterCount INT NOT NULL CHECK (BlasterCount >= 1 AND BlasterCount <= 9) DEFAULT 1,
-    HP INT NOT NULL CHECK (HP >= 0) DEFAULT 100,
+    CurrentShieldLevel INT NOT NULL CHECK (CurrentShieldLevel >= 0) DEFAULT 0,
+    CurrentBlasterCount INT NOT NULL CHECK (CurrentBlasterCount >= 1 AND CurrentBlasterCount <= 9) DEFAULT 1,
+    CurrentHP INT NOT NULL CHECK (CurrentHP >= 0) DEFAULT 100,
     IsRunOver BIT NOT NULL DEFAULT 1
     
     -- Define Foreign Key
