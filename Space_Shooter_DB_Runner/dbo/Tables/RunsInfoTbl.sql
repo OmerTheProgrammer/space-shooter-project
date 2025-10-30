@@ -15,5 +15,5 @@ CREATE TABLE RunsInfoTbl (
     IsRunOver BIT NOT NULL DEFAULT 1
     
     -- Define Foreign Key
-    FOREIGN KEY (PlayerIdx) REFERENCES PlayersTbl(idx)
+    FOREIGN KEY (PlayerIdx) REFERENCES PlayersTbl(idx) ON DELETE CASCADE
 );

@@ -21,6 +21,7 @@ namespace Test
             //{
             //    Console.WriteLine(t);
             //}
+
             //User user = new User() { Id = "122431414" };
             //UserDB.Insert(user);
             //Console.WriteLine($"{UserDB.SaveChanges()} affected rows.");
@@ -52,6 +53,10 @@ namespace Test
             #region players
             //PlayersDB PlayerDB = new PlayersDB();
             //PlayersTable pt = PlayerDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
 
             //Player Player = new Player() { Id = "454252552" };
             //PlayerDB.Insert(Player);
@@ -78,6 +83,10 @@ namespace Test
             #region admins
             //AdminsDB AdminDB = new AdminsDB();
             //AdminsTable pt = AdminDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
 
             //Admin Admin = new Admin() { Id = "454252552" };
             //AdminDB.Insert(Admin);
