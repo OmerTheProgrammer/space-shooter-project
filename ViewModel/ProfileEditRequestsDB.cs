@@ -107,6 +107,7 @@ namespace ViewModel
                 string sqlStr = $"INSERT INTO dbo.ProfileEditRequestsTbl(PlayerIdx, RequestDate, Status, ReviewDate, AdminIdx) " +
                         $"VALUES (@PlayerIdx, @RequestDate, @Status, @ReviewDate, @AdminIdx)";
                 command.CommandText = sqlStr;
+
                 if (c.RequestingPlayer != null)
                 {
                     command.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));

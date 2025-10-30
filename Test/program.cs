@@ -189,6 +189,33 @@ namespace Test
             //Console.WriteLine(pt.Last());
             #endregion
 
+            #region RunsInfo
+            RunsInfoDB RunInfoDB = new RunsInfoDB();
+            RunsInfoTable pt = RunInfoDB.SelectAll();
+            foreach (var item in pt)
+            {
+                Console.WriteLine(item);
+            }
+
+            RunInfo RunInfo = new RunInfo() { Player = new Player { Idx = 3 }, CurrentLevel = 1 };
+            RunInfoDB.Insert(RunInfo);
+            Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
+            pt = RunInfoDB.SelectAll();
+            Console.WriteLine(pt.Last());
+
+            RunInfo = pt.Last();
+            RunInfo.CurrentLevel += 5;
+            RunInfoDB.Update(RunInfo);
+            Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
+            pt = RunInfoDB.SelectAll();
+            Console.WriteLine(pt.Last());
+
+            RunInfoDB.Delete(pt.Last());
+            Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
+            pt = RunInfoDB.SelectAll();
+            Console.WriteLine(pt.Last());
+            #endregion
+
 
         }
     }

@@ -50,31 +50,6 @@ namespace ViewModel
         }
 
         //שלב ב
-        public virtual void Delete(BaseEntity entity)
-        {
-            //BaseEntity reqEntity = this.NewEntity();
-            //if (entity != null)
-            //{
-            //    if (entity.GetType() == reqEntity.GetType())
-            //    {
-
-            //        RequestsDataDB requestsDataDB = new RequestsDataDB();
-            //        RequestsDataTable allRequestDatas = requestsDataDB.SelectAll();
-            //        // Find all RequestData related to this RunInfo
-            //        List<RequestData> relatedRequestDatas = allRequestDatas.FindAll(item => item.Request.Idx == entity.Idx);
-            //        //cast to RequestsDataTable becouse can't in one line
-            //        relatedRequestDatas = relatedRequestDatas as RequestsDataTable;
-            //        if(relatedRequestDatas != null)
-            //        {
-            //            foreach (var item in relatedRequestDatas)
-            //            {
-            //                requestsDataDB.Delete(item);
-            //            }
-            //        }
-            //        deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
-            //    }
-            //}
-        }
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)
         {
             RunInfo c = entity as RunInfo;
@@ -89,60 +64,59 @@ namespace ViewModel
 
         protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
         {
-            //RunInfo c = entity as RunInfo;
-            //if (c != null)
-            //{
+            RunInfo c = entity as RunInfo;
+            if (c != null)
+            {
 
-            //    string sqlStr = $"INSERT INTO dbo.RunsInfoTbl(PlayerIdx, RequestDate, Status, ReviewDate, AdminIdx) " +
-            //            $"VALUES (@PlayerIdx, @RequestDate, @Status, @ReviewDate, @AdminIdx)";
-            //    command.CommandText = sqlStr;
-            //    if (c.RequestingPlayer != null)
-            //    {
-            //        command.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
-            //    }
-            //    else
-            //    {
-            //        System.Diagnostics.Debug.WriteLine("Need RequestingPlayer!\n");
-            //        throw new Exception(message: "Need RequestingPlayer!");
-            //    }
-            //    if (c.AdressingAdmin != null)
-            //    {
-            //        command.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));
-            //    }
-            //    else
-            //    {
-            //        command.Parameters.Add(new SqlParameter("@AdminIdx", DBNull.Value));
-            //    }
-            //    command.Parameters.Add(new SqlParameter("@RequestDate", c.RequestDate));
-            //    command.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
-            //    command.Parameters.Add(new SqlParameter("@ReviewDate", c.ReviewDate));
-            //}
+                string sqlStr = $"INSERT INTO dbo.RunsInfoTbl(PlayerIdx, CurrentScore, CurrentLevel" +
+                    $", RunStopDate, CurrentShieldLevel, CurrentBlasterCount, CurrentHp," +
+                    $"IsRunOver) VALUES (@PlayerIdx, @CurrentScore, @CurrentLevel," +
+                    $" @RunStopDate, @CurrentShieldLevel, @CurrentBlasterCount," +
+                    $" @CurrentHp, @IsRunOver)";
+                command.CommandText = sqlStr;
+
+                if (c.Player != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@PlayerIdx", c.Player.Idx));
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Need Player!\n");
+                    throw new Exception(message: "Need Player!");
+                }
+                command.Parameters.Add(new SqlParameter("@CurrentScore", c.CurrentScore));
+                command.Parameters.Add(new SqlParameter("@CurrentLevel", c.CurrentLevel));
+                command.Parameters.Add(new SqlParameter("@RunStopDate", c.RunStopDate));
+                command.Parameters.Add(new SqlParameter("@CurrentShieldLevel", c.CurrentShieldLevel));
+                command.Parameters.Add(new SqlParameter("@CurrentBlasterCount", c.CurrentBlasterCount));
+                command.Parameters.Add(new SqlParameter("@CurrentHp", c.CurrentHp));
+                command.Parameters.Add(new SqlParameter("@IsRunOver", c.IsRunOver));
+            }
         }
 
-        protected override void CreateUpdatedSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateUpdatedSQL(BaseEntity entity, SqlCommand command)
         {
-            //RunInfo c = entity as RunInfo;
-            //if (c != null)
-            //{
-            //    string sqlStr = $"UPDATE dbo.RunsInfoTbl SET PlayerIdx=@PlayerIdx, RequestDate=@RequestDate, Status=@Status, " +
-            //        $"ReviewDate=@ReviewDate WHERE Idx=@Idx";
-            //    cmd.CommandText = sqlStr;
+            RunInfo c = entity as RunInfo;
+            if (c != null)
+            {
+                string sqlStr = $"UPDATE dbo.RunsInfoTbl SET PlayerIdx=@PlayerIdx, " +
+                    $"CurrentLevel=@CurrentLevel,RunStopDate=@RunStopDate," +
+                    $"CurrentShieldLevel=@CurrentShieldLevel," +
+                    $"CurrentBlasterCount=@CurrentBlasterCount, " +
+                    $"CurrentHp=@CurrentHp,IsRunOver=@IsRunOver WHERE Idx=@Idx";
+                command.CommandText = sqlStr;
 
-            //    cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
-            //    cmd.Parameters.Add(new SqlParameter("@RequestDate", c.RequestDate));
-            //    cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
-            //    cmd.Parameters.Add(new SqlParameter("@ReviewDate", c.ReviewDate));
-            //    if (c.AdressingAdmin != null)
-            //    {
-            //        command.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));
-            //    }
-            //    else
-            //    {
-            //        command.Parameters.Add(new SqlParameter("@AdminIdx", DBNull.Value));
-            //    }
-            //    cmd.Parameters.Add(new SqlParameter("@Idx", c.Idx));
+                command.Parameters.Add(new SqlParameter("@PlayerIdx", c.Player.Idx));
+                command.Parameters.Add(new SqlParameter("@CurrentScore", c.CurrentScore));
+                command.Parameters.Add(new SqlParameter("@CurrentLevel", c.CurrentLevel));
+                command.Parameters.Add(new SqlParameter("@RunStopDate", c.RunStopDate));
+                command.Parameters.Add(new SqlParameter("@CurrentShieldLevel", c.CurrentShieldLevel));
+                command.Parameters.Add(new SqlParameter("@CurrentBlasterCount", c.CurrentBlasterCount));
+                command.Parameters.Add(new SqlParameter("@CurrentHp", c.CurrentHp));
+                command.Parameters.Add(new SqlParameter("@IsRunOver", c.IsRunOver));
+                command.Parameters.Add(new SqlParameter("@Idx", c.Idx));
 
-            //}
+            }
         }
     }
 }

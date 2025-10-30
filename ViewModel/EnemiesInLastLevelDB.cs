@@ -46,6 +46,7 @@ namespace ViewModel
         }
 
         //שלב ב
+
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand command)
         {
             EnemyInLastLevel c = entity as EnemyInLastLevel;
