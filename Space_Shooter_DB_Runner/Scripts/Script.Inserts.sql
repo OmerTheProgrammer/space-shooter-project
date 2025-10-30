@@ -250,7 +250,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.RunsInfoTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.RunsInfoTbl...'
     -- NOTE: Added IsRunOver to the column list.
-    INSERT INTO dbo.RunsInfoTbl (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, ShieldLevel, BlasterCount, HP, IsRunOver) VALUES
+    INSERT INTO dbo.RunsInfoTbl (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, CurrentShieldLevel, CurrentBlasterCount, CurrentHP, IsRunOver) VALUES
     -- Run 1 - Player 11 (StarPilot_Ace) -> True (1)
     (11, 15000, 5, '2025-09-27', 2, 4, 85, 1),
     -- Run 2 - Player 12 (GalaxyRunner) -> True (1)
@@ -278,7 +278,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.EnemiesInLastLevelTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.EnemiesInLastLevelTbl...'
     -- Inserting records to match the specific data shown in the picture:
-    INSERT INTO dbo.EnemiesInLastLevelTbl (RunIdx, Name, Amount) VALUES
+    INSERT INTO dbo.EnemiesInLastLevelTbl (RunInfoIdx, Name, Amount) VALUES
     -- Run 5 had 2 'basic' enemies
     (5, 0, 2),
     -- Run 9 had 6 'basic' enemies
