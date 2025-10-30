@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[EnemiesInLastLevelTbl] (
 
     -- Foreign Key: Links this enemy record back to a specific player run.
     -- (RunIdx in the image corresponds to the idx in RunsInfo)
-    [RunIdx]       INT            NOT NULL,
+    [RunInfoIdx] INT            NOT NULL,
 
     -- Data Fields
     [Name]   INT NOT NULL CHECK ([Name] IN (0, 1, 2, 3)) DEFAULT 0,
