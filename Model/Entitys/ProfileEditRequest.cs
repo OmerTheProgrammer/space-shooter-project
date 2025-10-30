@@ -30,8 +30,8 @@ namespace Model.Entitys
                 $"Requesting Player: {this.RequestingPlayer},\n" +
                 $"Request Date: {this.RequestDate}, " +
                 $"Review Date: {this.ReviewDate}, " +
-                $"Adressing Admin: {this.AdressingAdmin},\n " +
-                $"Status: {this.Status}\n";
+                $"Adressing Admin: {this.AdressingAdmin},\n" +
+                $"Status: {this.Status}";
         }
     }
 }

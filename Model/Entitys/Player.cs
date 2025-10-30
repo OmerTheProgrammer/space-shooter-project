@@ -20,8 +20,8 @@ namespace Model.Entitys
 
         public override string ToString()
         {
-            return $"{base.ToString()}" +
-                $"Max level : {this.MaxLevel},Total Score:{this.TotalScore}, " +
+            return $"{base.ToString()}, " +
+                $"Max level: {this.MaxLevel}, Total Score: {this.TotalScore}, " +
                 $"Sound is {this.IsSoundOn}ly on, " +
                 $"Music is {this.IsMusicOn}ly on";
         }

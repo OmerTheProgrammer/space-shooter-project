@@ -24,7 +24,7 @@ namespace Model.Entitys
                 $"Connected Request : {this.Request}," +
                 $"Field: {this.Field}, " +
                 $"Old Value: {this.OldValue}, " +
-                $"New Value: {this.NewValue},";
+                $"New Value: {this.NewValue}";
         }
     }
 }

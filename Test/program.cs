@@ -15,12 +15,14 @@ namespace Test
         public static void Main(string[] args)
         {
             #region users
-            //UsersDB UserDB = new UsersDB();
-            //UsersTable ut = UserDB.SelectAll();
-            //foreach (var t in ut)
-            //{
-            //    Console.WriteLine(t);
-            //}
+            UsersDB UserDB = new UsersDB();
+            UsersTable ut = UserDB.SelectAll();
+            Console.WriteLine("users: ");
+            foreach (var t in ut)
+            {
+                Console.WriteLine(t);
+            }
+            Console.WriteLine();
 
             //User user = new User() { Id = "122431414" };
             //UserDB.Insert(user);
@@ -51,12 +53,14 @@ namespace Test
             #endregion
 
             #region players
-            //PlayersDB PlayerDB = new PlayersDB();
-            //PlayersTable pt = PlayerDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            Console.WriteLine("players: ");
+            PlayersDB PlayerDB = new PlayersDB();
+            PlayersTable pt = PlayerDB.SelectAll();
+            foreach (var item in pt)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
             //Player Player = new Player() { Id = "454252552" };
             //PlayerDB.Insert(Player);
@@ -81,42 +85,46 @@ namespace Test
             #endregion
 
             #region admins
-            //AdminsDB AdminDB = new AdminsDB();
-            //AdminsTable pt = AdminDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            AdminsDB AdminDB = new AdminsDB();
+            AdminsTable at = AdminDB.SelectAll();
+            Console.WriteLine("admins: ");
+            foreach (var item in at)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
             //Admin Admin = new Admin() { Id = "454252552" };
             //AdminDB.Insert(Admin);
             //Console.WriteLine($"{AdminDB.SaveChanges()} affected rows.");
-            //pt = AdminDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //at = AdminDB.SelectAll();
+            //Console.WriteLine(at.Last());
 
-            //Admin = pt.Last();
+            //Admin = at.Last();
             //Admin.Username = "Admin245";
             //AdminDB.Update(Admin);
             //Console.WriteLine($"{AdminDB.SaveChanges()} affected rows.");
-            //pt = AdminDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //at = AdminDB.SelectAll();
+            //Console.WriteLine(at.Last());
 
-            //AdminDB.Delete(pt.Last());
+            //AdminDB.Delete(at.Last());
             //Console.WriteLine($"{AdminDB.SaveChanges()} affected rows.");
-            //pt = AdminDB.SelectAll();
-            //foreach (var t in pt)
+            //at = AdminDB.SelectAll();
+            //foreach (var t in at)
             //{
             //    Console.WriteLine(t);
             //}
             #endregion
 
             #region RequestData
-            //RequestsDataDB RequestsDataDB = new RequestsDataDB();
-            //RequestsDataTable pt = RequestsDataDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            RequestsDataDB RequestsDataDB = new RequestsDataDB();
+            RequestsDataTable rt = RequestsDataDB.SelectAll();
+            Console.WriteLine("RequestsData: ");
+            foreach (var item in rt)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
             //RequestData RequestsData = new RequestData()
             //{
@@ -125,113 +133,122 @@ namespace Test
             //};
             //RequestsDataDB.Insert(RequestsData);
             //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
-            //pt = RequestsDataDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //rt = RequestsDataDB.SelectAll();
+            //Console.WriteLine(rt.Last());
 
-            //RequestsData = pt.Last();
+            //RequestsData = rt.Last();
             //RequestsData.NewValue = "111";
             //RequestsDataDB.Update(RequestsData);
             //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
-            //pt = RequestsDataDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //rt = RequestsDataDB.SelectAll();
+            //Console.WriteLine(rt.Last());
 
-            //RequestsDataDB.Delete(pt.Last());
+            //RequestsDataDB.Delete(rt.Last());
             //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
-            //pt = RequestsDataDB.SelectAll();
-            //foreach (var t in pt)
+            //rt = RequestsDataDB.SelectAll();
+            //foreach (var t in rt)
             //{
             //    Console.WriteLine(t);
             //}
             #endregion
 
             #region ProfileEditRequests
-            //ProfileEditRequestsDB ProfileEditRequestDB = new ProfileEditRequestsDB();
-            //ProfileEditRequestsTable pt = ProfileEditRequestDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            ProfileEditRequestsDB ProfileEditRequestDB = new ProfileEditRequestsDB();
+            ProfileEditRequestsTable ProfTbl = ProfileEditRequestDB.SelectAll();
+            Console.WriteLine("ProfileEditRequests: ");
+            foreach (var item in ProfTbl)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
             //ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() { RequestingPlayer = new Player() { Idx = 3 }, Status = Status.Pending };
             //ProfileEditRequestDB.Insert(ProfileEditRequest);
             //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            //pt = ProfileEditRequestDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //ProfTbl = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(ProfTbl.Last());
 
-            //ProfileEditRequest = pt.Last();
+            //ProfileEditRequest = ProfTbl.Last();
             //ProfileEditRequest.Status = Status.Approved;
             //ProfileEditRequestDB.Update(ProfileEditRequest);
             //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            //pt = ProfileEditRequestDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //ProfTbl = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(ProfTbl.Last());
 
-            //ProfileEditRequestDB.Delete(pt.Last());
+            //ProfileEditRequestDB.Delete(ProfTbl.Last());
             //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            //pt = ProfileEditRequestDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //ProfTbl = ProfileEditRequestDB.SelectAll();
+            //Console.WriteLine(ProfTbl.Last());
             #endregion
 
             #region Groups
-            //GroupsDB GroupDB = new GroupsDB();
-            //GroupsTable pt = GroupDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            GroupsDB GroupDB = new GroupsDB();
+            GroupsTable gt = GroupDB.SelectAll();
+            Console.WriteLine("Groups: ");
+            foreach (var item in gt)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
             //Group group = new Group() { GroupScore = 1 };
             //GroupDB.Insert(group);
             //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
-            //pt = GroupDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //gt = GroupDB.SelectAll();
+            //Console.WriteLine(gt.Last());
 
-            //group = pt.Last();
+            //group = gt.Last();
             //group.GroupScore += 100;
             //GroupDB.Update(group);
             //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
-            //pt = GroupDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //gt = GroupDB.SelectAll();
+            //Console.WriteLine(gt.Last());
 
-            //GroupDB.Delete(pt.Last());
+            //GroupDB.Delete(gt.Last());
             //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
-            //pt = GroupDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //gt = GroupDB.SelectAll();
+            //Console.WriteLine(gt.Last());
             #endregion
 
             #region RunsInfo
-            //RunsInfoDB RunInfoDB = new RunsInfoDB();
-            //RunsInfoTable pt = RunInfoDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            RunsInfoDB RunInfoDB = new RunsInfoDB();
+            RunsInfoTable RunTbl = RunInfoDB.SelectAll();
+            Console.WriteLine("RunsInfo: ");
+            foreach (var item in RunTbl)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
-            //RunInfo RunInfo = new RunInfo() { Player=new Player {Idx = 3 }, CurrentLevel=1 };
+            //RunInfo RunInfo = new RunInfo() { Player =
+            //new Player {Idx = 3 }, CurrentLevel=1 };
             //RunInfoDB.Insert(RunInfo);
             //Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
-            //pt = RunInfoDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //RunTbl = RunInfoDB.SelectAll();
+            //Console.WriteLine(RunTbl.Last());
 
-            //RunInfo = pt.Last();
+            //RunInfo = RunTbl.Last();
             //RunInfo.CurrentLevel += 5;
             //RunInfoDB.Update(RunInfo);
             //Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
-            //pt = RunInfoDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //RunTbl = RunInfoDB.SelectAll();
+            //Console.WriteLine(RunTbl.Last());
 
-            //RunInfoDB.Delete(pt.Last());
+            //RunInfoDB.Delete(RunTbl.Last());
             //Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
-            //pt = RunInfoDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //RunTbl = RunInfoDB.SelectAll();
+            //Console.WriteLine(RunTbl.Last());
             #endregion
 
             #region EnemiesInLastLevel
-            //EnemiesInLastLevelDB EnemyInLastLevelDB = new EnemiesInLastLevelDB();
-            //EnemiesInLastLevelTable pt = EnemyInLastLevelDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            EnemiesInLastLevelDB EnemyInLastLevelDB = new EnemiesInLastLevelDB();
+            EnemiesInLastLevelTable et = EnemyInLastLevelDB.SelectAll();
+            Console.WriteLine("EnemiesInLastLevel: ");
+            foreach (var item in et)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
             //EnemyInLastLevel EnemyInLastLevel = new EnemyInLastLevel() {
             //    Name = Enemy.space_ship,
@@ -240,29 +257,31 @@ namespace Test
             //};
             //EnemyInLastLevelDB.Insert(EnemyInLastLevel);
             //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            //pt = EnemyInLastLevelDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //et = EnemyInLastLevelDB.SelectAll();
+            //Console.WriteLine(et.Last());
 
-            //EnemyInLastLevel = pt.Last();
+            //EnemyInLastLevel = et.Last();
             //EnemyInLastLevel.Amount -= 5;
             //EnemyInLastLevelDB.Update(EnemyInLastLevel);
             //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            //pt = EnemyInLastLevelDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //et = EnemyInLastLevelDB.SelectAll();
+            //Console.WriteLine(et.Last());
 
-            //EnemyInLastLevelDB.Delete(pt.Last());
+            //EnemyInLastLevelDB.Delete(et.Last());
             //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            //pt = EnemyInLastLevelDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //et = EnemyInLastLevelDB.SelectAll();
+            //Console.WriteLine(et.Last());
             #endregion
 
             #region PlayersAndGroups
-            //PlayersAndGroupsDB PlayerAndGroupDB = new PlayersAndGroupsDB();
-            //PlayersAndGroupsTable pt = PlayerAndGroupDB.SelectAll();
-            //foreach (var item in pt)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            PlayersAndGroupsDB PlayerAndGroupDB = new PlayersAndGroupsDB();
+            PlayersAndGroupsTable PlayerAndGTbl = PlayerAndGroupDB.SelectAll();
+            Console.WriteLine("P&G: ");
+            foreach (var item in PlayerAndGTbl)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
 
             //PlayerAndGroup PlayerAndGroup = new PlayerAndGroup()
             //{
@@ -271,22 +290,21 @@ namespace Test
             //};
             //PlayerAndGroupDB.Insert(PlayerAndGroup);
             //Console.WriteLine($"{PlayerAndGroupDB.SaveChanges()} affected rows.");
-            //pt = PlayerAndGroupDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //PlayerAndGTbl = PlayerAndGroupDB.SelectAll();
+            //Console.WriteLine(PlayerAndGTbl.Last());
 
-            //PlayerAndGroup = pt.Last();
-            //PlayerAndGroup.Player = pt[pt.Capacity-2].Player;
+            //PlayerAndGroup = PlayerAndGTbl.Last();
+            //PlayerAndGroup.Player = PlayerAndGTbl[PlayerAndGTbl.Capacity-2].Player;
             //PlayerAndGroupDB.Update(PlayerAndGroup);
             //Console.WriteLine($"{PlayerAndGroupDB.SaveChanges()} affected rows.");
-            //pt = PlayerAndGroupDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //PlayerAndGTbl = PlayerAndGroupDB.SelectAll();
+            //Console.WriteLine(PlayerAndGTbl.Last());
 
-            //PlayerAndGroupDB.Delete(pt.Last());
+            //PlayerAndGroupDB.Delete(PlayerAndGTbl.Last());
             //Console.WriteLine($"{PlayerAndGroupDB.SaveChanges()} affected rows.");
-            //pt = PlayerAndGroupDB.SelectAll();
-            //Console.WriteLine(pt.Last());
+            //PlayerAndGTbl = PlayerAndGroupDB.SelectAll();
+            //Console.WriteLine(PlayerAndGTbl.Last());
             #endregion
-
         }
     }
 }
