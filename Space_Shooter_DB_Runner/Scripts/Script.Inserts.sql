@@ -278,7 +278,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.EnemiesInLastLevelTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.EnemiesInLastLevelTbl...'
     -- Inserting records to match the specific data shown in the picture:
-    INSERT INTO dbo.EnemiesInLastLevelTbl (RunIdx, Name, Amount) VALUES
+    INSERT INTO dbo.EnemiesInLastLevelTbl (RunInfoIdx, Name, Amount) VALUES
     -- Run 5 had 2 'basic' enemies
     (5, 0, 2),
     -- Run 9 had 6 'basic' enemies

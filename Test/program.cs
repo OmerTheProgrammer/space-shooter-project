@@ -190,33 +190,62 @@ namespace Test
             #endregion
 
             #region RunsInfo
-            RunsInfoDB RunInfoDB = new RunsInfoDB();
-            RunsInfoTable pt = RunInfoDB.SelectAll();
+            //RunsInfoDB RunInfoDB = new RunsInfoDB();
+            //RunsInfoTable pt = RunInfoDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
+
+            //RunInfo RunInfo = new RunInfo() { Player=new Player {Idx = 3 }, CurrentLevel=1 };
+            //RunInfoDB.Insert(RunInfo);
+            //Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
+            //pt = RunInfoDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //RunInfo = pt.Last();
+            //RunInfo.CurrentLevel += 5;
+            //RunInfoDB.Update(RunInfo);
+            //Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
+            //pt = RunInfoDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //RunInfoDB.Delete(pt.Last());
+            //Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
+            //pt = RunInfoDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+            #endregion
+
+            #region EnemiesInLastLevel
+            EnemiesInLastLevelDB EnemyInLastLevelDB = new EnemiesInLastLevelDB();
+            EnemiesInLastLevelTable pt = EnemyInLastLevelDB.SelectAll();
             foreach (var item in pt)
             {
                 Console.WriteLine(item);
             }
 
-            RunInfo RunInfo = new RunInfo() { Player = new Player { Idx = 3 }, CurrentLevel = 1 };
-            RunInfoDB.Insert(RunInfo);
-            Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
-            pt = RunInfoDB.SelectAll();
+            EnemyInLastLevel EnemyInLastLevel = new EnemyInLastLevel() {
+                Name = Enemy.space_ship,
+                Amount = 10,
+                RunInfo = new RunInfo { Idx = 1 }
+            };
+            //EnemyInLastLevelDB.Insert(EnemyInLastLevel);
+            //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
+            //pt = EnemyInLastLevelDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            EnemyInLastLevel = pt.Last();
+            EnemyInLastLevel.Amount -= 5;
+            EnemyInLastLevelDB.Update(EnemyInLastLevel);
+            Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
+            pt = EnemyInLastLevelDB.SelectAll();
             Console.WriteLine(pt.Last());
 
-            RunInfo = pt.Last();
-            RunInfo.CurrentLevel += 5;
-            RunInfoDB.Update(RunInfo);
-            Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
-            pt = RunInfoDB.SelectAll();
-            Console.WriteLine(pt.Last());
-
-            RunInfoDB.Delete(pt.Last());
-            Console.WriteLine($"{RunInfoDB.SaveChanges()} affected rows.");
-            pt = RunInfoDB.SelectAll();
+            EnemyInLastLevelDB.Delete(pt.Last());
+            Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
+            pt = EnemyInLastLevelDB.SelectAll();
             Console.WriteLine(pt.Last());
             #endregion
-
-
         }
     }
 }
