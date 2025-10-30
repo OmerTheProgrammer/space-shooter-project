@@ -25,7 +25,7 @@ namespace ViewModel
             EnemyInLastLevel p = entity as EnemyInLastLevel;
             p.Name = (Enemy)int.Parse(reader["Name"].ToString());
             p.Amount = int.Parse(reader["Amount"].ToString());
-            p.RunInfo = RunInfoDB.SelectById(int.Parse(reader["RunInfoIdx"].ToString()));
+            p.RunInfo = RunsInfoDB.SelectById(int.Parse(reader["RunInfoIdx"].ToString()));
             base.CreateModel(entity);
             return p;
         }
@@ -46,31 +46,6 @@ namespace ViewModel
         }
 
         //שלב ב
-        public virtual void Delete(BaseEntity entity)
-        {
-            BaseEntity reqEntity = this.NewEntity();
-            if (entity != null)
-            {
-                if (entity.GetType() == reqEntity.GetType())
-                {
-
-                    RunsInfoDB runsInfoDB = new RunsInfoDB();
-                    RunsInfoTable allRequestDatas = RunsInfoDB.SelectAll();
-                    // Find all RequestData related to this ProfileEditRequest
-                    List<RunInfo> relatedRunDatas = allRequestDatas.FindAll(item => item.RunInfo.Idx == entity.Idx);
-                    //cast to RequestsDataTable becouse can't in one line
-                    relatedRunDatas = relatedRunDatas as RunsInfoTable;
-                    if (relatedRunDatas != null)
-                    {
-                        foreach (var item in relatedRunDatas)
-                        {
-                            RunsInfoDB.Delete(item);
-                        }
-                    }
-                    deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
-                }
-            }
-        }
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand command)
         {
             EnemyInLastLevel c = entity as EnemyInLastLevel;
