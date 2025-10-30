@@ -256,7 +256,36 @@ namespace Test
             //Console.WriteLine(pt.Last());
             #endregion
 
+            #region PlayersAndGroups
+            //PlayersAndGroupsDB PlayerAndGroupDB = new PlayersAndGroupsDB();
+            //PlayersAndGroupsTable pt = PlayerAndGroupDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
 
+            //PlayerAndGroup PlayerAndGroup = new PlayerAndGroup()
+            //{
+            //    Player = new Player { Idx = 20 },
+            //    Group = new Group { Idx = 5 }
+            //};
+            //PlayerAndGroupDB.Insert(PlayerAndGroup);
+            //Console.WriteLine($"{PlayerAndGroupDB.SaveChanges()} affected rows.");
+            //pt = PlayerAndGroupDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //PlayerAndGroup = pt.Last();
+            //PlayerAndGroup.Player = pt[pt.Capacity-2].Player;
+            //PlayerAndGroupDB.Update(PlayerAndGroup);
+            //Console.WriteLine($"{PlayerAndGroupDB.SaveChanges()} affected rows.");
+            //pt = PlayerAndGroupDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+
+            //PlayerAndGroupDB.Delete(pt.Last());
+            //Console.WriteLine($"{PlayerAndGroupDB.SaveChanges()} affected rows.");
+            //pt = PlayerAndGroupDB.SelectAll();
+            //Console.WriteLine(pt.Last());
+            #endregion
         }
     }
 }
