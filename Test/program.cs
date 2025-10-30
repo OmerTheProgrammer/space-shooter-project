@@ -276,7 +276,7 @@ namespace Test
             #region PlayersAndGroups
             PlayersAndGroupsDB PlayerAndGroupDB = new PlayersAndGroupsDB();
             PlayersAndGroupsTable PlayerAndGTbl = PlayerAndGroupDB.SelectAll();
-            Console.WriteLine("P&G: ");
+            Console.WriteLine("PlayersAndGroups: ");
             foreach (var item in PlayerAndGTbl)
             {
                 Console.WriteLine(item);
