@@ -17,5 +17,6 @@ CREATE TABLE [dbo].[EnemiesInLastLevelTbl] (
     CONSTRAINT [PK_EnemiesInLastLevel] PRIMARY KEY CLUSTERED ([idx] ASC),
 
     -- Foreign Key Constraint to RunsInfo
-    CONSTRAINT [FK_EnemiesInLastLevel_RunsInfo] FOREIGN KEY ([RunIdx]) REFERENCES [dbo].[RunsInfoTbl] ([idx]),
+    CONSTRAINT [FK_EnemiesInLastLevel_RunsInfo] 
+    FOREIGN KEY ([RunInfoIdx]) REFERENCES [dbo].[RunsInfoTbl] ([idx]) ON DELETE CASCADE,
 );

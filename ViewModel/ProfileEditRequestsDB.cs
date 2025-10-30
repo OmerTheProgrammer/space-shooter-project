@@ -61,31 +61,33 @@ namespace ViewModel
         }
 
         //שלב ב
-        public virtual void Delete(BaseEntity entity)
-        {
-            BaseEntity reqEntity = this.NewEntity();
-            if (entity != null)
-            {
-                if (entity.GetType() == reqEntity.GetType())
-                {
+        //added sql code to replace must check in other PCs
+        //public virtual void Delete(BaseEntity entity)
+        //{
+        //    BaseEntity reqEntity = this.NewEntity();
+        //    if (entity != null)
+        //    {
+        //        if (entity.GetType() == reqEntity.GetType())
+        //        {
 
-                    RequestsDataDB requestsDataDB = new RequestsDataDB();
-                    RequestsDataTable allRequestDatas = requestsDataDB.SelectAll();
-                    // Find all RequestData related to this ProfileEditRequest
-                    List<RequestData> relatedRequestDatas = allRequestDatas.FindAll(item => item.Request.Idx == entity.Idx);
-                    //cast to RequestsDataTable becouse can't in one line
-                    relatedRequestDatas = relatedRequestDatas as RequestsDataTable;
-                    if(relatedRequestDatas != null)
-                    {
-                        foreach (var item in relatedRequestDatas)
-                        {
-                            requestsDataDB.Delete(item);
-                        }
-                    }
-                    deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
-                }
-            }
-        }
+        //            RequestsDataDB requestsDataDB = new RequestsDataDB();
+        //            RequestsDataTable allRequestDatas = requestsDataDB.SelectAll();
+        //            // Find all RequestData related to this ProfileEditRequest
+        //            List<RequestData> relatedRequestDatas = allRequestDatas.FindAll(item => item.Request.Idx == entity.Idx);
+        //            //cast to RequestsDataTable becouse can't in one line
+        //            relatedRequestDatas = relatedRequestDatas as RequestsDataTable;
+        //            if (relatedRequestDatas != null)
+        //            {
+        //                foreach (var item in relatedRequestDatas)
+        //                {
+        //                    requestsDataDB.Delete(item);
+        //                }
+        //            }
+        //            deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
+        //        }
+        //    }
+        //}
+
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)
         {
             ProfileEditRequest c = entity as ProfileEditRequest;
