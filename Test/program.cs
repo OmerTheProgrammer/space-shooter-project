@@ -217,35 +217,37 @@ namespace Test
             #endregion
 
             #region EnemiesInLastLevel
-            EnemiesInLastLevelDB EnemyInLastLevelDB = new EnemiesInLastLevelDB();
-            EnemiesInLastLevelTable pt = EnemyInLastLevelDB.SelectAll();
-            foreach (var item in pt)
-            {
-                Console.WriteLine(item);
-            }
+            //EnemiesInLastLevelDB EnemyInLastLevelDB = new EnemiesInLastLevelDB();
+            //EnemiesInLastLevelTable pt = EnemyInLastLevelDB.SelectAll();
+            //foreach (var item in pt)
+            //{
+            //    Console.WriteLine(item);
+            //}
 
-            EnemyInLastLevel EnemyInLastLevel = new EnemyInLastLevel() {
-                Name = Enemy.space_ship,
-                Amount = 10,
-                RunInfo = new RunInfo { Idx = 1 }
-            };
+            //EnemyInLastLevel EnemyInLastLevel = new EnemyInLastLevel() {
+            //    Name = Enemy.space_ship,
+            //    Amount = 10,
+            //    RunInfo = new RunInfo { Idx = 1 }
+            //};
             //EnemyInLastLevelDB.Insert(EnemyInLastLevel);
             //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
             //pt = EnemyInLastLevelDB.SelectAll();
             //Console.WriteLine(pt.Last());
 
-            EnemyInLastLevel = pt.Last();
-            EnemyInLastLevel.Amount -= 5;
-            EnemyInLastLevelDB.Update(EnemyInLastLevel);
-            Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            pt = EnemyInLastLevelDB.SelectAll();
-            Console.WriteLine(pt.Last());
+            //EnemyInLastLevel = pt.Last();
+            //EnemyInLastLevel.Amount -= 5;
+            //EnemyInLastLevelDB.Update(EnemyInLastLevel);
+            //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
+            //pt = EnemyInLastLevelDB.SelectAll();
+            //Console.WriteLine(pt.Last());
 
-            EnemyInLastLevelDB.Delete(pt.Last());
-            Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            pt = EnemyInLastLevelDB.SelectAll();
-            Console.WriteLine(pt.Last());
+            //EnemyInLastLevelDB.Delete(pt.Last());
+            //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
+            //pt = EnemyInLastLevelDB.SelectAll();
+            //Console.WriteLine(pt.Last());
             #endregion
+
+
         }
     }
 }
