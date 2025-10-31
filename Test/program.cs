@@ -246,7 +246,7 @@ namespace Test
             Console.WriteLine("EnemiesInLastLevel: ");
             foreach (var item in et)
             {
-                Console.WriteLine(item);
+                Console.WriteLine(item );
             }
             Console.WriteLine();
 
@@ -285,8 +285,8 @@ namespace Test
 
             //PlayerAndGroup PlayerAndGroup = new PlayerAndGroup()
             //{
-            //    Player = new Player { Idx = 20 },
-            //    Group = new Group { Idx = 5 }
+            //    Player = new Player { Idx = 19 },
+            //    Group = new Group { Idx = 3 }
             //};
             //PlayerAndGroupDB.Insert(PlayerAndGroup);
             //Console.WriteLine($"{PlayerAndGroupDB.SaveChanges()} affected rows.");
