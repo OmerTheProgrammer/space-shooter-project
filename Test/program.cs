@@ -246,7 +246,7 @@ namespace Test
             Console.WriteLine("EnemiesInLastLevel: ");
             foreach (var item in et)
             {
-                Console.WriteLine(item);
+                Console.WriteLine(item );
             }
             Console.WriteLine();
 
