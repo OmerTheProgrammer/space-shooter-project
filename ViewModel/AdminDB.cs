@@ -56,6 +56,16 @@ namespace ViewModel
             }
         }
 
+        public override void Delete(BaseEntity entity)
+        {
+            BaseEntity reqEntity = this.NewEntity();
+            if (entity != null & entity.GetType() == reqEntity.GetType())
+            {
+                inserted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
+                inserted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
+            }
+        }
+
         protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
         {
             Admin c = entity as Admin;
@@ -85,7 +95,7 @@ namespace ViewModel
             Admin c = entity as Admin;
             if (c != null)
             {
-                string sqlStr = $"UPDATE AdminsTbl SET StartDate=@StartDate, WHERE Idx=@idx";
+                string sqlStr = $"UPDATE AdminsTbl SET StartDate=@StartDate WHERE Idx=@idx";
 
                 command.CommandText = sqlStr;
                 command.Parameters.Add(new SqlParameter("@idx", c.Idx));
@@ -102,5 +112,6 @@ namespace ViewModel
                 updated.Add(new ChangeEntity(this.CreateUpdatedSQL, entity));
             }
         }
+
     }
 }
