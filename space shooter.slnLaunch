@@ -22,5 +22,19 @@
         "DebugTarget": "Test"
       }
     ]
+  },
+  {
+    "Name": "Website with server",
+    "Projects": [
+      {
+        "Path": "Server Manager - API\\Server Manager - API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "space shooter\\space shooter.csproj",
+        "Action": "Start"
+      }
+    ]
   }
 ]

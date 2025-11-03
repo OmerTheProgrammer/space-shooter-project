@@ -13,17 +13,8 @@ namespace Test
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main()
         {
-            ApiService api = new ApiService("https://localhost:7013");
-
-            AdminsTable admins = await api.GetAllAdmins();
-            foreach (var admin in admins)
-            {
-                Console.WriteLine(admin);
-            }
-            Console.ReadLine();
-
             #region users
             //UsersDB UserDB = new UsersDB();
             //UsersTable ut = UserDB.SelectAll();
@@ -347,6 +338,22 @@ namespace Test
             //Console.WriteLine(PlayerAndGTbl.Last());
             //Console.WriteLine();
             #endregion
+        }
+
+        public static async Task Main(string[] args)
+        {
+            foreach (var item in args)
+            {
+                Console.WriteLine(args);
+            }
+            ApiService api = new ApiService("https://localhost:7013");
+
+            AdminsTable admins = await api.GetAllAdmins();
+            foreach (var admin in admins)
+            {
+                Console.WriteLine(admin);
+            }
+            Console.ReadLine();
         }
     }
 }
