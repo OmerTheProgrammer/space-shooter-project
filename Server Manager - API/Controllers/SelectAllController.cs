@@ -6,7 +6,7 @@ namespace Server_Manager___API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class SelectController : Controller
+    public class SelectAllController : Controller
     {
         [HttpGet]
         [ActionName("AdminsSelector")]
