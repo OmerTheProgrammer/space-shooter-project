@@ -36,5 +36,14 @@
         "Action": "Start"
       }
     ]
+  },
+  {
+    "Name": "Website",
+    "Projects": [
+      {
+        "Path": "space shooter\\space shooter.csproj",
+        "Action": "Start"
+      }
+    ]
   }
 ]
