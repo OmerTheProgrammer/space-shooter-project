@@ -19,44 +19,68 @@ namespace Client_Manager___API
             client.BaseAddress = new Uri(uri);
         }
 
+        // Default constructor pointing to localhost
+        public ApiService() : this("http://localhost:7013") { }
+
+        #region select all:
+        private async Task<T> GetTableAsync<T>(string endpoint)
+            where T : new()
+        {
+            try
+            {
+                // The method uses the relative path defined in the public methods
+                return await client.GetFromJsonAsync<T>(endpoint);
+            }
+            catch (Exception ex)
+            {
+                // Centralized error logging
+                Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
+                // Return an empty instance of the table type T
+                return new T();
+            }
+        }
+
         public async Task<AdminsTable> GetAllAdmins()
         {
-            return await client.GetFromJsonAsync<AdminsTable>("/api/Insert/CitySelector");
+            return await GetTableAsync<AdminsTable>("/api/SelectAll/AdminsSelector");
         }
 
         public async Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel()
         {
-            return await client.GetFromJsonAsync<EnemiesInLastLevelTable>("/api/SelectAll/EnemiesInLastLevelSelector");
+            return await GetTableAsync<EnemiesInLastLevelTable>("/api/SelectAll/EnemiesInLastLevelSelector");
         }
 
         public async Task<GroupsTable> GetAllGroups()
         {
-            return await client.GetFromJsonAsync<GroupsTable>("/api/SelectAll/GroupsSelector");
+            return await GetTableAsync<GroupsTable>("/api/SelectAll/GroupsSelector");
         }
 
         public async Task<PlayersTable> GetAllPlayers()
         {
-            return await client.GetFromJsonAsync<PlayersTable>("/api/SelectAll/PlayersSelector");
+            return await GetTableAsync<PlayersTable>("/api/SelectAll/PlayersSelector");
         }
 
         public async Task<ProfileEditRequestsTable> GetAllProfileEditRequests()
         {
-            return await client.GetFromJsonAsync<ProfileEditRequestsTable>("/api/SelectAll/ProfileEditRequestsSelector");
+            return await GetTableAsync<ProfileEditRequestsTable>("/api/SelectAll/ProfileEditRequestsSelector");
         }
 
         public async Task<RequestsDataTable> GetAllRequestsDataDB()
         {
-            return await client.GetFromJsonAsync<RequestsDataTable>("/api/SelectAll/RequestsDataSelector");
+            return await GetTableAsync<RequestsDataTable>("/api/SelectAll/RequestsDataSelector");
         }
 
         public async Task<RunsInfoTable> GetAllRunsInfoDB()
         {
-            return await client.GetFromJsonAsync<RunsInfoTable>("/api/SelectAll/RunsInfoSelector");
+            return await GetTableAsync<RunsInfoTable>("/api/SelectAll/RunsInfoSelector");
         }
 
         public async Task<UsersTable> GetAllUsersDB()
         {
-            return await client.GetFromJsonAsync<UsersTable>("/api/SelectAll/UsersSelector");
+            return await GetTableAsync<UsersTable>("/api/SelectAll/UsersSelector");
         }
+        #endregion
+
+
     }
 }

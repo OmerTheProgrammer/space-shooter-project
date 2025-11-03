@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "Test",
+    "Projects": [
+      {
+        "Path": "Test\\Test.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "Test with server",
+    "Projects": [
+      {
+        "Path": "Server Manager - API\\Server Manager - API.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "Test\\Test.csproj",
+        "Action": "Start",
+        "DebugTarget": "Test"
+      }
+    ]
+  }
+]

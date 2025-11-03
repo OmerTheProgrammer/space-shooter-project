@@ -13,15 +13,16 @@ namespace Test
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             ApiService api = new ApiService("https://localhost:7013");
 
-            AdminsTable admins = api.GetAllAdmins().Result;
+            AdminsTable admins = await api.GetAllAdmins();
             foreach (var admin in admins)
             {
                 Console.WriteLine(admin);
             }
+            Console.ReadLine();
 
             #region users
             //UsersDB UserDB = new UsersDB();
