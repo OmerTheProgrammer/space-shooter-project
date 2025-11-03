@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server Manager - API", "Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client Manager - API", "Client Manager - API\Client Manager - API.csproj", "{F1D62AFE-0FD7-46FC-AB7F-C41E1C786F18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space shooter website", "Space shooter website\Space shooter website.csproj", "{D474DD7B-C208-4237-8953-26014889E2A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Shooter Website", "Space shooter website\Space Shooter Website.csproj", "{D474DD7B-C208-4237-8953-26014889E2A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
