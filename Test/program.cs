@@ -7,6 +7,7 @@ using Model;
 using Model.Entitys;
 using Model.Tables;
 using ViewModel;
+using Client_Manager___API;
 
 namespace Test
 {
@@ -14,6 +15,14 @@ namespace Test
     {
         public static void Main(string[] args)
         {
+            ApiService api = new ApiService("https://localhost:7013");
+
+            AdminsTable admins = api.GetAllAdmins().Result;
+            foreach (var admin in admins)
+            {
+                Console.WriteLine(admin);
+            }
+
             #region users
             //UsersDB UserDB = new UsersDB();
             //UsersTable ut = UserDB.SelectAll();

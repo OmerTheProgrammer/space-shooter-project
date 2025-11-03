@@ -2918,7 +2918,12 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Client Manager - API\Client Manager - API.csproj">
+      <Project>{f1d62afe-0fd7-46fc-ab7f-c41e1c786f18}</Project>
+      <Name>Client Manager - API</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-reboot.rtl.min.css.map" />
     <Content Include="Content\bootstrap-reboot.rtl.css.map" />
