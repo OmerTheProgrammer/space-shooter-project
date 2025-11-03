@@ -54,7 +54,7 @@ namespace Server_Manager___API.Controllers
         }
 
         [HttpGet]
-        [ActionName("RequestsDataDBSelector")]
+        [ActionName("RequestsDataSelector")]
         public RequestsDataTable SelectAllRequestsDataDB()
         {
             RequestsDataDB RequestsDataDB = new RequestsDataDB();
