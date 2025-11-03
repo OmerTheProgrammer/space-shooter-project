@@ -32,6 +32,16 @@
         "DebugTarget": "https"
       },
       {
+        "Path": "Space shooter website\\Space Shooter Website.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  },
+  {
+    "Name": "Old Website",
+    "Projects": [
+      {
         "Path": "space shooter\\space shooter.csproj",
         "Action": "Start"
       }
@@ -41,8 +51,19 @@
     "Name": "Website",
     "Projects": [
       {
-        "Path": "space shooter\\space shooter.csproj",
-        "Action": "Start"
+        "Path": "Space shooter website\\Space Shooter Website.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  },
+  {
+    "Name": "Server",
+    "Projects": [
+      {
+        "Path": "Server Manager - API\\Server Manager - API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
       }
     ]
   }

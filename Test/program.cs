@@ -13,8 +13,9 @@ namespace Test
 {
     public class Program
     {
-        public static void Main()
+        public static void Main(string[] args)
         {
+            Console.WriteLine("ServerLess");
             #region users
             //UsersDB UserDB = new UsersDB();
             //UsersTable ut = UserDB.SelectAll();
@@ -338,14 +339,13 @@ namespace Test
             //Console.WriteLine(PlayerAndGTbl.Last());
             //Console.WriteLine();
             #endregion
+
+            Console.ReadLine();
         }
 
-        public static async Task Main(string[] args)
+        public static async Task Main1()
         {
-            foreach (var item in args)
-            {
-                Console.WriteLine(args);
-            }
+            Console.WriteLine("ServerFull");
             ApiService api = new ApiService("https://localhost:7013");
 
             AdminsTable admins = await api.GetAllAdmins();
@@ -353,6 +353,7 @@ namespace Test
             {
                 Console.WriteLine(admin);
             }
+
             Console.ReadLine();
         }
     }

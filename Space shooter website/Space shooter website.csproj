@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Space_shooter_website</RootNamespace>
+    <Configurations>Debug;Release;Test + Server</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

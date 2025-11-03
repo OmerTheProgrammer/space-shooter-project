@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Server_Manager___API</RootNamespace>
+    <Configurations>Debug;Release;Test + Server</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
