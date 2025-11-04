@@ -4,7 +4,8 @@
     "Projects": [
       {
         "Path": "Test\\Test.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "Test"
       }
     ]
   },
@@ -19,7 +20,7 @@
       {
         "Path": "Test\\Test.csproj",
         "Action": "Start",
-        "DebugTarget": "Test"
+        "DebugTarget": "Test with server"
       }
     ]
   },

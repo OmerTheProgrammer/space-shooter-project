@@ -6,6 +6,12 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": ""
+    },
+    "Test with server": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "RUNNING_TEST_SERVER": "true"
+      }
     }
   }
 }

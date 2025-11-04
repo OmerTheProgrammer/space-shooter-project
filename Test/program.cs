@@ -15,8 +15,25 @@ namespace Test
     {
         public static void Main(string[] args)
         {
-            
-            Console.WriteLine("ServerLess");
+            //added unique debug mode to this project only and added to it:
+            //RUNNING_TEST_SERVER = true,
+            //then changed startup projects, the test with server to run the
+            //new debug mode, with the EnvironmentVariable.
+            if (Environment.GetEnvironmentVariable("RUNNING_TEST_SERVER") == "true")
+            {
+                Console.WriteLine("ServerFull mode activated: API Test.");
+                ServerFullMain();
+            }
+            else
+            {
+                Console.WriteLine("ServerLess mode activated: Local DB Test.");
+                ServerLessMain();
+                Console.WriteLine("done!");
+            }
+            Console.ReadLine();
+        }
+        public static void ServerLessMain()
+        {
             #region users
             //UsersDB UserDB = new UsersDB();
             //UsersTable ut = UserDB.SelectAll();
@@ -340,13 +357,10 @@ namespace Test
             //Console.WriteLine(PlayerAndGTbl.Last());
             //Console.WriteLine();
             #endregion
-
-            Console.ReadLine();
         }
 
-        public static async Task Main1()
+        public static async Task ServerFullMain()
         {
-            Console.WriteLine("ServerFull");
             ApiService api = new ApiService("https://localhost:7013");
 
             AdminsTable admins = await api.GetAllAdmins();
@@ -354,8 +368,6 @@ namespace Test
             {
                 Console.WriteLine(admin);
             }
-
-            Console.ReadLine();
         }
     }
 }
