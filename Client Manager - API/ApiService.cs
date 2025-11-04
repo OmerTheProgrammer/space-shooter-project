@@ -81,6 +81,8 @@ namespace Client_Manager___API
         }
         #endregion
 
+        #region Select by Id
 
+        #endregion
     }
 }

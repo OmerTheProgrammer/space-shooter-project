@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Model.Entitys;
 using Model.Tables;
 using ViewModel;
 
@@ -8,76 +9,60 @@ namespace Server_Manager___API.Controllers
     [ApiController]
     public class SelectByIdController : Controller
     {
-        [HttpGet]
+        [HttpPost]
         [ActionName("AdminsSelectorById")]
-        public AdminsTable SelectAllAdmins()
+        public Admin SelectAdminsById([FromBody] int id)
         {
-            AdminsDB adminsDB = new AdminsDB();
-            AdminsTable adminsTable = adminsDB.SelectAll();
-            return adminsTable;
+            return AdminsDB.SelectById(id);
         }
 
-        [HttpGet]
-        [ActionName("EnemiesInLastLevelSelector")]
-        public EnemiesInLastLevelTable SelectAllEnemiesInLastLevel()
+        [HttpPost]
+        [ActionName("EnemiesInLastLevelSelectorById")]
+        public EnemyInLastLevel SelectEnemiesInLastLevelById([FromBody] int id)
         {
-            EnemiesInLastLevelDB EnemiesInLastLevelDB = new EnemiesInLastLevelDB();
-            EnemiesInLastLevelTable EnemiesInLastLevelTable = EnemiesInLastLevelDB.SelectAll();
-            return EnemiesInLastLevelTable;
+            return EnemiesInLastLevelDB.SelectById(id);
         }
 
-        [HttpGet]
-        [ActionName("GroupsSelector")]
-        public GroupsTable SelectAllGroups()
+        [HttpPost]
+        [ActionName("GroupsSelectorById")]
+        public Group SelectGroupsById([FromBody] int id)
         {
-            GroupsDB GroupsDB = new GroupsDB();
-            GroupsTable GroupsTable = GroupsDB.SelectAll();
-            return GroupsTable;
+            return GroupsDB.SelectById(id);
         }
 
-        [HttpGet]
-        [ActionName("PlayersSelector")]
-        public PlayersTable SelectAllPlayers()
+        [HttpPost]
+        [ActionName("PlayersSelectorById")]
+        public Player SelectPlayersById([FromBody] int id)
         {
-            PlayersDB PlayersDB = new PlayersDB();
-            PlayersTable PlayersTable = PlayersDB.SelectAll();
-            return PlayersTable;
+            return PlayersDB.SelectById(id);
         }
 
-        [HttpGet]
-        [ActionName("ProfileEditRequestsSelector")]
-        public ProfileEditRequestsTable SelectAllProfileEditRequests()
+        [HttpPost]
+        [ActionName("ProfileEditRequestsSelectorById")]
+        public ProfileEditRequest SelectProfileEditRequestsById([FromBody] int id)
         {
-            ProfileEditRequestsDB ProfileEditRequestsDB = new ProfileEditRequestsDB();
-            ProfileEditRequestsTable ProfileEditRequestsTable = ProfileEditRequestsDB.SelectAll();
-            return ProfileEditRequestsTable;
+            return ProfileEditRequestsDB.SelectById(id);
         }
 
-        [HttpGet]
-        [ActionName("RequestsDataSelector")]
-        public RequestsDataTable SelectAllRequestsDataDB()
+        [HttpPost]
+        [ActionName("RequestsDataSelectorById")]
+        public RequestData SelectRequestsDataById([FromBody] int id)
         {
-            RequestsDataDB RequestsDataDB = new RequestsDataDB();
-            RequestsDataTable RequestsDataDBTable = RequestsDataDB.SelectAll();
-            return RequestsDataDBTable;
+            return RequestsDataDB.SelectById(id);
         }
 
-        [HttpGet]
-        [ActionName("RunsInfoSelector")]
-        public RunsInfoTable SelectAllRunsInfo()
+        [HttpPost]
+        [ActionName("RunsInfoSelectorById")]
+        public RunInfo SelectRunsInfoById([FromBody] int id)
         {
-            RunsInfoDB RunsInfoDB = new RunsInfoDB();
-            RunsInfoTable RunsInfoTable = RunsInfoDB.SelectAll();
-            return RunsInfoTable;
+            return RunsInfoDB.SelectById(id);
         }
 
-        [HttpGet]
-        [ActionName("UsersSelector")]
-        public UsersTable SelectAllUsers()
+        [HttpPost]
+        [ActionName("UsersSelectorById")]
+        public User SelectUsersById([FromBody] int id)
         {
-            UsersDB UsersDB = new UsersDB();
-            UsersTable UsersTable = UsersDB.SelectAll();
-            return UsersTable;
+            return UsersDB.SelectById(id);
         }
     }
 }
