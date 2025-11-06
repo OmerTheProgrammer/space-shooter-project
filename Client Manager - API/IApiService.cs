@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Model.Entitys;
+using Model.Tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Model.Tables;
 
 
 namespace Client_Manager___API
 {
     internal interface IApiService
     {
+        #region select all:
         public Task<AdminsTable> GetAllAdmins();
         
         public Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel();
@@ -20,10 +22,31 @@ namespace Client_Manager___API
 
         public Task<ProfileEditRequestsTable> GetAllProfileEditRequests();
 
-        public Task<RequestsDataTable> GetAllRequestsDataDB();
+        public Task<RequestsDataTable> GetAllRequestsData();
 
-        public Task<RunsInfoTable> GetAllRunsInfoDB();
+        public Task<RunsInfoTable> GetAllRunsInfo();
 
-        public Task<UsersTable> GetAllUsersDB();
+        public Task<UsersTable> GetAllUsers();
+        #endregion
+
+        #region select by id:
+        public Task<Admin> GetAdminById(int idx);
+
+        public Task<EnemyInLastLevel> GetEnemiesInLastLevelById(int idx);
+
+        public Task<Group> GetGroupsById(int idx);
+
+        public Task<Player> GetPlayersById(int idx);
+
+        public Task<ProfileEditRequest> GetProfileEditRequestsById(int idx);
+
+        public Task<RequestData> GetRequestsDataById(int idx);
+
+        public Task<RunInfo> GetRunsInfoById(int idx);
+
+        public Task<User> GetUsersById(int idx);
+        #endregion
+
+
     }
 }

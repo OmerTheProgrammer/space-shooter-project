@@ -363,11 +363,7 @@ namespace Test
         {
             ApiService api = new ApiService("https://localhost:7013");
 
-            AdminsTable admins = await api.GetAllAdmins();
-            foreach (var admin in admins)
-            {
-                Console.WriteLine(admin);
-            }
+            Console.WriteLine( await api.GetAdminById(12));
         }
     }
 }
