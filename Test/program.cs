@@ -13,7 +13,7 @@ namespace Test
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             //added unique debug mode to this project only and added to it:
             //RUNNING_TEST_SERVER = true,
@@ -23,6 +23,7 @@ namespace Test
             {
                 Console.WriteLine("ServerFull mode activated: API Test.");
                 ServerFullMain();
+                Console.WriteLine("started!");
             }
             else
             {
@@ -31,6 +32,7 @@ namespace Test
                 Console.WriteLine("done!");
             }
             Console.ReadLine();
+
         }
         public static void ServerLessMain()
         {
@@ -363,7 +365,16 @@ namespace Test
         {
             ApiService api = new ApiService("https://localhost:7013");
 
-            Console.WriteLine( await api.GetAdminById(12));
+            AdminsTable admins = await api.GetAllAdmins();
+            foreach (var item in admins)
+            {
+                Console.WriteLine(item);
+            }
+            //expected not found message
+            Console.WriteLine(await api.GetAdminsByIdx(12));
+            Console.WriteLine();
+            //expected found message
+            Console.WriteLine(await api.GetAdminsByIdx(2));
         }
     }
 }

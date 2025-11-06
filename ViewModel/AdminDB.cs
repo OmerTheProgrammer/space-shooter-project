@@ -34,12 +34,16 @@ namespace ViewModel
         }
 
         static private AdminsTable list = new AdminsTable();
-        public static Admin SelectById(int id)
+        public static Admin SelectByIdx(int idx)
         {
             AdminsDB db = new AdminsDB();
             list = db.SelectAll();
 
-            Admin g = list.Find(item => (item.Idx == id));
+            Admin g = list.Find(item => (item.Idx == idx));
+            if(g == null)
+            {
+                throw new Exception($"Admin with Idx {idx} not found.");
+            }
             return g;
         }
 
