@@ -33,9 +33,9 @@ namespace ViewModel
                 p.ReviewDate = date;
             }
             p.Status = (Status)((int)reader["Status"]);
-            p.RequestingPlayer = PlayersDB.SelectById((int)reader["PlayerIdx"]);
+            p.RequestingPlayer = PlayersDB.SelectByIdx((int)reader["PlayerIdx"]);
             if(reader["AdminIdx"] != DBNull.Value) {
-                p.AdressingAdmin = AdminsDB.SelectById((int)reader["AdminIdx"]);
+                p.AdressingAdmin = AdminsDB.SelectByIdx((int)reader["AdminIdx"]);
             }
             else
             {
@@ -51,17 +51,21 @@ namespace ViewModel
         }
 
         static private ProfileEditRequestsTable list = new ProfileEditRequestsTable();
-        public static ProfileEditRequest SelectById(int id)
+        public static ProfileEditRequest SelectByIdx(int idx)
         {
             ProfileEditRequestsDB db = new ProfileEditRequestsDB();
             list = db.SelectAll();
 
-            ProfileEditRequest g = list.Find(item => (item.Idx == id));
+            ProfileEditRequest g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"ProfileEditRequest with Idx {idx} not found.");
+            }
             return g;
         }
 
-        //שלב ב
         //added sql code to replace must check in other PCs
+        //works without this code too -> but need to check in API
         //public virtual void Delete(BaseEntity entity)
         //{
         //    BaseEntity reqEntity = this.NewEntity();

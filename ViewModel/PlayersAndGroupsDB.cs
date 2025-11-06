@@ -24,8 +24,8 @@ namespace ViewModel
         protected override BaseEntity CreateModel(BaseEntity entity)
         {
             PlayerAndGroup p = entity as PlayerAndGroup;
-            p.Player = PlayersDB.SelectById(int.Parse(reader["PlayerIdx"].ToString())); 
-            p.Group = GroupsDB.SelectById(int.Parse(reader["GroupIdx"].ToString()));
+            p.Player = PlayersDB.SelectByIdx(int.Parse(reader["PlayerIdx"].ToString())); 
+            p.Group = GroupsDB.SelectByIdx(int.Parse(reader["GroupIdx"].ToString()));
             base.CreateModel(entity);
             return p;
         }
@@ -36,12 +36,16 @@ namespace ViewModel
         }
 
         static private PlayersAndGroupsTable list = new PlayersAndGroupsTable();
-        public static PlayerAndGroup SelectById(int id)
+        public static PlayerAndGroup SelectByIdx(int idx)
         {
             PlayersAndGroupsDB db = new PlayersAndGroupsDB();
             list = db.SelectAll();
 
-            PlayerAndGroup g = list.Find(item => (item.Idx == id));
+            PlayerAndGroup g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"PlayerAndGroup with Idx {idx} not found.");
+            }
             return g;
         }
 

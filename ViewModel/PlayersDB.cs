@@ -37,12 +37,16 @@ namespace ViewModel
         }
 
         static private PlayersTable list = new PlayersTable();
-        public static Player SelectById(int id)
+        public static Player SelectByIdx(int idx)
         {
             PlayersDB db = new PlayersDB();
             list = db.SelectAll();
 
-            Player g = list.Find(item => (item.Idx == id));
+            Player g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"Player with Idx {idx} not found.");
+            }
             return g;
         }
 

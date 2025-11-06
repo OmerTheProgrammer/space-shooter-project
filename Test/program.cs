@@ -7,12 +7,34 @@ using Model;
 using Model.Entitys;
 using Model.Tables;
 using ViewModel;
+using Client_Manager___API;
 
 namespace Test
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
+        {
+            //added unique debug mode to this project only and added to it:
+            //RUNNING_TEST_SERVER = true,
+            //then changed startup projects, the test with server to run the
+            //new debug mode, with the EnvironmentVariable.
+            if (Environment.GetEnvironmentVariable("RUNNING_TEST_SERVER") == "true")
+            {
+                Console.WriteLine("ServerFull mode activated: API Test.");
+                ServerFullMain();
+                Console.WriteLine("started!");
+            }
+            else
+            {
+                Console.WriteLine("ServerLess mode activated: Local DB Test.");
+                ServerLessMain();
+                Console.WriteLine("done!");
+            }
+            Console.ReadLine();
+
+        }
+        public static void ServerLessMain()
         {
             #region users
             //UsersDB UserDB = new UsersDB();
@@ -337,6 +359,22 @@ namespace Test
             //Console.WriteLine(PlayerAndGTbl.Last());
             //Console.WriteLine();
             #endregion
+        }
+
+        public static async Task ServerFullMain()
+        {
+            ApiService api = new ApiService("https://localhost:7013");
+
+            AdminsTable admins = await api.GetAllAdmins();
+            foreach (var item in admins)
+            {
+                Console.WriteLine(item);
+            }
+            //expected not found message
+            Console.WriteLine(await api.GetAdminsByIdx(12));
+            Console.WriteLine();
+            //expected found message
+            Console.WriteLine(await api.GetAdminsByIdx(2));
         }
     }
 }

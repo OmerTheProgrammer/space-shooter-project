@@ -23,7 +23,7 @@ namespace ViewModel
         protected override BaseEntity CreateModel(BaseEntity entity)
         {
             RequestData p = entity as RequestData;
-            p.Request = ProfileEditRequestsDB.SelectById((int)reader["RequestIdx"]);
+            p.Request = ProfileEditRequestsDB.SelectByIdx((int)reader["RequestIdx"]);
             p.Field = reader["Field"].ToString();
             p.OldValue = reader["OldValue"].ToString();
             p.NewValue = reader["NewValue"].ToString();
@@ -37,12 +37,16 @@ namespace ViewModel
         }
 
         static private RequestsDataTable list = new RequestsDataTable();
-        public static RequestData SelectById(int id)
+        public static RequestData SelectByIdx(int idx)
         {
             RequestsDataDB db = new RequestsDataDB();
             list = db.SelectAll();
 
-            RequestData g = list.Find(item => (item.Idx == id));
+            RequestData g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"RequestData with Idx {idx} not found.");
+            }
             return g;
         }
 
