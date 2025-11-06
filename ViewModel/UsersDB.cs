@@ -38,12 +38,16 @@ namespace ViewModel
         }
 
         static private UsersTable list = new UsersTable();
-        public static User SelectById(int id)
+        public static User SelectByIdx(int idx)
         {
             UsersDB db = new UsersDB();
             list = db.SelectAll();
 
-            User g = list.Find(item => (item.Idx == id));
+            User g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"User with Idx {idx} not found.");
+            }
             return g;
         }
 

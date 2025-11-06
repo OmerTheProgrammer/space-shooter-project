@@ -22,7 +22,7 @@ namespace ViewModel
         protected override BaseEntity CreateModel(BaseEntity entity)
         {
             RunInfo p = entity as RunInfo;
-            p.Player = PlayersDB.SelectById(int.Parse(reader["PlayerIdx"].ToString()));
+            p.Player = PlayersDB.SelectByIdx(int.Parse(reader["PlayerIdx"].ToString()));
             p.CurrentScore = int.Parse(reader["CurrentScore"].ToString());
             p.CurrentLevel = int.Parse(reader["CurrentLevel"].ToString());
             p.RunStopDate = DateTime.Parse(reader["RunStopDate"].ToString());
@@ -40,12 +40,16 @@ namespace ViewModel
         }
 
         static private RunsInfoTable list = new RunsInfoTable();
-        public static RunInfo SelectById(int id)
+        public static RunInfo SelectByIdx(int idx)
         {
             RunsInfoDB db = new RunsInfoDB();
             list = db.SelectAll();
 
-            RunInfo g = list.Find(item => (item.Idx == id));
+            RunInfo g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"RunInfo with Idx {idx} not found.");
+            }
             return g;
         }
 

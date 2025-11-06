@@ -82,14 +82,33 @@ namespace Client_Manager___API
         }
         #endregion
 
-        #region Select by Id
-        private async Task<T> GetById<T>(string endpoint, int idx)
+        #region Select by Idx
+        private async Task<T> GetByIdx<T>(string endpoint, int idx)
             where T : new()
         {
             try
             {
                 // The method uses the relative path defined in the public methods
-                return await client.GetFromJsonAsync<int>(endpoint, idx);
+                HttpResponseMessage response = 
+                    await client.PostAsJsonAsync(endpoint, idx);
+                // 2. Ensure the request was successful, if not tell the client about the failure
+                if (!response.IsSuccessStatusCode)
+                {
+                    // 2. Read the specific error content from the server
+                    // This reads the body containing the server's error message (e.g., "Idx not found")
+                    string errorContent = await response.Content.ReadAsStringAsync();
+
+                    // 3. Throw a detailed exception that includes the server's message.
+                    throw new HttpRequestException(
+                        $"Request failed: {response.StatusCode} - {errorContent}",
+                        null,
+                        response.StatusCode
+                    );
+                }
+                // 3. Read the JSON content and
+                // deserialize it into the target type <T>
+                T result = await response.Content.ReadFromJsonAsync<T>();
+                return result;
             }
             catch (Exception ex)
             {
@@ -100,44 +119,44 @@ namespace Client_Manager___API
             }
         }
 
-        public Task<Admin> GetAdminById(int idx)
+        public Task<Admin> GetAdminsByIdx(int idx)
         {
-            return GetById<Admin>($"/api/SelectByIdController/AdminsSelectorById",idx);
+            return GetByIdx<Admin>($"/api/SelectByIdx/AdminsSelectorById",idx);
         }
 
-        public Task<EnemyInLastLevel> GetEnemiesInLastLevelById(int idx)
+        public Task<EnemyInLastLevel> GetEnemiesInLastLevelByIdx(int idx)
         {
-            return GetById<EnemyInLastLevel>($"/api/SelectByIdController/AdminsSelectorById", idx);
+            return GetByIdx<EnemyInLastLevel>($"/api/SelectByIdx/EnemiesInLastLevelSelectorById", idx);
         }
 
-        public Task<Group> GetGroupsById(int idx)
+        public Task<Group> GetGroupsByIdx(int idx)
         {
-            return GetById<Group>($"/api/SelectByIdController/AdminsSelectorById", idx);
+            return  GetByIdx<Group>($"/api/SelectByIdx/GroupsSelectorById", idx);
         }
 
-        public Task<Player> GetPlayersById(int idx)
+        public Task<Player> GetPlayersByIdx(int idx)
         {
-            return GetById<Player>($"/api/SelectByIdController/AdminsSelectorById", idx);
+            return GetByIdx<Player>($"/api/SelectByIdx/PlayersSelectorById", idx);
         }
 
-        public Task<ProfileEditRequest> GetProfileEditRequestsById(int idx)
+        public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int idx)
         {
-            return GetById<ProfileEditRequest>($"/api/SelectByIdController/AdminsSelectorById", idx);
+            return GetByIdx<ProfileEditRequest>($"/api/SelectByIdx/ProfileEditRequestsSelectorById", idx);
         }
 
-        public Task<RequestData> GetRequestsDataById(int idx)
+        public Task<RequestData> GetRequestsDataByIdx(int idx)
         {
-            return GetById<RequestData>($"/api/SelectByIdController/AdminsSelectorById", idx);
+            return GetByIdx<RequestData>($"/api/SelectByIdx/RequestsDataSelectorById", idx);
         }
 
-        public Task<RunInfo> GetRunsInfoById(int idx)
+        public Task<RunInfo> GetRunsInfoByIdx(int idx)
         {
-            return GetById<RunInfo>($"/api/SelectByIdController/AdminsSelectorById", idx);
+            return GetByIdx<RunInfo>($"/api/SelectByIdx/RunsInfoSelectorById", idx);
         }
 
-        public Task<User> GetUsersById(int idx)
+        public Task<User> GetUsersByIdx(int idx)
         {
-            return GetById<User>($"/api/SelectByIdController/AdminsSelectorById", idx);
+            return GetByIdx<User>($"/api/SelectByIdx/UsersSelectorById", idx);
         }
         #endregion
     }

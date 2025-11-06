@@ -25,7 +25,7 @@ namespace ViewModel
             EnemyInLastLevel p = entity as EnemyInLastLevel;
             p.Name = (Enemy)int.Parse(reader["Name"].ToString());
             p.Amount = int.Parse(reader["Amount"].ToString());
-            p.RunInfo = RunsInfoDB.SelectById(int.Parse(reader["RunInfoIdx"].ToString()));
+            p.RunInfo = RunsInfoDB.SelectByIdx(int.Parse(reader["RunInfoIdx"].ToString()));
             base.CreateModel(entity);
             return p;
         }
@@ -36,12 +36,16 @@ namespace ViewModel
         }
 
         static private EnemiesInLastLevelTable list = new EnemiesInLastLevelTable();
-        public static EnemyInLastLevel SelectById(int id)
+        public static EnemyInLastLevel SelectByIdx(int idx)
         {
             EnemiesInLastLevelDB db = new EnemiesInLastLevelDB();
             list = db.SelectAll();
 
-            EnemyInLastLevel g = list.Find(item => (item.Idx == id));
+            EnemyInLastLevel g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"EnemyInLastLevel with Idx {idx} not found.");
+            }
             return g;
         }
 

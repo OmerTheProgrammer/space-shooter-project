@@ -34,12 +34,16 @@ namespace ViewModel
         }
 
         static private GroupsTable list = new GroupsTable();
-        public static Group SelectById(int id)
+        public static Group SelectByIdx(int idx)
         {
             GroupsDB db = new GroupsDB();
             list = db.SelectAll();
 
-            Group g = list.Find(item => (item.Idx == id));
+            Group g = list.Find(item => (item.Idx == idx));
+            if (g == null)
+            {
+                throw new Exception($"Group with Idx {idx} not found.");
+            }
             return g;
         }
 

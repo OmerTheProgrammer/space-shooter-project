@@ -29,22 +29,22 @@ namespace Client_Manager___API
         public Task<UsersTable> GetAllUsers();
         #endregion
 
-        #region select by id:
-        public Task<Admin> GetAdminById(int idx);
+        #region select by Idx:
+        public Task<Admin> GetAdminsByIdx(int Idx);
 
-        public Task<EnemyInLastLevel> GetEnemiesInLastLevelById(int idx);
+        public Task<EnemyInLastLevel> GetEnemiesInLastLevelByIdx(int Idx);
 
-        public Task<Group> GetGroupsById(int idx);
+        public Task<Group> GetGroupsByIdx(int Idx);
 
-        public Task<Player> GetPlayersById(int idx);
+        public Task<Player> GetPlayersByIdx(int Idx);
 
-        public Task<ProfileEditRequest> GetProfileEditRequestsById(int idx);
+        public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int Idx);
 
-        public Task<RequestData> GetRequestsDataById(int idx);
+        public Task<RequestData> GetRequestsDataByIdx(int Idx);
 
-        public Task<RunInfo> GetRunsInfoById(int idx);
+        public Task<RunInfo> GetRunsInfoByIdx(int Idx);
 
-        public Task<User> GetUsersById(int idx);
+        public Task<User> GetUsersByIdx(int Idx);
         #endregion
 
 
