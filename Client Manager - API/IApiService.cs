@@ -47,6 +47,10 @@ namespace Client_Manager___API
         public Task<User> GetUsersByIdx(int Idx);
         #endregion
 
+        #region Insert:
+        public Task<Admin> InsertAdmins(Admin admin);
 
+
+        #endregion
     }
 }
