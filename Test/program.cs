@@ -376,6 +376,7 @@ namespace Test
             //expected found message
             Console.WriteLine(await api.GetAdminsByIdx(2));
 
+            Console.WriteLine();
             api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
 
             admins = await api.GetAllAdmins();
