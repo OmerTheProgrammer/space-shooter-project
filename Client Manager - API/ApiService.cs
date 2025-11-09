@@ -159,5 +159,48 @@ namespace Client_Manager___API
             return GetByIdx<User>($"/api/SelectByIdx/UsersSelectorById", idx);
         }
         #endregion
+
+        #region Insert:
+        private async Task<T> Insert<T>(string endpoint, T entity)
+            where T : new()
+        {
+            try
+            {
+                // The method uses the relative path defined in the public methods
+                HttpResponseMessage response =
+                    await client.PostAsJsonAsync(endpoint, entity);
+                // 2. Ensure the request was successful, if not tell the client about the failure
+                if (!response.IsSuccessStatusCode)
+                {
+                    // 2. Read the specific error content from the server
+                    // This reads the body containing the server's error message (e.g., "Idx not found")
+                    string errorContent = await response.Content.ReadAsStringAsync();
+
+                    // 3. Throw a detailed exception that includes the server's message.
+                    throw new HttpRequestException(
+                        $"Request failed: {response.StatusCode} - {errorContent}",
+                        null,
+                        response.StatusCode
+                    );
+                }
+                // 3. Read the JSON content and
+                // deserialize it into the target type <T>
+                T result = await response.Content.ReadFromJsonAsync<T>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Centralized error logging
+                Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
+                // Return an empty instance of the table type T
+                return new T();
+            }
+        }
+
+        public Task<Admin> InsertAdmins(Admin admin)
+        {
+            return Insert<Admin>($"/api/Insert/AdminsInsertor", admin);
+        }
+        #endregion
     }
 }

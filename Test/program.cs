@@ -365,17 +365,24 @@ namespace Test
         {
             ApiService api = new ApiService("https://localhost:7013");
 
-            //AdminsTable admins = await api.GetAllAdmins();
-            //foreach (var item in admins)
-            //{
-            //    Console.WriteLine(item);
-            //}
-            ////expected not found message
-            //Console.WriteLine(await api.GetAdminsByIdx(12));
-            //Console.WriteLine();
-            ////expected found message
-            //Console.WriteLine(await api.GetAdminsByIdx(2));
+            AdminsTable admins = await api.GetAllAdmins();
+            foreach (var item in admins)
+            {
+                Console.WriteLine(item);
+            }
+            //expected not found message
+            Console.WriteLine(await api.GetAdminsByIdx(12));
+            Console.WriteLine();
+            //expected found message
+            Console.WriteLine(await api.GetAdminsByIdx(2));
 
+            api.InsertAdmins(new Admin { Birthday=new DateTime(2022,3,2)});
+
+            admins = await api.GetAllAdmins();
+            foreach (var item in admins)
+            {
+                Console.WriteLine(item);
+            }
 
         }
     }
