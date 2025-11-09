@@ -19,8 +19,8 @@ namespace Server_Manager___API.Controllers
             {
                 AdminsDB adminsDB = new AdminsDB();
                 adminsDB.Insert(admin);
-                // If SelectByIdx returns the entity, return HTTP 200 OK.
-                return Ok();
+                int ChangedRecords = adminsDB.SaveChanges();
+                return Ok(ChangedRecords);
             }
             catch (Exception ex)
             {

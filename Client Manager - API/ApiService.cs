@@ -201,6 +201,8 @@ namespace Client_Manager___API
         {
             return Insert<Admin>($"/api/Insert/AdminsInsertor", admin);
         }
+
+
         #endregion
     }
 }
