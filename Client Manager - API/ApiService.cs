@@ -259,7 +259,7 @@ namespace Client_Manager___API
         #endregion
 
         #region Delete:
-            
+
             
             public Task<int> DeleteAdmin(int idx)
             {
