@@ -11,13 +11,11 @@ namespace Client_Manager___API
 {
     public class ApiService : IApiService
     {
-        private string uri;
         private HttpClient client;
         public ApiService(string baseUri)
         {
-            uri = baseUri;
             client = new HttpClient();
-            client.BaseAddress = new Uri(uri);
+            client.BaseAddress = new Uri(baseUri);
         }
 
         // Default constructor pointing to localhost
