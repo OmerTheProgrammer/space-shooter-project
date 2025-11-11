@@ -122,7 +122,7 @@ namespace Test
             //}
             //Console.WriteLine();
 
-            //Admin Admin = new Admin() { Id = "454252552" };
+            //Admin Admin = new Admin() { Id = "74746747" };
             //AdminDB.Insert(Admin);
             //Console.WriteLine($"{AdminDB.SaveChanges()} affected rows.");
             //at = AdminDB.SelectAll();
