@@ -20,17 +20,14 @@ namespace Server_Manager___API.Controllers
                 AdminsDB adminsDB = new AdminsDB();
                 adminsDB.Delete(new Admin { Idx = idx});
                 int ChangedRecords = adminsDB.SaveChanges();
+                if (ChangedRecords == 0)//mean's "not found" and didn't delete
+                {
+                    return NotFound($"Didn't find Admin: idx = {idx}, so didn't delete!");
+                }
                 return Ok(ChangedRecords);
             }
             catch (Exception ex)
             {
-                // Check for the specific "not found" message from the DB layer.
-                if (ex.Message.Contains("not found"))
-                {
-                    // Use 404 Not Found for missing resources, with the concise error message.
-                    return NotFound(ex.Message);
-                }
-                // Use 500 Internal Server Error for all other unexpected issues.
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
         }

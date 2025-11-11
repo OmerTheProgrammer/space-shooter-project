@@ -13,5 +13,4 @@ CREATE TABLE PlayersAndGroupsTbl (
     FOREIGN KEY (GroupIdx) REFERENCES GroupsTbl(idx),
 
     -- Enforce the rule that a player can only be in a group once (Crucial for linking tables)
-    UNIQUE (PlayerIdx, GroupIdx)
-);
+CONSTRAINT UQ_PlayerGroup_PlayerIdxAndGroupIdx UNIQUE (PlayerIdx, GroupIdx));

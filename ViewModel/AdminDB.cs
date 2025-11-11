@@ -48,6 +48,16 @@ namespace ViewModel
         }
 
         //שלב ב
+        public override void Delete(BaseEntity entity)
+        {
+            BaseEntity reqEntity = this.NewEntity();
+            if (entity != null & entity.GetType() == reqEntity.GetType())
+            {
+                deleted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
+                deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
+            }
+        }
+
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)
         {
             Admin c = entity as Admin;
@@ -57,16 +67,6 @@ namespace ViewModel
 
                 command.CommandText = sqlStr;
                 command.Parameters.Add(new SqlParameter("@pid", c.Idx));
-            }
-        }
-
-        public override void Delete(BaseEntity entity)
-        {
-            BaseEntity reqEntity = this.NewEntity();
-            if (entity != null & entity.GetType() == reqEntity.GetType())
-            {
-                inserted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
-                inserted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
             }
         }
 
