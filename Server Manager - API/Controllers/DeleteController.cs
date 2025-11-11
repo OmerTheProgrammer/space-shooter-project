@@ -13,25 +13,45 @@ namespace Server_Manager___API.Controllers
         // --- ADMINS ---
         [HttpDelete]
         [ActionName("AdminDeletor")]
-        public IActionResult InsertAdmin([FromBody] int idx)
+        // NOTE: Changed parameter name from InsertAdmin to AdminDeletor for clarity.
+        public IActionResult AdminDeletor([FromBody] int idx)
         {
             try
             {
                 AdminsDB adminsDB = new AdminsDB();
-                adminsDB.Delete(new Admin { Idx = idx});
-                int ChangedRecords = adminsDB.SaveChanges();
-                if (ChangedRecords == 0)//mean's "not found" and didn't delete
+                adminsDB.Delete(new Admin { Idx = idx });
+                int changedRecords = adminsDB.SaveChanges();
+
+                if (changedRecords == 0) // Resource not found
                 {
-                    return NotFound($"Didn't find Admin: idx = {idx}, so didn't delete!");
+                    // 404 Not Found
+                    return StatusCode(404, $"Not Found: Admin with idx = {idx} was not found.");
                 }
-                return Ok(ChangedRecords);
+
+                // 204 No Content is the standard success response for a successful DELETE.
+                return StatusCode(204, $"OK: Record for Admin Idx=" +
+                        $"{idx} was removed, no returned content .\n" +
+                        $" Records changed: {changedRecords}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
+                //tries to get the innermost exception message,
+                //becouse errors in SQL are often wrapped in c# errors.
+                string errorMessage = ex.InnerException?.Message ?? ex.Message;
+
+                // 1. FOREIGN KEY VIOLATION (409 Conflict or 400 Bad Request)
+                // This occurs when a child record (e.g., an 'Order' created by this Admin) exists.
+                if (errorMessage.Contains("FOREIGN KEY constraint") ||
+                    errorMessage.Contains("violates foreign key constraint"))
+                {
+                    // 409 Conflict is often preferred for state-based conflicts.
+                    return StatusCode(409,
+                        $"Conflict: Cannot delete Admin with idx = {idx} because it is referenced by other records (Foreign Key violation).");
+                }
+
+                // 2. GENERAL SERVER ERROR (500 Internal Server Error)
+                return StatusCode(500, $"Internal Server Error: {errorMessage}");
             }
         }
-
-
     }
 }
