@@ -17,12 +17,8 @@ namespace Server_Manager___API.Controllers
         {
             try
             {
+                //run only thruogh Client side becouse replaces every field!
                 AdminsDB adminsDB = new AdminsDB();
-                Admin result = AdminsDB.SelectByIdx(admin.Idx);
-                //problem!!! intatianly not working, changed nothing, becouse
-                //currently if admin isn't result with same everything
-                //except the fields i change,
-                //the values in db will be changed to json defults,
                 adminsDB.Update(admin);
                 int changedRecords = adminsDB.SaveChanges();
 
