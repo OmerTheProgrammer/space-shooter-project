@@ -392,6 +392,14 @@ namespace Test
             admins = await api.GetAllAdmins();
             Console.WriteLine(admins.Last());
 
+            Console.WriteLine(api.UpdateAdmins(new Admin
+                    {
+                        Idx = admins.Last().Idx,
+                        Id = "14214431"
+                    }
+                    )
+                );
+
 
             #endregion
 

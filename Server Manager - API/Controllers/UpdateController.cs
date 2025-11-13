@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Model.Entitys;
+using System;
 using System.Text.RegularExpressions;
 using ViewModel;
 
@@ -10,6 +11,10 @@ namespace Server_Manager___API.Controllers
     [ApiController]
     public class UpdateController : Controller
     {
+        // Define the specific default/sentinel values used by all entities
+        private static readonly DateTime[] DEFAULT_DATEs = DateTime.Now, new DateTime(1753, 1, 1, 12, 0, 0), ;
+        private const string[] DEFAULT_STRINGs = new string[]{"","string" };
+        private const bool DEFAULT_BOOL = false;
         // --- ADMIN UPDATE ---
         [HttpPut]
         [ActionName("AdminUpdator")]
@@ -19,6 +24,49 @@ namespace Server_Manager___API.Controllers
             {
                 //run only thruogh Client side becouse replaces every field!
                 AdminsDB adminsDB = new AdminsDB();
+                //get current db values
+                Admin originalAdmin = AdminsDB.SelectByIdx(admin.Idx);
+
+                if (originalAdmin == null)
+                {
+                    return StatusCode(404, $"Admin with Idx={admin.Idx} not found.");
+                }
+
+                //easy primitve fields
+                if (DEFAULT_STRINGs.Contains(admin.Id))
+                {
+                    originalAdmin.Id = admin.Id;
+                }
+                if (admin.Password != DEFAULT_STRING)
+                {
+                    originalAdmin.Password = admin.Password;
+                }
+                if (admin.Username != DEFAULT_STRING)
+                {
+                    originalAdmin.Username = admin.Username;
+                }
+                if (admin.Email != DEFAULT_STRING)
+                {
+                    originalAdmin.Email = admin.Email;
+                }
+
+                // --- DateTime? Fields (Default: 1753-01-01 12:00:00) ---
+                // You must check both: HasValue AND if the value is not the sentinel date.
+                if (admin.Birthday.HasValue && admin.Birthday.Value != DEFAULT_DATE)
+                {
+                    originalAdmin.Birthday = admin.Birthday;
+                }
+                if (admin.StartDate.HasValue && admin.StartDate.Value != DEFAULT_DATE)
+                {
+                    originalAdmin.StartDate = admin.StartDate;
+                }
+
+                // If 'false' is a valid, intentional update, you need to use a different DTO.
+                if (admin.IsLoggedIn != DEFAULT_BOOL)
+                {
+                    originalAdmin.IsLoggedIn = admin.IsLoggedIn;
+                }
+
                 adminsDB.Update(admin);
                 int changedRecords = adminsDB.SaveChanges();
 
@@ -35,7 +83,7 @@ namespace Server_Manager___API.Controllers
                     return StatusCode(200, $"OK: Record for Admin Idx=" +
                         $"{admin.Idx} didn't need to change, " +
                         $"no returned content.\n" +
-                        $" Records changed: {changedRecords}");
+                        $" Records changed: {0}");
                 }
             }
             catch (Exception ex)
