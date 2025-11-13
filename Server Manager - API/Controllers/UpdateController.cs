@@ -12,9 +12,9 @@ namespace Server_Manager___API.Controllers
     public class UpdateController : Controller
     {
         // Define the specific default/sentinel values used by all entities
-        private static readonly DateTime[] DEFAULT_DATEs = DateTime.Now, new DateTime(1753, 1, 1, 12, 0, 0), ;
-        private const string[] DEFAULT_STRINGs = new string[]{"","string" };
-        private const bool DEFAULT_BOOL = false;
+        private static readonly DateTime DEFAULT_CS_DATE = new DateTime(1753, 1, 1, 12, 0, 0);
+        private readonly string[] DEFAULT_STRINGs = new string[]{ "", "string" };
+
         // --- ADMIN UPDATE ---
         [HttpPut]
         [ActionName("AdminUpdator")]
@@ -33,30 +33,30 @@ namespace Server_Manager___API.Controllers
                 }
 
                 //easy primitve fields
-                if (DEFAULT_STRINGs.Contains(admin.Id))
+                if (!DEFAULT_STRINGs.Contains(admin.Id))
                 {
                     originalAdmin.Id = admin.Id;
                 }
-                if (admin.Password != DEFAULT_STRING)
+                if (!DEFAULT_STRINGs.Contains(admin.Password))
                 {
                     originalAdmin.Password = admin.Password;
                 }
-                if (admin.Username != DEFAULT_STRING)
+                if (!DEFAULT_STRINGs.Contains(admin.Username))
                 {
                     originalAdmin.Username = admin.Username;
                 }
-                if (admin.Email != DEFAULT_STRING)
+                if (!DEFAULT_STRINGs.Contains(admin.Email))
                 {
                     originalAdmin.Email = admin.Email;
                 }
 
                 // --- DateTime? Fields (Default: 1753-01-01 12:00:00) ---
                 // You must check both: HasValue AND if the value is not the sentinel date.
-                if (admin.Birthday.HasValue && admin.Birthday.Value != DEFAULT_DATE)
+                if (admin.Birthday.HasValue && admin.Birthday.Value != DEFAULT_CS_DATE)
                 {
                     originalAdmin.Birthday = admin.Birthday;
                 }
-                if (admin.StartDate.HasValue && admin.StartDate.Value != DEFAULT_DATE)
+                if (admin.StartDate.HasValue && admin.StartDate.Value != DEFAULT_CS_DATE)
                 {
                     originalAdmin.StartDate = admin.StartDate;
                 }
