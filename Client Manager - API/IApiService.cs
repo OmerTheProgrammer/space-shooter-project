@@ -1,4 +1,5 @@
-﻿using Model.Entitys;
+﻿using Model.Data_Transfer_Objects;
+using Model.Entitys;
 using Model.Tables;
 using System;
 using System.Collections.Generic;
@@ -66,8 +67,9 @@ namespace Client_Manager___API
         #endregion
 
         #region Update:
-            public Task<int> UpdateAdmins(Admin admin);
-
+            public Task<int> UpdateAdmins(AdminDTO admin);
+            
+            
         #endregion
 
         #region Delete:
