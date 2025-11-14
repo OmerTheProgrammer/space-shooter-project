@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Client_Manager___API;
+using Model;
+using Model.Data_Transfer_Objects;
+using Model.Entitys;
+using Model.Tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Model;
-using Model.Entitys;
-using Model.Tables;
 using ViewModel;
-using Client_Manager___API;
 
 namespace Test
 {
@@ -366,42 +367,52 @@ namespace Test
             ApiService api = new ApiService("https://localhost:7013");
 
             #region Admins:
-            AdminsTable admins = await api.GetAllAdmins();
-            foreach (var item in admins)
-            {
-                Console.WriteLine(item);
-            }
-            Console.WriteLine();
+                Console.WriteLine("--- Starting API Demo Scenario ---\n");
 
-            //expected found message
-            Console.WriteLine(await api.GetAdminsByIdx(2));
+                // 1. Get All (Initial list)
+                AdminsTable admins = await api.GetAllAdmins();
 
-            //expected not found message
-            Console.WriteLine(await api.GetAdminsByIdx(12));
-            Console.WriteLine();
-
-            Console.WriteLine();
-            Console.WriteLine(
-                api.InsertAdmins(new Admin
+                // 2. Write initial list
+                foreach (var item in admins)
                 {
-                    Birthday = new DateTime(2022, 3, 2)
+                    Console.WriteLine(item + "\n");
                 }
-                )
-            );
 
-            admins = await api.GetAllAdmins();
-            Console.WriteLine(admins.Last());
+                // 3. Expected found message (Idx 2 exists)
+                Console.WriteLine(await api.GetAdminsByIdx(2) + "\n");
 
-            Console.WriteLine(api.UpdateAdmins(new Admin
-                    {
-                        Idx = admins.Last().Idx,
-                        Id = "14214431"
-                    }
-                    )
-                );
+                // 4. Expected not found message (Idx 12 does not exist)
+                // NOTE: The GetAdminsByIdx mock handles the error printing internally
+                Admin notFoundResult = await api.GetAdminsByIdx(12);
+                Console.WriteLine($"GetAdminByIdx(12) returned: {(notFoundResult == null ? "NULL (Error)" : notFoundResult.ToString())}\n");
 
+                // 5. Insert new Admin
+                int newIdx = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
+                Console.WriteLine($"InsertAdmins Result (New Idx): {newIdx}\n");
 
+                // 6. Get All (Updated list)
+                admins = await api.GetAllAdmins();
+
+                // 7. Write last item (the newly inserted Admin)
+                Console.WriteLine(admins.Last() + "\n");
+
+                // 8. Update the new Admin
+                int updateResult = await api.UpdateAdmins(new AdminDTO { Idx = admins.Last().Idx, Id = "14214431" });
+                Console.WriteLine($"UpdateAdmins Result (Rows Affected): {updateResult}\n");
+
+                // 9. Get All (Updated list)
+                admins = await api.GetAllAdmins();
+
+                // 10. Write last item (the updated Admin)
+                Console.WriteLine(admins.Last() + "\n");
+
+                // 11. Delete the new Admin
+                int deleteResult = await api.DeleteAdmin(admins.Last().Idx);
+                Console.WriteLine($"DeleteAdmin Result (Rows Affected): {deleteResult}\n");
+
+                Console.WriteLine("--- API Demo Scenario Complete ---");
             #endregion
+
 
         }
     }
