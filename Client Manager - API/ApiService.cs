@@ -294,7 +294,7 @@ namespace Client_Manager___API
 
                     // 1. Send the PUT request not using PutAsJsonAsync becouse
                     // content the json is now manually created
-                    HttpResponseMessage response =
+                    HttpResponseMessage response = 
                             await client.PutAsync(endpoint, content);
 
                     // 2. Check for success status codes (2xx)

@@ -8,17 +8,18 @@ namespace Model.Entitys
 {
     public enum Enemy
     {
-        space_ship = 0,//the basic green
-        space_destroyer = 1, // red - not implemnted yet in game
-        mini_boss = 2, // not implemnted yet in game
-        boss = 3, // not implemnted yet in game
+        None = 0,
+        space_ship = 1,//the basic green
+        space_destroyer = 2, // red - not implemnted yet in game
+        mini_boss = 3, // not implemnted yet in game
+        boss = 4, // not implemnted yet in game
     }
 
     public class EnemyInLastLevel : BaseEntity
     {
         private RunInfo runInfo;
-        private Enemy name = Enemy.space_ship;
-        private int amount = 1;
+        private Enemy name = Enemy.None;//defult that must be changed
+        private int amount = -1;//defult that must be changed
 
         public RunInfo RunInfo { get => runInfo; set => runInfo = value; }
         public Enemy Name { get => name; set => name = value; }
