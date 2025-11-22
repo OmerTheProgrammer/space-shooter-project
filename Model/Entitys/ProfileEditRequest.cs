@@ -13,14 +13,14 @@ namespace Model.Entitys
     public class ProfileEditRequest : BaseEntity
     {
         private Player requestingPlayer;
-        private DateTime? requestDate = new DateTime(1753, 1, 1, 12, 0, 0);
+        private DateTime? requestingDate = new DateTime(1753, 1, 1, 12, 0, 0);
         private Status status = 0;
-        private DateTime? reviewDate = new DateTime(1753, 1, 1, 12, 0, 0);
+        private DateTime? reviewingDate = new DateTime(1753, 1, 1, 12, 0, 0);
         private Admin adressingAdmin;
 
         public Player RequestingPlayer { get => requestingPlayer; set => requestingPlayer = value; }
-        public DateTime? RequestDate { get => requestDate; set => requestDate = value; }
-        public DateTime? ReviewDate { get => reviewDate; set => reviewDate = value; }
+        public DateTime? RequestingDate { get => requestingDate; set => requestingDate = value; }
+        public DateTime? ReviewingDate { get => reviewingDate; set => reviewingDate = value; }
         public Admin AdressingAdmin { get => adressingAdmin; set => adressingAdmin = value; }
         public Status Status { get => status; set => status = value; }
 
@@ -28,8 +28,8 @@ namespace Model.Entitys
         {
             return $"{base.ToString()}, " +
                 $"Requesting Player: {this.RequestingPlayer},\n" +
-                $"Request Date: {this.RequestDate}, " +
-                $"Review Date: {this.ReviewDate}, " +
+                $"Request Date: {this.RequestingDate}, " +
+                $"Review Date: {this.ReviewingDate}, " +
                 $"Adressing Admin: {this.AdressingAdmin},\n" +
                 $"Status: {this.Status}";
         }

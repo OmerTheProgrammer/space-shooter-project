@@ -6,11 +6,11 @@
 CREATE TABLE ProfileEditRequestsTbl (
     idx INT IDENTITY(1,1) PRIMARY KEY,
     PlayerIdx INT NOT NULL, -- Changed from UserID to PlayerIdx (Foreign Key to Players table)
-    RequestDate DATETIME NOT NULL,
+    RequestingDate DATETIME NOT NULL,
     
     -- Status values: 0=Pending, 1=Approved, 2=Rejected, 3=Canceled
     [Status] INT NOT NULL CHECK ([Status] IN (0, 1, 2, 3)) DEFAULT 0, 
-    ReviewDate DATETIME NULL, -- NULL if still Pending
+    ReviewingDate DATETIME NULL, -- NULL if still Pending
     AdminIdx INT NULL,    -- New field based on your image (Foreign Key to Admins table)
 
     -- Define Foreign Key: PlayerIdx links to the Player's ID in the Players table

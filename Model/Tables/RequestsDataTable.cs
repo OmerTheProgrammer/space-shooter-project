@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Model.Tables
 {
-    public class RequestsDataTable : List<RequestData>
+    public class RequestsDataTable : List<RequestingData>
     {
         public RequestsDataTable() { }
-        public RequestsDataTable(IEnumerable<RequestData> list) : base(list) { }
-        public RequestsDataTable(IEnumerable<BaseEntity> list) : base(list.Cast<RequestData>().ToList()) { }
+        public RequestsDataTable(IEnumerable<RequestingData> list) : base(list) { }
+        public RequestsDataTable(IEnumerable<BaseEntity> list) : base(list.Cast<RequestingData>().ToList()) { }
     }
 }

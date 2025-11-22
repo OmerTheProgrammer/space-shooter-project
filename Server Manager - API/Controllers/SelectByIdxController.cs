@@ -129,7 +129,7 @@ namespace Server_Manager___API.Controllers
         {
             try
             {
-                RequestData result = RequestsDataDB.SelectByIdx(Idx);
+                RequestingData result = RequestsDataDB.SelectByIdx(Idx);
                 //ok
                 return StatusCode(200,result);
             }

@@ -11,7 +11,7 @@ Post-Deployment Script Template
 */
 
 -- IMPORTANT: The order matters due to foreign key constraints.
--- Users must be inserted before Admins, Players, or RequestData.
+-- Users must be inserted before Admins, Players, or RequestingData.
 -- Players must be inserted before PlayersAndGroups or RunsInfo.
 
 ---------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.ProfileEditRequestsTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.ProfileEditRequestsTbl...'
     INSERT INTO dbo.ProfileEditRequestsTbl
-        (PlayerIdx, RequestDate, Status, ReviewDate, AdminIdx)
+        (PlayerIdx, RequestingDate, [Status], ReviewingDate, AdminIdx)
     VALUES
     -- Request 1: Player 11 (Pending), assigned to Admin 1
     (11, '2025-09-29 10:00:00', 0, NULL, 1),

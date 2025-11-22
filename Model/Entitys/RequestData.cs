@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Entitys
 {
-    public class RequestData :BaseEntity
+    public class RequestingData :BaseEntity
     {
         private ProfileEditRequest request;
         private string field = "";

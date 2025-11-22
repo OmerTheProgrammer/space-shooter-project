@@ -148,7 +148,7 @@ namespace Test
             //Console.WriteLine();
             #endregion
 
-            #region RequestData
+            #region RequestingData
             //RequestsDataDB RequestsDataDB = new RequestsDataDB();
             //RequestsDataTable rt = RequestsDataDB.SelectAll();
             //Console.WriteLine("RequestsData: ");
@@ -158,7 +158,7 @@ namespace Test
             //}
             //Console.WriteLine();
 
-            //RequestData RequestsData = new RequestData()
+            //RequestingData RequestsData = new RequestingData()
             //{
             //    Request = new ProfileEditRequest { Idx = 1 },
             //    Field = "3654"
@@ -188,8 +188,8 @@ namespace Test
             #endregion
 
             #region ProfileEditRequests
-            //ProfileEditRequestsDB ProfileEditRequestDB = new ProfileEditRequestsDB();
-            //ProfileEditRequestsTable ProfTbl = ProfileEditRequestDB.SelectAll();
+            //ProfileEditRequestsDB ProfileEditRequestingDB = new ProfileEditRequestsDB();
+            //ProfileEditRequestsTable ProfTbl = ProfileEditRequestingDB.SelectAll();
             //Console.WriteLine("ProfileEditRequests: ");
             //foreach (var item in ProfTbl)
             //{
@@ -198,23 +198,23 @@ namespace Test
             //Console.WriteLine();
 
             //ProfileEditRequest ProfileEditRequest = new ProfileEditRequest() { RequestingPlayer = new Player() { Idx = 3 }, Status = Status.Pending };
-            //ProfileEditRequestDB.Insert(ProfileEditRequest);
-            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            //ProfTbl = ProfileEditRequestDB.SelectAll();
+            //ProfileEditRequestingDB.Insert(ProfileEditRequest);
+            //Console.WriteLine($"{ProfileEditRequestingDB.SaveChanges()} affected rows.");
+            //ProfTbl = ProfileEditRequestingDB.SelectAll();
             //Console.WriteLine(ProfTbl.Last());
             //Console.WriteLine();
 
             //ProfileEditRequest = ProfTbl.Last();
             //ProfileEditRequest.Status = Status.Approved;
-            //ProfileEditRequestDB.Update(ProfileEditRequest);
-            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            //ProfTbl = ProfileEditRequestDB.SelectAll();
+            //ProfileEditRequestingDB.Update(ProfileEditRequest);
+            //Console.WriteLine($"{ProfileEditRequestingDB.SaveChanges()} affected rows.");
+            //ProfTbl = ProfileEditRequestingDB.SelectAll();
             //Console.WriteLine(ProfTbl.Last());
             //Console.WriteLine();
 
-            //ProfileEditRequestDB.Delete(ProfTbl.Last());
-            //Console.WriteLine($"{ProfileEditRequestDB.SaveChanges()} affected rows.");
-            //ProfTbl = ProfileEditRequestDB.SelectAll();
+            //ProfileEditRequestingDB.Delete(ProfTbl.Last());
+            //Console.WriteLine($"{ProfileEditRequestingDB.SaveChanges()} affected rows.");
+            //ProfTbl = ProfileEditRequestingDB.SelectAll();
             //Console.WriteLine(ProfTbl.Last());
             //Console.WriteLine();
             #endregion

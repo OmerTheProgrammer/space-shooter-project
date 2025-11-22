@@ -149,19 +149,19 @@
         <mxCell id="q9G1oTKpOTEInbmrcR3X-3" value="PlayerIdx: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-1" vertex="1">
           <mxGeometry y="52" width="235" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="q9G1oTKpOTEInbmrcR3X-6" value="RequestDate: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-1" vertex="1">
+        <mxCell id="q9G1oTKpOTEInbmrcR3X-6" value="RequestingDate: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-1" vertex="1">
           <mxGeometry y="78" width="235" height="26" as="geometry" />
         </mxCell>
         <mxCell id="q9G1oTKpOTEInbmrcR3X-9" value="Status:&amp;nbsp;&lt;code&gt;&lt;span style=&quot;font-family: Helvetica;&quot;&gt;Status(0=&lt;/span&gt;Pending&lt;/code&gt;/1=&lt;code&gt;Approved&lt;/code&gt;&lt;div&gt;/2=&lt;code&gt;Rejected/3=&lt;/code&gt;&lt;code&gt;Canceled)&lt;/code&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-1" vertex="1">
           <mxGeometry y="104" width="235" height="36" as="geometry" />
         </mxCell>
-        <mxCell id="q9G1oTKpOTEInbmrcR3X-11" value="ReviewDate: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-1" vertex="1">
+        <mxCell id="q9G1oTKpOTEInbmrcR3X-11" value="ReviewingDate: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-1" vertex="1">
           <mxGeometry y="140" width="235" height="26" as="geometry" />
         </mxCell>
         <mxCell id="nSvyFsM4M0dJGcgWFFCD-3" value="&lt;span style=&quot;text-align: center;&quot;&gt;Admin&lt;/span&gt;Idx: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-1" vertex="1">
           <mxGeometry y="166" width="235" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="q9G1oTKpOTEInbmrcR3X-12" value="RequestData" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="q9G1oTKpOTEInbmrcR3X-12" value="RequestingData" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="920" y="350" width="150" height="156" as="geometry" />
         </mxCell>
         <mxCell id="q9G1oTKpOTEInbmrcR3X-13" value="idx : auto number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="q9G1oTKpOTEInbmrcR3X-12" vertex="1">

@@ -23,14 +23,14 @@ namespace ViewModel
         {
             ProfileEditRequest p = entity as ProfileEditRequest;
             DateTime date = new DateTime(1753, 1, 1, 12, 0, 0);
-            if (DateTime.TryParse(reader["ReviewDate"].ToString(), out date))
+            if (DateTime.TryParse(reader["ReviewingDate"].ToString(), out date))
             {
-                p.ReviewDate = date;
+                p.ReviewingDate = date;
             }
             date = new DateTime(1753, 1, 1, 12, 0, 0);
-            if (DateTime.TryParse(reader["RequestDate"].ToString(), out date))
+            if (DateTime.TryParse(reader["RequestingDate"].ToString(), out date))
             {
-                p.ReviewDate = date;
+                p.ReviewingDate = date;
             }
             p.Status = (Status)((int)reader["Status"]);
             p.RequestingPlayer = PlayersDB.SelectByIdx((int)reader["PlayerIdx"]);
@@ -75,14 +75,14 @@ namespace ViewModel
         //        {
 
         //            RequestsDataDB requestsDataDB = new RequestsDataDB();
-        //            RequestsDataTable allRequestDatas = requestsDataDB.SelectAll();
-        //            // Find all RequestData related to this ProfileEditRequest
-        //            List<RequestData> relatedRequestDatas = allRequestDatas.FindAll(item => item.Request.Idx == entity.Idx);
+        //            RequestsDataTable allRequestingDatas = requestsDataDB.SelectAll();
+        //            // Find all RequestingData related to this ProfileEditRequest
+        //            List<RequestingData> relatedRequestingDatas = allRequestingDatas.FindAll(item => item.Request.Idx == entity.Idx);
         //            //cast to RequestsDataTable becouse can't in one line
-        //            relatedRequestDatas = relatedRequestDatas as RequestsDataTable;
-        //            if (relatedRequestDatas != null)
+        //            relatedRequestingDatas = relatedRequestingDatas as RequestsDataTable;
+        //            if (relatedRequestingDatas != null)
         //            {
-        //                foreach (var item in relatedRequestDatas)
+        //                foreach (var item in relatedRequestingDatas)
         //                {
         //                    requestsDataDB.Delete(item);
         //                }
@@ -110,8 +110,8 @@ namespace ViewModel
             if (c != null)
             {
 
-                string sqlStr = $"INSERT INTO dbo.ProfileEditRequestsTbl(PlayerIdx, RequestDate, Status, ReviewDate, AdminIdx) " +
-                        $"VALUES (@PlayerIdx, @RequestDate, @Status, @ReviewDate, @AdminIdx)";
+                string sqlStr = $"INSERT INTO dbo.ProfileEditRequestsTbl(PlayerIdx, RequestingDate, Status, ReviewingDate, AdminIdx) " +
+                        $"VALUES (@PlayerIdx, @RequestingDate, @Status, @ReviewingDate, @AdminIdx)";
                 command.CommandText = sqlStr;
 
                 if (c.RequestingPlayer != null)
@@ -131,9 +131,9 @@ namespace ViewModel
                 {
                     command.Parameters.Add(new SqlParameter("@AdminIdx", DBNull.Value));
                 }
-                command.Parameters.Add(new SqlParameter("@RequestDate", c.RequestDate));
+                command.Parameters.Add(new SqlParameter("@RequestingDate", c.RequestingDate));
                 command.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
-                command.Parameters.Add(new SqlParameter("@ReviewDate", c.ReviewDate));
+                command.Parameters.Add(new SqlParameter("@ReviewingDate", c.ReviewingDate));
             }
         }
 
@@ -142,14 +142,14 @@ namespace ViewModel
             ProfileEditRequest c = entity as ProfileEditRequest;
             if (c != null)
             {
-                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, RequestDate=@RequestDate, Status=@Status, " +
-                    $"ReviewDate=@ReviewDate WHERE Idx=@Idx";
+                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, RequestingDate=@RequestingDate, Status=@Status, " +
+                    $"ReviewingDate=@ReviewingDate WHERE Idx=@Idx";
                 cmd.CommandText = sqlStr;
 
                 cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
-                cmd.Parameters.Add(new SqlParameter("@RequestDate", c.RequestDate));
+                cmd.Parameters.Add(new SqlParameter("@RequestingDate", c.RequestingDate));
                 cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
-                cmd.Parameters.Add(new SqlParameter("@ReviewDate", c.ReviewDate));
+                cmd.Parameters.Add(new SqlParameter("@ReviewingDate", c.ReviewingDate));
                 if (c.AdressingAdmin != null)
                 {
                     command.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));
