@@ -23,7 +23,8 @@ namespace ViewModel
         protected override BaseEntity CreateModel(BaseEntity entity)
         {
             Group p = entity as Group;
-            p.GroupScore = int.Parse(reader["GroupScore"].ToString());
+            p.Score = int.Parse(reader["Score"].ToString());
+            p.Name = reader["Name"].ToString();
             base.CreateModel(entity);
             return p;
         }
@@ -65,24 +66,26 @@ namespace ViewModel
             Group c = entity as Group;
             if (c != null)
             {
-                string sqlStr = $"INSERT INTO dbo.GroupsTbl(GroupScore) " +
-                        $"VALUES (@GroupScore)";
+                string sqlStr = $"INSERT INTO dbo.GroupsTbl(Score,Name) " +
+                        $"VALUES (@Score,@Name)";
                 command.CommandText = sqlStr;
 
-                command.Parameters.Add(new SqlParameter("@GroupScore", c.GroupScore));
+                command.Parameters.Add(new SqlParameter("@Score", c.Score));
+                command.Parameters.Add(new SqlParameter("@Name", c.Name));
             }
         }
 
-        protected override void CreateUpdatedSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateUpdatedSQL(BaseEntity entity, SqlCommand command)
         {
             Group c = entity as Group;
             if (c != null)
             {
-                string sqlStr = $"UPDATE dbo.GroupsTbl SET GroupScore=@GroupScore WHERE Idx=@Idx";
-                cmd.CommandText = sqlStr;
+                string sqlStr = $"UPDATE dbo.GroupsTbl SET Score=@Score, Name=@Name WHERE Idx=@Idx";
+                command.CommandText = sqlStr;
 
-                command.Parameters.Add(new SqlParameter("@GroupScore", c.GroupScore));
-                cmd.Parameters.Add(new SqlParameter("@Idx", c.Idx));
+                command.Parameters.Add(new SqlParameter("@Score", c.Score));
+                command.Parameters.Add(new SqlParameter("@Name", c.Name));
+                command.Parameters.Add(new SqlParameter("@Idx", c.Idx));
             }
         }
     }

@@ -8,13 +8,15 @@ namespace Model.Entitys
 {
     public class Group : BaseEntity
     {
-        private int groupScore = -1;//defult that must be changed
+        private int score = -1;//defult that must be changed
+        private string name = "";//defult that must be changed
 
-        public int GroupScore { get => groupScore; set => groupScore = value; }
+        public int Score { get => score; set => score = value; }
+        public string Name { get => name; set => name = value; }
 
         public override string ToString()
         {
-            return $"{base.ToString()}, Groups score: {this.GroupScore}";
+            return $"{base.ToString()},The Group {this.Name}'s score is {this.Score}";
         }
     }
 }

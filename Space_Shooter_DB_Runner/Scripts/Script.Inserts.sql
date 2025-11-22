@@ -196,17 +196,17 @@ GO -- End of dbo.RequestsDataTbl IF block
 IF NOT EXISTS (SELECT 1 FROM dbo.GroupsTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.GroupsTbl...'
-    INSERT INTO dbo.GroupsTbl (GroupScore) VALUES
+    INSERT INTO dbo.GroupsTbl (GroupScore, [Name]) VALUES
     -- Group 1: idx will be 1
-    (550000),
+    (550000,'The Astral Vanguard'),
     -- Group 2: idx will be 2
-    ( 920000),
+    ( 920000,'Echoes of the Void'),
     -- Group 3: idx will be 3
-    ( 120000),
+    ( 120000,'The Iron Sovereigns'),
     -- Group 4: idx will be 4
-    ( 380000),
+    ( 380000,'Crimson Zealots'),
     -- Group 5: idx will be 5
-    ( 1050000);
+    ( 1050000,'Shadow Syndicate');
 END
 GO -- End of dbo.GroupsTbl IF block
 

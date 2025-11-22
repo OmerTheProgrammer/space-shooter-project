@@ -1,5 +1,6 @@
 ﻿-- Table 3: Groups
 CREATE TABLE GroupsTbl (
     idx INT IDENTITY(1,1) PRIMARY KEY,
-    GroupScore INT NOT NULL DEFAULT 0,
+    Score INT NOT NULL DEFAULT 0,
+    Name NVARCHAR(100) NOT NULL
 );

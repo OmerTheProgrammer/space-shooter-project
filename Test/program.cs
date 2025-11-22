@@ -229,7 +229,7 @@ namespace Test
             //}
             //Console.WriteLine();
 
-            //Group group = new Group() { GroupScore = 1 };
+            //Group group = new Group() { Score = 1 };
             //GroupDB.Insert(group);
             //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
             //gt = GroupDB.SelectAll();
@@ -237,7 +237,7 @@ namespace Test
             //Console.WriteLine();
 
             //group = gt.Last();
-            //group.GroupScore += 100;
+            //group.Score += 100;
             //GroupDB.Update(group);
             //Console.WriteLine($"{GroupDB.SaveChanges()} affected rows.");
             //gt = GroupDB.SelectAll();
