@@ -52,5 +52,45 @@ namespace Server_Manager___API.Controllers
                 return StatusCode(500, $"Internal Server Error: {errorMessage}");
             }
         }
+
+        // --- USERS ---
+        [HttpDelete]
+        [ActionName("UserDeletor")]
+        public IActionResult UserDeletor([FromBody] int idx)
+        {
+            try
+            {
+                UsersDB usersDB = new UsersDB();
+                usersDB.Delete(new User { Idx = idx });
+                int changedRecords = usersDB.SaveChanges();
+                if (changedRecords == 0) // Resource not found
+                {
+                    // 404 Not Found
+                    return StatusCode(404, $"Not Found: User with idx = {idx} was not found.");
+                }
+                return StatusCode(200, $"OK: Record for User Idx=" +
+                        $"{idx} was removed.\n" +
+                        $" Records changed: {changedRecords}");
+            }
+            catch (Exception ex)
+            {
+                //tries to get the innermost exception message,
+                //becouse errors in SQL are often wrapped in c# errors.
+                string errorMessage = ex.InnerException?.Message ?? ex.Message;
+                // 1. FOREIGN KEY VIOLATION (409 Conflict or 400 Bad Request)
+                // This occurs when a child record (e.g., an 'Order' created by this User) exists.
+                if (errorMessage.Contains("FOREIGN KEY constraint") ||
+                    errorMessage.Contains("violates foreign key constraint"))
+                {
+                    // 409 Conflict is often preferred for state-based conflicts.
+                    return StatusCode(409,
+                        $"Conflict: Cannot delete User with idx = {idx} because it is referenced by other records (Foreign Key violation).");
+                }
+                // 2. GENERAL SERVER ERROR (500 Internal Server Error)
+                return StatusCode(500, $"Internal Server Error: {errorMessage}");
+            }
+        }
+
+
     }
 }
