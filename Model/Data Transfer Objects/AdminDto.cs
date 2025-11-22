@@ -11,11 +11,8 @@ namespace Model.Data_Transfer_Objects
     // includ fields that normally exist in Admin entity only as values 
     //becouse they not null in DB, but here they are
     //nullable to support partial updates
-    public class AdminDTO
+    public class AdminDTO : BaseDTO<Admin, AdminDTO>
     {
-        // Idx is always mandatory for finding the record
-        public int Idx { get; set; }
-
         // Reference types (strings) are nullable by default (null if omitted from JSON)
         public string? Id { get; set; }
         public string? Password { get; set; }
@@ -27,19 +24,5 @@ namespace Model.Data_Transfer_Objects
         public DateTime? Birthday { get; set; } = null;
         public DateTime? StartDate { get; set; } = null;
 
-        public AdminDTO() { }//for recinstance without parameters in returns
-
-        ///<summary>
-        ///takes an Admin entity and converts it to AdminDTO,
-        ///copies only the Idx field needed for identification
-        ///so user changes only the fields they want to update
-        ///</summary>
-        public static AdminDTO FromAdmin(Admin admin)
-        {
-            return new AdminDTO
-            {
-                Idx = admin.Idx,
-            };
-        }
     }
 }

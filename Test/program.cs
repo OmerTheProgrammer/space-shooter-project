@@ -399,13 +399,15 @@ namespace Test
             // 8. Update the new Admin:
             //find the admin (that we just added)
             Admin admin = admins.Last();
-            //create a DTO from it to update just the fields we want to send
-            AdminDTO Dto = AdminDTO.FromAdmin(admin);
-            //change some fields
-            Dto.Id = "14214431";
-            //send tne update request with the DTO
-            //that has nulls, idx and the changed field/s only
-            int updateResult = await api.UpdateAdmins(Dto);
+            int updateResult = await api.UpdateAdmins(
+                        //create DTO from entity with nulls and change only what we want
+                        AdminDTO.FromEntity(admin, dto =>
+                        {
+                            // Define ALL changes
+                            dto.Id = "14214431";
+                        }
+                    )
+                );
             Console.WriteLine($"UpdateAdmins Result (Rows Affected): {updateResult}\n");
 
             // 9. Get All (Updated list)
