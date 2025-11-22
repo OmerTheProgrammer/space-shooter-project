@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Model.Data_Transfer_Objects
 {
+    // NOTE: Assuming EnemyInLastLevel, RunInfo, and Enemy are defined elsewhere.
+
+    // Data Transfer Object (DTO) for EnemyInLastLevel entity supporting partial updates.
     public class EnemyInLastLevelDTO
     {
         // Idx is always mandatory for finding the record
@@ -17,34 +20,27 @@ namespace Model.Data_Transfer_Objects
 
         // Value types MUST be explicitly nullable for partial updates
         public int? Amount { get; set; } = null;
+
+        // Assuming Enemy is an enum, it must be nullable (Enemy?)
         public Enemy? Name { get; set; } = null;
 
-        public EnemyInLastLevelDTO(EnemyInLastLevel enemy)
+        /// <summary>
+        /// Parameterless constructor for deserialization and static factory use.
+        /// </summary>
+        public EnemyInLastLevelDTO() { }
+
+        /// <summary>
+        /// Factory method to easily create a DTO from a full EnemyInLastLevel entity,
+        /// marking all fields as NOT to be updated initially (they are all null).
+        /// </summary>
+        public static EnemyInLastLevelDTO FromEntity(EnemyInLastLevel enemy)
         {
-            this.Idx = enemy.Idx;
-
-            // --- NEW DEFAULT VALUES ---
-            const Enemy defaultEnemyName = Enemy.None;
-            const int defaultAmount = -1;
-            // --------------------------
-
-            // RunInfo (Reference Type Check - Default is null/uninitialized)
-            if (enemy.RunInfo != null)
+            // We only copy the Index (Idx) which is mandatory for the update operation.
+            // All other properties remain null to signal to the server they shouldn't be touched.
+            return new EnemyInLastLevelDTO
             {
-                this.RunInfo = enemy.RunInfo;
-            }
-
-            // Name (Value Type Check - Default is Enemy.None)
-            if (enemy.Name != defaultEnemyName)
-            {
-                this.Name = enemy.Name;
-            }
-
-            // Amount (Value Type Check - Default is -1)
-            if (enemy.Amount != defaultAmount)
-            {
-                this.Amount = enemy.Amount;
-            }
+                Idx = enemy.Idx,
+            };
         }
     }
 }

@@ -396,10 +396,16 @@ namespace Test
             // 7. Write last item (the newly inserted Admin)
             Console.WriteLine(admins.Last() + "\n");
 
-            // 8. Update the new Admin
+            // 8. Update the new Admin:
+            //find the admin (that we just added)
             Admin admin = admins.Last();
-            admin.Id = "14214431";
-            int updateResult = await api.UpdateAdmins(new AdminDTO(admin, admin.IsLoggedIn));
+            //create a DTO from it to update just the fields we want to send
+            AdminDTO Dto = AdminDTO.FromAdmin(admin);
+            //change some fields
+            Dto.Id = "14214431";
+            //send tne update request with the DTO
+            //that has nulls, idx and the changed field/s only
+            int updateResult = await api.UpdateAdmins(Dto);
             Console.WriteLine($"UpdateAdmins Result (Rows Affected): {updateResult}\n");
 
             // 9. Get All (Updated list)
