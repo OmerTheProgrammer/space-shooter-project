@@ -250,6 +250,7 @@ namespace ViewModel
             {
                 trans.Rollback();
                 System.Diagnostics.Debug.WriteLine(ex.Message + "\n SQL:" + command.CommandText);
+                throw new Exception(ex.Message + "\n SQL: " + command.CommandText);
             }
             finally
             {

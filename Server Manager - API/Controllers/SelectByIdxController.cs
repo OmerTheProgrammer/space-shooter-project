@@ -19,7 +19,7 @@ namespace Server_Manager___API.Controllers
             {
                 Admin result = AdminsDB.SelectByIdx(Idx);
                 // If SelectByIdx returns the entity, return HTTP 200 OK.
-                return Ok(result);
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
@@ -27,7 +27,7 @@ namespace Server_Manager___API.Controllers
                 if (ex.Message.Contains("not found"))
                 {
                     // Use 404 Not Found for missing resources, with the concise error message.
-                    return NotFound(ex.Message);
+                    return StatusCode(404, ex.Message);
                 }
                 // Use 500 Internal Server Error for all other unexpected issues.
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
@@ -42,13 +42,15 @@ namespace Server_Manager___API.Controllers
             try
             {
                 EnemyInLastLevel result = EnemiesInLastLevelDB.SelectByIdx(Idx);
-                return Ok(result);
+                //ok
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found"))
                 {
-                    return NotFound(ex.Message);
+                    //not found
+                    return StatusCode(404,ex.Message);
                 }
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
@@ -62,13 +64,15 @@ namespace Server_Manager___API.Controllers
             try
             {
                 Group result = GroupsDB.SelectByIdx(Idx);
-                return Ok(result);
+                //ok
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found"))
                 {
-                    return NotFound(ex.Message);
+                    //not found
+                    return StatusCode(404,ex.Message);
                 }
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
@@ -82,13 +86,15 @@ namespace Server_Manager___API.Controllers
             try
             {
                 Player result = PlayersDB.SelectByIdx(Idx);
-                return Ok(result);
+                //ok
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found"))
                 {
-                    return NotFound(ex.Message);
+                    //not found
+                    return StatusCode(404,ex.Message);
                 }
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
@@ -102,13 +108,15 @@ namespace Server_Manager___API.Controllers
             try
             {
                 ProfileEditRequest result = ProfileEditRequestsDB.SelectByIdx(Idx);
-                return Ok(result);
+                //ok
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found"))
                 {
-                    return NotFound(ex.Message);
+                    //not found
+                    return StatusCode(404,ex.Message);
                 }
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
@@ -122,13 +130,15 @@ namespace Server_Manager___API.Controllers
             try
             {
                 RequestData result = RequestsDataDB.SelectByIdx(Idx);
-                return Ok(result);
+                //ok
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found"))
                 {
-                    return NotFound(ex.Message);
+                    //not found
+                    return StatusCode(404,ex.Message);
                 }
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
@@ -142,13 +152,15 @@ namespace Server_Manager___API.Controllers
             try
             {
                 RunInfo result = RunsInfoDB.SelectByIdx(Idx);
-                return Ok(result);
+                //ok
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found"))
                 {
-                    return NotFound(ex.Message);
+                    //not found
+                    return StatusCode(404,ex.Message);
                 }
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
@@ -162,13 +174,15 @@ namespace Server_Manager___API.Controllers
             try
             {
                 User result = UsersDB.SelectByIdx(Idx);
-                return Ok(result);
+                //ok
+                return StatusCode(200,result);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("not found"))
                 {
-                    return NotFound(ex.Message);
+                    //not found
+                    return StatusCode(404,ex.Message);
                 }
                 return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
             }
