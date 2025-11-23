@@ -367,59 +367,59 @@ namespace Test
             ApiService api = new ApiService("https://localhost:7013");
 
             #region Admins:
-            Console.WriteLine("--- Starting API Demo Scenario ---\n");
+            //Console.WriteLine("--- Starting API Demo Scenario ---\n");
 
-            // 1. Get All (Initial list)
-            AdminsTable admins = await api.GetAllAdmins();
+            //// 1. Get All (Initial list)
+            //AdminsTable admins = await api.GetAllAdmins();
 
-            // 2. Write initial list
-            foreach (var item in admins)
-            {
-                Console.WriteLine(item + "\n");
-            }
+            //// 2. Write initial list
+            //foreach (var item in admins)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
 
-            // 3. Expected found message (Idx 2 exists)
-            Console.WriteLine(await api.GetAdminsByIdx(2) + "\n");
+            //// 3. Expected found message (Idx 2 exists)
+            //Console.WriteLine(await api.GetAdminsByIdx(2) + "\n");
 
-            // 4. Expected not found message (Idx 12 does not exist)
-            // NOTE: The GetAdminsByIdx mock handles the error printing internally
-            Admin notFoundResult = await api.GetAdminsByIdx(12);
-            Console.WriteLine($"GetAdminByIdx(12) returned: {(notFoundResult == null ? "NULL (Error)" : notFoundResult.ToString())}\n");
+            //// 4. Expected not found message (Idx 12 does not exist)
+            //// NOTE: The GetAdminsByIdx mock handles the error printing internally
+            //Admin notFoundResult = await api.GetAdminsByIdx(12);
+            //Console.WriteLine($"GetAdminByIdx(12) returned: {(notFoundResult == null ? "NULL (Error)" : notFoundResult.ToString())}\n");
 
-            // 5. Insert new Admin
-            int updateResult = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
-            Console.WriteLine($"InsertAdmins Result (Rows Affected): {updateResult}\n");
+            //// 5. Insert new Admin
+            //int updateResult = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
+            //Console.WriteLine($"InsertAdmins Result (Rows Affected): {updateResult}\n");
 
-            // 6. Get All (Updated list)
-            admins = await api.GetAllAdmins();
+            //// 6. Get All (Updated list)
+            //admins = await api.GetAllAdmins();
 
-            // 7. Write last item (the newly inserted Admin)
-            Console.WriteLine(admins.Last() + "\n");
+            //// 7. Write last item (the newly inserted Admin)
+            //Console.WriteLine(admins.Last() + "\n");
 
-            // 8. Update the new Admin:
-            //find the admin (that we just added)
-            updateResult = await api.UpdateAdmins(
-                        //create DTO from entity with nulls and change only what we want
-                        AdminDTO.FromEntity(admins.Last(), dto =>
-                        {
-                            // Define ALL changes rest is null
-                            dto.Id = "14214431";
-                        }
-                    )
-                );
-            Console.WriteLine($"UpdateAdmins Result (Rows Affected): {updateResult}\n");
+            //// 8. Update the new Admin:
+            ////find the admin (that we just added)
+            //updateResult = await api.UpdateAdmins(
+            //            //create DTO from entity with nulls and change only what we want
+            //            AdminDTO.FromEntity(admins.Last(), dto =>
+            //            {
+            //                // Define ALL changes rest is null
+            //                dto.Id = "14214431";
+            //            }
+            //        )
+            //    );
+            //Console.WriteLine($"UpdateAdmins Result (Rows Affected): {updateResult}\n");
 
-            // 9. Get All (Updated list)
-            admins = await api.GetAllAdmins();
+            //// 9. Get All (Updated list)
+            //admins = await api.GetAllAdmins();
 
-            // 10. Write last item (the updated Admin)
-            Console.WriteLine(admins.Last() + "\n");
+            //// 10. Write last item (the updated Admin)
+            //Console.WriteLine(admins.Last() + "\n");
 
-            // 11. Delete the new Admin
-            int deleteResult = await api.DeleteAdmin(admins.Last().Idx);
-            Console.WriteLine($"DeleteAdmin Result (Rows Affected): {deleteResult}\n");
+            //// 11. Delete the new Admin
+            //int deleteResult = await api.DeleteAdmin(admins.Last().Idx);
+            //Console.WriteLine($"DeleteAdmin Result (Rows Affected): {deleteResult}\n");
 
-            Console.WriteLine("--- API Demo Scenario Complete ---");
+            //Console.WriteLine("--- API Demo Scenario Complete ---");
             #endregion
 
 

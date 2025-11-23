@@ -9,8 +9,8 @@ namespace Model.Entitys
         private int currentLevel = 1;
         private int currentShieldLevel = 0;
         private int currentBlasterCount = 1;
-        private DateTime runStopDate = new DateTime(1753, 1, 1, 12, 0, 0);
         private int currentHp = 5;
+        private DateTime runStopDate = new DateTime(1753, 1, 1, 12, 0, 0);
         private bool isRunOver = false;
 
         public Player Player { get => player; set => player = value; }
