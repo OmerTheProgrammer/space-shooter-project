@@ -402,7 +402,7 @@ namespace Test
                         //create DTO from entity with nulls and change only what we want
                         AdminDTO.FromEntity(admins.Last(), dto =>
                         {
-                            // Define ALL changes
+                            // Define ALL changes rest is null
                             dto.Id = "14214431";
                         }
                     )

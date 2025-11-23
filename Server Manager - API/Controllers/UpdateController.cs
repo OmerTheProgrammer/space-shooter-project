@@ -14,101 +14,6 @@ namespace Server_Manager___API.Controllers
     [ApiController]
     public class UpdateController : Controller
     {
-        // Define the specific default/Basic_CS values used by all entities
-        private static readonly DateTime DEFAULT_CS_DATE = new DateTime(1753, 1, 1, 12, 0, 0);
-        private readonly string[] DEFAULT_STRINGs = new string[] { "", "string" };
-
-        /// <summary>
-        /// Determines if the incoming string value is meaningful for an update 
-        /// (i.e., not null and not a placeholder default value).
-        /// </summary>
-        private bool IsMeaningfulStringUpdate(string dtoValue)
-        {
-            // Must be provided (not null) and must not be a placeholder default string
-            return dtoValue != null && !DEFAULT_STRINGs.Contains(dtoValue);
-        }
-
-        /// <summary>
-        /// Updates a string field using a setter delegate.
-        /// </summary>
-        private void UpdateStringField(string originalValue, string dtoValue,
-            Action<string> setter, ref bool isModified)
-        {
-            if (IsMeaningfulStringUpdate(dtoValue))
-            {
-                if (originalValue != dtoValue)
-                {
-                    setter(dtoValue);
-                    isModified = true;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates a boolean field using a setter delegate.
-        /// </summary>
-        private void UpdateBooleanField(bool originalValue, bool? dtoValue,
-            Action<bool> setter, ref bool isModified)
-        {
-            // The check for HasValue is the primary validation here, as `false` is a valid update value.
-            if (dtoValue.HasValue)
-            {
-                if (originalValue != dtoValue.Value)
-                {
-                    setter(dtoValue.Value);
-                    isModified = true;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Determines if the incoming DateTime value is meaningful for an update.
-        /// (i.e., HasValue, not the Basic_CS default, and not a serializer default near DateTime.Now).
-        /// </summary>
-        private bool IsMeaningfulDateTimeUpdate(DateTime? dtoValue)
-        {
-            if (!dtoValue.HasValue)
-            {
-                return false;
-            }
-
-            // 1. Check for the hardcoded Basic_CS date default
-            bool isBasic_CS_Date = (dtoValue.Value == DEFAULT_CS_DATE);
-            if (isBasic_CS_Date)
-            {
-                return false;
-            }
-
-            // 2. Check if the date is very close to now (serializer default)
-            // Use 5 seconds as the margin for serializer delay.
-            bool isCloseToNow = (Math.Abs(
-                    (dtoValue.Value - DateTime.Now).TotalSeconds
-                ) < 5);
-
-            if (isCloseToNow)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Updates a nullable DateTime field using a setter delegate.
-        /// </summary>
-        private void UpdateDateTimeField(DateTime? originalValue,
-            DateTime? dtoValue, Action<DateTime?> setter, ref bool isModified)
-        {
-            if (IsMeaningfulDateTimeUpdate(dtoValue))
-            {
-                if (originalValue != dtoValue.Value)
-                {
-                    setter(dtoValue.Value);
-                    isModified = true;
-                }
-            }
-        }
-
         //--- ADMIN UPDATE ---
         [HttpPut]
         [ActionName("AdminUpdator")]
@@ -127,54 +32,53 @@ namespace Server_Manager___API.Controllers
                 }
 
                 bool isModified = false;
-                // --- 1. String Fields ---
-                UpdateStringField(
-                     originalAdmin.Id,
-                     admin.Id,
-                     val => originalAdmin.Id = val,
-                     ref isModified
-                 );
-                UpdateStringField(
-                    originalAdmin.Password,
-                    admin.Password,
-                    val => originalAdmin.Password = val,
-                     ref isModified
-                );
-                UpdateStringField(
-                    originalAdmin.Username,
-                    admin.Username,
-                    val => originalAdmin.Username = val,
-                     ref isModified
-                );
-                UpdateStringField(
-                    originalAdmin.Email,
-                    admin.Email,
-                    val => originalAdmin.Email = val,
-                    ref isModified
-                );
+                if (admin.Id != null)
+                {
+                    originalAdmin.Id = admin.Id;
+                    isModified = true;
+                }
 
-                // --- 2. DateTime Fields ---
-                // updates DateTime fields that aren't null
-                UpdateDateTimeField(
-                    originalAdmin.Birthday,
-                    admin.Birthday,
-                    val => originalAdmin.Birthday = val,
-                    ref isModified
-                );
-                UpdateDateTimeField(
-                    originalAdmin.StartDate,
-                    admin.StartDate,
-                    val => originalAdmin.StartDate = val,
-                    ref isModified
-                );
+                if (admin.Email != null)
+                {
+                    originalAdmin.Email = admin.Email;
+                    isModified = true;
+                }
 
-                // updates boolean fields that aren't null
-                UpdateBooleanField(
-                    originalAdmin.IsLoggedIn,
-                    admin.IsLoggedIn,
-                    val => originalAdmin.IsLoggedIn = val,
-                    ref isModified
-                );
+                if (admin.Password != null)
+                {
+                    originalAdmin.Email = admin.Email;
+                    isModified = true;
+                }
+
+                if (admin.Username != null)
+                {
+                    originalAdmin.Username = admin.Username;
+                    isModified = true;
+                }
+
+                if (admin.StartDate != null)
+                {
+                    originalAdmin.StartDate = admin.StartDate;
+                    isModified = true;
+                }
+
+                if (admin.Birthday != null)
+                {
+                    originalAdmin.Birthday = admin.Birthday;
+                    isModified = true;
+                }
+
+                if (admin.Birthday != null)
+                {
+                    originalAdmin.Birthday = admin.Birthday;
+                    isModified = true;
+                }
+
+                if (admin.IsLoggedIn != null && admin.IsLoggedIn.HasValue)
+                {
+                    originalAdmin.IsLoggedIn = admin.IsLoggedIn.Value;
+                    isModified = true;
+                }
 
                 int changedRecords = 0;
                 if (isModified)

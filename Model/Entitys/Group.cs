@@ -8,8 +8,8 @@ namespace Model.Entitys
 {
     public class Group : BaseEntity
     {
-        private int score = -1;//defult that must be changed
-        private string name = "";//defult that must be changed
+        private int score = 0;
+        private string name = "";
 
         public int Score { get => score; set => score = value; }
         public string Name { get => name; set => name = value; }
