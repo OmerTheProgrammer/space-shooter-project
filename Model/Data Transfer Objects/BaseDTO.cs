@@ -45,6 +45,7 @@ namespace Model.Data_Transfer_Objects
             dto.Idx = entity.Idx; // Inherited Idx is set from the entity
 
             // Execute the configuration lambda if provided
+            //the ? runs: if (configure != null) { configure.Invoke(dto); }
             configure?.Invoke(dto);
 
             return dto;

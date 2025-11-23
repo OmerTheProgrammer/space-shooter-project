@@ -387,8 +387,8 @@ namespace Test
             Console.WriteLine($"GetAdminByIdx(12) returned: {(notFoundResult == null ? "NULL (Error)" : notFoundResult.ToString())}\n");
 
             // 5. Insert new Admin
-            int newIdx = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
-            Console.WriteLine($"InsertAdmins Result (New Idx): {newIdx}\n");
+            int updateResult = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
+            Console.WriteLine($"InsertAdmins Result (Rows Affected): {updateResult}\n");
 
             // 6. Get All (Updated list)
             admins = await api.GetAllAdmins();
@@ -398,10 +398,9 @@ namespace Test
 
             // 8. Update the new Admin:
             //find the admin (that we just added)
-            Admin admin = admins.Last();
-            int updateResult = await api.UpdateAdmins(
+            updateResult = await api.UpdateAdmins(
                         //create DTO from entity with nulls and change only what we want
-                        AdminDTO.FromEntity(admin, dto =>
+                        AdminDTO.FromEntity(admins.Last(), dto =>
                         {
                             // Define ALL changes
                             dto.Id = "14214431";
