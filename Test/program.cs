@@ -366,9 +366,8 @@ namespace Test
         {
             ApiService api = new ApiService("https://localhost:7013");
 
+            Console.WriteLine("--- Starting API Demo Scenario ---\n");
             #region Admins:
-            //Console.WriteLine("--- Starting API Demo Scenario ---\n");
-
             //// 1. Get All (Initial list)
             //AdminsTable admins = await api.GetAllAdmins();
 
@@ -418,11 +417,10 @@ namespace Test
             //// 11. Delete the new Admin
             //int deleteResult = await api.DeleteAdmin(admins.Last().Idx);
             //Console.WriteLine($"DeleteAdmin Result (Rows Affected): {deleteResult}\n");
-
-            //Console.WriteLine("--- API Demo Scenario Complete ---");
             #endregion
 
 
+            Console.WriteLine("--- API Demo Scenario Complete ---");
         }
     }
 }
