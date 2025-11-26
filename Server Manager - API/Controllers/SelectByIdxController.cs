@@ -15,23 +15,14 @@ namespace Server_Manager___API.Controllers
         [ActionName("AdminsSelectorByIdx")]
         public IActionResult SelectAdminsByIdx([FromBody] int Idx)
         {
-            try
-            {
-                Admin result = AdminsDB.SelectByIdx(Idx);
-                // If SelectByIdx returns the entity, return HTTP 200 OK.
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                // Check for the specific "not found" message from the DB layer.
-                if (ex.Message.Contains("not found"))
-                {
-                    // Use 404 Not Found for missing resources, with the concise error message.
-                    return StatusCode(404, ex.Message);
-                }
-                // Use 500 Internal Server Error for all other unexpected issues.
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            // 1. Remove try/catch entirely.
+            // 2. The ExpandedException thrown by AdminsDB.SelectByIdx(Idx)
+            //    will automatically flow up to the ExceptionHandler middleware.
+
+            Admin result = AdminsDB.SelectByIdx(Idx);
+
+            // If SelectByIdx returns the entity (no exception thrown), return HTTP 200 OK.
+            return StatusCode(200, result);
         }
 
         // --- ENEMIES IN LAST LEVEL ---
@@ -39,21 +30,8 @@ namespace Server_Manager___API.Controllers
         [ActionName("EnemiesInLastLevelSelectorByIdx")]
         public IActionResult SelectEnemiesInLastLevelByIdx([FromBody] int Idx)
         {
-            try
-            {
-                EnemyInLastLevel result = EnemiesInLastLevelDB.SelectByIdx(Idx);
-                //ok
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("not found"))
-                {
-                    //not found
-                    return StatusCode(404,ex.Message);
-                }
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            EnemyInLastLevel result = EnemiesInLastLevelDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
         }
 
         // --- GROUPS ---
@@ -61,21 +39,8 @@ namespace Server_Manager___API.Controllers
         [ActionName("GroupsSelectorByIdx")]
         public IActionResult SelectGroupsByIdx([FromBody] int Idx)
         {
-            try
-            {
-                Group result = GroupsDB.SelectByIdx(Idx);
-                //ok
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("not found"))
-                {
-                    //not found
-                    return StatusCode(404,ex.Message);
-                }
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            Group result = GroupsDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
         }
 
         // --- PLAYERS ---
@@ -83,21 +48,8 @@ namespace Server_Manager___API.Controllers
         [ActionName("PlayersSelectorByIdx")]
         public IActionResult SelectPlayersByIdx([FromBody] int Idx)
         {
-            try
-            {
-                Player result = PlayersDB.SelectByIdx(Idx);
-                //ok
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("not found"))
-                {
-                    //not found
-                    return StatusCode(404,ex.Message);
-                }
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            Player result = PlayersDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
         }
 
         // --- PROFILE EDIT REQUESTS ---
@@ -105,21 +57,8 @@ namespace Server_Manager___API.Controllers
         [ActionName("ProfileEditRequestsSelectorByIdx")]
         public IActionResult SelectProfileEditRequestsByIdx([FromBody] int Idx)
         {
-            try
-            {
-                ProfileEditRequest result = ProfileEditRequestsDB.SelectByIdx(Idx);
-                //ok
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("not found"))
-                {
-                    //not found
-                    return StatusCode(404,ex.Message);
-                }
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            ProfileEditRequest result = ProfileEditRequestsDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
         }
 
         // --- REQUESTS DATA ---
@@ -127,21 +66,8 @@ namespace Server_Manager___API.Controllers
         [ActionName("RequestsDataSelectorByIdx")]
         public IActionResult SelectRequestsDataByIdx([FromBody] int Idx)
         {
-            try
-            {
-                RequestingData result = RequestsDataDB.SelectByIdx(Idx);
-                //ok
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("not found"))
-                {
-                    //not found
-                    return StatusCode(404,ex.Message);
-                }
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            RequestingData result = RequestsDataDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
         }
 
         // --- RUN INFO ---
@@ -149,21 +75,8 @@ namespace Server_Manager___API.Controllers
         [ActionName("RunsInfoSelectorByIdx")]
         public IActionResult SelectRunsInfoByIdx([FromBody] int Idx)
         {
-            try
-            {
-                RunInfo result = RunsInfoDB.SelectByIdx(Idx);
-                //ok
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("not found"))
-                {
-                    //not found
-                    return StatusCode(404,ex.Message);
-                }
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            RunInfo result = RunsInfoDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
         }
 
         // --- USERS ---
@@ -171,21 +84,8 @@ namespace Server_Manager___API.Controllers
         [ActionName("UsersSelectorByIdx")]
         public IActionResult SelectUsersByIdx([FromBody] int Idx)
         {
-            try
-            {
-                User result = UsersDB.SelectByIdx(Idx);
-                //ok
-                return StatusCode(200,result);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("not found"))
-                {
-                    //not found
-                    return StatusCode(404,ex.Message);
-                }
-                return StatusCode(500, $"An unexpected server error occurred: {ex.Message}");
-            }
+            User result = UsersDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
         }
     }
 }
