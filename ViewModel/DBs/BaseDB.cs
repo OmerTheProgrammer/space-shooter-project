@@ -2,7 +2,7 @@
 using Model.Entitys;
 using System.Data;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     public abstract class BaseDB
     {
@@ -99,7 +99,7 @@ namespace ViewModel
                 command.Connection = connection;
                 command.CommandText = sqlStr;
                 connection.Open();
-                this.reader = (SqlDataReader)await command.ExecuteReaderAsync();
+                reader = await command.ExecuteReaderAsync();
 
 
                 while (reader.Read())
@@ -140,12 +140,12 @@ namespace ViewModel
         /// </remarks>
         public virtual void Delete(BaseEntity entity)
         {
-            BaseEntity reqEntity = this.NewEntity();
+            BaseEntity reqEntity = NewEntity();
             if (entity != null)
             {
                 if (entity.GetType() == reqEntity.GetType())
                 {
-                    deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
+                    deleted.Add(new ChangeEntity(CreateDeletedSQL, entity));
                 }
             }
         }
@@ -163,10 +163,10 @@ namespace ViewModel
         /// </remarks>
         public virtual void Insert(BaseEntity entity)
         {
-            BaseEntity reqEntity = this.NewEntity();
+            BaseEntity reqEntity = NewEntity();
             if (entity != null & entity.GetType() == reqEntity.GetType())
             {
-                inserted.Add(new ChangeEntity(this.CreateInsertdSQL, entity));
+                inserted.Add(new ChangeEntity(CreateInsertdSQL, entity));
             }
         }
 
@@ -183,10 +183,10 @@ namespace ViewModel
         /// </remarks>
         public virtual void Update(BaseEntity entity)
         {
-            BaseEntity reqEntity = this.NewEntity();
+            BaseEntity reqEntity = NewEntity();
             if (entity != null && entity.GetType() == reqEntity.GetType())
             {
-                updated.Add(new ChangeEntity(this.CreateUpdatedSQL, entity));
+                updated.Add(new ChangeEntity(CreateUpdatedSQL, entity));
             }
         }
 
@@ -249,8 +249,8 @@ namespace ViewModel
             catch (Exception ex)
             {
                 trans.Rollback();
-                System.Diagnostics.Debug.WriteLine(ex.Message + "\n SQL:" + command.CommandText);
-                throw new Exception(ex.Message + "\n SQL: " + command.CommandText);
+                throw new ExpandedException("Sql error happend: ",
+                    command.CommandText, ex);
             }
             finally
             {
@@ -260,6 +260,8 @@ namespace ViewModel
 
                 deleted.Clear();
 
+                trans?.Dispose();
+                command?.Dispose();
                 //if (connection.State == System.Data.ConnectionState.Open)
                 //{
                 //    connection.Close();

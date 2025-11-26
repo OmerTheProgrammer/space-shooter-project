@@ -9,7 +9,7 @@ using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     
     public class EnemiesInLastLevelDB : BaseDB
@@ -17,7 +17,7 @@ namespace ViewModel
         public EnemiesInLastLevelTable SelectAll()
         {
             command.CommandText = $"SELECT * FROM EnemiesInLastLevelTbl";
-            EnemiesInLastLevelTable pList = new EnemiesInLastLevelTable(base.Select());
+            EnemiesInLastLevelTable pList = new EnemiesInLastLevelTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -41,7 +41,7 @@ namespace ViewModel
             EnemiesInLastLevelDB db = new EnemiesInLastLevelDB();
             list = db.SelectAll();
 
-            EnemyInLastLevel g = list.Find(item => (item.Idx == idx));
+            EnemyInLastLevel g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"EnemyInLastLevel with Idx {idx} not found.");

@@ -5,7 +5,7 @@ using Model.Data_Transfer_Objects;
 using System;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using ViewModel;
+using ViewModel.DBs;
 
 namespace Server_Manager___API.Controllers
 {

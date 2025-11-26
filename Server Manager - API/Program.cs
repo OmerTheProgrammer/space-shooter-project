@@ -1,3 +1,5 @@
+using Server_Manager___API;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +17,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//run exception handler middleware
+//means every request will create an instance of ExceptionHandler
+//then run the InvokeAsync method
+app.UseMiddleware<ExceptionHandler>();
 
 app.UseHttpsRedirection();
 

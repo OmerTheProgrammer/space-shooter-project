@@ -9,14 +9,14 @@ using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     public class UsersDB : BaseDB
     {
         public UsersTable SelectAll()
         {
             command.CommandText = $"SELECT * FROM UsersTbl";
-            UsersTable pList = new UsersTable(base.Select());
+            UsersTable pList = new UsersTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -43,7 +43,7 @@ namespace ViewModel
             UsersDB db = new UsersDB();
             list = db.SelectAll();
 
-            User g = list.Find(item => (item.Idx == idx));
+            User g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"User with Idx {idx} not found.");

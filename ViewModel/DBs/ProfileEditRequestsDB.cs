@@ -9,14 +9,14 @@ using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     public class ProfileEditRequestsDB : BaseDB
     {
         public ProfileEditRequestsTable SelectAll()
         {
             command.CommandText = $"SELECT * FROM ProfileEditRequestsTbl";
-            ProfileEditRequestsTable pList = new ProfileEditRequestsTable(base.Select());
+            ProfileEditRequestsTable pList = new ProfileEditRequestsTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -32,7 +32,7 @@ namespace ViewModel
             {
                 p.ReviewingDate = date;
             }
-            p.Status = (Status)((int)reader["Status"]);
+            p.Status = (Status)(int)reader["Status"];
             p.RequestingPlayer = PlayersDB.SelectByIdx((int)reader["PlayerIdx"]);
             if(reader["AdminIdx"] != DBNull.Value) {
                 p.AdressingAdmin = AdminsDB.SelectByIdx((int)reader["AdminIdx"]);
@@ -56,7 +56,7 @@ namespace ViewModel
             ProfileEditRequestsDB db = new ProfileEditRequestsDB();
             list = db.SelectAll();
 
-            ProfileEditRequest g = list.Find(item => (item.Idx == idx));
+            ProfileEditRequest g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"ProfileEditRequest with Idx {idx} not found.");

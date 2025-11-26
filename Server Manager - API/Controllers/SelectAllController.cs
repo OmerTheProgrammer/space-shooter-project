@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Model.Tables;
-using ViewModel;
+using ViewModel.DBs;
 
 namespace Server_Manager___API.Controllers
 {

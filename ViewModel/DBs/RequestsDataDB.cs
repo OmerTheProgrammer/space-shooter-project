@@ -9,7 +9,7 @@ using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     
     public class RequestsDataDB : BaseDB
@@ -17,7 +17,7 @@ namespace ViewModel
         public RequestsDataTable SelectAll()
         {
             command.CommandText = $"SELECT * FROM RequestsDataTbl";
-            RequestsDataTable pList = new RequestsDataTable(base.Select());
+            RequestsDataTable pList = new RequestsDataTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -42,7 +42,7 @@ namespace ViewModel
             RequestsDataDB db = new RequestsDataDB();
             list = db.SelectAll();
 
-            RequestingData g = list.Find(item => (item.Idx == idx));
+            RequestingData g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"RequestingData with Idx {idx} not found.");

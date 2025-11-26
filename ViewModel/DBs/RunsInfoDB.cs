@@ -9,14 +9,14 @@ using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     public class RunsInfoDB : BaseDB
     {
         public RunsInfoTable SelectAll()
         {
             command.CommandText = $"SELECT * FROM RunsInfoTbl";
-            RunsInfoTable pList = new RunsInfoTable(base.Select());
+            RunsInfoTable pList = new RunsInfoTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -45,7 +45,7 @@ namespace ViewModel
             RunsInfoDB db = new RunsInfoDB();
             list = db.SelectAll();
 
-            RunInfo g = list.Find(item => (item.Idx == idx));
+            RunInfo g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"RunInfo with Idx {idx} not found.");

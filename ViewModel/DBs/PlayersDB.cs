@@ -4,20 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ViewModel;
 using System.Data.Sql;
 using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     public class PlayersDB : UsersDB
     {
         public PlayersTable SelectAll()
         {
             command.CommandText = $"SELECT * FROM (PlayersTbl INNER JOIN\r\n UsersTbl ON PlayersTbl.Idx = UsersTbl.Idx)";
-            PlayersTable pList = new PlayersTable(base.Select());
+            PlayersTable pList = new PlayersTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -42,7 +41,7 @@ namespace ViewModel
             PlayersDB db = new PlayersDB();
             list = db.SelectAll();
 
-            Player g = list.Find(item => (item.Idx == idx));
+            Player g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"Player with Idx {idx} not found.");
@@ -53,11 +52,11 @@ namespace ViewModel
         //שלב ב
         public override void Delete(BaseEntity entity)
         {
-            BaseEntity reqEntity = this.NewEntity();
+            BaseEntity reqEntity = NewEntity();
             if (entity != null & entity.GetType() == reqEntity.GetType())
             {
                 deleted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
-                deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
+                deleted.Add(new ChangeEntity(CreateDeletedSQL, entity));
             }
         }
 
@@ -93,11 +92,11 @@ namespace ViewModel
 
         public override void Insert(BaseEntity entity)
         {
-            BaseEntity reqEntity = this.NewEntity();
+            BaseEntity reqEntity = NewEntity();
             if (entity != null & entity.GetType() == reqEntity.GetType())
             {
                 inserted.Add(new ChangeEntity(base.CreateInsertdSQL, entity));
-                inserted.Add(new ChangeEntity(this.CreateInsertdSQL, entity));
+                inserted.Add(new ChangeEntity(CreateInsertdSQL, entity));
             }
         }
 
@@ -121,11 +120,11 @@ namespace ViewModel
 
         public override void Update(BaseEntity entity)
         {
-            BaseEntity reqEntity = this.NewEntity();
+            BaseEntity reqEntity = NewEntity();
             if (entity != null && entity.GetType() == reqEntity.GetType())
             {
                 updated.Add(new ChangeEntity(base.CreateUpdatedSQL, entity));
-                updated.Add(new ChangeEntity(this.CreateUpdatedSQL, entity));
+                updated.Add(new ChangeEntity(CreateUpdatedSQL, entity));
             }
         }
     }

@@ -9,7 +9,7 @@ using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     
     public class PlayersAndGroupsDB : BaseDB
@@ -18,7 +18,7 @@ namespace ViewModel
         {
             
             command.CommandText = $"SELECT * FROM PlayersAndGroupsTbl";
-            PlayersAndGroupsTable pList = new PlayersAndGroupsTable(base.Select());
+            PlayersAndGroupsTable pList = new PlayersAndGroupsTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -41,7 +41,7 @@ namespace ViewModel
             PlayersAndGroupsDB db = new PlayersAndGroupsDB();
             list = db.SelectAll();
 
-            PlayerAndGroup g = list.Find(item => (item.Idx == idx));
+            PlayerAndGroup g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"PlayerAndGroup with Idx {idx} not found.");

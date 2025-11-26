@@ -9,7 +9,7 @@ using Model.Tables;
 using Model.Entitys;
 using Microsoft.Data.SqlClient;
 
-namespace ViewModel
+namespace ViewModel.DBs
 {
     
     public class GroupsDB : BaseDB
@@ -17,7 +17,7 @@ namespace ViewModel
         public GroupsTable SelectAll()
         {
             command.CommandText = $"SELECT * FROM GroupsTbl";
-            GroupsTable pList = new GroupsTable(base.Select());
+            GroupsTable pList = new GroupsTable(Select());
             return pList;
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
@@ -40,7 +40,7 @@ namespace ViewModel
             GroupsDB db = new GroupsDB();
             list = db.SelectAll();
 
-            Group g = list.Find(item => (item.Idx == idx));
+            Group g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
                 throw new Exception($"Group with Idx {idx} not found.");
