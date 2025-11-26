@@ -13,6 +13,8 @@ namespace ViewModel
         /// <summary>
         /// use this constructor when there is SQL error text to provide
         /// and an inner ExpandedException (c# error)
+        /// and your message(note)
+        /// usefull for 409,400,500 scenarios
         ///</summary>
         public ExpandedException(string message, string sqlStatement, Exception innerException)
             : base(message, innerException)
@@ -22,7 +24,8 @@ namespace ViewModel
 
         /// <summary>
         /// use this constructor when there is SQL error text to provide
-        /// but no inner ExpandedException (c# error)
+        /// but no Exception (c# error)
+        /// and your message(note)
         ///</summary>
         public ExpandedException(string message, string sqlStatement)
             : base(message)
@@ -31,8 +34,20 @@ namespace ViewModel
         }
 
         /// <summary>
+        /// use this constructor when there c# error and
+        /// your message(note) and
+        /// no SQL error text to provide
+        ///</summary>
+        public ExpandedException(string message, Exception ex)
+            : base(message)
+        {
+            this.SqlErrorText = null;
+        }
+
+        /// <summary>
         /// use this constructor when there is no SQL error text to provide
-        /// 404 - Not Found scenarios
+        /// just your message(note)
+        /// usefull for 404 - Not Found scenarios
         /// </summary>
         /// <param name="message"></param>
         public ExpandedException(string message)

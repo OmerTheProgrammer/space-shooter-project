@@ -47,8 +47,8 @@ namespace Client_Manager___API
                     // Centralized error logging
                     Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
                     // Return an empty instance of the table type T
-                    return new T();
-                }
+                    return new T(); //returns empty list = empty table
+            }
             }
 
             public async Task<AdminsTable> GetAllAdmins()
@@ -94,7 +94,7 @@ namespace Client_Manager___API
 
         #region Select by Idx
             private async Task<T> GetByIdx<T>(string endpoint, int idx)
-                where T : new()
+                where T : BaseEntity, new()
             {
                 try
                 {
@@ -129,7 +129,10 @@ namespace Client_Manager___API
                     // Centralized error logging
                     Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
                     // Return an empty instance of the table type T
-                    return new T();
+                    BaseEntity BemptyResult = new BaseEntity();
+                    BemptyResult.Idx = -1;
+                    T emptyResult = BemptyResult as T;
+                    return emptyResult;
                 }
             }
 
@@ -205,9 +208,9 @@ namespace Client_Manager___API
                     string responseContent = await response.Content.ReadAsStringAsync();
 
                     // convert it into the int
-                    if (int.TryParse(responseContent, out int newId))
+                    if (int.TryParse(responseContent, out int changedRecords))
                     {
-                        return newId;
+                        return changedRecords;
                     }
                     else
                     {

@@ -77,10 +77,14 @@ namespace Server_Manager___API
             // --- If a 404 was determined, we skip DB analysis and return immediately ---
             if (statusCode == StatusCodes.Status404NotFound)
             {
-                context.Response.ContentType = "application/json";
+
+                //context.Response.ContentType = "application/json";
+                context.Response.ContentType = "text/plain";
                 context.Response.StatusCode = statusCode;
-                var result = JsonConvert.SerializeObject(new { StatusCode = statusCode, Message = responseMessage });
-                return context.Response.WriteAsync(result);
+
+                //var result = JsonConvert.SerializeObject(new { StatusCode = statusCode, Message = responseMessage });
+                //return context.Response.WriteAsync(result);
+                return context.Response.WriteAsync(responseMessage);
             }
 
             // 2. DATABASE ERROR ANALYSIS (Only runs for non-404-Errors)
@@ -128,16 +132,18 @@ namespace Server_Manager___API
             // Fallback for general errors remains 500 (set at the beginning)
 
             // 3. Send the final response
-            context.Response.ContentType = "application/json";
+
+            //context.Response.ContentType = "application/json";
+            context.Response.ContentType = "text/plain";
             context.Response.StatusCode = statusCode;
 
-            var finalResult = JsonConvert.SerializeObject(new
-            {
-                StatusCode = statusCode,
-                Message = responseMessage
-            });
-
-            return context.Response.WriteAsync(finalResult);
+            //var finalResult = JsonConvert.SerializeObject(new
+            //{
+            //    StatusCode = statusCode,
+            //    Message = responseMessage
+            //});
+            //return context.Response.WriteAsync(finalResult);
+            return context.Response.WriteAsync(responseMessage);
         }
     }
 }

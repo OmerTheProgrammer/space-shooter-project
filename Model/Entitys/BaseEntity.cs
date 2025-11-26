@@ -4,7 +4,9 @@ namespace Model.Entitys
 {
     public class BaseEntity
     {
-        private int idx = 3;//fixes itself in 1:1
+        //3 becouse a record exists in every table with idx=3
+        //required for insert operation in inherited classes
+        private int idx = 3;
         public int Idx { get => idx; set => idx = value; }
 
         public override string ToString()
