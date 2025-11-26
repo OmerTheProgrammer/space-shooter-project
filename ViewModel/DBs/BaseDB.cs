@@ -260,8 +260,6 @@ namespace ViewModel.DBs
 
                 deleted.Clear();
 
-                trans?.Dispose();
-                command?.Dispose();
                 //if (connection.State == System.Data.ConnectionState.Open)
                 //{
                 //    connection.Close();
