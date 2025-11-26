@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ViewModel;
+using ViewModel.DBs;
 
 namespace Test
 {
@@ -148,45 +149,6 @@ namespace Test
             //Console.WriteLine();
             #endregion
 
-            #region RequestingData
-            //RequestsDataDB RequestsDataDB = new RequestsDataDB();
-            //RequestsDataTable rt = RequestsDataDB.SelectAll();
-            //Console.WriteLine("RequestsData: ");
-            //foreach (var item in rt)
-            //{
-            //    Console.WriteLine(item);
-            //}
-            //Console.WriteLine();
-
-            //RequestingData RequestsData = new RequestingData()
-            //{
-            //    Request = new ProfileEditRequest { Idx = 1 },
-            //    Field = "3654"
-            //};
-            //RequestsDataDB.Insert(RequestsData);
-            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
-            //rt = RequestsDataDB.SelectAll();
-            //Console.WriteLine(rt.Last());
-            //Console.WriteLine();
-
-            //RequestsData = rt.Last();
-            //RequestsData.NewValue = "111";
-            //RequestsDataDB.Update(RequestsData);
-            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
-            //rt = RequestsDataDB.SelectAll();
-            //Console.WriteLine(rt.Last());
-            //Console.WriteLine();
-
-            //RequestsDataDB.Delete(rt.Last());
-            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
-            //rt = RequestsDataDB.SelectAll();
-            //foreach (var t in rt)
-            //{
-            //    Console.WriteLine(t);
-            //}
-            //Console.WriteLine();
-            #endregion
-
             #region ProfileEditRequests
             //ProfileEditRequestsDB ProfileEditRequestingDB = new ProfileEditRequestsDB();
             //ProfileEditRequestsTable ProfTbl = ProfileEditRequestingDB.SelectAll();
@@ -216,6 +178,46 @@ namespace Test
             //Console.WriteLine($"{ProfileEditRequestingDB.SaveChanges()} affected rows.");
             //ProfTbl = ProfileEditRequestingDB.SelectAll();
             //Console.WriteLine(ProfTbl.Last());
+            //Console.WriteLine();
+            #endregion
+
+            #region RequestingData
+            //RequestsDataDB RequestsDataDB = new RequestsDataDB();
+            //RequestsDataTable rt = RequestsDataDB.SelectAll();
+            //Console.WriteLine("RequestsData: ");
+            //foreach (var item in rt)
+            //{
+            //    Console.WriteLine(item);
+            //}
+            //Console.WriteLine();
+
+            //RequestingData RequestsData = new RequestingData()
+            //{
+            //    Request = new ProfileEditRequest { Idx = 1 },
+            //    Field = "3654"
+            //};
+            //RequestsDataDB.Insert(RequestsData);
+            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
+
+            //rt = RequestsDataDB.SelectAll();
+            //Console.WriteLine(rt.Last());
+            //Console.WriteLine();
+
+            //RequestsData = rt.Last();
+            //RequestsData.NewValue = "111";
+            //RequestsDataDB.Update(RequestsData);
+            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
+            //rt = RequestsDataDB.SelectAll();
+            //Console.WriteLine(rt.Last());
+            //Console.WriteLine();
+
+            //RequestsDataDB.Delete(rt.Last());
+            //Console.WriteLine($"{RequestsDataDB.SaveChanges()} affected rows.");
+            //rt = RequestsDataDB.SelectAll();
+            //foreach (var t in rt)
+            //{
+            //    Console.WriteLine(t);
+            //}
             //Console.WriteLine();
             #endregion
 

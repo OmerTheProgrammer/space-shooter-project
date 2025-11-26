@@ -12,7 +12,7 @@ namespace ViewModel
 
         /// <summary>
         /// use this constructor when there is SQL error text to provide
-        /// and an inner exception (c# error)
+        /// and an inner ExpandedException (c# error)
         ///</summary>
         public ExpandedException(string message, string sqlStatement, Exception innerException)
             : base(message, innerException)
@@ -22,7 +22,7 @@ namespace ViewModel
 
         /// <summary>
         /// use this constructor when there is SQL error text to provide
-        /// but no inner exception (c# error)
+        /// but no inner ExpandedException (c# error)
         ///</summary>
         public ExpandedException(string message, string sqlStatement)
             : base(message)

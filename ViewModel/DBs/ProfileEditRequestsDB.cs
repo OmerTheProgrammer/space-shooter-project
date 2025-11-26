@@ -59,7 +59,7 @@ namespace ViewModel.DBs
             ProfileEditRequest g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"ProfileEditRequest with Idx {idx} not found.");
+                throw new ExpandedException($"ProfileEditRequest with Idx {idx} not found.");
             }
             return g;
         }
@@ -121,7 +121,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need RequestingPlayer!\n");
-                    throw new Exception(message: "Need RequestingPlayer!");
+                    throw new ExpandedException(message: "Need RequestingPlayer!");
                 }
                 if (c.AdressingAdmin != null)
                 {

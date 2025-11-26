@@ -44,7 +44,7 @@ namespace ViewModel.DBs
             Player g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"Player with Idx {idx} not found.");
+                throw new ExpandedException($"Player with Idx {idx} not found.");
             }
             return g;
         }
@@ -56,7 +56,7 @@ namespace ViewModel.DBs
             if (entity != null & entity.GetType() == reqEntity.GetType())
             {
                 deleted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
-                deleted.Add(new ChangeEntity(CreateDeletedSQL, entity));
+                deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
             }
         }
 
@@ -96,7 +96,7 @@ namespace ViewModel.DBs
             if (entity != null & entity.GetType() == reqEntity.GetType())
             {
                 inserted.Add(new ChangeEntity(base.CreateInsertdSQL, entity));
-                inserted.Add(new ChangeEntity(CreateInsertdSQL, entity));
+                inserted.Add(new ChangeEntity(this.CreateInsertdSQL, entity));
             }
         }
 
@@ -124,7 +124,7 @@ namespace ViewModel.DBs
             if (entity != null && entity.GetType() == reqEntity.GetType())
             {
                 updated.Add(new ChangeEntity(base.CreateUpdatedSQL, entity));
-                updated.Add(new ChangeEntity(CreateUpdatedSQL, entity));
+                updated.Add(new ChangeEntity(this.CreateUpdatedSQL, entity));
             }
         }
     }

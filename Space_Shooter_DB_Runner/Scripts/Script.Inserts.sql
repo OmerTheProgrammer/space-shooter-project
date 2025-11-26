@@ -196,7 +196,7 @@ GO -- End of dbo.RequestsDataTbl IF block
 IF NOT EXISTS (SELECT 1 FROM dbo.GroupsTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.GroupsTbl...'
-    INSERT INTO dbo.GroupsTbl (GroupScore, [Name]) VALUES
+    INSERT INTO dbo.GroupsTbl (Score, [Name]) VALUES
     -- Group 1: idx will be 1
     (550000,'The Astral Vanguard'),
     -- Group 2: idx will be 2

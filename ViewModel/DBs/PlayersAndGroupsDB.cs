@@ -44,7 +44,7 @@ namespace ViewModel.DBs
             PlayerAndGroup g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"PlayerAndGroup with Idx {idx} not found.");
+                throw new ExpandedException($"PlayerAndGroup with Idx {idx} not found.");
             }
             return g;
         }
@@ -79,7 +79,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need Player!\n");
-                    throw new Exception(message: "Need Player!");
+                    throw new ExpandedException(message: "Need Player!");
                 }
                 if (c.Group != null)
                 {
@@ -88,7 +88,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need Group!\n");
-                    throw new Exception(message: "Need Group!");
+                    throw new ExpandedException(message: "Need Group!");
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need Player!\n");
-                    throw new Exception(message: "Need Player!");
+                    throw new ExpandedException(message: "Need Player!");
                 }
                 if (c.Group != null)
                 {
@@ -118,7 +118,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need Group!\n");
-                    throw new Exception(message: "Need Group!");
+                    throw new ExpandedException(message: "Need Group!");
                 }
                 command.Parameters.Add(new SqlParameter("@Idx", c.Idx));
             }

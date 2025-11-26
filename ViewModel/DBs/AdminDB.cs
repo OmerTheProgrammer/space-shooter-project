@@ -41,7 +41,7 @@ namespace ViewModel.DBs
             Admin g = list.Find(item => item.Idx == idx);
             if(g == null)
             {
-                throw new ExpandedException($"Admin Not Found in idx={idx} ");
+                throw new ExpandedException($"Admin with Idx {idx} not found.");
             }
             return g;
         }

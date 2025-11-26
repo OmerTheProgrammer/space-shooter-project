@@ -7,5 +7,5 @@ CREATE TABLE PlayersTbl (
     IsMusicOn BIT NOT NULL DEFAULT 1,
     
     -- Define Foreign Key relationship
-    FOREIGN KEY (idx) REFERENCES UsersTbl(idx)
+    FOREIGN KEY (idx) REFERENCES UsersTbl(idx) ON DELETE CASCADE
 );

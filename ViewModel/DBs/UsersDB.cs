@@ -46,7 +46,7 @@ namespace ViewModel.DBs
             User g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"User with Idx {idx} not found.");
+                throw new ExpandedException($"User with Idx {idx} not found.");
             }
             return g;
         }

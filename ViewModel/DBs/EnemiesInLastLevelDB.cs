@@ -44,7 +44,7 @@ namespace ViewModel.DBs
             EnemyInLastLevel g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"EnemyInLastLevel with Idx {idx} not found.");
+                throw new ExpandedException($"EnemyInLastLevel with Idx {idx} not found.");
             }
             return g;
         }
@@ -80,8 +80,7 @@ namespace ViewModel.DBs
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Need RunInfo!\n");
-                    throw new Exception(message: "Need RunInfo!");
+                    throw new ExpandedException("Need RunInfo!");
                 }
             }
         }

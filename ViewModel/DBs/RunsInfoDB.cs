@@ -48,7 +48,7 @@ namespace ViewModel.DBs
             RunInfo g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"RunInfo with Idx {idx} not found.");
+                throw new ExpandedException($"RunInfo with Idx {idx} not found.");
             }
             return g;
         }
@@ -86,7 +86,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need Player!\n");
-                    throw new Exception(message: "Need Player!");
+                    throw new ExpandedException(message: "Need Player!");
                 }
                 command.Parameters.Add(new SqlParameter("@CurrentScore", c.CurrentScore));
                 command.Parameters.Add(new SqlParameter("@CurrentLevel", c.CurrentLevel));

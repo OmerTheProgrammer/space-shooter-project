@@ -45,7 +45,7 @@ namespace ViewModel.DBs
             RequestingData g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"RequestingData with Idx {idx} not found.");
+                throw new ExpandedException($"RequestingData with Idx {idx} not found.");
             }
             return g;
         }
@@ -79,7 +79,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need Request!\n");
-                    throw new Exception(message: "Need Request!");
+                    throw new ExpandedException(message: "Need Request!");
                 }
 
                 command.Parameters.Add(new SqlParameter("@Field", c.Field));
@@ -105,7 +105,7 @@ namespace ViewModel.DBs
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("Need Request!\n");
-                    throw new Exception(message: "Need Request!");
+                    throw new ExpandedException(message: "Need Request!");
                 }
                 command.Parameters.Add(new SqlParameter("@Field", c.Field));
                 command.Parameters.Add(new SqlParameter("@OldValue", c.OldValue));

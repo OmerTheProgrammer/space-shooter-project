@@ -43,7 +43,7 @@ namespace ViewModel.DBs
             Group g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new Exception($"Group with Idx {idx} not found.");
+                throw new ExpandedException($"Group with Idx {idx} not found.");
             }
             return g;
         }
