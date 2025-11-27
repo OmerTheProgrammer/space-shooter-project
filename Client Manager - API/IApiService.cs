@@ -41,7 +41,7 @@ namespace Client_Manager___API
 
             public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int Idx);
 
-            public Task<RequestingData> GetRequestsDataByIdx(int Idx);
+            public Task<RequestData> GetRequestsDataByIdx(int Idx);
 
             public Task<RunInfo> GetRunsInfoByIdx(int Idx);
 
@@ -59,7 +59,7 @@ namespace Client_Manager___API
 
             public Task<int> InsertProfileEditRequests(ProfileEditRequest profileEditRequest);
 
-            public Task<int> InsertRequestsData(RequestingData RequestingData);
+            public Task<int> InsertRequestsData(RequestData RequestData);
 
             public Task<int> InsertRunsInfo(RunInfo runInfo);
 
@@ -74,7 +74,8 @@ namespace Client_Manager___API
 
         #region Delete:
             public Task<int> DeleteAdmin(int idx);
-
+            
+            
         #endregion
     }
 }

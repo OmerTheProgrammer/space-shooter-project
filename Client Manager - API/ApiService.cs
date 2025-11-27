@@ -161,9 +161,9 @@ namespace Client_Manager___API
                 return GetByIdx<ProfileEditRequest>($"/api/SelectByIdx/ProfileEditRequestsSelectorByIdx", idx);
             }
 
-            public Task<RequestingData> GetRequestsDataByIdx(int idx)
+            public Task<RequestData> GetRequestsDataByIdx(int idx)
             {
-                return GetByIdx<RequestingData>($"/api/SelectByIdx/RequestsDataSelectorByIdx", idx);
+                return GetByIdx<RequestData>($"/api/SelectByIdx/RequestsDataSelectorByIdx", idx);
             }
 
             public Task<RunInfo> GetRunsInfoByIdx(int idx)
@@ -261,10 +261,10 @@ namespace Client_Manager___API
                 return Insert<ProfileEditRequest>($"/api/Insert/ProfileEditRequestsInsertor", profileEditRequest);
             }
 
-            public Task<int> InsertRequestsData(RequestingData RequestingData)
+            public Task<int> InsertRequestsData(RequestData RequestData)
             {
                 //returns number of rows affected
-                return Insert<RequestingData>($"/api/Insert/RequestsDataInsertor", RequestingData);
+                return Insert<RequestData>($"/api/Insert/RequestsDataInsertor", RequestData);
             }
 
             public Task<int> InsertRunsInfo(RunInfo runInfo)

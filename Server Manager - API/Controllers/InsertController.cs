@@ -24,6 +24,84 @@ namespace Server_Manager___API.Controllers
         }
 
         [HttpPost]
+        [ActionName("EnemiesInLastLevelInsertor")]
+        public IActionResult InsertEnemyInLastLevel([FromBody] EnemyInLastLevel enemy)
+        {
+            EnemiesInLastLevelDB enemyDB = new EnemiesInLastLevelDB();
+            enemyDB.Insert(enemy);
+            int changedRecords = enemyDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
+        }
+
+        [HttpPost]
+        [ActionName("GroupsInsertor")]
+        public IActionResult InsertUser([FromBody] Model.Entitys.Group group)
+        {
+            GroupsDB groupsDB = new GroupsDB();
+            groupsDB.Insert(group);
+            int changedRecords = groupsDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
+        }
+
+        [HttpPost]
+        [ActionName("PlayersInsertor")]
+        public IActionResult InsertPlayer([FromBody] Player player)
+        {
+            PlayersDB playersDB = new PlayersDB();
+            playersDB.Insert(player);
+            int changedRecords = playersDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
+        }
+
+        [HttpPost]
+        [ActionName("PlayersAndGroupsInsertor")]
+        public IActionResult InsertPlayerAndGroup([FromBody] PlayerAndGroup playerAndGroup)
+        {
+            PlayersAndGroupsDB playerAndGroupsDB = new PlayersAndGroupsDB();
+            playerAndGroupsDB.Insert(playerAndGroup);
+            int changedRecords = playerAndGroupsDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
+        }
+
+        [HttpPost]
+        [ActionName("ProfileEditRequestsInsertor")]
+        public IActionResult InsertProfileEditRequest(
+            [FromBody] ProfileEditRequest profileEditRequest)
+        {
+            ProfileEditRequestsDB profileEditRequestsDB = new ProfileEditRequestsDB();
+            profileEditRequestsDB.Insert(profileEditRequest);
+            int changedRecords = profileEditRequestsDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
+        }
+
+        [HttpPost]
+        [ActionName("RequestsDataInsertor")]
+        public IActionResult InsertRequestData([FromBody] RequestData requestData)
+        {
+            RequestsDataDB requestsDataDB = new RequestsDataDB();
+            requestsDataDB.Insert(requestData);
+            int changedRecords = requestsDataDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
+        }
+
+        [HttpPost]
+        [ActionName("RunsInfoInsertor")]
+        public IActionResult InsertRunInfo([FromBody] RunInfo runInfo)
+        {
+            RunsInfoDB runInfosDB = new RunsInfoDB();
+            runInfosDB.Insert(runInfo);
+            int changedRecords = runInfosDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
+        }
+
+        [HttpPost]
         [ActionName("UsersInsertor")]
         public IActionResult InsertUser([FromBody] User user)
         {
@@ -33,7 +111,5 @@ namespace Server_Manager___API.Controllers
             // 200 - OK: 
             return StatusCode(200, changedRecords);
         }
-
-
     }
 }

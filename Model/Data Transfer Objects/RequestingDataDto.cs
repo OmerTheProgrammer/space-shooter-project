@@ -12,7 +12,7 @@ namespace Model.Data_Transfer_Objects
     // includ fields that normally exist in Admin entity only as values 
     //becouse they not null in DB, but here they are
     //nullable to support partial updates
-    public class RequestingDataDto : BaseDTO<RequestingData, RequestingDataDto>
+    public class RequestingDataDto : BaseDTO<RequestData, RequestingDataDto>
     {
         public ProfileEditRequest? Request { get; set; } = null;
         public string? Field { get; set; } = null;
