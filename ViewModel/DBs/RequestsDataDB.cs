@@ -22,7 +22,7 @@ namespace ViewModel.DBs
         }
         protected override BaseEntity CreateModel(BaseEntity entity)
         {
-            RequestingData p = entity as RequestingData;
+            RequestData p = entity as RequestData;
             p.Request = ProfileEditRequestsDB.SelectByIdx((int)reader["RequestIdx"]);
             p.Field = reader["Field"].ToString();
             p.OldValue = reader["OldValue"].ToString();
@@ -33,19 +33,19 @@ namespace ViewModel.DBs
 
         protected override BaseEntity NewEntity()
         {
-            return new RequestingData();
+            return new RequestData();
         }
 
         static private RequestsDataTable list = new RequestsDataTable();
-        public static RequestingData SelectByIdx(int idx)
+        public static RequestData SelectByIdx(int idx)
         {
             RequestsDataDB db = new RequestsDataDB();
             list = db.SelectAll();
 
-            RequestingData g = list.Find(item => item.Idx == idx);
+            RequestData g = list.Find(item => item.Idx == idx);
             if (g == null)
             {
-                throw new ExpandedException($"RequestingData with Idx {idx} not found.");
+                throw new ExpandedException($"RequestData with Idx {idx} not found.");
             }
             return g;
         }
@@ -53,7 +53,7 @@ namespace ViewModel.DBs
         //שלב ב
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)
         {
-            RequestingData c = entity as RequestingData;
+            RequestData c = entity as RequestData;
             if (c != null)
             {
                 string sqlStr = $"DELETE FROM RequestsDataTbl where Idx=@pid";
@@ -65,7 +65,7 @@ namespace ViewModel.DBs
 
         protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
         {
-            RequestingData c = entity as RequestingData;
+            RequestData c = entity as RequestData;
             if (c != null)
             {
                 string sqlStr = $"INSERT INTO dbo.RequestsDataTbl(RequestIdx, Field, OldValue,NewValue) " +
@@ -90,7 +90,7 @@ namespace ViewModel.DBs
 
         protected override void CreateUpdatedSQL(BaseEntity entity, SqlCommand cmd)
         {
-            RequestingData c = entity as RequestingData;
+            RequestData c = entity as RequestData;
             if (c != null)
             {
                 string sqlStr = $"UPDATE dbo.RequestsDataTbl SET RequestIdx=@RequestIdx, Field=@Field," +

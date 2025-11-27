@@ -66,7 +66,7 @@ namespace Server_Manager___API.Controllers
         [ActionName("RequestsDataSelectorByIdx")]
         public IActionResult SelectRequestsDataByIdx([FromBody] int Idx)
         {
-            RequestingData result = RequestsDataDB.SelectByIdx(Idx);
+            RequestData result = RequestsDataDB.SelectByIdx(Idx);
             return StatusCode(200, result);
         }
 
