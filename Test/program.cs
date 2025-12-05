@@ -467,10 +467,10 @@ namespace Test
             Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
 
             //9.Get All(Updated list)
-            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
 
             //10.Write last item(the updated EnemyInLastLevel)
-            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+            Console.WriteLine(enemiesInLastLevel.Last() + "\n");
 
             //11.Delete the new EnemyInLastLevel
             //int deleteResult = await api.DeleteEnemyInLastLevel(enemiesInLastLevel.Last().Idx);
