@@ -78,13 +78,13 @@ namespace Server_Manager___API
             if (statusCode == StatusCodes.Status404NotFound)
             {
 
-                //context.Response.ContentType = "application/json";
-                context.Response.ContentType = "text/plain";
+                context.Response.ContentType = "application/json";
+                //context.Response.ContentType = "text/plain";
                 context.Response.StatusCode = statusCode;
 
-                //var result = JsonConvert.SerializeObject(new { StatusCode = statusCode, Message = responseMessage });
-                //return context.Response.WriteAsync(result);
-                return context.Response.WriteAsync(responseMessage);
+                var result = JsonConvert.SerializeObject(new { StatusCode = statusCode, Message = responseMessage });
+                return context.Response.WriteAsync(result);
+                //return context.Response.WriteAsync(responseMessage);
             }
 
             // 2. DATABASE ERROR ANALYSIS (Only runs for non-404-Errors)
@@ -111,13 +111,46 @@ namespace Server_Manager___API
             }
 
             // 2b. FOREIGN KEY VIOLATION (400 Bad Request)
-            else if (dbErrorMessage.Contains("FOREIGN KEY constraint"))
-            {
-                statusCode = StatusCodes.Status400BadRequest;
-                string fkConstraintPattern = @"constraint\s+\""(\w+)\""";
-                Match fkMatch = Regex.Match(dbErrorMessage, fkConstraintPattern);
-                string constraintName = fkMatch.Success ? fkMatch.Groups[1].Value : "a foreign key constraint";
-                responseMessage = $"Bad Request: Cannot process operation due to missing referenced data (Foreign Key violation: {constraintName}).";
+            else if (dbErrorMessage.Contains("FOREIGN KEY constraint") ||
+                     dbErrorMessage.Contains("REFERENCE constraint")) {
+                bool IsForeignKeyViolation = 
+                    dbErrorMessage.Contains("FOREIGN KEY constraint");
+                //if ForeignKeyViolation -> 400, else (refreance) 409
+                statusCode = IsForeignKeyViolation ? 
+                    StatusCodes.Status400BadRequest : 
+                    StatusCodes.Status409Conflict;
+
+                Match constraintMatch = Regex.Match(dbErrorMessage,
+                    @"REFERENCE constraint\s+\""(FK__\w+)\""");
+
+                Match tableColumnMatch = Regex.Match(dbErrorMessage,
+                    @"table\s+\""dbo\.(\w+)\""\,\s+column\s+'(\w+)'");
+
+                // Extract details or use generic terms
+                string constraintName = constraintMatch.Success ?
+                    constraintMatch.Groups[1].Value :
+                    "a foreign key constraint";
+                string tableName = tableColumnMatch.Success ?
+                    tableColumnMatch.Groups[1].Value :
+                    "another table";
+                string columnName = tableColumnMatch.Success ?
+                    tableColumnMatch.Groups[2].Value :
+                    "a required column";
+
+                if (IsForeignKeyViolation)
+                {
+                    responseMessage = $"Bad Request: " +
+                        $"Cannot process operation due to missing " +
+                        $"referenced data (" +
+                        $"Foreign Key violation: {constraintName}).";
+                }
+                else
+                {
+                    responseMessage = $"Conflict: record is still referenced " +
+                        $"by the '{columnName}' " +
+                        $"column in the '{tableName}' table " +
+                        $"(Constraint: {constraintName}).";
+                }
             }
 
             // 2c. NOT NULL VIOLATION (400 Bad Request)
@@ -133,17 +166,17 @@ namespace Server_Manager___API
 
             // 3. Send the final response
 
-            //context.Response.ContentType = "application/json";
-            context.Response.ContentType = "text/plain";
+            context.Response.ContentType = "application/json";
+            //context.Response.ContentType = "text/plain";
             context.Response.StatusCode = statusCode;
 
-            //var finalResult = JsonConvert.SerializeObject(new
-            //{
-            //    StatusCode = statusCode,
-            //    Message = responseMessage
-            //});
-            //return context.Response.WriteAsync(finalResult);
-            return context.Response.WriteAsync(responseMessage);
+            var finalResult = JsonConvert.SerializeObject(new
+            {
+                StatusCode = statusCode,
+                Message = responseMessage
+            });
+            return context.Response.WriteAsync(finalResult);
+            //return context.Response.WriteAsync(responseMessage);
         }
     }
 }

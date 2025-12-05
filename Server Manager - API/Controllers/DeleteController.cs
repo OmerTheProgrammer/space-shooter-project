@@ -37,9 +37,9 @@ namespace Server_Manager___API.Controllers
         [ActionName("UserDeletor")]
         public IActionResult UserDeletor([FromBody] int idx)
         {
-            UsersDB usersDB = new UsersDB();
-            usersDB.Delete(new User { Idx = idx });
-            int changedRecords = usersDB.SaveChanges();
+            UsersDB playersDB = new UsersDB();
+            playersDB.Delete(new User { Idx = idx });
+            int changedRecords = playersDB.SaveChanges();
 
             if (changedRecords == 0) // Resource not found or already deleted
             {
@@ -49,6 +49,27 @@ namespace Server_Manager___API.Controllers
             }
 
             return StatusCode(200, $"OK: Record for User Idx=" +
+                $"{idx} was removed.\n" +
+                $" Records changed: {changedRecords}");
+        }
+
+        // --- PLAYERS ---
+        [HttpDelete]
+        [ActionName("PlayerDeletor")]
+        public IActionResult PlayerDeletor([FromBody] int idx)
+        {
+            PlayersDB playersDB = new PlayersDB();
+            playersDB.Delete(new Player { Idx = idx });
+            int changedRecords = playersDB.SaveChanges();
+
+            if (changedRecords == 0) // Resource not found or already deleted
+            {
+                // Throw ExpandedException without SQL context. The middleware will catch this
+                // and return a 404 Not Found (based on Case A logic in the handler).
+                throw new ExpandedException($"Not Found: Player with idx = {idx} was not found or has already been deleted.");
+            }
+
+            return StatusCode(200, $"OK: Record for Player Idx=" +
                 $"{idx} was removed.\n" +
                 $" Records changed: {changedRecords}");
         }
