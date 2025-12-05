@@ -121,7 +121,7 @@ namespace Server_Manager___API
                     StatusCodes.Status409Conflict;
 
                 Match constraintMatch = Regex.Match(dbErrorMessage,
-                    @"REFERENCE constraint\s+\""(FK__\w+)\""");
+                    @"constraint\s+\""(\w+)\""");
 
                 Match tableColumnMatch = Regex.Match(dbErrorMessage,
                     @"table\s+\""dbo\.(\w+)\""\,\s+column\s+'(\w+)'");
@@ -130,6 +130,7 @@ namespace Server_Manager___API
                 string constraintName = constraintMatch.Success ?
                     constraintMatch.Groups[1].Value :
                     "a foreign key constraint";
+
                 string tableName = tableColumnMatch.Success ?
                     tableColumnMatch.Groups[1].Value :
                     "another table";
@@ -141,7 +142,7 @@ namespace Server_Manager___API
                 {
                     responseMessage = $"Bad Request: " +
                         $"Cannot process operation due to missing " +
-                        $"referenced data (" +
+                        $"referenced data in {columnName} of table {tableName}" +
                         $"Foreign Key violation: {constraintName}).";
                 }
                 else
