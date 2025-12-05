@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Model.Entitys;
 using Model.Tables;
 using ViewModel.DBs;
 

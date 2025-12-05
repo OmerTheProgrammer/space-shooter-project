@@ -32,23 +32,44 @@ namespace Server_Manager___API.Controllers
                 $" Records changed: {changedRecords}");
         }
 
-        // --- USERS ---
+        // --- EnemiesInLastLevel: ---
         [HttpDelete]
-        [ActionName("UserDeletor")]
-        public IActionResult UserDeletor([FromBody] int idx)
+        [ActionName("EnemyInLastLevelDeletor")]
+        public IActionResult EnemyInLastLevelDeletor([FromBody] int idx)
         {
-            UsersDB playersDB = new UsersDB();
-            playersDB.Delete(new User { Idx = idx });
-            int changedRecords = playersDB.SaveChanges();
+            EnemiesInLastLevelDB enemiesInLastLevelDB = new EnemiesInLastLevelDB();
+            enemiesInLastLevelDB.Delete(new EnemyInLastLevel { Idx = idx });
+            int changedRecords = enemiesInLastLevelDB.SaveChanges();
 
             if (changedRecords == 0) // Resource not found or already deleted
             {
                 // Throw ExpandedException without SQL context. The middleware will catch this
                 // and return a 404 Not Found (based on Case A logic in the handler).
-                throw new ExpandedException($"Not Found: User with idx = {idx} was not found or has already been deleted.");
+                throw new ExpandedException($"Not Found: EnemyInLastLevel with idx = {idx} was not found or has already been deleted.");
             }
 
-            return StatusCode(200, $"OK: Record for User Idx=" +
+            return StatusCode(200, $"OK: Record for EnemyInLastLevel Idx=" +
+                $"{idx} was removed.\n" +
+                $" Records changed: {changedRecords}");
+        }
+
+        // --- GROUPS: ---
+        [HttpDelete]
+        [ActionName("GroupDeletor")]
+        public IActionResult GroupDeletor([FromBody] int idx)
+        {
+            GroupsDB groupsDB = new GroupsDB();
+            groupsDB.Delete(new Group { Idx = idx });
+            int changedRecords = groupsDB.SaveChanges();
+
+            if (changedRecords == 0) // Resource not found or already deleted
+            {
+                // Throw ExpandedException without SQL context. The middleware will catch this
+                // and return a 404 Not Found (based on Case A logic in the handler).
+                throw new ExpandedException($"Not Found: Group with idx = {idx} was not found or has already been deleted.");
+            }
+
+            return StatusCode(200, $"OK: Record for Group Idx=" +
                 $"{idx} was removed.\n" +
                 $" Records changed: {changedRecords}");
         }
@@ -74,6 +95,88 @@ namespace Server_Manager___API.Controllers
                 $" Records changed: {changedRecords}");
         }
 
+        // --- ProfileEditRequests ---
+        [HttpDelete]
+        [ActionName("ProfileEditRequestDeletor")]
+        public IActionResult ProfileEditRequestDeletor([FromBody] int idx)
+        {
+            ProfileEditRequestsDB profileEditRequestsDB = new ProfileEditRequestsDB();
+            profileEditRequestsDB.Delete(new ProfileEditRequest { Idx = idx });
+            int changedRecords = profileEditRequestsDB.SaveChanges();
 
+            if (changedRecords == 0) // Resource not found or already deleted
+            {
+                // Throw ExpandedException without SQL context. The middleware will catch this
+                // and return a 404 Not Found (based on Case A logic in the handler).
+                throw new ExpandedException($"Not Found: ProfileEditRequest with idx = {idx} was not found or has already been deleted.");
+            }
+
+            return StatusCode(200, $"OK: Record for ProfileEditRequest Idx=" +
+                $"{idx} was removed.\n" +
+                $" Records changed: {changedRecords}");
+        }
+
+        // --- RequestsData ---
+        [HttpDelete]
+        [ActionName("RequestDataDeletor")]
+        public IActionResult RequestDataDeletor([FromBody] int idx)
+        {
+            RequestsDataDB requestsDataDB = new RequestsDataDB();
+            requestsDataDB.Delete(new RequestData { Idx = idx });
+            int changedRecords = requestsDataDB.SaveChanges();
+
+            if (changedRecords == 0) // Resource not found or already deleted
+            {
+                // Throw ExpandedException without SQL context. The middleware will catch this
+                // and return a 404 Not Found (based on Case A logic in the handler).
+                throw new ExpandedException($"Not Found: RequestData with idx = {idx} was not found or has already been deleted.");
+            }
+
+            return StatusCode(200, $"OK: Record for RequestData Idx=" +
+                $"{idx} was removed.\n" +
+                $" Records changed: {changedRecords}");
+        }
+
+        // --- RunsInfo ---
+        [HttpDelete]
+        [ActionName("RunInfoDeletor")]
+        public IActionResult RunInfoDeletor([FromBody] int idx)
+        {
+            RunsInfoDB runsInfoDB = new RunsInfoDB();
+            runsInfoDB.Delete(new RunInfo { Idx = idx });
+            int changedRecords = runsInfoDB.SaveChanges();
+
+            if (changedRecords == 0) // Resource not found or already deleted
+            {
+                // Throw ExpandedException without SQL context. The middleware will catch this
+                // and return a 404 Not Found (based on Case A logic in the handler).
+                throw new ExpandedException($"Not Found: RunInfo with idx = {idx} was not found or has already been deleted.");
+            }
+
+            return StatusCode(200, $"OK: Record for RunInfo Idx=" +
+                $"{idx} was removed.\n" +
+                $" Records changed: {changedRecords}");
+        }
+
+        // --- USERS ---
+        [HttpDelete]
+        [ActionName("UserDeletor")]
+        public IActionResult UserDeletor([FromBody] int idx)
+        {
+            UsersDB usersDB = new UsersDB();
+            usersDB.Delete(new User { Idx = idx });
+            int changedRecords = usersDB.SaveChanges();
+
+            if (changedRecords == 0) // Resource not found or already deleted
+            {
+                // Throw ExpandedException without SQL context. The middleware will catch this
+                // and return a 404 Not Found (based on Case A logic in the handler).
+                throw new ExpandedException($"Not Found: User with idx = {idx} was not found or has already been deleted.");
+            }
+
+            return StatusCode(200, $"OK: Record for User Idx=" +
+                $"{idx} was removed.\n" +
+                $" Records changed: {changedRecords}");
+        }
     }
 }

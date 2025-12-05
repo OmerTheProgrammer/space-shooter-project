@@ -13,69 +13,81 @@ namespace Client_Manager___API
     internal interface IApiService
     {
         #region select all:
-            public Task<AdminsTable> GetAllAdmins();
-        
-            public Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel();
+        public Task<AdminsTable> GetAllAdmins();
 
-            public Task<GroupsTable> GetAllGroups();
+        public Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel();
 
-            public Task<PlayersTable> GetAllPlayers();
+        public Task<GroupsTable> GetAllGroups();
 
-            public Task<ProfileEditRequestsTable> GetAllProfileEditRequests();
+        public Task<PlayersTable> GetAllPlayers();
 
-            public Task<RequestsDataTable> GetAllRequestsData();
+        public Task<ProfileEditRequestsTable> GetAllProfileEditRequests();
 
-            public Task<RunsInfoTable> GetAllRunsInfo();
+        public Task<RequestsDataTable> GetAllRequestsData();
 
-            public Task<UsersTable> GetAllUsers();
+        public Task<RunsInfoTable> GetAllRunsInfo();
+
+        public Task<UsersTable> GetAllUsers();
         #endregion
 
         #region select by Idx:
-            public Task<Admin> GetAdminsByIdx(int Idx);
+        public Task<Admin> GetAdminsByIdx(int Idx);
 
-            public Task<EnemyInLastLevel> GetEnemiesInLastLevelByIdx(int Idx);
+        public Task<EnemyInLastLevel> GetEnemiesInLastLevelByIdx(int Idx);
 
-            public Task<Group> GetGroupsByIdx(int Idx);
+        public Task<Group> GetGroupsByIdx(int Idx);
 
-            public Task<Player> GetPlayersByIdx(int Idx);
+        public Task<Player> GetPlayersByIdx(int Idx);
 
-            public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int Idx);
+        public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int Idx);
 
-            public Task<RequestData> GetRequestsDataByIdx(int Idx);
+        public Task<RequestData> GetRequestsDataByIdx(int Idx);
 
-            public Task<RunInfo> GetRunsInfoByIdx(int Idx);
+        public Task<RunInfo> GetRunsInfoByIdx(int Idx);
 
-            public Task<User> GetUsersByIdx(int Idx);
+        public Task<User> GetUsersByIdx(int Idx);
         #endregion
 
         #region Insert:
-            public Task<int> InsertAdmins(Admin admin);
+        public Task<int> InsertAdmins(Admin admin);
 
-            public Task<int> InsertEnemiesInLastLevel(EnemyInLastLevel admin);
+        public Task<int> InsertEnemiesInLastLevel(EnemyInLastLevel admin);
 
-            public Task<int> InsertGroups(Group group);
+        public Task<int> InsertGroups(Group group);
 
-            public Task<int> InsertPlayers(Player player);
+        public Task<int> InsertPlayers(Player player);
 
-            public Task<int> InsertProfileEditRequests(ProfileEditRequest profileEditRequest);
+        public Task<int> InsertProfileEditRequests(ProfileEditRequest profileEditRequest);
 
-            public Task<int> InsertRequestsData(RequestData RequestData);
+        public Task<int> InsertRequestsData(RequestData RequestData);
 
-            public Task<int> InsertRunsInfo(RunInfo runInfo);
+        public Task<int> InsertRunsInfo(RunInfo runInfo);
 
-            public Task<int> InsertUsers(User user);
+        public Task<int> InsertUsers(User user);
         #endregion
 
         #region Update:
-            public Task<int> UpdateAdmins(AdminDTO admin);
-            
-            
+        public Task<int> UpdateAdmins(AdminDTO admin);
+
+
         #endregion
 
         #region Delete:
-            public Task<int> DeleteAdmin(int idx);
-            
-            
+        public Task<int> DeleteAdmin(int idx);
+
+        public Task<int> DeleteEnemyInLastLevel(int idx);
+
+        public Task<int> DeleteGroup(int idx);
+
+        public Task<int> DeletePlayer(int idx);
+
+        public Task<int> DeleteProfileEditRequest(int idx);
+
+        public Task<int> DeleteRequestData(int idx);
+
+        public Task<int> DeleteRunInfo(int idx);
+
+        public Task<int> DeleteUser(int idx);
         #endregion
     }
 }
