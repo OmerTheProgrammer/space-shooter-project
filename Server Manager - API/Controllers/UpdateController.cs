@@ -31,6 +31,23 @@ namespace Server_Manager___API.Controllers
         }
 
         /// <summary>
+        /// Overload for based on BaseEntity.
+        /// </summary>
+        public static bool TryUpdateProperty<T>(T? source,T? toChange, Action<T> setter)
+            where T : BaseEntity //like string
+        {
+            // handles classes derived from BaseEntity
+            if (source != null && toChange != null)
+            {
+                if(source.Idx != toChange.Idx)
+                {
+                    return TryUpdateProperty(source, setter);
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Overload for Nullable Value Types (DateTime?, bool?).
         /// </summary>
         public static bool TryUpdateProperty<T>(T? source, Action<T> setter)
@@ -128,7 +145,7 @@ namespace Server_Manager___API.Controllers
             isModified |= TryUpdateProperty(enemyInLastLevel.Amount, val => originalEnemyInLastLevel.Amount = val);
 
             int changedRecords = 0;
-            if (isModified )
+            if (isModified)
             {
                 enemyInLastLevelsDB.Update(originalEnemyInLastLevel);
 
