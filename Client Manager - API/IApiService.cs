@@ -75,7 +75,19 @@ namespace Client_Manager___API
         #region Delete:
             public Task<int> DeleteAdmin(int idx);
             
-            
+            public Task<int> DeleteEnemyInLastLevel(int idx);
+
+            public Task<int> DeleteGroup(int idx);
+
+            public Task<int> DeletePlayer(int idx);
+
+            public Task<int> DeleteProfileEditRequest(int idx);
+
+            public Task<int> DeleteRequestData(int idx);
+
+            public Task<int> DeleteRunInfo(int idx);
+
+            public Task<int> DeleteUser(int idx);
         #endregion
     }
 }
