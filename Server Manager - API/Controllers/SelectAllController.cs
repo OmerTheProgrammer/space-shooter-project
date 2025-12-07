@@ -5,6 +5,8 @@ using ViewModel.DBs;
 
 namespace Server_Manager___API.Controllers
 {
+
+    //Route: api/SelectAll/AdminsSelector
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class SelectAllController : Controller

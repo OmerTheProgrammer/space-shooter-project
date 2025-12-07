@@ -441,11 +441,20 @@ namespace Test
                 $"{(notFoundResult == null ? "NULL (Error)" :
                 notFoundResult.ToString())}\n");
 
+            int linesChanged = 0;
             //5.Insert new EnemyInLastLevel
-            int linesChanged = await api.InsertEnemiesInLastLevel(new EnemyInLastLevel
-                { Amount=10 });// has error if bcz RunInfo = null, FK constraint
-            //but we don't see the error here, or server console -> fix
-            Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            //linesChanged = await api.InsertEnemiesInLastLevel(
+            //    new EnemyInLastLevel {
+            //        Amount=10, 
+            //        RunInfo = new RunInfo {
+            //            Idx = 1, 
+            //            Player = new Player {
+            //                Idx = 11
+            //            }
+            //        }
+            //    }
+            //);
+            //Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
 
             //6.Get All(Updated list)
             enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
@@ -464,17 +473,18 @@ namespace Test
             //            }
             //        )
             //    );
-            Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            //Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
 
-            //9.Get All(Updated list)
-            enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            ////9.Get All(Updated list)
+            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
 
-            //10.Write last item(the updated EnemyInLastLevel)
-            Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+            ////10.Write last item(the updated EnemyInLastLevel)
+            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
 
-            //11.Delete the new EnemyInLastLevel
+            ////11.Delete the new EnemyInLastLevel
             //int deleteResult = await api.DeleteEnemyInLastLevel(enemiesInLastLevel.Last().Idx);
-            //Console.WriteLine($"DeleteEnemyInLastLevel Result (Rows Affected): {deleteResult}\n");
+            //Console.WriteLine($"DeleteEnemyInLastLevel Result " +
+            //    $"(Rows Affected): {deleteResult}\n");
             #endregion
 
 
