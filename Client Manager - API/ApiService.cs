@@ -425,7 +425,53 @@ namespace Client_Manager___API
             return Delete($"/api/Delete/AdminDeletor", idx);
         }
 
+        public Task<int> DeleteEnemyInLastLevel(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/EnemyInLastLevelDeletor", idx);
+        }
 
+        public Task<int> DeleteGroup(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/GroupDeletor", idx);
+        }
+
+        public Task<int> DeletePlayerAndGroup(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/PlayerAndGroupDeletor", idx);
+        }
+
+        public Task<int> DeletePlayer(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/PlayerDeletor", idx);
+        }
+
+        public Task<int> DeleteProfileEditRequest(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/ProfileEditRequestDeletor", idx);
+        }
+
+        public Task<int> DeleteRequestData(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/RequestDataDeletor", idx);
+        }
+
+        public Task<int> DeleteRunInfo(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/RunInfoDeletor", idx);
+        }
+
+        public Task<int> DeleteUser(int idx)
+        {
+            // returns number of rows affected
+            return Delete($"/api/Delete/AdminDeletor", idx);
+        }
         #endregion
     }
 }

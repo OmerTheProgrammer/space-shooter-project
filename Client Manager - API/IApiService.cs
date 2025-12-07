@@ -79,6 +79,8 @@ namespace Client_Manager___API
 
             public Task<int> DeleteGroup(int idx);
 
+            public Task<int> DeletePlayerAndGroup(int idx)
+
             public Task<int> DeletePlayer(int idx);
 
             public Task<int> DeleteProfileEditRequest(int idx);
