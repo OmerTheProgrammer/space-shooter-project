@@ -112,12 +112,13 @@ namespace Server_Manager___API
 
             // 2b. FOREIGN KEY VIOLATION (400 Bad Request)
             else if (dbErrorMessage.Contains("FOREIGN KEY constraint") ||
-                     dbErrorMessage.Contains("REFERENCE constraint")) {
-                bool IsForeignKeyViolation = 
+                     dbErrorMessage.Contains("REFERENCE constraint"))
+            {
+                bool IsForeignKeyViolation =
                     dbErrorMessage.Contains("FOREIGN KEY constraint");
                 //if ForeignKeyViolation -> 400, else (refreance) 409
-                statusCode = IsForeignKeyViolation ? 
-                    StatusCodes.Status400BadRequest : 
+                statusCode = IsForeignKeyViolation ?
+                    StatusCodes.Status400BadRequest :
                     StatusCodes.Status409Conflict;
 
                 Match constraintMatch = Regex.Match(dbErrorMessage,
@@ -162,6 +163,14 @@ namespace Server_Manager___API
                 Match nullMatch = Regex.Match(dbErrorMessage, nullColumnPattern);
                 string columnName = nullMatch.Success ? nullMatch.Groups[1].Value : "a mandatory field";
                 responseMessage = $"Bad Request: The mandatory field '{columnName}' was not provided (NOT NULL violation).";
+            }
+
+            //3c. update a field (Not Idx) in a nested entity
+            else if (dbErrorMessage.Contains("Invalid Use of Update"))
+            {
+                statusCode = StatusCodes.Status422UnprocessableEntity;
+                responseMessage = "Client Bad Request About Nested Entity Error: "
+                    + dbErrorMessage;
             }
             // Fallback for general errors remains 500 (set at the beginning)
 
