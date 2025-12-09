@@ -6,6 +6,7 @@ using System;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using ViewModel;
 using ViewModel.DBs;
 
 namespace Server_Manager___API.Controllers
@@ -63,7 +64,7 @@ namespace Server_Manager___API.Controllers
                     //    isValueProvided = true; // Inner field provided (non-null value type)
                     //}
 
-                    // 2. Check for non-nulls )
+                    // 2. Check for non-nullables )
                     else // if (propType.IsClass)
                     {
                         isValueProvided = true; // Inner field provided (non-null)
@@ -84,12 +85,12 @@ namespace Server_Manager___API.Controllers
                         // to recurse we need to change the T to the nested type
                         // so we use reflection to get the generic method definition
                         // by same name, is generic and has 2 parameters
-                        MethodInfo? genericMethod = 
+                        MethodInfo? genericMethod =
                             typeof(UpdateController).GetMethods(
                                 BindingFlags.NonPublic | BindingFlags.Static
                                 )
                             .Where(
-                                m => m.Name == nameof(CheckForInnerFieldChanges) 
+                                m => m.Name == nameof(CheckForInnerFieldChanges)
                                 && m.IsGenericMethodDefinition
                                 && m.GetParameters().Length == 2)
                             .FirstOrDefault();
@@ -98,7 +99,7 @@ namespace Server_Manager___API.Controllers
                         if (genericMethod != null)
                         {
                             // 2. crate the func with the nested type
-                            MethodInfo constructedMethod = 
+                            MethodInfo constructedMethod =
                                 genericMethod.MakeGenericMethod(propType);
 
                             // 3. run the func with the nested source and original values
@@ -110,10 +111,10 @@ namespace Server_Manager___API.Controllers
                                 //sourceValue, originalValue
                                 (bool)constructedMethod.Invoke(
                                     null,//calling object doesn't exist = static
-                                    new object?[] 
+                                    new object?[]
                                     { sourceValue, originalValue }
                                     )!;
-                                //! -> don't make a null error compilar
+                            //! -> don't make a null error compilar
 
                             //runs recursively, until it finds simple types
                             //or no changes
@@ -177,11 +178,15 @@ namespace Server_Manager___API.Controllers
                 if (CheckForInnerFieldChanges(source, toChange))
                 {
                     string className = typeof(T).Name;
-                    // Throw exception because the user attempted to modify an inner field (Task 2).
-                    throw new InvalidOperationException(
-                        $"Invalid Use of Update: Attempted to update fields of the nested entity '{className}' (Idx: {source.Idx}) " +
-                        $"during the update of the containing object. To update the nested entity's fields, " +
-                        $"you must use the separate update function for {className}.");
+                    // Throw exception because the user attempted to modify an inner field.
+                    string errorMessage = 
+                        $"Invalid Use of Update:";
+                    errorMessage += $" Attempted to update fields of the nested entity '{className}' " +
+                        $"(Idx: {source.Idx}) during the update of the containing object." +
+                        $" To update the nested entity's fields, " +
+                        $"you must use the separate update function for {className}.";
+
+                    throw new ExpandedException(errorMessage);
                 }
 
                 if (source.Idx != toChange.Idx)

@@ -443,18 +443,21 @@ namespace Test
 
             int linesChanged = 0;
             //5.Insert new EnemyInLastLevel
-            //linesChanged = await api.InsertEnemiesInLastLevel(
-            //    new EnemyInLastLevel {
-            //        Amount=10, 
-            //        RunInfo = new RunInfo {
-            //            Idx = 1, 
-            //            Player = new Player {
-            //                Idx = 11
-            //            }
-            //        }
-            //    }
-            //);
-            //Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            linesChanged = await api.InsertEnemiesInLastLevel(
+                new EnemyInLastLevel
+                {
+                    Amount = 10,
+                    RunInfo = new RunInfo
+                    {
+                        Idx = 1,
+                        Player = new Player
+                        {
+                            Idx = 11
+                        }
+                    }
+                }
+            );
+            Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
 
             //6.Get All(Updated list)
             enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();

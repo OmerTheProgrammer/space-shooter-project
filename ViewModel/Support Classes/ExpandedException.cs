@@ -12,7 +12,7 @@ namespace ViewModel
 
         /// <summary>
         /// use this constructor when there is SQL error text to provide
-        /// and an inner ExpandedException (c# error)
+        /// and an inner Exception (c# error)
         /// and your message(note)
         /// usefull for 409,400,500 scenarios
         ///</summary>

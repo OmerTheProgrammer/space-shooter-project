@@ -44,14 +44,25 @@ namespace Server_Manager___API
             if (exception is ExpandedException expandedEx)
             {
                 // Case A: Entity.SelectByIdx error = (404 Not Found)
-                // - No SQL context provided from VM
+                // - No SQL context provided = 404, resource not found or 422 for nested entity update
                 if (string.IsNullOrEmpty(expandedEx.SqlErrorText))
                 {
-                    statusCode = StatusCodes.Status404NotFound;
-                    responseMessage = expandedEx.Message; // Use the specific "Not Found" message
 
-                    // Log at Warning level since this is an expected business logic failure
-                    _logger.LogWarning("404 - Resource Not Found: {Message}", responseMessage);
+                    //if update a field (Not Idx) in a nested entity -> give 422
+                    if (expandedEx.Message.Contains("Invalid Use of Update"))
+                    {
+                        statusCode = StatusCodes.Status422UnprocessableEntity;
+                        responseMessage = "Client Bad Request About Nested Entity Error: " + expandedEx.Message;
+                    }
+                    else
+                    {
+                        // Regular 404 Not Found case
+                        statusCode = StatusCodes.Status404NotFound;
+                        responseMessage = expandedEx.Message; // Use the specific "Not Found" message
+
+                        // Log at Warning level since this is an expected business logic failure
+                        _logger.LogWarning("404 - Resource Not Found: {Message}", responseMessage);
+                    }
                 }
                 // Case B: BaseDB error: (409/400/500) - SQL context is present
                 else
@@ -89,14 +100,14 @@ namespace Server_Manager___API
 
             // 2. DATABASE ERROR ANALYSIS (Only runs for non-404-Errors)
             //turns the actual db error message to string for analysis
-            string dbErrorMessage = errorToAnalyze.InnerException?.Message ?? errorToAnalyze.Message;
+            string ErrorMessage = errorToAnalyze.InnerException?.Message ?? errorToAnalyze.Message;
 
             // 2a. UNIQUE KEY VIOLATION (409 Conflict)
-            if (dbErrorMessage.Contains("duplicate key"))
+            if (ErrorMessage.Contains("duplicate key"))
             {
                 statusCode = StatusCodes.Status409Conflict;
                 string pattern = @"Unique_(\w+)_(\w+)";
-                Match match = Regex.Match(dbErrorMessage, pattern);
+                Match match = Regex.Match(ErrorMessage, pattern);
 
                 if (match.Success)
                 {
@@ -111,20 +122,20 @@ namespace Server_Manager___API
             }
 
             // 2b. FOREIGN KEY VIOLATION (400 Bad Request)
-            else if (dbErrorMessage.Contains("FOREIGN KEY constraint") ||
-                     dbErrorMessage.Contains("REFERENCE constraint"))
+            else if (ErrorMessage.Contains("FOREIGN KEY constraint") ||
+                     ErrorMessage.Contains("REFERENCE constraint"))
             {
                 bool IsForeignKeyViolation =
-                    dbErrorMessage.Contains("FOREIGN KEY constraint");
+                    ErrorMessage.Contains("FOREIGN KEY constraint");
                 //if ForeignKeyViolation -> 400, else (refreance) 409
                 statusCode = IsForeignKeyViolation ?
                     StatusCodes.Status400BadRequest :
                     StatusCodes.Status409Conflict;
 
-                Match constraintMatch = Regex.Match(dbErrorMessage,
+                Match constraintMatch = Regex.Match(ErrorMessage,
                     @"constraint\s+\""(\w+)\""");
 
-                Match tableColumnMatch = Regex.Match(dbErrorMessage,
+                Match tableColumnMatch = Regex.Match(ErrorMessage,
                     @"table\s+\""dbo\.(\w+)\""\,\s+column\s+'(\w+)'");
 
                 // Extract details or use generic terms
@@ -156,22 +167,15 @@ namespace Server_Manager___API
             }
 
             // 2c. NOT NULL VIOLATION (400 Bad Request)
-            else if (dbErrorMessage.Contains("NULL into column"))
+            else if (ErrorMessage.Contains("NULL into column"))
             {
                 statusCode = StatusCodes.Status400BadRequest;
                 string nullColumnPattern = @"column\s+\""(\w+)\""";
-                Match nullMatch = Regex.Match(dbErrorMessage, nullColumnPattern);
+                Match nullMatch = Regex.Match(ErrorMessage, nullColumnPattern);
                 string columnName = nullMatch.Success ? nullMatch.Groups[1].Value : "a mandatory field";
                 responseMessage = $"Bad Request: The mandatory field '{columnName}' was not provided (NOT NULL violation).";
             }
 
-            //3c. update a field (Not Idx) in a nested entity
-            else if (dbErrorMessage.Contains("Invalid Use of Update"))
-            {
-                statusCode = StatusCodes.Status422UnprocessableEntity;
-                responseMessage = "Client Bad Request About Nested Entity Error: "
-                    + dbErrorMessage;
-            }
             // Fallback for general errors remains 500 (set at the beginning)
 
             // 3. Send the final response
