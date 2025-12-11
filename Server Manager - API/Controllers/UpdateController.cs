@@ -3,6 +3,7 @@ using Model.Data_Transfer_Objects;
 using Model.Entitys;
 using Model.Tables;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -22,7 +23,7 @@ namespace Server_Manager___API.Controllers
         /// in a DTO of a BaseEntity derivative 
         /// AND if that provided value is different from the original value.
         /// </summary>
-        private static bool CheckForInnerFieldChanges<T>(T source, T original) where T : BaseEntity
+        private static List<string>? CheckForInnerFieldChanges<T>(T source, T original) where T : BaseEntity
         {
             PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -105,11 +106,11 @@ namespace Server_Manager___API.Controllers
                             // 3. run the func with the nested source and original values
                             // The result is a bool indicating
                             // if an unauthorized inner change was detected.
-                            bool innerChangeDetected =
+                            List<string>? innerPath =
                                 //run with null for static methods
                                 //and send the parameters as object array with
                                 //sourceValue, originalValue
-                                (bool)constructedMethod.Invoke(
+                                (List<string>?)constructedMethod.Invoke(
                                     null,//calling object doesn't exist = static
                                     new object?[]
                                     { sourceValue, originalValue }
@@ -118,10 +119,11 @@ namespace Server_Manager___API.Controllers
 
                             //runs recursively, until it finds simple types
                             //or no changes
-
-                            if (innerChangeDetected)
+                            if (innerPath != null)
                             {
-                                return true; // Unauthorized deep change detected.
+                                // Found change. add to start the current property name (prop.Name) and return.
+                                innerPath.Insert(0, prop.Name);
+                                return innerPath;
                             }
                         }
                     }
@@ -143,12 +145,12 @@ namespace Server_Manager___API.Controllers
                         // Compare simple types/strings. If they differ, it's an unauthorized change.
                         if (!object.Equals(comparableSource, originalValue))
                         {
-                            return true;
+                            return new List<string> { prop.Name }; // Found differing field in the calling object
                         }
                     }
                 }
             }
-            return false; // No differing non-Idx inner fields were provided
+            return null; // No differing non-Idx inner fields were provided
         }
 
         /// <summary>
@@ -175,14 +177,21 @@ namespace Server_Manager___API.Controllers
             // handles classes derived from BaseEntity
             if (source != null && toChange != null)
             {
-                if (CheckForInnerFieldChanges(source, toChange))
+                List<string> path = CheckForInnerFieldChanges(source, toChange);
+                if (path != null)
                 {
                     string className = typeof(T).Name;
                     // Throw exception because the user attempted to modify an inner field.
+                    // Create the path string: e.g., "RunInfo -> EnemyInLastLevel -> Task"
+                    // The path returned is innermost first, so we reverse and join.
+                    path.Reverse();
+                    string pathString = string.Join(" -> ", path.ToArray());
+
+                    // Throw exception because the user attempted to modify an inner field.
                     string errorMessage = 
-                        $"Invalid Use of Update:";
-                    errorMessage += $" Attempted to update fields of the nested entity '{className}' " +
-                        $"(Idx: {source.Idx}) during the update of the containing object." +
+                        $"Invalid Use of Update: Attempted to update fields of the nested entity '{className}' " +
+                        $"(Idx: {source.Idx}) during the update of the containing object. " +
+                        $"Unauthorized change detected at field path: '{pathString}'. " +
                         $" To update the nested entity's fields, " +
                         $"you must use the separate update function for {className}.";
 
