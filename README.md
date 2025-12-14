@@ -6,19 +6,22 @@ Project Structure:
     2.2. Diagrams - The DB diagram, built in DrawIo.
     2.3. Entities - The C# holding objects for records based on BaseEntity with the field Id and basic functions.
     2.4. Tables - The C# holding objects for tables based on List<Entity>s.
-  3. Server Manager - API - The project that runs the server:
+  3. Server Manager - API - The project that runs the server, Server as startapp project.:
     3.1. Controllers - Holds all the controllers, split by function, to all entities.
     3.2. ExceptionHandler.cs - Holds a middleware of the server that runs the exception handling,
            creating detailed errors from the server's errors, ViewModel's errors, and sends them to the client and server.
     3.3. Program.cs - runs the server's life cycle, opens Swagger, runs the middleware.
-  4. space shooter - the website's old version (.net framework 4.7.2), will be replaced by Space Shooter Website.
-    4.1. It's a bit of a mess and has redundancy, things I don't need because other projects in the solution,
-    it's a temporary in-between version.
-  5. Space Shooter Website - the future virsion of the web site, still with defults, no work done yet.
-  6. Space_Shooter_DB Creator - the project that crated the sql DB of the project first time.
+     
+  5. space shooter - the website's old version (.net framework 4.7.2), will be replaced by Space Shooter Website.
+     It's a bit of a mess and has redundancy, things I don't need because other projects in the solution,
+     it's a temporary in-between version..
+      Old Website as startapp project.
+  6. Space Shooter Website - the future virsion of the web site, still with defults, no work done yet.
+     has Website with server and Website as startapp projects.
+  7. Space_Shooter_DB Creator - the project that crated the sql DB of the project first time.
      6.1.
      6.2. 
-  7. Test - Console app to test ViewModel and Client Manager - API, dependes on the startapp project,
+  8. Test - Console app to test ViewModel and Client Manager - API, dependes on the startapp projects,
      Test -> vm testing, Test with server -> Client Manager - API testing.
   
 
