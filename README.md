@@ -1,29 +1,38 @@
 ** Current real info: 14.12.2025 **
+
 Project Structure:
   1. Client Manager - API - The library that holds the class (ApiService) which will work with the server in the app.
   2. Model - describe the C# side of the tables and entities in DB:
     2.1. Data Transfer Objects - DTOs - All entities, with null as defaults to force manual update.
-    2.2. Diagrams - The DB diagram, built in DrawIo.
+    2.2. Diagrams - The DB diagram, built in DrawIO.
     2.3. Entities - The C# holding objects for records based on BaseEntity with the field Id and basic functions.
     2.4. Tables - The C# holding objects for tables based on List<Entity>s.
-  3. Server Manager - API - The project that runs the server, Server as startapp project.:
-    3.1. Controllers - Holds all the controllers, split by function, to all entities.
-    3.2. ExceptionHandler.cs - Holds a middleware of the server that runs the exception handling,
-           creating detailed errors from the server's errors, ViewModel's errors, and sends them to the client and server.
-    3.3. Program.cs - runs the server's life cycle, opens Swagger, runs the middleware.
-     
-  5. space shooter - the website's old version (.net framework 4.7.2), will be replaced by Space Shooter Website.
-     It's a bit of a mess and has redundancy, things I don't need because other projects in the solution,
-     it's a temporary in-between version..
-      Old Website as startapp project.
-  6. Space Shooter Website - the future virsion of the web site, still with defults, no work done yet.
-     has Website with server and Website as startapp projects.
-  7. Space_Shooter_DB Creator - the project that crated the sql DB of the project first time.
-     6.1.
-     6.2. 
-  8. Test - Console app to test ViewModel and Client Manager - API, dependes on the startapp projects,
-     Test -> vm testing, Test with server -> Client Manager - API testing.
-  
+  3. Server Manager - API - The project that runs the server, Server as startup project.:
+  3.1. Controllers - Holds all the controllers, split by function, to all entities.
+  3.2. ExceptionHandler.cs - Holds a middleware of the server that runs the exception handling,
+  creating detailed errors from the server's errors, ViewModel's errors, and sends them to the client and server.
+  3.3. Program.cs - runs the server's life cycle, opens Swagger, runs the middleware.
+
+  4. space shooter - the website's old version (.net framework 4.7.2), will be replaced by Space Shooter Website.
+    It's a bit of a mess and has redundancy, things I don't need because other projects in the solution,
+    it's a temporary in-between version.
+    Old Website as startup project.
+  5. Space Shooter Website - the future version of the web site, still with defaults, no work done yet.
+     has Website with server and Website as startup projects.
+  6. Space_Shooter_DB Creator - the project that created the SQL DB of the project first time.
+    6.1. dbo:
+      6.1.1: Tables: the SQL create table for each table.
+    6.2. Scripts:
+      6.2.1. Script.Inserts.sql - inserts up to 10 values to every Table after publish runs.
+    6.3. the publish - run, create and save DB in right version.
+  7. Test - Console app to test ViewModel and Client Manager - API, depends on the startup projects, Test -> vm testing,         Test with server -> Client Manager - API testing.
+  8. ViewModel - brings the data from the DB, to server or to any requester.
+    8.1. DBs: classes that handle all DB functions for each entity.
+    8.2. Support Classes:
+      8.2.1. ChangeEntity - links entity to the SQL command to the entity requesting.
+      8.2.2. ExpandedException - collects the data using a builder of exceptions.
+    8.3. Space_Shooter_DB.mdf - the DB file.
+    8.4. Space_Shooter_DB_log.ldf - log of DB, don't know if correct or working.
 
 **this readme is under development, it's just a structure, no real info **
 
