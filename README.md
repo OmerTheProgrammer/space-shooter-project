@@ -1,3 +1,14 @@
+** Current real info: 14.12.2025 **
+Project Structure:
+  Model - describe the C# side of the tables and entities in DB:
+    Data Transfer Objects - DTOs - All entities, with null as defaults to force manual update.
+    Diagrams - The DB diagram, built in DrawIo.
+    Entities - The C# holding objects for records based on BaseEntity with the field Id and basic functions.
+    Tables - The C# holding objects for tables based on List<Entity>s.
+  
+  
+  
+
 **this readme is under development, it's just a structure, no real info **
 
 Space Shooter Project 🚀
