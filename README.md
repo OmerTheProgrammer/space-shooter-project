@@ -6,8 +6,12 @@ Project Structure:
     Diagrams - The DB diagram, built in DrawIo.
     Entities - The C# holding objects for records based on BaseEntity with the field Id and basic functions.
     Tables - The C# holding objects for tables based on List<Entity>s.
+  Server Manager - API - The project that runs the server:
+    Controllers - Holds all the controllers, split by function, to all entities.
+    ExceptionHandler.cs - Holds a middleware of the server that runs the exception handling, creating detailed errors from         the server's errors, ViewModel's errors, and sends them to the client and server.
+    program.cs - runs the server's life cycle, opens swager, runs the middleware.
   
-  
+    
   
 
 **this readme is under development, it's just a structure, no real info **
