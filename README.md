@@ -9,9 +9,12 @@ Project Structure:
   Server Manager - API - The project that runs the server:
     Controllers - Holds all the controllers, split by function, to all entities.
     ExceptionHandler.cs - Holds a middleware of the server that runs the exception handling, creating detailed errors from         the server's errors, ViewModel's errors, and sends them to the client and server.
-    program.cs - runs the server's life cycle, opens swager, runs the middleware.
-  
-    
+    Program.cs - runs the server's life cycle, opens Swagger, runs the middleware.
+  space shooter - the website's old version (.net framework 4.7.2), will be replaced by Space Shooter Website.
+    It's a bit of a mess and has redundancy, things I don't need because other projects in the solution,
+    it's a temporary in-between version.
+  Space Shooter Website - the future virsion of the web site, still with defults, no work done yet.
+
   
 
 **this readme is under development, it's just a structure, no real info **
