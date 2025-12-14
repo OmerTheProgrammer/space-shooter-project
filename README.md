@@ -1,20 +1,25 @@
 ** Current real info: 14.12.2025 **
 Project Structure:
-  Client Manager - API - The library that holds the class (ApiService) which will work with the server in the app.
-  Model - describe the C# side of the tables and entities in DB:
-    Data Transfer Objects - DTOs - All entities, with null as defaults to force manual update.
-    Diagrams - The DB diagram, built in DrawIo.
-    Entities - The C# holding objects for records based on BaseEntity with the field Id and basic functions.
-    Tables - The C# holding objects for tables based on List<Entity>s.
-  Server Manager - API - The project that runs the server:
-    Controllers - Holds all the controllers, split by function, to all entities.
-    ExceptionHandler.cs - Holds a middleware of the server that runs the exception handling, creating detailed errors from         the server's errors, ViewModel's errors, and sends them to the client and server.
-    Program.cs - runs the server's life cycle, opens Swagger, runs the middleware.
-  space shooter - the website's old version (.net framework 4.7.2), will be replaced by Space Shooter Website.
-    It's a bit of a mess and has redundancy, things I don't need because other projects in the solution,
+  1. Client Manager - API - The library that holds the class (ApiService) which will work with the server in the app.
+  2. Model - describe the C# side of the tables and entities in DB:
+    2.1. Data Transfer Objects - DTOs - All entities, with null as defaults to force manual update.
+    2.2. Diagrams - The DB diagram, built in DrawIo.
+    2.3. Entities - The C# holding objects for records based on BaseEntity with the field Id and basic functions.
+    2.4. Tables - The C# holding objects for tables based on List<Entity>s.
+  3. Server Manager - API - The project that runs the server:
+    3.1. Controllers - Holds all the controllers, split by function, to all entities.
+    3.2. ExceptionHandler.cs - Holds a middleware of the server that runs the exception handling,
+           creating detailed errors from the server's errors, ViewModel's errors, and sends them to the client and server.
+    3.3. Program.cs - runs the server's life cycle, opens Swagger, runs the middleware.
+  4. space shooter - the website's old version (.net framework 4.7.2), will be replaced by Space Shooter Website.
+    4.1. It's a bit of a mess and has redundancy, things I don't need because other projects in the solution,
     it's a temporary in-between version.
-  Space Shooter Website - the future virsion of the web site, still with defults, no work done yet.
-
+  5. Space Shooter Website - the future virsion of the web site, still with defults, no work done yet.
+  6. Space_Shooter_DB Creator - the project that crated the sql DB of the project first time.
+     6.1.
+     6.2. 
+  7. Test - Console app to test ViewModel and Client Manager - API, dependes on the startapp project,
+     Test -> vm testing, Test with server -> Client Manager - API testing.
   
 
 **this readme is under development, it's just a structure, no real info **
