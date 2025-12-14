@@ -1,5 +1,6 @@
 ** Current real info: 14.12.2025 **
 Project Structure:
+  Client Manager - API - The library that holds the class (ApiService) which will work with the server in the app.
   Model - describe the C# side of the tables and entities in DB:
     Data Transfer Objects - DTOs - All entities, with null as defaults to force manual update.
     Diagrams - The DB diagram, built in DrawIo.
