@@ -69,17 +69,29 @@ namespace Client_Manager___API
         #region Update:
             public Task<int> UpdateAdmins(AdminDTO admin);
             
+            public Task<int> UpdateEnemiesInLastLevel(EnemyInLastLevelDTO enemyInLastLevel);
+
+            public Task<int> UpdateGroups(GroupDTO group);
+
+            public Task<int> UpdatePlayers(PlayerDTO player);
+
+            public Task<int> UpdateProfileEditRequests(ProfileEditRequestDTO profileEditRequest);
             
+            public Task<int> UpdateRequestsData(RequestDataDTO requestData);
+            
+            public Task<int> UpdateRunsInfo(RunInfoDTO runInfo);
+            
+            public Task<int> UpdateUsers(UserDTO user);
         #endregion
 
         #region Delete:
-            public Task<int> DeleteAdmin(int idx);
+        public Task<int> DeleteAdmin(int idx);
             
             public Task<int> DeleteEnemyInLastLevel(int idx);
 
             public Task<int> DeleteGroup(int idx);
 
-        public Task<int> DeletePlayerAndGroup(int idx);
+            public Task<int> DeletePlayerAndGroup(int idx);
 
             public Task<int> DeletePlayer(int idx);
 

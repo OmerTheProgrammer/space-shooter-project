@@ -347,6 +347,40 @@ namespace Client_Manager___API
         }
 
 
+        public Task<int> UpdateEnemiesInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
+        {
+            return Update<EnemyInLastLevelDTO>($"/api/Update/EnemiesInLastLevelUpdator", enemyInLastLevel);
+        }
+
+        public Task<int> UpdateGroups(GroupDTO group)
+        {
+            return Update<GroupDTO>($"/api/Update/GroupsUpdator", group);
+        }
+
+        public Task<int> UpdatePlayers(PlayerDTO player)
+        {
+            return Update<PlayerDTO>($"/api/Update/PlayersUpdator", player);
+        }
+
+        public Task<int> UpdateProfileEditRequests(ProfileEditRequestDTO profileEditRequest)
+        {
+            return Update<ProfileEditRequestDTO>($"/api/Update/ProfileEditRequestsUpdator", profileEditRequest);
+        }
+
+        public Task<int> UpdateRequestsData(RequestDataDTO requestData)
+        {
+            return Update<RequestDataDTO>($"/api/Update/RequestsDataUpdator", requestData);
+        }
+
+        public Task<int> UpdateRunsInfo(RunInfoDTO runInfo)
+        {
+            return Update<RunInfoDTO>($"/api/Update/RunsInfoUpdator", runInfo);
+        }
+
+        public Task<int> UpdateUsers(UserDTO user)
+        {
+            return Update<UserDTO>($"/api/Update/UsersUpdator", user);
+        }
         #endregion
 
         #region Delete:
