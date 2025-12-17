@@ -38,6 +38,17 @@ namespace Server_Manager___API.Controllers
             return GroupsTable;
         }
 
+        [HttpPost]
+        [ActionName("PlayersAndGroupsSelector")]
+        public PlayersAndGroupsTable SelectAllPlayersAndGroups()
+        {
+            PlayersAndGroupsDB PlayerAndGroupsDB = 
+                new PlayersAndGroupsDB();
+            PlayersAndGroupsTable PlayerAndGroupsTable = 
+                PlayerAndGroupsDB.SelectAll();
+            return PlayerAndGroupsTable;
+        }
+
         [HttpGet]
         [ActionName("PlayersSelector")]
         public PlayersTable SelectAllPlayers()

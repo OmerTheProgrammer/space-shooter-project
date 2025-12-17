@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Client_Manager___API
 {
-    internal interface IApiService
+    public interface IApiService
     {
         #region select all:
             public Task<AdminsTable> GetAllAdmins();
@@ -19,7 +19,7 @@ namespace Client_Manager___API
 
             public Task<GroupsTable> GetAllGroups();
 
-            
+            public Task<PlayersAndGroupsTable> GetAllPlayersAndGroups();
 
             public Task<PlayersTable> GetAllPlayers();
 
@@ -39,6 +39,8 @@ namespace Client_Manager___API
 
             public Task<Group> GetGroupsByIdx(int Idx);
 
+            public Task<PlayerAndGroup> GetPlayersAndGroupsByIdx(int Idx);
+
             public Task<Player> GetPlayersByIdx(int Idx);
 
             public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int Idx);
@@ -53,15 +55,21 @@ namespace Client_Manager___API
         #region Insert:
             public Task<int> InsertAdmins(Admin admin);
 
-            public Task<int> InsertEnemiesInLastLevel(EnemyInLastLevel admin);
+            public Task<int> InsertEnemiesInLastLevel(
+                EnemyInLastLevel admin);
 
             public Task<int> InsertGroups(Group group);
 
+            public Task<int> InsertPlayersAndGroups(
+                PlayerAndGroup playerAndGroup);
+
             public Task<int> InsertPlayers(Player player);
 
-            public Task<int> InsertProfileEditRequests(ProfileEditRequest profileEditRequest);
+            public Task<int> InsertProfileEditRequests(
+                ProfileEditRequest profileEditRequest);
 
-            public Task<int> InsertRequestsData(RequestData RequestData);
+            public Task<int> InsertRequestsData(
+                RequestData RequestData);
 
             public Task<int> InsertRunsInfo(RunInfo runInfo);
 
@@ -71,15 +79,21 @@ namespace Client_Manager___API
         #region Update:
             public Task<int> UpdateAdmins(AdminDTO admin);
             
-            public Task<int> UpdateEnemiesInLastLevel(EnemyInLastLevelDTO enemyInLastLevel);
+            public Task<int> UpdateEnemiesInLastLevel(
+                EnemyInLastLevelDTO enemyInLastLevel);
 
             public Task<int> UpdateGroups(GroupDTO group);
 
+            public Task<int> UpdatePlayersAndGroups(
+                PlayerAndGroupDTO playerAndGroup);
+
             public Task<int> UpdatePlayers(PlayerDTO player);
 
-            public Task<int> UpdateProfileEditRequests(ProfileEditRequestDTO profileEditRequest);
+            public Task<int> UpdateProfileEditRequests(
+                ProfileEditRequestDTO profileEditRequest);
             
-            public Task<int> UpdateRequestsData(RequestDataDTO requestData);
+            public Task<int> UpdateRequestsData(
+                RequestDataDTO requestData);
             
             public Task<int> UpdateRunsInfo(RunInfoDTO runInfo);
             
@@ -87,7 +101,7 @@ namespace Client_Manager___API
         #endregion
 
         #region Delete:
-        public Task<int> DeleteAdmin(int idx);
+            public Task<int> DeleteAdmin(int idx);
             
             public Task<int> DeleteEnemyInLastLevel(int idx);
 

@@ -66,6 +66,11 @@ namespace Client_Manager___API
             return await GetTable<GroupsTable>("/api/SelectAll/GroupsSelector");
         }
 
+        public async Task<PlayersAndGroupsTable> GetAllPlayersAndGroups()
+        {
+            return await GetTable<PlayersAndGroupsTable>("/api/SelectAll/PlayersAndGroupsSelector");
+        }
+
         public async Task<PlayersTable> GetAllPlayers()
         {
             return await GetTable<PlayersTable>("/api/SelectAll/PlayersSelector");
@@ -149,6 +154,11 @@ namespace Client_Manager___API
         public Task<Model.Entitys.Group> GetGroupsByIdx(int idx)
         {
             return GetByIdx<Model.Entitys.Group>($"/api/SelectByIdx/GroupsSelectorByIdx", idx);
+        }
+
+        public Task<PlayerAndGroup> GetPlayersAndGroupsByIdx(int idx)
+        {
+            return GetByIdx<PlayerAndGroup>($"/api/SelectByIdx/PlayersAndGroupsSelectorByIdx", idx);
         }
 
         public Task<Player> GetPlayersByIdx(int idx)
@@ -246,6 +256,12 @@ namespace Client_Manager___API
         {
             //returns number of rows affected
             return Insert<Model.Entitys.Group>($"/api/Insert/GroupsInsertor", group);
+        }
+
+        public Task<int> InsertPlayersAndGroups(PlayerAndGroup playerAndGroup)
+        {
+            //returns number of rows affected
+            return Insert<PlayerAndGroup>($"/api/Insert/PlayersAndGroupsInsertor", playerAndGroup);
         }
 
         public Task<int> InsertPlayers(Player player)
@@ -346,7 +362,6 @@ namespace Client_Manager___API
             return Update<AdminDTO>($"/api/Update/AdminUpdator", admin);
         }
 
-
         public Task<int> UpdateEnemiesInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
         {
             return Update<EnemyInLastLevelDTO>($"/api/Update/EnemiesInLastLevelUpdator", enemyInLastLevel);
@@ -355,6 +370,11 @@ namespace Client_Manager___API
         public Task<int> UpdateGroups(GroupDTO group)
         {
             return Update<GroupDTO>($"/api/Update/GroupsUpdator", group);
+        }
+
+        public Task<int> UpdatePlayersAndGroups(PlayerAndGroupDTO playerAndGroup)
+        {
+            return Update<PlayerAndGroupDTO>($"/api/Update/PlayersAndGroupsUpdator", playerAndGroup);
         }
 
         public Task<int> UpdatePlayers(PlayerDTO player)

@@ -46,6 +46,19 @@ namespace Server_Manager___API.Controllers
         }
 
         [HttpPost]
+        [ActionName("PlayersAndGroupsInsertor")]
+        public IActionResult InsertPlayerAndGroup(
+            [FromBody] PlayerAndGroup playerAndGroup)
+        {
+            PlayersAndGroupsDB playerAndGroupsDB =
+                new PlayersAndGroupsDB();
+            playerAndGroupsDB.Insert(playerAndGroup);
+            int ChangedRecords = playerAndGroupsDB.SaveChanges();
+            // 200 - OK
+            return StatusCode(200, ChangedRecords);
+        }
+
+        [HttpPost]
         [ActionName("PlayersInsertor")]
         public IActionResult InsertPlayer([FromBody] Player player)
         {

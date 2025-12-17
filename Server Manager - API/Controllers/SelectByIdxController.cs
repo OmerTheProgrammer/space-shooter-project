@@ -13,7 +13,7 @@ namespace Server_Manager___API.Controllers
         // --- ADMINS ---
         [HttpPost]
         [ActionName("AdminsSelectorByIdx")]
-        public IActionResult SelectAdminsByIdx([FromBody] int Idx)
+        public IActionResult SelectAdminByIdx([FromBody] int Idx)
         {
             // 1. Remove try/catch entirely.
             // 2. The ExpandedException thrown by AdminsDB.SelectByIdx(Idx)
@@ -28,7 +28,7 @@ namespace Server_Manager___API.Controllers
         // --- ENEMIES IN LAST LEVEL ---
         [HttpPost]
         [ActionName("EnemiesInLastLevelSelectorByIdx")]
-        public IActionResult SelectEnemiesInLastLevelByIdx([FromBody] int Idx)
+        public IActionResult SelectEnemyInLastLevelByIdx([FromBody] int Idx)
         {
             EnemyInLastLevel result = EnemiesInLastLevelDB.SelectByIdx(Idx);
             return StatusCode(200, result);
@@ -37,16 +37,25 @@ namespace Server_Manager___API.Controllers
         // --- GROUPS ---
         [HttpPost]
         [ActionName("GroupsSelectorByIdx")]
-        public IActionResult SelectGroupsByIdx([FromBody] int Idx)
+        public IActionResult SelectGroupByIdx([FromBody] int Idx)
         {
             Group result = GroupsDB.SelectByIdx(Idx);
+            return StatusCode(200, result);
+        }
+
+        // --- PLAYERS AND GROUPS ---
+        [HttpPost]
+        [ActionName("PlayersAndGroupsSelectorByIdx")]
+        public IActionResult SelectPlayerAndGroupByIdx(
+            [FromBody] int Idx) {
+            PlayerAndGroup result = PlayersAndGroupsDB.SelectByIdx(Idx);
             return StatusCode(200, result);
         }
 
         // --- PLAYERS ---
         [HttpPost]
         [ActionName("PlayersSelectorByIdx")]
-        public IActionResult SelectPlayersByIdx([FromBody] int Idx)
+        public IActionResult SelectPlayerByIdx([FromBody] int Idx)
         {
             Player result = PlayersDB.SelectByIdx(Idx);
             return StatusCode(200, result);
@@ -55,7 +64,7 @@ namespace Server_Manager___API.Controllers
         // --- PROFILE EDIT REQUESTS ---
         [HttpPost]
         [ActionName("ProfileEditRequestsSelectorByIdx")]
-        public IActionResult SelectProfileEditRequestsByIdx([FromBody] int Idx)
+        public IActionResult SelectProfileEditRequestByIdx([FromBody] int Idx)
         {
             ProfileEditRequest result = ProfileEditRequestsDB.SelectByIdx(Idx);
             return StatusCode(200, result);
@@ -64,7 +73,7 @@ namespace Server_Manager___API.Controllers
         // --- REQUESTS DATA ---
         [HttpPost]
         [ActionName("RequestsDataSelectorByIdx")]
-        public IActionResult SelectRequestsDataByIdx([FromBody] int Idx)
+        public IActionResult SelectRequestDataByIdx([FromBody] int Idx)
         {
             RequestData result = RequestsDataDB.SelectByIdx(Idx);
             return StatusCode(200, result);
@@ -73,7 +82,7 @@ namespace Server_Manager___API.Controllers
         // --- RUN INFO ---
         [HttpPost]
         [ActionName("RunsInfoSelectorByIdx")]
-        public IActionResult SelectRunsInfoByIdx([FromBody] int Idx)
+        public IActionResult SelectRunInfoByIdx([FromBody] int Idx)
         {
             RunInfo result = RunsInfoDB.SelectByIdx(Idx);
             return StatusCode(200, result);
@@ -82,7 +91,7 @@ namespace Server_Manager___API.Controllers
         // --- USERS ---
         [HttpPost]
         [ActionName("UsersSelectorByIdx")]
-        public IActionResult SelectUsersByIdx([FromBody] int Idx)
+        public IActionResult SelectUserByIdx([FromBody] int Idx)
         {
             User result = UsersDB.SelectByIdx(Idx);
             return StatusCode(200, result);

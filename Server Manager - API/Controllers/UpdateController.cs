@@ -434,6 +434,62 @@ namespace Server_Manager___API.Controllers
             }
         }
 
+        //--- PlayerAndGroup UPDATE ---
+        [HttpPut]
+        [ActionName("PlayerAndGroupUpdator")]
+        public IActionResult UpdatePlayerAndGroup(
+            [FromBody] PlayerAndGroupDTO playerAndGroup)
+        {
+            // NOTE: The entire try/catch block is removed.
+            // Any exception (404 from SelectByIdx, or 409/400 from SaveChanges) 
+            // will now bubble up to the ExceptionHandler middleware.
+
+            PlayersAndGroupsDB playerAndGroupsDB =
+                new PlayersAndGroupsDB();
+
+            // 1. Fetch current DB values. If not found, playerAndGroupsDB.SelectByIdx is expected 
+            //    to throw an ExpandedException which the middleware handles as 404.
+            PlayerAndGroup originalPlayerAndGroup =
+                PlayersAndGroupsDB.SelectByIdx(playerAndGroup.Idx);
+
+            bool isModified = false;
+
+            // Check and update fields only if they are provided in the DTO
+            // |= like += but for ||
+            // 1. Strings (Nullable Reference Types)
+            isModified |= TryUpdateProperty(playerAndGroup.Player,
+               originalPlayerAndGroup.Player,
+                val => originalPlayerAndGroup.Player = val);
+            isModified |= TryUpdateProperty(playerAndGroup.Group,
+               originalPlayerAndGroup.Group,
+                val => originalPlayerAndGroup.Group = val);
+
+            int changedRecords = 0;
+            if (isModified)
+            {
+                playerAndGroupsDB.Update(originalPlayerAndGroup);
+
+                // 2. SaveChanges will throw exceptions on DB constraint violations (Unique/Not Null/FK),
+                //    which are handled by the ExceptionHandler middleware.
+                changedRecords = playerAndGroupsDB.SaveChanges();
+            }
+
+            if (changedRecords > 0)
+            {
+                // Success with changes: 200 OK.
+                return StatusCode(200, $"OK: Record for PlayerAndGroup Idx=" +
+                    $" {playerAndGroup.Idx} successfully updated.\n" +
+                    $" Records changed: {changedRecords}");
+            }
+            else //changedRecords == 0 -> no changes made
+            {
+                // Success with no changes: 200 OK with a specific message.
+                return StatusCode(200, $"OK: Record for PlayerAndGroup Idx=" +
+                    $"{playerAndGroup.Idx} was not changed as the data was identical, " +
+                    $"Records changed: {changedRecords}");
+            }
+        }
+
         //--- PLAYER UPDATE ---
         [HttpPut]
         [ActionName("PlayerUpdator")]
