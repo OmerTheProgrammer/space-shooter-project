@@ -10,7 +10,7 @@ namespace Model.Data_Transfer_Objects
     public class GroupDTO : BaseDTO<Group, GroupDTO>
     {
         // Value type MUST be explicitly nullable for partial updates
-        public int? GroupScore { get; set; } = null;
+        public int? Score { get; set; } = null;
         public string? Name;
 
     }

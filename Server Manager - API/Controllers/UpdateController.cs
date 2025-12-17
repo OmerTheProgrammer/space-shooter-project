@@ -528,6 +528,57 @@ namespace Server_Manager___API.Controllers
             }
         }
 
+        //--- GROUP UPDATE ---
+        [HttpPut]
+        [ActionName("GroupUpdator")]
+        public IActionResult UpdateGroup([FromBody] GroupDTO group)
+        {
+            // NOTE: The entire try/catch block is removed.
+            // Any exception (404 from SelectByIdx, or 409/400 from SaveChanges) 
+            // will now bubble up to the ExceptionHandler middleware.
+
+            GroupsDB groupsDB = new GroupsDB();
+
+            // 1. Fetch current DB values. If not found, GroupsDB.SelectByIdx is expected 
+            //    to throw an ExpandedException which the middleware handles as 404.
+            Model.Entitys.Group
+                originalGroup = GroupsDB.SelectByIdx(group.Idx);
+
+            bool isModified = false;
+
+            // Check and update fields only if they are provided in the DTO
+            // |= like += but for ||
+            // 1. Strings (Nullable Reference Types)
+            isModified |= TryUpdateProperty(group.Name, val => originalGroup.Name = val);
+
+            // 2. Nullable Value Types (DateTime?, bool?)
+            isModified |= TryUpdateProperty(group.Score, val => originalGroup.Score = val);
+
+            int changedRecords = 0;
+            if (isModified)
+            {
+                groupsDB.Update(originalGroup);
+
+                // 2. SaveChanges will throw exceptions on DB constraint violations (Unique/Not Null/FK),
+                //    which are handled by the ExceptionHandler middleware.
+                changedRecords = groupsDB.SaveChanges();
+            }
+
+            if (changedRecords > 0)
+            {
+                // Success with changes: 200 OK.
+                return StatusCode(200, $"OK: Record for Group Idx=" +
+                    $" {group.Idx} successfully updated.\n" +
+                    $" Records changed: {changedRecords}");
+            }
+            else //changedRecords == 0 -> no changes made
+            {
+                // Success with no changes: 200 OK with a specific message.
+                return StatusCode(200, $"OK: Record for Group Idx=" +
+                    $"{group.Idx} was not changed as the data was identical, " +
+                    $"Records changed: {changedRecords}");
+            }
+        }
 
     }
 }
