@@ -19,6 +19,8 @@ namespace Client_Manager___API
 
             public Task<GroupsTable> GetAllGroups();
 
+            
+
             public Task<PlayersTable> GetAllPlayers();
 
             public Task<ProfileEditRequestsTable> GetAllProfileEditRequests();

@@ -422,55 +422,55 @@ namespace Test
             #endregion
 
             #region EnemiesInLastLevel:
-            //1.Get All(Initial list)
-            EnemiesInLastLevelTable enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            ////1.Get All(Initial list)
+            //EnemiesInLastLevelTable enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
 
-            //2.Write initial list
-            foreach (var item in enemiesInLastLevel)
-            {
-                Console.WriteLine(item + "\n");
-            }
+            ////2.Write initial list
+            //foreach (var item in enemiesInLastLevel)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
 
-            //3.Expected found message(Idx 2 exists)
-            Console.WriteLine(await api.GetEnemiesInLastLevelByIdx(2) + "\n");
+            ////3.Expected found message(Idx 2 exists)
+            //Console.WriteLine(await api.GetEnemiesInLastLevelByIdx(2) + "\n");
 
-            //4.Expected not found message(Idx 12 does not exist)
-             //NOTE: The GetEnemiesInLastLevelByIdx mock handles the error printing internally
-            EnemyInLastLevel notFoundResult = await api.GetEnemiesInLastLevelByIdx(12);
-            Console.WriteLine($"GetEnemyInLastLevelByIdx(12) returned: " +
-                $"{(notFoundResult == null ? "NULL (Error)" :
-                notFoundResult.ToString())}\n");
+            ////4.Expected not found message(Idx 12 does not exist)
+            // //NOTE: The GetEnemiesInLastLevelByIdx mock handles the error printing internally
+            //EnemyInLastLevel notFoundResult = await api.GetEnemiesInLastLevelByIdx(12);
+            //Console.WriteLine($"GetEnemyInLastLevelByIdx(12) returned: " +
+            //    $"{(notFoundResult == null ? "NULL (Error)" :
+            //    notFoundResult.ToString())}\n");
 
-            int linesChanged = 0;
-            //5.Insert new EnemyInLastLevel
-            linesChanged = await api.InsertEnemiesInLastLevel(
-                new EnemyInLastLevel
-                {
-                    Amount = 10,
-                    RunInfo = new RunInfo
-                    {
-                        Idx = 1,
-                        Player = new Player
-                        {
-                            Idx = 11
-                        }
-                    }
-                }
-            );
-            Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            //int linesChanged = 0;
+            ////5.Insert new EnemyInLastLevel
+            //linesChanged = await api.InsertEnemiesInLastLevel(
+            //    new EnemyInLastLevel
+            //    {
+            //        Amount = 10,
+            //        RunInfo = new RunInfo
+            //        {
+            //            Idx = 1,
+            //            Player = new Player
+            //            {
+            //                Idx = 11
+            //            }
+            //        }
+            //    }
+            //);
+            //Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
 
-            //6.Get All(Updated list)
-            enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            ////6.Get All(Updated list)
+            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
 
-            //7.Write last item(the newly inserted EnemyInLastLevel)
-            Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+            ////7.Write last item(the newly inserted EnemyInLastLevel)
+            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
 
             ////8.Update the new EnemyInLastLevel:
             ////find the enemyInLastLevel(that we just added)
             //linesChanged = await api.UpdateEnemiesInLastLevel(
             //            //create DTO from entity with nulls and change only what we want
-            //            EnemyInLastLevelDTO.FromEntity(enemiesInLastLevel.Last(), dto =>
-            //            {
+            //            EnemyInLastLevelDTO.FromEntity(
+            //                enemiesInLastLevel.Last(), dto =>{
             //                //Define ALL changes rest is null
             //                dto.Amount = 3;
             //            }
@@ -490,8 +490,7 @@ namespace Test
             //    $"(Rows Affected): {deleteResult}\n");
             #endregion
 
-
-
+            
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
     }
