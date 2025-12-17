@@ -632,6 +632,73 @@ namespace Server_Manager___API.Controllers
             }
         }
 
+        //--- RunInfo UPDATE ---
+        [HttpPut]
+        [ActionName("RunInfoUpdator")]
+        public IActionResult UpdateRunInfo([FromBody] RunInfoDTO runInfo)
+        {
+            // NOTE: The entire try/catch block is removed.
+            // Any exception (404 from SelectByIdx, or 409/400 from SaveChanges) 
+            // will now bubble up to the ExceptionHandler middleware.
+
+            RunsInfoDB runInfosDB = new RunsInfoDB();
+
+            // 1. Fetch current DB values. If not found, RunsInfoDB.SelectByIdx is expected 
+            //    to throw an ExpandedException which the middleware handles as 404.
+            RunInfo originalRunInfo = RunsInfoDB.SelectByIdx(runInfo.Idx);
+
+            bool isModified = false;
+
+            // Check and update fields only if they are provided in the DTO
+            // |= like += but for ||
+            // 1. Strings (Nullable Reference Types)
+            isModified |= TryUpdateProperty(runInfo.Player,
+                originalRunInfo.Player,
+                val => originalRunInfo.Player = val);
+
+            // 2. Nullable Value Types (DateTime?, bool?)
+            isModified |= TryUpdateProperty(runInfo.CurrentHp,
+                val => originalRunInfo.CurrentHp = val);
+            isModified |= TryUpdateProperty(runInfo.CurrentShieldLevel,
+                val => originalRunInfo.CurrentShieldLevel = val);
+            isModified |= TryUpdateProperty(runInfo.CurrentBlasterCount,
+                val => originalRunInfo.CurrentBlasterCount = val);
+            isModified |= TryUpdateProperty(runInfo.CurrentLevel,
+                val => originalRunInfo.CurrentLevel = val);
+            isModified |= TryUpdateProperty(runInfo.CurrentScore,
+                val => originalRunInfo.CurrentScore = val);
+            isModified |= TryUpdateProperty(runInfo.IsRunOver,
+                val => originalRunInfo.IsRunOver = val);
+            isModified |= TryUpdateProperty(runInfo.RunStopDate,
+                val => originalRunInfo.RunStopDate = val);
+
+
+            int changedRecords = 0;
+            if (isModified)
+            {
+                runInfosDB.Update(originalRunInfo);
+
+                // 2. SaveChanges will throw exceptions on DB constraint violations (Unique/Not Null/FK),
+                //    which are handled by the ExceptionHandler middleware.
+                changedRecords = runInfosDB.SaveChanges();
+            }
+
+            if (changedRecords > 0)
+            {
+                // Success with changes: 200 OK.
+                return StatusCode(200, $"OK: Record for RunInfo Idx=" +
+                    $" {runInfo.Idx} successfully updated.\n" +
+                    $" Records changed: {changedRecords}");
+            }
+            else //changedRecords == 0 -> no changes made
+            {
+                // Success with no changes: 200 OK with a specific message.
+                return StatusCode(200, $"OK: Record for RunInfo Idx=" +
+                    $"{runInfo.Idx} was not changed as the data was identical, " +
+                    $"Records changed: {changedRecords}");
+            }
+        }
+
 
     }
 }
