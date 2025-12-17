@@ -12,7 +12,7 @@ namespace Model.Data_Transfer_Objects
     // includ fields that normally exist in Admin entity only as values 
     //becouse they not null in DB, but here they are
     //nullable to support partial updates
-    public class PlayerAndGroupDto : BaseDTO<PlayerAndGroup, PlayerAndGroupDto>
+    public class PlayerAndGroupDTO : BaseDTO<PlayerAndGroup, PlayerAndGroupDTO>
     {
         // Reference types (objects/strings) are naturally nullable
         public Player? Player { get; set; }

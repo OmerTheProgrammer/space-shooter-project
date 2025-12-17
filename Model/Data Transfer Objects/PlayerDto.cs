@@ -11,7 +11,7 @@ namespace Model.Data_Transfer_Objects
     // includ fields that normally exist in Admin entity only as values 
     //becouse they not null in DB, but here they are
     //nullable to support partial updates
-    public class PlayerDto : BaseDTO<Player, PlayerDto>
+    public class PlayerDTO : BaseDTO<Player, PlayerDTO>
     {
         // Reference types (strings) are nullable by default (null if omitted from JSON)
         public string? Id { get; set; }
