@@ -11,21 +11,12 @@ namespace Model.Data_Transfer_Objects
     // includ fields that normally exist in Admin entity only as values 
     //becouse they not null in DB, but here they are
     //nullable to support partial updates
-    public class PlayerDTO : BaseDTO<Player, PlayerDTO>
-    {
-        // Reference types (strings) are nullable by default (null if omitted from JSON)
-        public string? Id { get; set; }
-        public string? Password { get; set; }
-        public string? Username { get; set; }
-        public string? Email { get; set; }
-
-        // Value types MUST be explicitly nullable to support partial updates
-        public bool? IsLoggedIn { get; set; } = null;
-        public DateTime? Birthday { get; set; } = null;
-
+    public class PlayerDTO : UserDTO<Player, PlayerDTO>{
         public int? MaxLevel { get; set; } = null;
         public int? TotalScore { get; set; } = null;
         public bool? IsSoundOn { get; set; } = null;
         public bool? IsMusicOn { get; set; } = null;
+
+        public override Player ToEntity() => (Player)base.ToEntity();
     }
 }

@@ -7,21 +7,26 @@ using System.Threading.Tasks;
 
 namespace Model.Data_Transfer_Objects
 {
-    // Data Transfer Object (DTO) for Admin entity supporting partial updates
-    // includ fields that normally exist in Admin entity only as values 
-    //becouse they not null in DB, but here they are
-    //nullable to support partial updates
-    public class UserDTO : BaseDTO<User, UserDTO>
+    /// <summary>
+    /// version for when you want to use UserDTO for inherite.
+    /// </summary>
+    public class UserDTO<TEntity, TDTO> : BaseDTO<TEntity, TDTO>
+        where TEntity : User, new()
+        where TDTO : UserDTO<TEntity, TDTO>, new()
     {
-        // Reference types (strings) are nullable by default (null if omitted from JSON)
         public string? Id { get; set; }
         public string? Password { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }
 
-        // Value types MUST be explicitly nullable to support partial updates
         public bool? IsLoggedIn { get; set; } = null;
         public DateTime? Birthday { get; set; } = null;
-
+    }
+    /// <summary>
+    ///  version for when you want to use UserDTO directly (non-inherited).
+    /// </summary>
+    public class UserDTO : UserDTO<User, UserDTO>
+    {
+        //copies all from UserDTO<TEntity, TDTO> (above)
     }
 }

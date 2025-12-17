@@ -15,7 +15,7 @@ namespace Model.Data_Transfer_Objects
     {
 
         // Reference types (objects/strings) are naturally nullable
-        public RunInfo? RunInfo { get; set; }
+        public RunInfoDTO? RunInfo { get; set; }
 
         // Value types MUST be explicitly nullable for partial updates
         public int? Amount { get; set; } = null;

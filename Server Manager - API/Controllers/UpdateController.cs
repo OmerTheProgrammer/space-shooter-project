@@ -20,15 +20,19 @@ namespace Server_Manager___API.Controllers
     public class UpdateController : Controller
     {
         #region field updateing functions:
-            /// <summary>
-            /// Helper method to check if any non-Idx field was provided
-            /// in a DTO of a BaseEntity derivative 
-            /// AND if that provided value is different from the original value.
-            /// </summary>
-            private static List<List<string>>? CheckForInnerFieldChanges<T>(T source, T original) where T : BaseEntity
-            {
+        /// <summary>
+        /// Helper method to check if any non-Idx field was provided
+        /// in a DTO of a BaseEntity derivative 
+        /// AND if that provided value is different from the original value.
+        /// </summary>
+        private static List<List<string>>? 
+            CheckForInnerFieldChanges<TEntity, TDTO>
+            (TDTO source, TDTO original)
+            where TEntity : BaseEntity, new()
+            where TDTO : BaseDTO<TEntity, TDTO>, new()
+        {
                 PropertyInfo[] entityProperties =
-                    typeof(T).GetProperties(
+                    typeof(TDTO).GetProperties(
                         BindingFlags.Public | BindingFlags.Instance
                     );
                 List<List<string>> allChanges = new List<List<string>>();
@@ -151,7 +155,8 @@ namespace Server_Manager___API.Controllers
             /// <summary>
             /// Overload for string and classes.
             /// </summary>
-            private static bool TryUpdateProperty<T>(T? source, Action<T> setter)
+            private static bool TryUpdateProperty<T>(T? source,
+                Action<T> setter)
                 where T : class //like string
             {
                 // This handles strings and other nullable reference types
@@ -163,89 +168,45 @@ namespace Server_Manager___API.Controllers
                 return false;
             }
 
-            /// <summary>
-            /// Overload for based on BaseEntity.
-            /// </summary>
-            private static bool TryUpdateProperty<T>(T? source, T? toChange, Action<T> setter)
-               where T : BaseEntity
+        /// <summary>
+        /// Overload for based on BaseDTO.
+        /// </summary>
+        private static bool TryUpdateProperty<TEntity, TDTO>(
+            TDTO? source, TDTO? originalDTO, Action<TEntity> setter)
+            where TEntity : BaseEntity, new()
+            where TDTO : BaseDTO<TEntity, TDTO>, new()
+        {
+            if (source != null && originalDTO != null)
             {
-                // handles classes derived from BaseEntity
-                if (source != null && toChange != null)
+                // Compare the incoming DTO against the populated DTO from DB
+                List<List<string>>? deepChanges = 
+                    CheckForInnerFieldChanges<TEntity, TDTO>
+                    (source, originalDTO);
+
+                if (deepChanges != null && deepChanges.Any())
                 {
-                    List<List<string>>? deepChanges = CheckForInnerFieldChanges(source, toChange);
-
-                    //deepChanges.Any() - deepChanges is not empty
-                    if (deepChanges != null && deepChanges.Any())
-                    {
-                        // --- Construct the Combined Error Message and Throw ---
-                        List<string> errorDetails = new List<string>();
-                        string rootEntityType = typeof(T).Name;
-                        int rootEntityIdx = source.Idx;
-
-                        foreach (var path in deepChanges)
-                        {
-                            // --- 1. Identify Innermost Entity and Index ---
-                            // Note: Here 'source' is the DTO property we are checking (e.g., RunInfo), not the root update DTO.
-                            // We start traversal from 'source' here.
-                            BaseEntity? currentEntity = source;
-                            int innermostIdx = source.Idx;
-                            string innermostEntityTypeName = rootEntityType;
-
-                            // Traverse path elements *before* the last one (the simple field name)
-                            for (int i = 0; i < path.Count - 1; i++)
-                            {
-                                string propName = path[i];
-                                PropertyInfo? prop = currentEntity?.GetType().GetProperty(propName);
-
-                                if (prop != null)
-                                {
-                                    BaseEntity? nextEntity = prop.GetValue(currentEntity) as BaseEntity;
-                                    if (nextEntity != null)
-                                    {
-                                        currentEntity = nextEntity;
-                                        innermostIdx = nextEntity.Idx;
-                                        innermostEntityTypeName = nextEntity.GetType().Name;
-                                    }
-                                }
-                            }
-
-                            // --- 2. Format Error Detail ---
-                            string fullPath = string.Join("/", path);
-                            string fieldName = path.Last();
-
-                            // Format the error for this single change
-                            string detail =
-                                $"Change detected in nested entity '{innermostEntityTypeName}' (Idx: {innermostIdx}). " +
-                                $"Path from current property: '{rootEntityType}/{fullPath}'. Field changed: '{fieldName}'.";
-
-                            errorDetails.Add(detail);
-                        }
-
-                        // Combine all details into a single error message
-                        string combinedDetails = string.Join("\n\t- ", errorDetails);
-
-                        // Throw exception with combined error message.
-                        string finalErrorMessage =
-                            $"Invalid Update Attempt in Table/Entity '{rootEntityType}' (Idx: {rootEntityIdx}): " +
-                            $"Multiple unauthorized deep changes were detected:\n\t- {combinedDetails}\n" +
-                            $"To update these nested entity fields, you must use the separate update functions for the respective types.";
-
-                        // Assuming ExpandedException is mapped to HTTP 422 by the middleware.
-                        throw new ExpandedException(finalErrorMessage);
-                    }
-
-                    if (source.Idx != toChange.Idx)
-                    {
-                        return TryUpdateProperty(source, setter);
-                    }
+                    string details = string.Join(", ", deepChanges.Select(p => string.Join("/", p)));
+                    throw new ExpandedException($"Unauthorized Update Attempt in {typeof(TDTO).Name}. " +
+                        $"You provided values for nested fields: [{details}]. " +
+                        $"Nested updates are forbidden; use the specific controller for that type.");
                 }
-                return false;
-            }
 
-            /// <summary>
-            /// Overload for Nullable Value Types (DateTime?, bool?).
-            /// </summary>
-            private static bool TryUpdateProperty<T>(T? source, Action<T> setter)
+                // Check if the reference (ID) changed
+                if (source.Idx != originalDTO.Idx)
+                {
+                    setter(source.ToEntity());
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        /// <summary>
+        /// Overload for Nullable Value Types (DateTime?, bool?).
+        /// </summary>
+        private static bool TryUpdateProperty<T>(T? source,
+            Action<T> setter)
                 where T : struct //like int, DateTime, bool and rest
             {
                 // This handles DateTime?, bool?, int?, etc.
@@ -344,8 +305,57 @@ namespace Server_Manager___API.Controllers
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
-            isModified |= TryUpdateProperty(enemyInLastLevel.RunInfo,
-               originalEnemyInLastLevel.RunInfo,
+            #region convert OgRunInfo to DTO to use in TryUpdateProperty
+                RunInfoDTO OgRunInfoDTO = RunInfoDTO.FromEntity(
+                    originalEnemyInLastLevel.RunInfo, dto =>
+                        {
+                            dto.CurrentBlasterCount = originalEnemyInLastLevel
+                            .RunInfo.CurrentBlasterCount;
+                            dto.CurrentHp = originalEnemyInLastLevel
+                            .RunInfo.CurrentHp;
+                            dto.CurrentLevel = originalEnemyInLastLevel
+                            .RunInfo.CurrentLevel;
+                            dto.CurrentScore = originalEnemyInLastLevel
+                            .RunInfo.CurrentScore;
+                            dto.CurrentShieldLevel = originalEnemyInLastLevel
+                            .RunInfo.CurrentShieldLevel;
+                            dto.IsRunOver = originalEnemyInLastLevel
+                            .RunInfo.IsRunOver;
+                            dto.RunStopDate = originalEnemyInLastLevel
+                            .RunInfo.RunStopDate;
+                            dto.Player = PlayerDTO.FromEntity(
+                                originalEnemyInLastLevel
+                                .RunInfo.Player,
+                                playerDto =>
+                                {
+                                    playerDto.Username = originalEnemyInLastLevel
+                                    .RunInfo.Player.Username;
+                                    playerDto.Email = originalEnemyInLastLevel
+                                    .RunInfo.Player.Email;
+                                    playerDto.Id = originalEnemyInLastLevel
+                                    .RunInfo.Player.Id;
+                                    playerDto.Password = originalEnemyInLastLevel
+                                    .RunInfo.Player.Password;
+                                    playerDto.IsLoggedIn = originalEnemyInLastLevel
+                                    .RunInfo.Player.IsLoggedIn;
+                                    playerDto.Birthday = originalEnemyInLastLevel
+                                    .RunInfo.Player.Birthday;
+                                    playerDto.IsMusicOn = originalEnemyInLastLevel
+                                    .RunInfo.Player.IsMusicOn;
+                                    playerDto.IsSoundOn = originalEnemyInLastLevel
+                                    .RunInfo.Player.IsSoundOn;
+                                    playerDto.MaxLevel = originalEnemyInLastLevel
+                                    .RunInfo.Player.MaxLevel;
+                                    playerDto.TotalScore = originalEnemyInLastLevel
+                                    .RunInfo.Player.TotalScore;
+                                }
+                            );
+                        }
+                    );
+            #endregion
+            isModified |= TryUpdateProperty<RunInfo, RunInfoDTO>(
+                enemyInLastLevel.RunInfo,
+                OgRunInfoDTO,
                 val => originalEnemyInLastLevel.RunInfo = val);
 
             // 2. Nullable Value Types (DateTime?, bool?)
@@ -457,11 +467,50 @@ namespace Server_Manager___API.Controllers
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
-            isModified |= TryUpdateProperty(playerAndGroup.Player,
-               originalPlayerAndGroup.Player,
+            #region convert OgPlayer to DTO to use in TryUpdateProperty
+                PlayerDTO OgPlayerDTO =
+                    PlayerDTO.FromEntity(
+                        originalPlayerAndGroup.Player,
+                        dto =>
+                        {
+                            dto.Username = originalPlayerAndGroup
+                            .Player.Username;
+                            dto.Email = originalPlayerAndGroup
+                            .Player.Email;
+                            dto.Id = originalPlayerAndGroup
+                            .Player.Id;
+                            dto.Password = originalPlayerAndGroup
+                            .Player.Password;
+                            dto.IsLoggedIn = originalPlayerAndGroup
+                            .Player.IsLoggedIn;
+                            dto.Birthday = originalPlayerAndGroup
+                            .Player.Birthday;
+                            dto.IsMusicOn = originalPlayerAndGroup
+                            .Player.IsMusicOn;
+                            dto.IsSoundOn = originalPlayerAndGroup
+                            .Player.IsSoundOn;
+                            dto.MaxLevel = originalPlayerAndGroup
+                            .Player.MaxLevel;
+                            dto.TotalScore = originalPlayerAndGroup
+                            .Player.TotalScore;
+                        }
+                    );
+            #endregion
+            isModified |= TryUpdateProperty<Player,PlayerDTO>(
+                playerAndGroup.Player, OgPlayerDTO,
                 val => originalPlayerAndGroup.Player = val);
-            isModified |= TryUpdateProperty(playerAndGroup.Group,
-               originalPlayerAndGroup.Group,
+            #region convert OgGroup to DTO to use in TryUpdateProperty
+            GroupDTO OgGroupDTO =
+                GroupDTO.FromEntity(
+                     originalPlayerAndGroup.Group,
+                     dto => {
+                          dto.Name = originalPlayerAndGroup.Group.Name;
+                          dto.Score = originalPlayerAndGroup.Group.Score;
+                     }
+                );
+            #endregion
+            isModified |= TryUpdateProperty<Model.Entitys.Group,
+                GroupDTO>( playerAndGroup.Group, OgGroupDTO,
                 val => originalPlayerAndGroup.Group = val);
 
             int changedRecords = 0;
@@ -584,16 +633,66 @@ namespace Server_Manager___API.Controllers
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
-            isModified |= TryUpdateProperty(
-                profileEditRequest.RequestingPlayer,
-                originalProfileEditRequest.RequestingPlayer,
-                val => 
-                originalProfileEditRequest.RequestingPlayer = val);
-            isModified |= TryUpdateProperty(
+            #region convert OgPlayer to DTO to use in TryUpdateProperty
+                PlayerDTO OgRequstingPlayerDTO =
+                    PlayerDTO.FromEntity(
+                        originalProfileEditRequest.RequestingPlayer,
+                        dto =>
+                        {
+                            dto.Username = originalProfileEditRequest
+                            .RequestingPlayer.Username;
+                            dto.Email = originalProfileEditRequest
+                            .RequestingPlayer.Email;
+                            dto.Id = originalProfileEditRequest
+                            .RequestingPlayer.Id;
+                            dto.Password = originalProfileEditRequest
+                            .RequestingPlayer.Password;
+                            dto.IsLoggedIn = originalProfileEditRequest
+                            .RequestingPlayer.IsLoggedIn;
+                            dto.Birthday = originalProfileEditRequest
+                            .RequestingPlayer.Birthday;
+                            dto.IsMusicOn = originalProfileEditRequest
+                            .RequestingPlayer.IsMusicOn;
+                            dto.IsSoundOn = originalProfileEditRequest
+                            .RequestingPlayer.IsSoundOn;
+                            dto.MaxLevel = originalProfileEditRequest
+                            .RequestingPlayer.MaxLevel;
+                            dto.TotalScore = originalProfileEditRequest
+                            .RequestingPlayer.TotalScore;
+                        }
+                    );
+            #endregion
+            isModified |= TryUpdateProperty<Player, PlayerDTO>(
+                profileEditRequest.RequestingPlayer, 
+                OgRequstingPlayerDTO,
+                val => originalProfileEditRequest.RequestingPlayer = val);
+            #region convert OgAdmin to DTO to use in TryUpdateProperty
+                AdminDTO OgAdressingAdminDTO =
+                   AdminDTO.FromEntity(
+                       originalProfileEditRequest.AdressingAdmin,
+                       dto =>
+                       {
+                           dto.Username = originalProfileEditRequest
+                           .AdressingAdmin.Username;
+                           dto.Email = originalProfileEditRequest
+                           .AdressingAdmin.Email;
+                           dto.Id = originalProfileEditRequest
+                           .AdressingAdmin.Id;
+                           dto.Password = originalProfileEditRequest
+                           .AdressingAdmin.Password;
+                           dto.IsLoggedIn = originalProfileEditRequest
+                           .AdressingAdmin.IsLoggedIn;
+                           dto.Birthday = originalProfileEditRequest
+                           .AdressingAdmin.Birthday;
+                           dto.StartDate = originalProfileEditRequest
+                           .AdressingAdmin.StartDate;
+                       }
+                   );
+            #endregion
+            isModified |= TryUpdateProperty<Admin, AdminDTO>(
                 profileEditRequest.AdressingAdmin,
-                originalProfileEditRequest.AdressingAdmin,
-                val =>
-                originalProfileEditRequest.AdressingAdmin = val);
+                OgAdressingAdminDTO,
+                val => originalProfileEditRequest.AdressingAdmin = val);
 
 
             // 2. Nullable Value Types (DateTime?, bool?)
@@ -708,8 +807,38 @@ namespace Server_Manager___API.Controllers
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
-            isModified |= TryUpdateProperty(runInfo.Player,
-                originalRunInfo.Player,
+            #region convert OgPlayer to DTO to use in TryUpdateProperty
+                PlayerDTO OgPlayerDTO =
+                    PlayerDTO.FromEntity(
+                        originalRunInfo.Player,
+                        dto =>
+                        {
+                            dto.Username = originalRunInfo
+                            .Player.Username;
+                            dto.Email = originalRunInfo
+                            .Player.Email;
+                            dto.Id = originalRunInfo
+                            .Player.Id;
+                            dto.Password = originalRunInfo
+                            .Player.Password;
+                            dto.IsLoggedIn = originalRunInfo
+                            .Player.IsLoggedIn;
+                            dto.Birthday = originalRunInfo
+                            .Player.Birthday;
+                            dto.IsMusicOn = originalRunInfo
+                            .Player.IsMusicOn;
+                            dto.IsSoundOn = originalRunInfo
+                            .Player.IsSoundOn;
+                            dto.MaxLevel = originalRunInfo
+                            .Player.MaxLevel;
+                            dto.TotalScore = originalRunInfo
+                            .Player.TotalScore;
+                        }
+                    );
+            #endregion
+            isModified |= TryUpdateProperty<Player, PlayerDTO>(
+                runInfo.Player,
+                OgPlayerDTO,
                 val => originalRunInfo.Player = val);
 
             // 2. Nullable Value Types (DateTime?, bool?)

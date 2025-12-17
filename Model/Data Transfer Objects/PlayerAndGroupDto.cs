@@ -15,7 +15,7 @@ namespace Model.Data_Transfer_Objects
     public class PlayerAndGroupDTO : BaseDTO<PlayerAndGroup, PlayerAndGroupDTO>
     {
         // Reference types (objects/strings) are naturally nullable
-        public Player? Player { get; set; }
-        public Group? Group { get; set; }
+        public PlayerDTO? Player { get; set; }
+        public GroupDTO? Group { get; set; }
     }
 }

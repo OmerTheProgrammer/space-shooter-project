@@ -364,42 +364,42 @@ namespace Client_Manager___API
 
         public Task<int> UpdateEnemiesInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
         {
-            return Update<EnemyInLastLevelDTO>($"/api/Update/EnemiesInLastLevelUpdator", enemyInLastLevel);
+            return Update<EnemyInLastLevelDTO>($"/api/Update/EnemyInLastLevelUpdator", enemyInLastLevel);
         }
 
         public Task<int> UpdateGroups(GroupDTO group)
         {
-            return Update<GroupDTO>($"/api/Update/GroupsUpdator", group);
+            return Update<GroupDTO>($"/api/Update/GroupUpdator", group);
         }
 
         public Task<int> UpdatePlayersAndGroups(PlayerAndGroupDTO playerAndGroup)
         {
-            return Update<PlayerAndGroupDTO>($"/api/Update/PlayersAndGroupsUpdator", playerAndGroup);
+            return Update<PlayerAndGroupDTO>($"/api/Update/PlayerAndGroupUpdator", playerAndGroup);
         }
 
         public Task<int> UpdatePlayers(PlayerDTO player)
         {
-            return Update<PlayerDTO>($"/api/Update/PlayersUpdator", player);
+            return Update<PlayerDTO>($"/api/Update/PlayerUpdator", player);
         }
 
         public Task<int> UpdateProfileEditRequests(ProfileEditRequestDTO profileEditRequest)
         {
-            return Update<ProfileEditRequestDTO>($"/api/Update/ProfileEditRequestsUpdator", profileEditRequest);
+            return Update<ProfileEditRequestDTO>($"/api/Update/ProfileEditRequestUpdator", profileEditRequest);
         }
 
         public Task<int> UpdateRequestsData(RequestDataDTO requestData)
         {
-            return Update<RequestDataDTO>($"/api/Update/RequestsDataUpdator", requestData);
+            return Update<RequestDataDTO>($"/api/Update/RequestDataUpdator", requestData);
         }
 
         public Task<int> UpdateRunsInfo(RunInfoDTO runInfo)
         {
-            return Update<RunInfoDTO>($"/api/Update/RunsInfoUpdator", runInfo);
+            return Update<RunInfoDTO>($"/api/Update/RunInfoUpdator", runInfo);
         }
 
         public Task<int> UpdateUsers(UserDTO user)
         {
-            return Update<UserDTO>($"/api/Update/UsersUpdator", user);
+            return Update<UserDTO>($"/api/Update/UserUpdator", user);
         }
         #endregion
 

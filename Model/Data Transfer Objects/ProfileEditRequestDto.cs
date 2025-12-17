@@ -14,10 +14,10 @@ namespace Model.Data_Transfer_Objects
     //nullable to support partial updates
     public class ProfileEditRequestDTO : BaseDTO<ProfileEditRequest, ProfileEditRequestDTO>
     {
-        public Player? RequestingPlayer { get; set; }
+        public PlayerDTO? RequestingPlayer { get; set; }
         public DateTime? RequestingDate { get; set; } = null;
         public DateTime? ReviewingDate { get; set; } = null;
-        public Admin? AdressingAdmin { get; set; }
+        public AdminDTO? AdressingAdmin { get; set; }
         public Status? Status { get; set; } = null;
     }
 }

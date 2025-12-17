@@ -76,7 +76,7 @@ namespace Model.Entitys
         public override string ToString()
         {
             return $"{base.ToString()}, " +
-                $" {this.Player},\n" +
+                $"The player: {this.Player},\n" +
                 $"Current Score: {this.CurrentScore}, " +
                 $"Current Level: {this.CurrentLevel}, " +
                 $"Current Shield Level: {this.CurrentShieldLevel}, " +

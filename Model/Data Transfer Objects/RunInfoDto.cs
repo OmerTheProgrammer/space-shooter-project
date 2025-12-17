@@ -21,6 +21,6 @@ namespace Model.Data_Transfer_Objects
         public int? CurrentHp { get; set; } = null;
         public bool? IsRunOver { get; set; } = null;
         public DateTime? RunStopDate { get; set; } = null;
-        public Player? Player { get; set; } = null;
+        public PlayerDTO? Player { get; set; } = null;
     }
 }

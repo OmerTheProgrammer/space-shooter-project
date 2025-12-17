@@ -14,7 +14,7 @@ namespace Model.Data_Transfer_Objects
     //nullable to support partial updates
     public class RequestDataDTO : BaseDTO<RequestData, RequestDataDTO>
     {
-        public ProfileEditRequest? Request { get; set; } = null;
+        public ProfileEditRequestDTO? Request { get; set; } = null;
         public string? Field { get; set; } = null;
         public string? OldValue { get; set; } = null;
         public string? NewValue { get; set; } = null;
