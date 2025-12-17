@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 namespace Model.Data_Transfer_Objects
 {
     /// <summary>
+    ///  version for when you want to use UserDTO directly (non-inherited).
+    /// </summary>
+    public class UserDTO : UserDTO<User, UserDTO>{
+        //copies all from UserDTO<TEntity, TDTO> (below)
+    }
+    /// <summary>
     /// version for when you want to use UserDTO for inherite.
     /// </summary>
     public class UserDTO<TEntity, TDTO> : BaseDTO<TEntity, TDTO>
@@ -21,12 +27,15 @@ namespace Model.Data_Transfer_Objects
 
         public bool? IsLoggedIn { get; set; } = null;
         public DateTime? Birthday { get; set; } = null;
-    }
-    /// <summary>
-    ///  version for when you want to use UserDTO directly (non-inherited).
-    /// </summary>
-    public class UserDTO : UserDTO<User, UserDTO>
-    {
-        //copies all from UserDTO<TEntity, TDTO> (above)
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}, " +
+                $" {this.Username}, ID: {this.Id}, " +
+                $"With password Hased: {this.Password},\n " +
+                $"With Birthday: {this.Birthday}, " +
+                $"Is {this.IsLoggedIn}ly logged in, " +
+                $"email: {this.Email}";
+        }
     }
 }

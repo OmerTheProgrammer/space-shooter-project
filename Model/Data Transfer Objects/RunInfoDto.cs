@@ -22,5 +22,17 @@ namespace Model.Data_Transfer_Objects
         public bool? IsRunOver { get; set; } = null;
         public DateTime? RunStopDate { get; set; } = null;
         public PlayerDTO? Player { get; set; } = null;
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}, " +
+                $"The player: {this.Player},\n" +
+                $"Current Score: {this.CurrentScore}, " +
+                $"Current Level: {this.CurrentLevel}, " +
+                $"Current Shield Level: {this.CurrentShieldLevel}, " +
+                $"Current Blaster Count: {this.CurrentBlasterCount}, " +
+                $"Current health: {this.CurrentHp}, and is {this.IsRunOver}ly over. " +
+                $"The Run Stopped at: {this.RunStopDate}";
+        }
     }
 }

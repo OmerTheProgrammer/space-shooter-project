@@ -18,5 +18,14 @@ namespace Model.Data_Transfer_Objects
         public string? Field { get; set; } = null;
         public string? OldValue { get; set; } = null;
         public string? NewValue { get; set; } = null;
+
+        public override string ToString()
+        {
+            return $"{base.ToString()} " +
+                $"Connected Request : {this.Request}," +
+                $"Field: {this.Field}, " +
+                $"Old Value: {this.OldValue}, " +
+                $"New Value: {this.NewValue}";
+        }
     }
 }

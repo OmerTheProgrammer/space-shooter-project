@@ -53,6 +53,7 @@ namespace Server_Manager___API
                     {
                         statusCode = StatusCodes.Status422UnprocessableEntity;
                         responseMessage = "Client Bad Request About Nested Entity Error: " + expandedEx.Message;
+                        _logger.LogError(responseMessage);
                     }
                     else
                     {

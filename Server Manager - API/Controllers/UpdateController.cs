@@ -21,136 +21,142 @@ namespace Server_Manager___API.Controllers
     {
         #region field updateing functions:
         /// <summary>
+        /// Helper method to determine if a type inherits from BaseDTO<TEntity, TDTO>
+        /// </summary>
+        private static bool IsBaseDtoType(Type? type)
+        {
+            while (type != null && type != typeof(object))
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(BaseDTO<,>))
+                {
+                    return true;
+                }
+                type = type.BaseType;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Helper method to check if any non-Idx field was provided
         /// in a DTO of a BaseEntity derivative 
         /// AND if that provided value is different from the original value.
         /// </summary>
-        private static List<List<string>>? 
+        private static List<List<string>>?
             CheckForInnerFieldChanges<TEntity, TDTO>
             (TDTO source, TDTO original)
             where TEntity : BaseEntity, new()
             where TDTO : BaseDTO<TEntity, TDTO>, new()
         {
-                PropertyInfo[] entityProperties =
-                    typeof(TDTO).GetProperties(
-                        BindingFlags.Public | BindingFlags.Instance
-                    );
-                List<List<string>> allChanges = new List<List<string>>();
-
-                foreach (PropertyInfo prop in entityProperties)
+            PropertyInfo[] entityProperties =
+                typeof(TDTO).GetProperties(
+                    BindingFlags.Public | BindingFlags.Instance
+                );
+            List<List<string>> allChanges = new List<List<string>>();
+            foreach (PropertyInfo prop in entityProperties)
+            {
+                // Skip Idx
+                if (prop.Name == "Idx")
                 {
-                    // Skip Idx
-                    if (prop.Name == "Idx")
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    //get values of the property from source and original
-                    object? sourceValue = prop.GetValue(source);
-                    object? originalValue = prop.GetValue(original);
-                    bool isValueProvided = false;
-                    Type propType = prop.PropertyType;
+                //get values of the property from source and original
+                object? sourceValue = prop.GetValue(source);
+                object? originalValue = prop.GetValue(original);
+                bool isValueProvided = false;
+                Type propType = prop.PropertyType;
 
-                    if (sourceValue != null)
+                if (sourceValue != null)
+                {
+                    // 1. Check for Nullable Value Types
+                    // (e.g., int?, bool?, DateTime?)
+                    if (propType.IsGenericType &&
+                        propType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     {
-                        // 1. Check for Nullable Value Types
-                        // (e.g., int?, bool?, DateTime?)
-                        if (propType.IsGenericType &&
-                            propType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        //gets the HasValue property of the nullable type
+                        var hasValue =
+                            propType.GetProperty("HasValue")?
+                            .GetValue(sourceValue, null);
+                        //if HasValue is true, then the inner field was provided
+                        //the HasValue is always a bool, but we check to be safe
+                        if (hasValue is bool b && b)
                         {
-                            //gets the HasValue property of the nullable type
-                            var hasValue =
-                                propType.GetProperty("HasValue")?
-                                .GetValue(sourceValue, null);
-                            //if HasValue is true, then the inner field was provided
-                            //the HasValue is always a bool, but we check to be safe
-                            if (hasValue is bool b && b)
-                            {
-                                isValueProvided = true; // Inner field provided
-                            }
-                        }
-                        // 2. Check for non-nullables (Value types like int, bool, structs, and Reference types like string/classes)
-                        else
-                        {
-                            isValueProvided = true; // Inner field provided (non-null)
+                            isValueProvided = true; // Inner field provided
                         }
                     }
-
-                    // If a value was explicitly provided by the client, check if it differs from the original.
-                    if (isValueProvided)
+                    // 2. Check for non-nullables (Value types like int, bool, structs, and Reference types like string/classes)
+                    else
                     {
-                        // A: Nested BaseEntity Derivative (Recursive Check) ---
-                        // If the property is a complex class that inherits
-                        // from BaseEntity (a nested DTO/Entity)
-                        if (typeof(BaseEntity).IsAssignableFrom(propType)
-                            && propType.IsClass && propType != typeof(string))
+                        isValueProvided = true; // Inner field provided (non-null)
+                    }
+                }
+
+                // If a value was explicitly provided by the client, check if it differs from the original.
+                if (isValueProvided)
+                {
+                    // Case A: Nested DTO (Recursive Check)
+                    // Check if the property type is a DTO inheriting from BaseDTO
+                    if (IsBaseDtoType(propType) && propType.IsClass && propType != typeof(string))
+                    {
+                        // 1. Find the CheckForInnerFieldChanges<T>
+                        MethodInfo? genericMethod =
+                            typeof(UpdateController).GetMethods(
+                                BindingFlags.NonPublic | BindingFlags.Static
+                                )
+                            .Where(
+                                m => m.Name == nameof(CheckForInnerFieldChanges)
+                                && m.IsGenericMethodDefinition
+                                && m.GetParameters().Length == 2)
+                            .FirstOrDefault();
+
+                        //if we found the method, we can invoke it
+                        if (genericMethod != null)
                         {
-                            // 1. Find the CheckForInnerFieldChanges<T>
-                            MethodInfo? genericMethod =
-                                typeof(UpdateController).GetMethods(
-                                    BindingFlags.NonPublic | BindingFlags.Static
-                                    )
-                                .Where(
-                                    m => m.Name == nameof(CheckForInnerFieldChanges)
-                                    && m.IsGenericMethodDefinition
-                                    && m.GetParameters().Length == 2)
-                                .FirstOrDefault();
+                            // Extract TEntity and TDTO from the nested DTO's BaseType
+                            Type nestedEntity = propType.BaseType!.GetGenericArguments()[0];
+                            Type nestedDto = propType.BaseType!.GetGenericArguments()[1];
 
-                            //if we found the method, we can invoke it
-                            if (genericMethod != null)
+                            MethodInfo constructedMethod = genericMethod.MakeGenericMethod(nestedEntity, nestedDto);
+
+                            List<List<string>>? innerPaths = (List<List<string>>?)constructedMethod.Invoke(null, new object?[] { sourceValue, originalValue });
+
+                            if (innerPaths != null && innerPaths.Any())
                             {
-                                // 2. create the func with the nested type
-                                MethodInfo constructedMethod =
-                                    genericMethod.MakeGenericMethod(propType);
-
-                                // 3. run the func with the nested source and original values
-                                // The result is a List<List<string>>?
-                                List<List<string>>? innerPaths =
-                                    (List<List<string>>?)constructedMethod.Invoke(
-                                        null,//calling object doesn't exist = static
-                                        new object?[]
-                                        { sourceValue, originalValue }
-                                        )!;
-
-                                if (innerPaths != null && innerPaths.Any())
+                                foreach (var path in innerPaths)
                                 {
-                                    // Found changes deep inside. Prepend the current property name (prop.Name)
-                                    // to the beginning of every path and add to the collective list.
-                                    foreach (var path in innerPaths)
-                                    {
-                                        path.Insert(0, prop.Name);
-                                        allChanges.Add(path);
-                                    }
+                                    path.Insert(0, prop.Name);
+                                    allChanges.Add(path);
                                 }
                             }
                         }
-                        // --- Case B: Simple Types (Value Types and Strings) ---
-                        else
+                    }
+                    // --- Case B: Simple Types (Value Types and Strings) ---
+                    else
+                    {
+                        // Unpack Nullable Value Types to their underlying value for comparison
+                        object? comparableSource = sourceValue;
+
+                        // Check if the property type is Nullable<T> (e.g., int?, DateTime?)
+                        Type? underlyingType = Nullable.GetUnderlyingType(propType);
+
+                        if (underlyingType != null)
                         {
-                            // Unpack Nullable Value Types to their underlying value for comparison
-                            object? comparableSource = sourceValue;
+                            // If it is Nullable<T>, extract the actual T value 
+                            comparableSource =
+                                propType.GetProperty("Value")?.GetValue(sourceValue);
+                        }
 
-                            // Check if the property type is Nullable<T> (e.g., int?, DateTime?)
-                            Type? underlyingType = Nullable.GetUnderlyingType(propType);
-
-                            if (underlyingType != null)
-                            {
-                                // If it is Nullable<T>, extract the actual T value 
-                                PropertyInfo? valueProperty = propType.GetProperty("Value");
-                                comparableSource = valueProperty?.GetValue(sourceValue);
-                            }
-
-                            // Compare simple types/strings using string representation for reliable comparison of boxed value types.
-                            if (!string.Equals(comparableSource?.ToString(), originalValue?.ToString()))
-                            {
-                                // Found change at this level. Add a new path list with only the property name.
-                                allChanges.Add(new List<string> { prop.Name });
-                            }
+                        // Compare simple types/strings using string representation for reliable comparison of boxed value types.
+                        if (!string.Equals(comparableSource?.ToString(), originalValue?.ToString()))
+                        {
+                            // Found change at this level. Add a new path list with only the property name.
+                            allChanges.Add(new List<string> { prop.Name });
                         }
                     }
                 }
-                return allChanges.Any() ? allChanges : null; // Return all changes or null
             }
+            return allChanges.Any() ? allChanges : null; // Return all changes or null
+        }
 
             /// <summary>
             /// Overload for string and classes.
@@ -182,11 +188,12 @@ namespace Server_Manager___API.Controllers
                 List<List<string>>? deepChanges = 
                     CheckForInnerFieldChanges<TEntity, TDTO>
                     (source, originalDTO);
-
+                
                 if (deepChanges != null && deepChanges.Any())
                 {
-                    string details = string.Join(", ", deepChanges.Select(p => string.Join("/", p)));
-                    throw new ExpandedException($"Unauthorized Update Attempt in {typeof(TDTO).Name}. " +
+                    string details = string.Join(", ", deepChanges.Select(
+                        p => $"{typeof(TEntity).Name}/" + string.Join("/", p)));
+                    throw new ExpandedException($"Invalid Use of Update in {typeof(TDTO).Name}. " +
                         $"You provided values for nested fields: [{details}]. " +
                         $"Nested updates are forbidden; use the specific controller for that type.");
                 }
@@ -227,15 +234,13 @@ namespace Server_Manager___API.Controllers
             // NOTE: The entire try/catch block is removed.
             // Any exception (404 from SelectByIdx, or 409/400 from SaveChanges) 
             // will now bubble up to the ExceptionHandler middleware.
-
             AdminsDB adminsDB = new AdminsDB();
-
             // 1. Fetch current DB values. If not found, AdminsDB.SelectByIdx is expected 
             //    to throw an ExpandedException which the middleware handles as 404.
             Admin originalAdmin = AdminsDB.SelectByIdx(admin.Idx);
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
@@ -255,12 +260,11 @@ namespace Server_Manager___API.Controllers
                 val => originalAdmin.Birthday = val);
             isModified |= TryUpdateProperty(admin.IsLoggedIn,
                 val => originalAdmin.IsLoggedIn = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
                 adminsDB.Update(originalAdmin);
-
                 // 2. SaveChanges will throw exceptions on DB constraint violations (Unique/Not Null/FK),
                 //    which are handled by the ExceptionHandler middleware.
                 changedRecords = adminsDB.SaveChanges();
@@ -301,12 +305,12 @@ namespace Server_Manager___API.Controllers
                 EnemiesInLastLevelDB.SelectByIdx(enemyInLastLevel.Idx);
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
             #region convert OgRunInfo to DTO to use in TryUpdateProperty
-                RunInfoDTO OgRunInfoDTO = RunInfoDTO.FromEntity(
+            RunInfoDTO OgRunInfoDTO = RunInfoDTO.FromEntity(
                     originalEnemyInLastLevel.RunInfo, dto =>
                         {
                             dto.CurrentBlasterCount = originalEnemyInLastLevel
@@ -363,7 +367,7 @@ namespace Server_Manager___API.Controllers
                 val => originalEnemyInLastLevel.Name = val);
             isModified |= TryUpdateProperty(enemyInLastLevel.Amount,
                 val => originalEnemyInLastLevel.Amount = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
@@ -407,7 +411,7 @@ namespace Server_Manager___API.Controllers
                 originalGroup = GroupsDB.SelectByIdx(group.Idx);
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
@@ -417,7 +421,7 @@ namespace Server_Manager___API.Controllers
             // 2. Nullable Value Types (DateTime?, bool?)
             isModified |= TryUpdateProperty(group.Score,
                 val => originalGroup.Score = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
@@ -463,12 +467,12 @@ namespace Server_Manager___API.Controllers
                 PlayersAndGroupsDB.SelectByIdx(playerAndGroup.Idx);
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
             #region convert OgPlayer to DTO to use in TryUpdateProperty
-                PlayerDTO OgPlayerDTO =
+            PlayerDTO OgPlayerDTO =
                     PlayerDTO.FromEntity(
                         originalPlayerAndGroup.Player,
                         dto =>
@@ -512,7 +516,7 @@ namespace Server_Manager___API.Controllers
             isModified |= TryUpdateProperty<Model.Entitys.Group,
                 GroupDTO>( playerAndGroup.Group, OgGroupDTO,
                 val => originalPlayerAndGroup.Group = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
@@ -555,7 +559,7 @@ namespace Server_Manager___API.Controllers
             Player originalPlayer = PlayersDB.SelectByIdx(player.Idx);
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
@@ -581,7 +585,7 @@ namespace Server_Manager___API.Controllers
                 val => originalPlayer.MaxLevel = val);
             isModified |= TryUpdateProperty(player.TotalScore,
                 val => originalPlayer.TotalScore = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
@@ -629,12 +633,12 @@ namespace Server_Manager___API.Controllers
                 );
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
             #region convert OgPlayer to DTO to use in TryUpdateProperty
-                PlayerDTO OgRequstingPlayerDTO =
+            PlayerDTO OgRequstingPlayerDTO =
                     PlayerDTO.FromEntity(
                         originalProfileEditRequest.RequestingPlayer,
                         dto =>
@@ -693,8 +697,7 @@ namespace Server_Manager___API.Controllers
                 profileEditRequest.AdressingAdmin,
                 OgAdressingAdminDTO,
                 val => originalProfileEditRequest.AdressingAdmin = val);
-
-
+            
             // 2. Nullable Value Types (DateTime?, bool?)
             isModified |= TryUpdateProperty(
                 profileEditRequest.RequestingDate,
@@ -705,7 +708,7 @@ namespace Server_Manager___API.Controllers
             isModified |= TryUpdateProperty(
                 profileEditRequest.Status,
                 val => originalProfileEditRequest.Status = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
@@ -750,7 +753,7 @@ namespace Server_Manager___API.Controllers
                 RequestsDataDB.SelectByIdx(requestData.Idx);
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
@@ -760,7 +763,7 @@ namespace Server_Manager___API.Controllers
                 val => originalRequestData.NewValue = val);
             isModified |= TryUpdateProperty(requestData.OldValue,
                 val => originalRequestData.OldValue = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
@@ -803,7 +806,7 @@ namespace Server_Manager___API.Controllers
             RunInfo originalRunInfo = RunsInfoDB.SelectByIdx(runInfo.Idx);
 
             bool isModified = false;
-
+            #region Updating Fields
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
@@ -856,8 +859,7 @@ namespace Server_Manager___API.Controllers
                 val => originalRunInfo.IsRunOver = val);
             isModified |= TryUpdateProperty(runInfo.RunStopDate,
                 val => originalRunInfo.RunStopDate = val);
-
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {
@@ -900,6 +902,7 @@ namespace Server_Manager___API.Controllers
             User originalUser = UsersDB.SelectByIdx(user.Idx);
 
             bool isModified = false;
+            #region Updating Fields
 
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
@@ -918,7 +921,7 @@ namespace Server_Manager___API.Controllers
                 val => originalUser.Birthday = val);
             isModified |= TryUpdateProperty(user.IsLoggedIn,
                 val => originalUser.IsLoggedIn = val);
-
+            #endregion
             int changedRecords = 0;
             if (isModified)
             {

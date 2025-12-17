@@ -23,5 +23,18 @@ namespace Model.Data_Transfer_Objects
         // Assuming Enemy is an enum, it must be nullable (Enemy?)
         public Enemy? Name { get; set; } = null;
 
+        public override string ToString()
+        {
+            string output = $"{base.ToString()} In run: {this.RunInfo}\n";
+            if (this.Amount == 1)
+            {
+                output += $"there is 1 Enemy {this.Name} ";
+            }
+            else
+            {
+                output += $"there are {this.Amount} Enemy {this.Name}s ";
+            }
+            return output;
+        }
     }
 }

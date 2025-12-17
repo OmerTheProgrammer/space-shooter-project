@@ -17,5 +17,11 @@ namespace Model.Data_Transfer_Objects
         // Reference types (objects/strings) are naturally nullable
         public PlayerDTO? Player { get; set; }
         public GroupDTO? Group { get; set; }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()} Group: {this.Group}\n" +
+                $"Player: {this.Player}";
+        }
     }
 }

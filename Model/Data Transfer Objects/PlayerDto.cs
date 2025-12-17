@@ -18,5 +18,13 @@ namespace Model.Data_Transfer_Objects
         public bool? IsMusicOn { get; set; } = null;
 
         public override Player ToEntity() => (Player)base.ToEntity();
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}, " +
+                $"Max level: {this.MaxLevel}, Total Score: {this.TotalScore}, " +
+                $"Sound is {this.IsSoundOn}ly on, " +
+                $"Music is {this.IsMusicOn}ly on";
+        }
     }
 }

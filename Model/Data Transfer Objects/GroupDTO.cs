@@ -13,5 +13,10 @@ namespace Model.Data_Transfer_Objects
         public int? Score { get; set; } = null;
         public string? Name;
 
+        public override string ToString()
+        {
+            return $"{base.ToString()}, " +
+                $"The Group {this.Name}'s score is {this.Score}";
+        }
     }
 }

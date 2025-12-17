@@ -24,7 +24,7 @@ namespace Model.Entitys
                 $" {this.Username}, ID: {this.Id}, " +
                 $"With password Hased: {this.Password},\n " +
                 $"With Birthday: {this.Birthday}, " +
-                $"Is {this.isLoggedIn}ly logged in, " +
+                $"Is {this.IsLoggedIn}ly logged in, " +
                 $"email: {this.Email}";
         }
     }

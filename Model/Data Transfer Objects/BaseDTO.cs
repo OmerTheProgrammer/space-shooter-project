@@ -113,5 +113,9 @@ namespace Model.Data_Transfer_Objects
             return entity;
         }
 
+        public override string ToString()
+        {
+            return $"idx : {this.Idx}";
+        }
     }
 }
