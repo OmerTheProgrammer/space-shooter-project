@@ -38,7 +38,7 @@ namespace Server_Manager___API.Controllers
             return GroupsTable;
         }
 
-        [HttpPost]
+        [HttpGet]
         [ActionName("PlayersAndGroupsSelector")]
         public PlayersAndGroupsTable SelectAllPlayersAndGroups()
         {

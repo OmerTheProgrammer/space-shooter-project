@@ -47,15 +47,15 @@ namespace Server_Manager___API.Controllers
 
         [HttpPost]
         [ActionName("PlayersAndGroupsInsertor")]
-        public IActionResult InsertPlayerAndGroup(
-            [FromBody] PlayerAndGroup playerAndGroup)
+        public IActionResult InsertPlayerAndGroup([FromBody]
+            PlayerAndGroup playerAndGroup)
         {
             PlayersAndGroupsDB playerAndGroupsDB =
                 new PlayersAndGroupsDB();
             playerAndGroupsDB.Insert(playerAndGroup);
-            int ChangedRecords = playerAndGroupsDB.SaveChanges();
-            // 200 - OK
-            return StatusCode(200, ChangedRecords);
+            int changedRecords = playerAndGroupsDB.SaveChanges();
+            // 200 - OK: 
+            return StatusCode(200, changedRecords);
         }
 
         [HttpPost]
@@ -65,17 +65,6 @@ namespace Server_Manager___API.Controllers
             PlayersDB playersDB = new PlayersDB();
             playersDB.Insert(player);
             int changedRecords = playersDB.SaveChanges();
-            // 200 - OK: 
-            return StatusCode(200, changedRecords);
-        }
-
-        [HttpPost]
-        [ActionName("PlayersAndGroupsInsertor")]
-        public IActionResult InsertPlayerAndGroup([FromBody] PlayerAndGroup playerAndGroup)
-        {
-            PlayersAndGroupsDB playerAndGroupsDB = new PlayersAndGroupsDB();
-            playerAndGroupsDB.Insert(playerAndGroup);
-            int changedRecords = playerAndGroupsDB.SaveChanges();
             // 200 - OK: 
             return StatusCode(200, changedRecords);
         }
