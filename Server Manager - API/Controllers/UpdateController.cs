@@ -699,6 +699,66 @@ namespace Server_Manager___API.Controllers
             }
         }
 
+        //--- USER UPDATE ---
+        [HttpPut]
+        [ActionName("UserUpdator")]
+        public IActionResult UpdateUser([FromBody] UserDTO user)
+        {
+            // NOTE: The entire try/catch block is removed.
+            // Any exception (404 from SelectByIdx, or 409/400 from SaveChanges) 
+            // will now bubble up to the ExceptionHandler middleware.
+
+            UsersDB usersDB = new UsersDB();
+
+            // 1. Fetch current DB values. If not found, UsersDB.SelectByIdx is expected 
+            //    to throw an ExpandedException which the middleware handles as 404.
+            User originalUser = UsersDB.SelectByIdx(user.Idx);
+
+            bool isModified = false;
+
+            // Check and update fields only if they are provided in the DTO
+            // |= like += but for ||
+            // 1. Strings (Nullable Reference Types)
+            isModified |= TryUpdateProperty(user.Id,
+                val => originalUser.Id = val);
+            isModified |= TryUpdateProperty(user.Email,
+                val => originalUser.Email = val);
+            isModified |= TryUpdateProperty(user.Password,
+                val => originalUser.Password = val);
+            isModified |= TryUpdateProperty(user.Username,
+                val => originalUser.Username = val);
+
+            // 2. Nullable Value Types (DateTime?, bool?)
+            isModified |= TryUpdateProperty(user.Birthday,
+                val => originalUser.Birthday = val);
+            isModified |= TryUpdateProperty(user.IsLoggedIn,
+                val => originalUser.IsLoggedIn = val);
+
+            int changedRecords = 0;
+            if (isModified)
+            {
+                usersDB.Update(originalUser);
+
+                // 2. SaveChanges will throw exceptions on DB constraint violations (Unique/Not Null/FK),
+                //    which are handled by the ExceptionHandler middleware.
+                changedRecords = usersDB.SaveChanges();
+            }
+
+            if (changedRecords > 0)
+            {
+                // Success with changes: 200 OK.
+                return StatusCode(200, $"OK: Record for User Idx=" +
+                    $" {user.Idx} successfully updated.\n" +
+                    $" Records changed: {changedRecords}");
+            }
+            else //changedRecords == 0 -> no changes made
+            {
+                // Success with no changes: 200 OK with a specific message.
+                return StatusCode(200, $"OK: Record for User Idx=" +
+                    $"{user.Idx} was not changed as the data was identical, " +
+                    $"Records changed: {changedRecords}");
+            }
+        }
 
     }
 }
