@@ -59,7 +59,6 @@ namespace Model.Data_Transfer_Objects
         /// 2. Inheritance (e.g., Admin : User).
         /// 3. Composition (Nested DTOs).
         /// </summary>
-        // no use yet (ע"מ 22 במחברת)
         public virtual TEntity ToEntity()
         {
             // Create the specific entity instance (e.g., an Admin)
