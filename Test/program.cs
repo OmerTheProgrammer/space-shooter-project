@@ -371,135 +371,130 @@ namespace Test
             Console.WriteLine("--- Starting API Demo Scenario ---\n");
             int linesChanged = 0;
             #region Admins:
-                ////// 1. Get All (Initial list)
-                //AdminsTable admins = await api.GetAllAdmins();
+            ////// 1. Get All (Initial list)
+            //AdminsTable admins = await api.GetAllAdmins();
 
-                //// 2. Write initial list
-                //foreach (var item in admins)
-                //{
-                //    Console.WriteLine(item + "\n");
-                //}
-
-                //// 3. Expected found message (Idx 2 exists)
-                //Console.WriteLine(await api.GetAdminsByIdx(2) + "\n");
-
-                //// 4. Expected not found message (Idx 12 does not exist)
-                //// NOTE: The GetAdminsByIdx mock handles the error printing internally
-                //Admin notFoundAdminResult = await api.GetAdminsByIdx(12);
-                //Console.WriteLine($"GetAdminByIdx(12) returned: " +
-                //    $"{(notFoundAdminResult == null ? "NULL (Error)" :
-                //    notFoundAdminResult.ToString())}\n");
-
-                //// 5. Insert new Admin
-                //linesChanged = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
-                //Console.WriteLine($"InsertAdmins Result (Rows Affected): {linesChanged}\n");
-
-                //// 6. Get All (Updated list)
-                //admins = await api.GetAllAdmins();
-
-                //// 7. Write last item (the newly inserted Admin)
-                //Console.WriteLine(admins.Last() + "\n");
-
-                ////8.Update the new Admin:
-                ////find the admin(that we just added)
-                //linesChanged = await api.UpdateAdmins(
-                //            //create DTO from entity with nulls and change only what we want
-                //            AdminDTO.FromEntity(admins.Last(), dto =>
-                //            {
-                //                // Define ALL changes rest is null
-                //                dto.Id = "14214431";
-                //            }
-                //        )
-                //    );
-                //Console.WriteLine($"UpdateAdmins Result (Rows Affected): {linesChanged}\n");
-
-                //// 9. Get All (Updated list)
-                //admins = await api.GetAllAdmins();
-
-                //// 10. Write last item (the updated Admin)
-                //Console.WriteLine(admins.Last() + "\n");
-
-                //// 11. Delete the new Admin
-                //linesChanged = await api.DeleteAdmin(admins.Last().Idx);
-                //Console.WriteLine($"DeleteAdmin Result (Rows Affected):" +
-                //    $" {linesChanged}\n");
-            #endregion
-
-            #region EnemiesInLastLevel:
-            ////1.Get All(Initial list)
-            //EnemiesInLastLevelTable enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
-
-            ////2.Write initial list
-            //foreach (var item in enemiesInLastLevel)
+            //// 2. Write initial list
+            //foreach (var item in admins)
             //{
             //    Console.WriteLine(item + "\n");
             //}
 
-            ////3.Expected found message(Idx 2 exists)
-            //Console.WriteLine(await api.GetEnemiesInLastLevelByIdx(2) + "\n");
+            //// 3. Expected found message (Idx 2 exists)
+            //Console.WriteLine(await api.GetAdminsByIdx(2) + "\n");
 
-            ////4.Expected not found message(Idx 12 does not exist)
-            //EnemyInLastLevel notFoundEnemyInLastLevelResult = await api.GetEnemiesInLastLevelByIdx(12);
-            //Console.WriteLine($"GetEnemyInLastLevelByIdx(12) returned: " +
-            //    $"{(notFoundEnemyInLastLevelResult == null ? "NULL (Error)" :
-            //    notFoundEnemyInLastLevelResult.ToString())}\n");
+            //// 4. Expected not found message (Idx 12 does not exist)
+            //// NOTE: The GetAdminsByIdx mock handles the error printing internally
+            //Admin notFoundAdminResult = await api.GetAdminsByIdx(12);
+            //Console.WriteLine($"GetAdminByIdx(12) returned: " +
+            //    $"{(notFoundAdminResult == null ? "NULL (Error)" :
+            //    notFoundAdminResult.ToString())}\n");
 
-            //linesChanged = 0;
-            ////5.Insert new EnemyInLastLevel
-            //linesChanged = await api.InsertEnemiesInLastLevel(
-            //    new EnemyInLastLevel
-            //    {
-            //        Amount = 10,
-            //        RunInfo = new RunInfo
-            //        {
-            //            Idx = 1,
-            //            Player = new Player
-            //            {
-            //                Idx = 11
-            //            }
-            //        }
-            //    }
-            //);
-            //Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            //// 5. Insert new Admin
+            //linesChanged = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
+            //Console.WriteLine($"InsertAdmins Result (Rows Affected): {linesChanged}\n");
 
-            ////6.Get All(Updated list)
-            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            //// 6. Get All (Updated list)
+            //admins = await api.GetAllAdmins();
 
-            ////7.Write last item(the newly inserted EnemyInLastLevel)
-            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+            //// 7. Write last item (the newly inserted Admin)
+            //Console.WriteLine(admins.Last() + "\n");
 
-            ////8.Update the new EnemyInLastLevel:
-            ////find the enemyInLastLevel(that we just added)
-            //linesChanged = await api.UpdateEnemiesInLastLevel(
+            ////8.Update the new Admin:
+            ////find the admin(that we just added)
+            //linesChanged = await api.UpdateAdmins(
             //            //create DTO from entity with nulls and change only what we want
-            //            EnemyInLastLevelDTO.FromEntity(
-            //                enemiesInLastLevel.Last(), dto =>
-            //                {
-            //                    //Define ALL changes rest is null
-            //                    dto.Amount = 3;
-            //                    dto.RunInfo = new RunInfoDTO
-            //                    {
-            //                        Idx = 1,
-            //                        Player = new PlayerDTO
-            //                        {
-            //                            Idx = 11,
-            //                        }
-            //                    };
-            //                }
+            //            AdminDTO.FromEntity(admins.Last(), dto =>
+            //            {
+            //                // Define ALL changes rest is null
+            //                dto.Id = "14214431";
+            //            }
             //        )
             //    );
-            //Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            //Console.WriteLine($"UpdateAdmins Result (Rows Affected): {linesChanged}\n");
 
-            ////9.Get All(Updated list)
-            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            //// 9. Get All (Updated list)
+            //admins = await api.GetAllAdmins();
 
-            ////10.Write last item(the updated EnemyInLastLevel)
-            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+            //// 10. Write last item (the updated Admin)
+            //Console.WriteLine(admins.Last() + "\n");
 
-            ////11.Delete the new EnemyInLastLevel
-            //linesChanged = await api.DeleteEnemyInLastLevel(enemiesInLastLevel.Last().Idx);
-            //Console.WriteLine($"DeleteEnemyInLastLevel Result " +
-            //    $"(Rows Affected): {linesChanged}\n");
+            //// 11. Delete the new Admin
+            //linesChanged = await api.DeleteAdmin(admins.Last().Idx);
+            //Console.WriteLine($"DeleteAdmin Result (Rows Affected):" +
+            //    $" {linesChanged}\n");
+            #endregion
+
+            #region EnemiesInLastLevel:
+            //1.Get All(Initial list)
+            EnemiesInLastLevelTable enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+
+            //2.Write initial list
+            foreach (var item in enemiesInLastLevel)
+            {
+                Console.WriteLine(item + "\n");
+            }
+
+            //3.Expected found message(Idx 2 exists)
+            Console.WriteLine(await api.GetEnemiesInLastLevelByIdx(2) + "\n");
+
+            //4.Expected not found message(Idx 12 does not exist)
+            EnemyInLastLevel notFoundEnemyInLastLevelResult = await api.GetEnemiesInLastLevelByIdx(12);
+            Console.WriteLine($"GetEnemyInLastLevelByIdx(12) returned: " +
+                $"{(notFoundEnemyInLastLevelResult == null ? "NULL (Error)" :
+                notFoundEnemyInLastLevelResult.ToString())}\n");
+
+            linesChanged = 0;
+            //5.Insert new EnemyInLastLevel
+            linesChanged = await api.InsertEnemiesInLastLevel(
+                new EnemyInLastLevel
+                {
+                    Amount = 10,
+                    RunInfo = new RunInfo
+                    {
+                        Idx = 1,
+                        Player = new Player
+                        {
+                            Idx = 11
+                        }
+                    }
+                }
+            );
+            Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+
+            //6.Get All(Updated list)
+            enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+
+            //7.Write last item(the newly inserted EnemyInLastLevel)
+            Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+
+            //8.Update the new EnemyInLastLevel:
+            //find the enemyInLastLevel(that we just added)
+            linesChanged = await api.UpdateEnemiesInLastLevel(
+                        //create DTO from entity with nulls and change only what we want
+                        EnemyInLastLevelDTO.FromEntity(
+                            enemiesInLastLevel.Last(), dto =>
+                            {
+                                //Define ALL changes, the rest is null
+                                dto.Amount = 3;
+                                dto.RunInfo = new RunInfoDTO {
+                                    Idx = 2
+                                };
+                            }
+                    )
+                );
+            Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+
+            //9.Get All(Updated list)
+            enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+
+            //10.Write last item(the updated EnemyInLastLevel)
+            Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+
+            //11.Delete the new EnemyInLastLevel
+            linesChanged = await api.DeleteEnemyInLastLevel(enemiesInLastLevel.Last().Idx);
+            Console.WriteLine($"DeleteEnemyInLastLevel Result " +
+                $"(Rows Affected): {linesChanged}\n");
             #endregion
 
 
