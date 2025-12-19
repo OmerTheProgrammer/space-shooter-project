@@ -477,8 +477,13 @@ namespace Test
                             {
                                 //Define ALL changes, the rest is null
                                 dto.Amount = 3;
-                                dto.RunInfo = new RunInfoDTO {
-                                    Idx = 2
+                                dto.RunInfo = new RunInfoDTO
+                                {
+                                    Idx = 2,
+                                    Player = new PlayerDTO
+                                    {
+                                        Idx = 12
+                                    }
                                 };
                             }
                     )
