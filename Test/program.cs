@@ -480,10 +480,6 @@ namespace Test
                                 dto.RunInfo = new RunInfoDTO
                                 {
                                     Idx = 2,
-                                    Player = new PlayerDTO
-                                    {
-                                        Idx = 12
-                                    }
                                 };
                             }
                     )
