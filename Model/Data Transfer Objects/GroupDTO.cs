@@ -11,7 +11,7 @@ namespace Model.Data_Transfer_Objects
     {
         // Value type MUST be explicitly nullable for partial updates
         public int? Score { get; set; } = null;
-        public string? Name;
+        public string? Name { get; set; }
 
         public override string ToString()
         {
