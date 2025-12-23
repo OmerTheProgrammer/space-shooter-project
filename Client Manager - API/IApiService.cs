@@ -33,71 +33,71 @@ namespace Client_Manager___API
         #endregion
 
         #region select by Idx:
-            public Task<Admin> GetAdminsByIdx(int Idx);
+            public Task<Admin> GetAdminByIdx(int Idx);
 
-            public Task<EnemyInLastLevel> GetEnemiesInLastLevelByIdx(int Idx);
+            public Task<EnemyInLastLevel> GetEnemyInLastLevelByIdx(int Idx);
 
-            public Task<Group> GetGroupsByIdx(int Idx);
+            public Task<Group> GetGroupByIdx(int Idx);
 
-            public Task<PlayerAndGroup> GetPlayersAndGroupsByIdx(int Idx);
+            public Task<PlayerAndGroup> GetPlayerAndGroupByIdx(int Idx);
 
-            public Task<Player> GetPlayersByIdx(int Idx);
+            public Task<Player> GetPlayerByIdx(int Idx);
 
-            public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int Idx);
+            public Task<ProfileEditRequest> GetProfileEditRequestByIdx(int Idx);
 
-            public Task<RequestData> GetRequestsDataByIdx(int Idx);
+            public Task<RequestData> GetRequestDataByIdx(int Idx);
 
-            public Task<RunInfo> GetRunsInfoByIdx(int Idx);
+            public Task<RunInfo> GetRunInfoByIdx(int Idx);
 
-            public Task<User> GetUsersByIdx(int Idx);
+            public Task<User> GetUserByIdx(int Idx);
         #endregion
 
         #region Insert:
-            public Task<int> InsertAdmins(Admin admin);
+            public Task<int> InsertAdmin(Admin admin);
 
-            public Task<int> InsertEnemiesInLastLevel(
+            public Task<int> InsertEnemyInLastLevel(
                 EnemyInLastLevel admin);
 
-            public Task<int> InsertGroups(Group group);
+            public Task<int> InsertGroup(Group group);
 
-            public Task<int> InsertPlayersAndGroups(
+            public Task<int> InsertPlayerAndGroup(
                 PlayerAndGroup playerAndGroup);
 
-            public Task<int> InsertPlayers(Player player);
+            public Task<int> InsertPlayer(Player player);
 
-            public Task<int> InsertProfileEditRequests(
+            public Task<int> InsertProfileEditRequest(
                 ProfileEditRequest profileEditRequest);
 
-            public Task<int> InsertRequestsData(
+            public Task<int> InsertRequestData(
                 RequestData RequestData);
 
-            public Task<int> InsertRunsInfo(RunInfo runInfo);
+            public Task<int> InsertRunInfo(RunInfo runInfo);
 
-            public Task<int> InsertUsers(User user);
+            public Task<int> InsertUser(User user);
         #endregion
 
         #region Update:
-            public Task<int> UpdateAdmins(AdminDTO admin);
+            public Task<int> UpdateAdmin(AdminDTO admin);
             
-            public Task<int> UpdateEnemiesInLastLevel(
+            public Task<int> UpdateEnemyInLastLevel(
                 EnemyInLastLevelDTO enemyInLastLevel);
 
-            public Task<int> UpdateGroups(GroupDTO group);
+            public Task<int> UpdateGroup(GroupDTO group);
 
-            public Task<int> UpdatePlayersAndGroups(
+            public Task<int> UpdatePlayerAndGroup(
                 PlayerAndGroupDTO playerAndGroup);
 
-            public Task<int> UpdatePlayers(PlayerDTO player);
+            public Task<int> UpdatePlayer(PlayerDTO player);
 
-            public Task<int> UpdateProfileEditRequests(
+            public Task<int> UpdateProfileEditRequest(
                 ProfileEditRequestDTO profileEditRequest);
             
-            public Task<int> UpdateRequestsData(
+            public Task<int> UpdateRequestData(
                 RequestDataDTO requestData);
             
-            public Task<int> UpdateRunsInfo(RunInfoDTO runInfo);
+            public Task<int> UpdateRunInfo(RunInfoDTO runInfo);
             
-            public Task<int> UpdateUsers(UserDTO user);
+            public Task<int> UpdateUser(UserDTO user);
         #endregion
 
         #region Delete:
