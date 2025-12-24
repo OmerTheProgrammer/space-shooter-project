@@ -123,7 +123,7 @@ namespace Server_Manager___API.Controllers
                 return dtoInstance;
             }
 
-        private static string GetDbClassName(string entityName)
+            private static string GetDbClassName(string entityName)
             {
                 // Define rules: (Pattern to look for, Replacement)
                 var rules = new Dictionary<string, string>
@@ -135,17 +135,14 @@ namespace Server_Manager___API.Controllers
                     { "Run", "Runs" },
                     { "User", "Users" },
                     { "Admin", "Admins" },
-                    { "ProfileEdit", "ProfileEditRequests" } // Specific override for ProfileEditRequest
+                    { "ProfileEditRequest", "ProfileEditRequests" } // Specific override for ProfileEditRequest
                 };
 
                 foreach (var rule in rules)
                 {
                     if (entityName.StartsWith(rule.Key))
                     {
-                        // Special case for ProfileEditRequest -> ProfileEditRequestsDB
-                        if (entityName == "ProfileEditRequest") return "ProfileEditRequestsDB";
-
-                        // Replace only the first occurrence (the subject of the sentence)
+                        // Replace singolar to prlural
                         return entityName.Replace(rule.Key, rule.Value) + "DB";
                     }
                 }
