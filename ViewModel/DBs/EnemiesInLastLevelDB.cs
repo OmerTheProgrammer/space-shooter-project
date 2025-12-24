@@ -16,7 +16,7 @@ namespace ViewModel.DBs
     {
         public EnemiesInLastLevelTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM EnemiesInLastLevelTbl";
+            command.CommandText = $"SELECT * FROM EnemiesInLastLevelTbl ORDER BY idx ASC";
             EnemiesInLastLevelTable pList = new EnemiesInLastLevelTable(Select());
             return pList;
         }

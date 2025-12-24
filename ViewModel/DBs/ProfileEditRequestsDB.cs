@@ -15,7 +15,7 @@ namespace ViewModel.DBs
     {
         public ProfileEditRequestsTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM ProfileEditRequestsTbl";
+            command.CommandText = $"SELECT * FROM ProfileEditRequestsTbl ORDER BY idx ASC";
             ProfileEditRequestsTable pList = new ProfileEditRequestsTable(Select());
             return pList;
         }

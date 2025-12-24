@@ -30,8 +30,8 @@ namespace Client_Manager___API
                 PropertyNamingPolicy = null
             };
 
-        // Default constructor pointing to localhost
-        public ApiService() : this("http://localhost:7013") { }
+        // Default constructor pointing to dev tunnel
+        public ApiService() : this("https://32wpk9jk-7013.euw.devtunnels.ms/") { }
 
         #region select all:
         private async Task<T> GetTable<T>(string endpoint)

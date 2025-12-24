@@ -15,7 +15,8 @@ namespace ViewModel.DBs
     {
         public AdminsTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM (AdminsTbl INNER JOIN\r\n UsersTbl ON AdminsTbl.Idx = UsersTbl.Idx)";
+            command.CommandText = $"SELECT * FROM (AdminsTbl INNER JOIN\r\n" +
+                $" UsersTbl ON AdminsTbl.Idx = UsersTbl.Idx) ORDER BY UsersTbl.Idx ASC";
             AdminsTable pList = new AdminsTable(Select());
             return pList;
         }

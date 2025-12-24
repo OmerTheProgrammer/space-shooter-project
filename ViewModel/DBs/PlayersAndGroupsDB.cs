@@ -17,10 +17,11 @@ namespace ViewModel.DBs
         public PlayersAndGroupsTable SelectAll()
         {
             
-            command.CommandText = $"SELECT * FROM PlayersAndGroupsTbl";
+            command.CommandText = $"SELECT * FROM PlayersAndGroupsTbl ORDER BY idx ASC";
             PlayersAndGroupsTable pList = new PlayersAndGroupsTable(Select());
             return pList;
         }
+
         protected override BaseEntity CreateModel(BaseEntity entity)
         {
             PlayerAndGroup p = entity as PlayerAndGroup;

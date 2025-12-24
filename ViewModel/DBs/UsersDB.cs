@@ -15,7 +15,7 @@ namespace ViewModel.DBs
     {
         public UsersTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM UsersTbl";
+            command.CommandText = $"SELECT * FROM UsersTbl ORDER BY idx ASC";
             UsersTable pList = new UsersTable(Select());
             return pList;
         }

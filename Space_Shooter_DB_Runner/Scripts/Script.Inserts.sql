@@ -115,7 +115,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.ProfileEditRequestsTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.ProfileEditRequestsTbl...'
     INSERT INTO dbo.ProfileEditRequestsTbl
-        (PlayerIdx, RequestingDate, [Status], ReviewingDate, AdminIdx)
+        (PlayerIdx, [RequestingDate], [Status], ReviewingDate, AdminIdx )
     VALUES
     -- Request 1: Player 11 (Pending), assigned to Admin 1
     (11, '2025-09-29 10:00:00', 0, NULL, 1),
@@ -196,7 +196,7 @@ GO -- End of dbo.RequestsDataTbl IF block
 IF NOT EXISTS (SELECT 1 FROM dbo.GroupsTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.GroupsTbl...'
-    INSERT INTO dbo.GroupsTbl (Score, [Name]) VALUES
+    INSERT INTO dbo.GroupsTbl ([Score], [Name]) VALUES
     -- Group 1: idx will be 1
     (550000,'The Astral Vanguard'),
     -- Group 2: idx will be 2
@@ -250,7 +250,9 @@ IF NOT EXISTS (SELECT 1 FROM dbo.RunsInfoTbl)
 BEGIN
     PRINT 'Inserting initial data into dbo.RunsInfoTbl...'
     -- NOTE: Added IsRunOver to the column list.
-    INSERT INTO dbo.RunsInfoTbl (PlayerIdx, CurrentScore, CurrentLevel, RunStopDate, CurrentShieldLevel, CurrentBlasterCount, CurrentHP, IsRunOver) VALUES
+    INSERT INTO dbo.RunsInfoTbl (PlayerIdx, CurrentScore,
+    CurrentLevel, RunStopDate, CurrentShieldLevel, CurrentBlasterCount,
+    CurrentHP, IsRunOver) VALUES
     -- Run 1 - Player 11 (StarPilot_Ace) -> True (1)
     (11, 15000, 5, '2025-09-27', 2, 4, 85, 1),
     -- Run 2 - Player 12 (GalaxyRunner) -> True (1)

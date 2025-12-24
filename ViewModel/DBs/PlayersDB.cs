@@ -15,7 +15,8 @@ namespace ViewModel.DBs
     {
         public PlayersTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM (PlayersTbl INNER JOIN\r\n UsersTbl ON PlayersTbl.Idx = UsersTbl.Idx)";
+            command.CommandText = $"SELECT * FROM (PlayersTbl INNER JOIN" +
+                $"\r\n UsersTbl ON PlayersTbl.Idx = UsersTbl.Idx) ORDER BY UsersTbl.Idx ASC";
             PlayersTable pList = new PlayersTable(Select());
             return pList;
         }

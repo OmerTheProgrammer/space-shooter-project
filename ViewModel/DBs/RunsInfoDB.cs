@@ -15,7 +15,7 @@ namespace ViewModel.DBs
     {
         public RunsInfoTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM RunsInfoTbl";
+            command.CommandText = $"SELECT * FROM RunsInfoTbl ORDER BY idx ASC";
             RunsInfoTable pList = new RunsInfoTable(Select());
             return pList;
         }

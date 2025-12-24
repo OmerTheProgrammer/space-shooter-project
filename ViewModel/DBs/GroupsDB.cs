@@ -16,7 +16,7 @@ namespace ViewModel.DBs
     {
         public GroupsTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM GroupsTbl";
+            command.CommandText = $"SELECT * FROM GroupsTbl ORDER BY idx ASC";
             GroupsTable pList = new GroupsTable(Select());
             return pList;
         }

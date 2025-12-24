@@ -16,7 +16,7 @@ namespace ViewModel.DBs
     {
         public RequestsDataTable SelectAll()
         {
-            command.CommandText = $"SELECT * FROM RequestsDataTbl";
+            command.CommandText = $"SELECT * FROM RequestsDataTbl ORDER BY idx ASC";
             RequestsDataTable pList = new RequestsDataTable(Select());
             return pList;
         }
