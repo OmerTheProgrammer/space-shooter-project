@@ -535,7 +535,57 @@ namespace Test
             //Console.WriteLine($"DeleteGroup Result (Rows Affected): {linesChanged}\n");
             #endregion
 
-            //player
+            #region Player:
+            //// 1. Get All Players
+            //PlayersTable players = await api.GetAllPlayers();
+
+            //// 2. Display initial list
+            //foreach (var item in players)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new Player
+            //// Inherits from User properties + Player specific ones
+            //linesChanged = await api.InsertPlayer(new Player
+            //{
+            //    Username = "pro_player_X",
+            //    Password = "player_hash_888",
+            //    Email = "pro@game.com",
+            //    Id = "123123123",
+            //    TotalScore = 0,
+            //    MaxLevel = 1,
+            //    IsSoundOn = true,
+            //});
+            //Console.WriteLine($"InsertPlayer Result (Rows Affected): {linesChanged}\n");
+
+            //players = await api.GetAllPlayers();
+            //Console.WriteLine($"Inserted Player: {players.Last()}\n");
+
+            //// 4. Perform a Partial Update (Change Score and Settings)
+            //// Using PlayerDTO.FromEntity to ensure only changed fields are sent
+            //linesChanged = await api.UpdatePlayer(
+            //    PlayerDTO.FromEntity(players.Last(), dto =>
+            //    {
+            //        dto.TotalScore = 99;
+            //        dto.MaxLevel = 10;
+            //        dto.IsSoundOn = false; // Player turned off sound
+            //    })
+            //);
+            //Console.WriteLine($"UpdatePlayer Result (Rows Affected): {linesChanged}\n");
+
+            //// 5. Verify the update
+            //players = await api.GetAllPlayers();
+            //Console.WriteLine($"Updated Player: {players.Last()}\n");
+
+            //// 6. Delete the Player
+            //linesChanged = await api.DeletePlayer(players.Last().Idx);
+            //Console.WriteLine($"DeletePlayer Result (Rows Affected): {linesChanged}\n");
+
+            //// 7. Verify the delete
+            //players = await api.GetAllPlayers();
+            //Console.WriteLine($"Delete Player: {players.Last()}\n");
+            #endregion
 
             #region PlayersAndGroups:
             //// 1. Get initial data
@@ -635,52 +685,55 @@ namespace Test
             #endregion
 
             #region RequestData:
-            // 1. Get All RequestData
-            RequestsDataTable requestDataItems = 
-                await api.GetAllRequestsData();
+            //// 1. Get All RequestData
+            //RequestsDataTable requestDataItems = 
+            //    await api.GetAllRequestsData();
 
-            // 2. Display initial list
-            foreach (var item in requestDataItems)
-            {
-                Console.WriteLine(item + "\n");
-            }
+            //// 2. Display initial list
+            //foreach (var item in requestDataItems)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
 
-            // 3. Insert new RequestData
-            linesChanged = await api.InsertRequestData(new RequestData
-            {
-                Request = new ProfileEditRequest
-                {
-                    Idx = 6,
-                    RequestingPlayer = new Player { Idx = 20 },
-                    AdressingAdmin = new Admin { Idx = 8 },
-                },
-                Field = "Password",
-                OldValue = "hashed_pass_P20",
-                NewValue = "another_new_hash"
-            });
-            Console.WriteLine($"InsertRequestData Result (Rows Affected): {linesChanged}\n");
+            ////3.Insert new RequestData
+            //linesChanged = await api.InsertRequestData(new RequestData
+            //{
+            //    Request = new ProfileEditRequest
+            //    {
+            //        Idx = 6,
+            //        RequestingPlayer = new Player { Idx = 20 },
+            //        AdressingAdmin = new Admin { Idx = 8 },
+            //    },
+            //    Field = "Password",
+            //    OldValue = "hashed_pass_P20",
+            //    NewValue = "another_new_hash"
+            //});
+            //Console.WriteLine($"InsertRequestData Result (Rows Affected): {linesChanged}\n");
 
-            requestDataItems = await api.GetAllRequestsData();
-            Console.WriteLine($"Inserted RequestData: {requestDataItems.Last()}\n");
+            //requestDataItems = await api.GetAllRequestsData();
+            //Console.WriteLine($"Inserted RequestData: {requestDataItems.Last()}\n");
 
-            // 4. Perform a Partial Update (Reference Switch + Value Change)
-            linesChanged = await api.UpdateRequestData(
-                RequestDataDTO.FromEntity(requestDataItems.Last(), dto =>
-                {
-                    // Switch the connected request to 12 and change the value
-                    dto.Request = new ProfileEditRequestDTO { Idx = 12 };
-                    dto.NewValue = "99";
-                })
-            );
-            Console.WriteLine($"UpdateRequestData Result (Rows Affected): {linesChanged}\n");
+            //// 4. Perform a Partial Update (Reference Switch + Value Change)
+            //linesChanged = await api.UpdateRequestData(
+            //    RequestDataDTO.FromEntity(requestDataItems.Last(), dto =>
+            //    {
+            //        // Switch the connected request to 12 and change the value
+            //        dto.Request = new ProfileEditRequestDTO { Idx = 12 };
+            //        dto.NewValue = "99";
+            //    })
+            //);
+            //Console.WriteLine($"UpdateRequestData Result (Rows Affected): {linesChanged}\n");
 
-            // 5. Verify the update
-            requestDataItems = await api.GetAllRequestsData();
-            Console.WriteLine($"Updated RequestData: {requestDataItems.Last()}\n");
+            //// 5. Verify the update
+            //requestDataItems = await api.GetAllRequestsData();
+            //Console.WriteLine($"Updated RequestData: {requestDataItems.Last()}\n");
 
-            // 6. Delete the RequestData
-            linesChanged = await api.DeleteRequestData(requestDataItems.Last().Idx);
-            Console.WriteLine($"DeleteRequestData Result (Rows Affected): {linesChanged}\n");
+            //// 6. Delete the RequestData
+            //linesChanged = await api.DeleteRequestData(requestDataItems.Last().Idx);
+            //Console.WriteLine($"DeleteRequestData Result (Rows Affected): {linesChanged}\n");
+            //// 5. Verify the delete
+            //requestDataItems = await api.GetAllRequestsData();
+            //Console.WriteLine($"Updated RequestData: {requestDataItems.Last()}\n");
             #endregion
 
             #region RunsInfo:
