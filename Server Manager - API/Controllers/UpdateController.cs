@@ -549,7 +549,7 @@ namespace Server_Manager___API.Controllers
             //turn originalPlayerAndGroup Group to DTO
             GroupDTO OgGroupDTO = (GroupDTO)MapFullEntityToDTO(
                 originalPlayerAndGroup.Group,
-                typeof(GroupDTO),
+                typeof(Model.Entitys.Group),
                 typeof(GroupDTO)
             )!;
             isModified |= TryUpdateProperty<Model.Entitys.Group,

@@ -363,7 +363,6 @@ namespace Test
             //Console.WriteLine();
             #endregion
         }
-
         public static async Task ServerFullMain()
         {
             ApiService api = new ApiService("https://localhost:7013");
@@ -371,133 +370,414 @@ namespace Test
             Console.WriteLine("--- Starting API Demo Scenario ---\n");
             int linesChanged = 0;
             #region Admins:
-                ////// 1. Get All (Initial list)
-                //AdminsTable admins = await api.GetAllAdmins();
+            //// 1. Get All (Initial list)
+            //AdminsTable admins = await api.GetAllAdmins();
 
-                //// 2. Write initial list
-                //foreach (var item in admins)
-                //{
-                //    Console.WriteLine(item + "\n");
-                //}
+            //// 2. Write initial list
+            //foreach (var item in admins)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
 
-                //// 3. Expected found message (Idx 2 exists)
-                //Console.WriteLine(await api.GetAdminsByIdx(2) + "\n");
+            //// 3. Expected found message (Idx 2 exists)
+            //Console.WriteLine(await api.GetAdminByIdx(2) + "\n");
 
-                //// 4. Expected not found message (Idx 12 does not exist)
-                //// NOTE: The GetAdminsByIdx mock handles the error printing internally
-                //Admin notFoundAdminResult = await api.GetAdminsByIdx(12);
-                //Console.WriteLine($"GetAdminByIdx(12) returned: " +
-                //    $"{(notFoundAdminResult == null ? "NULL (Error)" :
-                //    notFoundAdminResult.ToString())}\n");
+            //// 4. Expected not found message (Idx 12 does not exist)
+            //// NOTE: The GetAdminsByIdx mock handles the error printing internally
+            //Admin notFoundAdminResult = await api.GetAdminByIdx(12);
+            //Console.WriteLine($"GetAdminByIdx(12) returned: " +
+            //    $"{(notFoundAdminResult == null ? "NULL (Error)" :
+            //    notFoundAdminResult.ToString())}\n");
 
-                //// 5. Insert new Admin
-                //linesChanged = await api.InsertAdmins(new Admin { Birthday = new DateTime(2022, 3, 2) });
-                //Console.WriteLine($"InsertAdmins Result (Rows Affected): {linesChanged}\n");
+            //// 5. Insert new Admin
+            //linesChanged = await api.InsertAdmin(new Admin { Birthday = new DateTime(2022, 3, 2) });
+            //Console.WriteLine($"InsertAdmins Result (Rows Affected): {linesChanged}\n");
 
-                //// 6. Get All (Updated list)
-                //admins = await api.GetAllAdmins();
+            //// 6. Get All (Updated list)
+            //admins = await api.GetAllAdmins();
 
-                //// 7. Write last item (the newly inserted Admin)
-                //Console.WriteLine(admins.Last() + "\n");
+            //// 7. Write last item (the newly inserted Admin)
+            //Console.WriteLine(admins.Last() + "\n");
 
-                ////8.Update the new Admin:
-                ////find the admin(that we just added)
-                //linesChanged = await api.UpdateAdmins(
-                //            //create DTO from entity with nulls and change only what we want
-                //            AdminDTO.FromEntity(admins.Last(), dto =>
-                //            {
-                //                // Define ALL changes rest is null
-                //                dto.Id = "14214431";
-                //            }
-                //        )
-                //    );
-                //Console.WriteLine($"UpdateAdmins Result (Rows Affected): {linesChanged}\n");
+            ////8.Update the new Admin:
+            ////find the admin(that we just added)
+            //linesChanged = await api.UpdateAdmin(
+            //            //create DTO from entity with nulls and change only what we want
+            //            AdminDTO.FromEntity(admins.Last(), dto =>
+            //            {
+            //                // Define ALL changes rest is null
+            //                dto.Id = "14214431";
+            //            }
+            //        )
+            //    );
+            //Console.WriteLine($"UpdateAdmins Result (Rows Affected): {linesChanged}\n");
 
-                //// 9. Get All (Updated list)
-                //admins = await api.GetAllAdmins();
+            //// 9. Get All (Updated list)
+            //admins = await api.GetAllAdmins();
 
-                //// 10. Write last item (the updated Admin)
-                //Console.WriteLine(admins.Last() + "\n");
+            //// 10. Write last item (the updated Admin)
+            //Console.WriteLine(admins.Last() + "\n");
 
-                //// 11. Delete the new Admin
-                //linesChanged = await api.DeleteAdmin(admins.Last().Idx);
-                //Console.WriteLine($"DeleteAdmin Result (Rows Affected):" +
-                //    $" {linesChanged}\n");
+            //// 11. Delete the new Admin
+            //linesChanged = await api.DeleteAdmin(admins.Last().Idx);
+            //Console.WriteLine($"DeleteAdmin Result (Rows Affected):" +
+            //    $" {linesChanged}\n");
             #endregion
 
             #region EnemiesInLastLevel:
-                ////1.Get All(Initial list)
-                //EnemiesInLastLevelTable enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            ////1.Get All(Initial list)
+            //EnemiesInLastLevelTable enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
 
-                ////2.Write initial list
-                //foreach (var item in enemiesInLastLevel)
-                //{
-                //    Console.WriteLine(item + "\n");
-                //}
+            ////2.Write initial list
+            //foreach (var item in enemiesInLastLevel)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
 
-                ////3.Expected found message(Idx 2 exists)
-                //Console.WriteLine(await api.GetEnemiesInLastLevelByIdx(2) + "\n");
+            ////3.Expected found message(Idx 2 exists)
+            //Console.WriteLine(await api.GetEnemyInLastLevelByIdx(2) + "\n");
 
-                ////4.Expected not found message(Idx 12 does not exist)
-                //EnemyInLastLevel notFoundEnemyInLastLevelResult = await api.GetEnemiesInLastLevelByIdx(12);
-                //Console.WriteLine($"GetEnemyInLastLevelByIdx(12) returned: " +
-                //    $"{(notFoundEnemyInLastLevelResult == null ? "NULL (Error)" :
-                //    notFoundEnemyInLastLevelResult.ToString())}\n");
+            ////4.Expected not found message(Idx 12 does not exist)
+            //EnemyInLastLevel notFoundEnemyInLastLevelResult = await api.GetEnemyInLastLevelByIdx(12);
+            //Console.WriteLine($"GetEnemyInLastLevelByIdx(12) returned: " +
+            //    $"{(notFoundEnemyInLastLevelResult == null ? "NULL (Error)" :
+            //    notFoundEnemyInLastLevelResult.ToString())}\n");
 
-                //linesChanged = 0;
-                ////5.Insert new EnemyInLastLevel
-                //linesChanged = await api.InsertEnemiesInLastLevel(
-                //    new EnemyInLastLevel
-                //    {
-                //        Amount = 10,
-                //        RunInfo = new RunInfo
-                //        {
-                //            Idx = 1,
-                //            Player = new Player
-                //            {
-                //                Idx = 11
-                //            }
-                //        }
-                //    }
-                //);
-                //Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            //linesChanged = 0;
+            ////5.Insert new EnemyInLastLevel
+            //linesChanged = await api.InsertEnemyInLastLevel(
+            //    new EnemyInLastLevel
+            //    {
+            //        Amount = 10,
+            //        RunInfo = new RunInfo
+            //        {
+            //            Idx = 1,
+            //            Player = new Player
+            //            {
+            //                Idx = 11
+            //            }
+            //        }
+            //    }
+            //);
+            //Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
 
-                ////6.Get All(Updated list)
-                //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            ////6.Get All(Updated list)
+            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
 
-                ////7.Write last item(the newly inserted EnemyInLastLevel)
-                //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+            ////7.Write last item(the newly inserted EnemyInLastLevel)
+            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
 
-                ////8.Update the new EnemyInLastLevel:
-                ////find the enemyInLastLevel(that we just added)
-                //linesChanged = await api.UpdateEnemiesInLastLevel(
-                //            //create DTO from entity with nulls and change only what we want
-                //            EnemyInLastLevelDTO.FromEntity(
-                //                enemiesInLastLevel.Last(), dto =>
-                //                {
-                //                    //Define ALL changes, the rest is null
-                //                    dto.Amount = 3;
-                //                    dto.RunInfo = new RunInfoDTO
-                //                    {
-                //                        Idx = 2,
-                //                    };
-                //                }
-                //        )
-                //    );
-                //Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
+            ////8.Update the new EnemyInLastLevel:
+            ////find the enemyInLastLevel(that we just added)
+            //linesChanged = await api.UpdateEnemyInLastLevel(
+            //        //create DTO from entity with nulls and change only what we want
+            //        EnemyInLastLevelDTO.FromEntity(
+            //            enemiesInLastLevel.Last(), dto =>
+            //            {
+            //                //Define ALL changes, the rest is null
+            //                dto.Amount = 3;
+            //                dto.RunInfo = new RunInfoDTO
+            //                {
+            //                    Idx = 2,
+            //                };
+            //            }
+            //        )
+            //    );
+            //Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
 
-                ////9.Get All(Updated list)
-                //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
+            ////9.Get All(Updated list)
+            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
 
-                ////10.Write last item(the updated EnemyInLastLevel)
-                //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
+            ////10.Write last item(the updated EnemyInLastLevel)
+            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
 
-                ////11.Delete the new EnemyInLastLevel
-                //linesChanged = await api.DeleteEnemyInLastLevel(enemiesInLastLevel.Last().Idx);
-                //Console.WriteLine($"DeleteEnemyInLastLevel Result " +
-                //    $"(Rows Affected): {linesChanged}\n");
+            ////11.Delete the new EnemyInLastLevel
+            //linesChanged = await api.DeleteEnemyInLastLevel(enemiesInLastLevel.Last().Idx);
+            //Console.WriteLine($"DeleteEnemyInLastLevel Result " +
+            //    $"(Rows Affected): {linesChanged}\n");
             #endregion
 
+            #region Groups:
+            //// 1. Get All Groups
+            //GroupsTable groups = await api.GetAllGroups();
+
+            //// 2. Display initial list
+            //foreach (var item in groups)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new Group
+            //linesChanged = await api.InsertGroup(new Group { Name = "Alpha Team", Score = 100 });
+            //Console.WriteLine($"InsertGroup Result (Rows Affected): {linesChanged}\n");
+
+            //// 4. Update the Group partially
+            //// We want to change the Name but keep the Score as it is in the DB.
+            //groups = await api.GetAllGroups();
+            //Console.WriteLine($"Inserted Group: {groups.Last()}\n");
+
+            //linesChanged = await api.UpdateGroup(
+            //    GroupDTO.FromEntity(groups.Last(), dto =>
+            //    {
+            //        // Only changing the Name. Score remains null in the DTO, 
+            //        // meaning it won't be overwritten in the DB.
+            //        dto.Name = "Omega Team";
+            //    })
+            //);
+            //Console.WriteLine($"UpdateGroup Result (Rows Affected): {linesChanged}\n");
+
+            //// 5. Verify the update
+            //groups = await api.GetAllGroups();
+            //Console.WriteLine($"Updated Group: {groups.Last()}\n");
+
+            //// 6. Delete the Group
+            //linesChanged = await api.DeleteGroup(groups.Last().Idx);
+            //Console.WriteLine($"DeleteGroup Result (Rows Affected): {linesChanged}\n");
+            #endregion
+
+            //player
+
+            #region PlayersAndGroups:
+            //// 1. Get initial data
+            //PlayersAndGroupsTable playersAndGroups = await api.GetAllPlayersAndGroups();
+
+            //// 2. Display initial list
+            //foreach (var item in playersAndGroups)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new Group
+            //linesChanged = await api.InsertPlayerAndGroup(
+            //        new PlayerAndGroup
+            //        {
+            //            Player = new Player { Idx = 11 },
+            //            Group = new Group { Idx = 4 }
+            //        }
+            //    );
+            //Console.WriteLine($"InsertGroup Result" +
+            //    $" (Rows Affected): {linesChanged}\n");
+            //playersAndGroups = await api.GetAllPlayersAndGroups();
+            //Console.WriteLine($"Inserted Player And Group: " +
+            //    $"{playersAndGroups.Last()}");
+
+            //// 3. Perform a Update
+            //linesChanged = await api.UpdatePlayerAndGroup(
+            //    PlayerAndGroupDTO.FromEntity(
+            //        playersAndGroups.Last(), dto =>
+            //        {
+            //            dto.Group = new GroupDTO { Idx = 3 };
+            //        }
+            //    )
+            //);
+
+            //Console.WriteLine($"Update Result: {linesChanged}" +
+            //    $" row(s) affected.");
+            //playersAndGroups = await api.GetAllPlayersAndGroups();
+            //Console.WriteLine($"Updated Player And Group:" +
+            //    $" {playersAndGroups.Last()}");
+            //// 6. Delete the Group
+            //linesChanged = await api.DeletePlayerAndGroup(
+            //playersAndGroups.Last().Idx);
+            //Console.WriteLine($"Delete Player And Group Result
+            //(Rows Affected): {linesChanged}\n");
+            #endregion
+
+            #region ProfileEditRequests:
+            //// 1. Get initial data
+            //ProfileEditRequestsTable profileEditRequests =
+            //    await api.GetAllProfileEditRequests();
+
+            //// 2. Display initial list
+            //foreach (var item in profileEditRequests)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new Group
+            //linesChanged = await api.InsertProfileEditRequest(
+            //        new ProfileEditRequest
+            //        {
+            //            RequestingDate = DateTime.Now,
+            //        }
+            //    );
+            //Console.WriteLine($"InsertGroup Result" +
+            //    $" (Rows Affected): {linesChanged}\n");
+            //profileEditRequests = 
+            //    await api.GetAllProfileEditRequests();
+            //Console.WriteLine($"Inserted Player And Group: " +
+            //    $"{profileEditRequests.Last()}");
+
+            //// 3. Perform a Update
+            //linesChanged = await api.UpdateProfileEditRequest(
+            //    ProfileEditRequestDTO.FromEntity(
+            //        profileEditRequests.Last(), dto =>
+            //        {
+            //            dto.RequestingPlayer =
+            //                new PlayerDTO()
+            //                {
+            //                    Idx = 14,
+            //                };
+            //        }
+            //    )
+            //);
+
+            //Console.WriteLine($"Update Result: {linesChanged}" +
+            //    $" row(s) affected.");
+            //profileEditRequests = await api.GetAllProfileEditRequests();
+            //Console.WriteLine($"Updated Player And Group:" +
+            //    $" {profileEditRequests.Last()}");
+            //// 6. Delete the Group
+            //linesChanged = await api.DeleteProfileEditRequest(
+            //profileEditRequests.Last().Idx);
+            //Console.WriteLine($"Delete Player And Group Result " +
+            //    $"(Rows Affected): { linesChanged}\n");
+            #endregion
+
+            #region RequestData:
+            // 1. Get All RequestData
+            RequestsDataTable requestDataItems = 
+                await api.GetAllRequestsData();
+
+            // 2. Display initial list
+            foreach (var item in requestDataItems)
+            {
+                Console.WriteLine(item + "\n");
+            }
+
+            // 3. Insert new RequestData
+            linesChanged = await api.InsertRequestData(new RequestData
+            {
+                Request = new ProfileEditRequest
+                {
+                    Idx = 6,
+                    RequestingPlayer = new Player { Idx = 20 },
+                    AdressingAdmin = new Admin { Idx = 8 },
+                },
+                Field = "Password",
+                OldValue = "hashed_pass_P20",
+                NewValue = "another_new_hash"
+            });
+            Console.WriteLine($"InsertRequestData Result (Rows Affected): {linesChanged}\n");
+
+            requestDataItems = await api.GetAllRequestsData();
+            Console.WriteLine($"Inserted RequestData: {requestDataItems.Last()}\n");
+
+            // 4. Perform a Partial Update (Reference Switch + Value Change)
+            linesChanged = await api.UpdateRequestData(
+                RequestDataDTO.FromEntity(requestDataItems.Last(), dto =>
+                {
+                    // Switch the connected request to 12 and change the value
+                    dto.Request = new ProfileEditRequestDTO { Idx = 12 };
+                    dto.NewValue = "99";
+                })
+            );
+            Console.WriteLine($"UpdateRequestData Result (Rows Affected): {linesChanged}\n");
+
+            // 5. Verify the update
+            requestDataItems = await api.GetAllRequestsData();
+            Console.WriteLine($"Updated RequestData: {requestDataItems.Last()}\n");
+
+            // 6. Delete the RequestData
+            linesChanged = await api.DeleteRequestData(requestDataItems.Last().Idx);
+            Console.WriteLine($"DeleteRequestData Result (Rows Affected): {linesChanged}\n");
+            #endregion
+
+            #region RunsInfo:
+            //// 1. Get All RunInfo
+            //RunInfoTable runs = await api.GetAllRunInfo();
+
+            //// 2. Display initial list
+            //foreach (var item in runs)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new RunInfo
+            //linesChanged = await api.InsertRunInfo(new RunInfo 
+            //{ 
+            //    Player = new Player { Idx = 1 },
+            //    CurrentScore = 0,
+            //    CurrentLevel = 1,
+            //    CurrentHp = 5,
+            //    IsRunOver = false
+            //});
+            //Console.WriteLine($"InsertRunInfo Result (Rows Affected): {linesChanged}\n");
+
+            //runs = await api.GetAllRunInfo();
+            //Console.WriteLine($"Inserted Run: {runs.Last()}\n");
+
+            //// 4. Perform a Partial Update (Reference Switch + Score Update)
+            //// Switching the run to a different Player (Idx 3) and updating Score/Level
+            //linesChanged = await api.UpdateRunInfo(
+            //    RunInfoDTO.FromEntity(runs.Last(), dto =>
+            //    {
+            //        // Pivot: Switch the Player associated with this run
+            //        dto.Player = new PlayerDTO { Idx = 3 };
+
+            //        // Update stats
+            //        dto.CurrentScore = 1500;
+            //        dto.CurrentLevel = 4;
+            //        dto.CurrentHp = 3;
+            //    })
+            //);
+            //Console.WriteLine($"UpdateRunInfo Result (Rows Affected): {linesChanged}\n");
+
+            //// 5. Verify the update
+            //runs = await api.GetAllRunInfo();
+            //Console.WriteLine($"Updated Run: {runs.Last()}\n");
+
+            //// 6. Delete the RunInfo
+            //linesChanged = await api.DeleteRunInfo(runs.Last().Idx);
+            //Console.WriteLine($"DeleteRunInfo Result (Rows Affected): {linesChanged}\n");
+            #endregion
+
+            #region Users:
+            //// 1. Get All Users
+            //UsersTable users = await api.GetAllUsers();
+
+            //// 2. Display initial list
+            //foreach (var item in users)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new User
+            //linesChanged = await api.InsertUser(new User 
+            //{ 
+            //    Username = "new_test_user",
+            //    Password = "hashed_password_123",
+            //    Email = "test@user.com",
+            //    Id = "312345678",
+            //    Birthday = new DateTime(1995, 10, 10),
+            //    IsLoggedIn = false
+            //});
+            //Console.WriteLine($"InsertUser Result (Rows Affected): {linesChanged}\n");
+
+            //users = await api.GetAllUsers();
+            //Console.WriteLine($"Inserted User: {users.Last()}\n");
+
+            //// 4. Perform a Partial Update (Change Username and Email)
+            //// Password, Id, and Birthday remain null in the DTO action,
+            //// so they are not sent to the server and remain unchanged in DB.
+            //linesChanged = await api.UpdateUser(
+            //    UserDTO.FromEntity(users.Last(), dto =>
+            //    {
+            //        dto.Username = "updated_username_99";
+            //        dto.Email = "updated_email@user.com";
+            //        dto.IsLoggedIn = true;
+            //    })
+            //);
+            //Console.WriteLine($"UpdateUser Result (Rows Affected): {linesChanged}\n");
+
+            //// 5. Verify the update
+            //users = await api.GetAllUsers();
+            //Console.WriteLine($"Updated User: {users.Last()}\n");
+
+            //// 6. Delete the User
+            //linesChanged = await api.DeleteUser(users.Last().Idx);
+            //Console.WriteLine($"DeleteUser Result (Rows Affected): {linesChanged}\n");
+            #endregion
 
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }

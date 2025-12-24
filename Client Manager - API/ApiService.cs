@@ -141,47 +141,47 @@ namespace Client_Manager___API
             }
         }
 
-        public Task<Admin> GetAdminsByIdx(int idx)
+        public Task<Admin> GetAdminByIdx(int idx)
         {
             return GetByIdx<Admin>($"/api/SelectByIdx/AdminsSelectorByIdx", idx);
         }
 
-        public Task<EnemyInLastLevel> GetEnemiesInLastLevelByIdx(int idx)
+        public Task<EnemyInLastLevel> GetEnemyInLastLevelByIdx(int idx)
         {
             return GetByIdx<EnemyInLastLevel>($"/api/SelectByIdx/EnemiesInLastLevelSelectorByIdx", idx);
         }
 
-        public Task<Model.Entitys.Group> GetGroupsByIdx(int idx)
+        public Task<Model.Entitys.Group> GetGroupByIdx(int idx)
         {
             return GetByIdx<Model.Entitys.Group>($"/api/SelectByIdx/GroupsSelectorByIdx", idx);
         }
 
-        public Task<PlayerAndGroup> GetPlayersAndGroupsByIdx(int idx)
+        public Task<PlayerAndGroup> GetPlayerAndGroupByIdx(int idx)
         {
             return GetByIdx<PlayerAndGroup>($"/api/SelectByIdx/PlayersAndGroupsSelectorByIdx", idx);
         }
 
-        public Task<Player> GetPlayersByIdx(int idx)
+        public Task<Player> GetPlayerByIdx(int idx)
         {
             return GetByIdx<Player>($"/api/SelectByIdx/PlayersSelectorByIdx", idx);
         }
 
-        public Task<ProfileEditRequest> GetProfileEditRequestsByIdx(int idx)
+        public Task<ProfileEditRequest> GetProfileEditRequestByIdx(int idx)
         {
             return GetByIdx<ProfileEditRequest>($"/api/SelectByIdx/ProfileEditRequestsSelectorByIdx", idx);
         }
 
-        public Task<RequestData> GetRequestsDataByIdx(int idx)
+        public Task<RequestData> GetRequestDataByIdx(int idx)
         {
             return GetByIdx<RequestData>($"/api/SelectByIdx/RequestsDataSelectorByIdx", idx);
         }
 
-        public Task<RunInfo> GetRunsInfoByIdx(int idx)
+        public Task<RunInfo> GetRunInfoByIdx(int idx)
         {
             return GetByIdx<RunInfo>($"/api/SelectByIdx/RunsInfoSelectorByIdx", idx);
         }
 
-        public Task<User> GetUsersByIdx(int idx)
+        public Task<User> GetUserByIdx(int idx)
         {
             return GetByIdx<User>($"/api/SelectByIdx/UsersSelectorByIdx", idx);
         }
@@ -240,55 +240,55 @@ namespace Client_Manager___API
             }
         }
 
-        public Task<int> InsertAdmins(Admin admin)
+        public Task<int> InsertAdmin(Admin admin)
         {
             //returns number of rows affected
             return Insert<Admin>($"/api/Insert/AdminsInsertor", admin);
         }
 
-        public Task<int> InsertEnemiesInLastLevel(EnemyInLastLevel enemyInLastLevel)
+        public Task<int> InsertEnemyInLastLevel(EnemyInLastLevel enemyInLastLevel)
         {
             //returns number of rows affected
             return Insert<EnemyInLastLevel>($"/api/Insert/EnemiesInLastLevelInsertor", enemyInLastLevel);
         }
 
-        public Task<int> InsertGroups(Model.Entitys.Group group)
+        public Task<int> InsertGroup(Model.Entitys.Group group)
         {
             //returns number of rows affected
             return Insert<Model.Entitys.Group>($"/api/Insert/GroupsInsertor", group);
         }
 
-        public Task<int> InsertPlayersAndGroups(PlayerAndGroup playerAndGroup)
+        public Task<int> InsertPlayerAndGroup(PlayerAndGroup playerAndGroup)
         {
             //returns number of rows affected
             return Insert<PlayerAndGroup>($"/api/Insert/PlayersAndGroupsInsertor", playerAndGroup);
         }
 
-        public Task<int> InsertPlayers(Player player)
+        public Task<int> InsertPlayer(Player player)
         {
             //returns number of rows affected
             return Insert<Player>($"/api/Insert/PlayersInsertor", player);
         }
 
-        public Task<int> InsertProfileEditRequests(ProfileEditRequest profileEditRequest)
+        public Task<int> InsertProfileEditRequest(ProfileEditRequest profileEditRequest)
         {
             //returns number of rows affected
             return Insert<ProfileEditRequest>($"/api/Insert/ProfileEditRequestsInsertor", profileEditRequest);
         }
 
-        public Task<int> InsertRequestsData(RequestData RequestData)
+        public Task<int> InsertRequestData(RequestData RequestData)
         {
             //returns number of rows affected
             return Insert<RequestData>($"/api/Insert/RequestsDataInsertor", RequestData);
         }
 
-        public Task<int> InsertRunsInfo(RunInfo runInfo)
+        public Task<int> InsertRunInfo(RunInfo runInfo)
         {
             //returns number of rows affected
             return Insert<RunInfo>($"/api/Insert/RunsInfoInsertor", runInfo);
         }
 
-        public Task<int> InsertUsers(User user)
+        public Task<int> InsertUser(User user)
         {
             //returns number of rows affected
             return Insert<User>($"/api/Insert/UsersInsertor", user);
@@ -357,47 +357,47 @@ namespace Client_Manager___API
             }
         }
 
-        public Task<int> UpdateAdmins(AdminDTO admin)
+        public Task<int> UpdateAdmin(AdminDTO admin)
         {
             return Update<AdminDTO>($"/api/Update/AdminUpdator", admin);
         }
 
-        public Task<int> UpdateEnemiesInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
+        public Task<int> UpdateEnemyInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
         {
             return Update<EnemyInLastLevelDTO>($"/api/Update/EnemyInLastLevelUpdator", enemyInLastLevel);
         }
 
-        public Task<int> UpdateGroups(GroupDTO group)
+        public Task<int> UpdateGroup(GroupDTO group)
         {
             return Update<GroupDTO>($"/api/Update/GroupUpdator", group);
         }
 
-        public Task<int> UpdatePlayersAndGroups(PlayerAndGroupDTO playerAndGroup)
+        public Task<int> UpdatePlayerAndGroup(PlayerAndGroupDTO playerAndGroup)
         {
             return Update<PlayerAndGroupDTO>($"/api/Update/PlayerAndGroupUpdator", playerAndGroup);
         }
 
-        public Task<int> UpdatePlayers(PlayerDTO player)
+        public Task<int> UpdatePlayer(PlayerDTO player)
         {
             return Update<PlayerDTO>($"/api/Update/PlayerUpdator", player);
         }
 
-        public Task<int> UpdateProfileEditRequests(ProfileEditRequestDTO profileEditRequest)
+        public Task<int> UpdateProfileEditRequest(ProfileEditRequestDTO profileEditRequest)
         {
             return Update<ProfileEditRequestDTO>($"/api/Update/ProfileEditRequestUpdator", profileEditRequest);
         }
 
-        public Task<int> UpdateRequestsData(RequestDataDTO requestData)
+        public Task<int> UpdateRequestData(RequestDataDTO requestData)
         {
             return Update<RequestDataDTO>($"/api/Update/RequestDataUpdator", requestData);
         }
 
-        public Task<int> UpdateRunsInfo(RunInfoDTO runInfo)
+        public Task<int> UpdateRunInfo(RunInfoDTO runInfo)
         {
             return Update<RunInfoDTO>($"/api/Update/RunInfoUpdator", runInfo);
         }
 
-        public Task<int> UpdateUsers(UserDTO user)
+        public Task<int> UpdateUser(UserDTO user)
         {
             return Update<UserDTO>($"/api/Update/UserUpdator", user);
         }
