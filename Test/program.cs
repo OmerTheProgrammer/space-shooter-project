@@ -575,11 +575,64 @@ namespace Test
             //Console.WriteLine($"Updated Player And Group:" +
             //    $" {playersAndGroups.Last()}");
             //// 6. Delete the Group
-            //linesChanged = await api.DeletePlayerAndGroup(playersAndGroups.Last().Idx);
-            //Console.WriteLine($"Delete Player And Group Result (Rows Affected): {linesChanged}\n");
+            //linesChanged = await api.DeletePlayerAndGroup(
+            //playersAndGroups.Last().Idx);
+            //Console.WriteLine($"Delete Player And Group Result
+            //(Rows Affected): {linesChanged}\n");
             #endregion
 
-            
+            #region ProfileEditRequests:
+            //// 1. Get initial data
+            //ProfileEditRequestsTable profileEditRequests =
+            //    await api.GetAllProfileEditRequests();
+
+            //// 2. Display initial list
+            //foreach (var item in profileEditRequests)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new Group
+            //linesChanged = await api.InsertProfileEditRequest(
+            //        new ProfileEditRequest
+            //        {
+            //            RequestingDate = DateTime.Now,
+            //        }
+            //    );
+            //Console.WriteLine($"InsertGroup Result" +
+            //    $" (Rows Affected): {linesChanged}\n");
+            //profileEditRequests = 
+            //    await api.GetAllProfileEditRequests();
+            //Console.WriteLine($"Inserted Player And Group: " +
+            //    $"{profileEditRequests.Last()}");
+
+            //// 3. Perform a Update
+            //linesChanged = await api.UpdateProfileEditRequest(
+            //    ProfileEditRequestDTO.FromEntity(
+            //        profileEditRequests.Last(), dto =>
+            //        {
+            //            dto.RequestingPlayer =
+            //                new PlayerDTO()
+            //                {
+            //                    Idx = 14,
+            //                };
+            //        }
+            //    )
+            //);
+
+            //Console.WriteLine($"Update Result: {linesChanged}" +
+            //    $" row(s) affected.");
+            //profileEditRequests = await api.GetAllProfileEditRequests();
+            //Console.WriteLine($"Updated Player And Group:" +
+            //    $" {profileEditRequests.Last()}");
+            //// 6. Delete the Group
+            //linesChanged = await api.DeleteProfileEditRequest(
+            //profileEditRequests.Last().Idx);
+            //Console.WriteLine($"Delete Player And Group Result " +
+            //    $"(Rows Affected): { linesChanged}\n");
+            #endregion
+
+
 
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
