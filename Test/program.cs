@@ -535,6 +535,8 @@ namespace Test
             //Console.WriteLine($"DeleteGroup Result (Rows Affected): {linesChanged}\n");
             #endregion
 
+            //player
+
             #region PlayersAndGroups:
             //// 1. Get initial data
             //PlayersAndGroupsTable playersAndGroups = await api.GetAllPlayersAndGroups();
@@ -632,7 +634,150 @@ namespace Test
             //    $"(Rows Affected): { linesChanged}\n");
             #endregion
 
+            #region RequestData:
+            // 1. Get All RequestData
+            RequestsDataTable requestDataItems = 
+                await api.GetAllRequestsData();
 
+            // 2. Display initial list
+            foreach (var item in requestDataItems)
+            {
+                Console.WriteLine(item + "\n");
+            }
+
+            // 3. Insert new RequestData
+            linesChanged = await api.InsertRequestData(new RequestData
+            {
+                Request = new ProfileEditRequest
+                {
+                    Idx = 6,
+                    RequestingPlayer = new Player { Idx = 20 },
+                    AdressingAdmin = new Admin { Idx = 8 },
+                },
+                Field = "Password",
+                OldValue = "hashed_pass_P20",
+                NewValue = "another_new_hash"
+            });
+            Console.WriteLine($"InsertRequestData Result (Rows Affected): {linesChanged}\n");
+
+            requestDataItems = await api.GetAllRequestsData();
+            Console.WriteLine($"Inserted RequestData: {requestDataItems.Last()}\n");
+
+            // 4. Perform a Partial Update (Reference Switch + Value Change)
+            linesChanged = await api.UpdateRequestData(
+                RequestDataDTO.FromEntity(requestDataItems.Last(), dto =>
+                {
+                    // Switch the connected request to 12 and change the value
+                    dto.Request = new ProfileEditRequestDTO { Idx = 12 };
+                    dto.NewValue = "99";
+                })
+            );
+            Console.WriteLine($"UpdateRequestData Result (Rows Affected): {linesChanged}\n");
+
+            // 5. Verify the update
+            requestDataItems = await api.GetAllRequestsData();
+            Console.WriteLine($"Updated RequestData: {requestDataItems.Last()}\n");
+
+            // 6. Delete the RequestData
+            linesChanged = await api.DeleteRequestData(requestDataItems.Last().Idx);
+            Console.WriteLine($"DeleteRequestData Result (Rows Affected): {linesChanged}\n");
+            #endregion
+
+            #region RunsInfo:
+            //// 1. Get All RunInfo
+            //RunInfoTable runs = await api.GetAllRunInfo();
+
+            //// 2. Display initial list
+            //foreach (var item in runs)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new RunInfo
+            //linesChanged = await api.InsertRunInfo(new RunInfo 
+            //{ 
+            //    Player = new Player { Idx = 1 },
+            //    CurrentScore = 0,
+            //    CurrentLevel = 1,
+            //    CurrentHp = 5,
+            //    IsRunOver = false
+            //});
+            //Console.WriteLine($"InsertRunInfo Result (Rows Affected): {linesChanged}\n");
+
+            //runs = await api.GetAllRunInfo();
+            //Console.WriteLine($"Inserted Run: {runs.Last()}\n");
+
+            //// 4. Perform a Partial Update (Reference Switch + Score Update)
+            //// Switching the run to a different Player (Idx 3) and updating Score/Level
+            //linesChanged = await api.UpdateRunInfo(
+            //    RunInfoDTO.FromEntity(runs.Last(), dto =>
+            //    {
+            //        // Pivot: Switch the Player associated with this run
+            //        dto.Player = new PlayerDTO { Idx = 3 };
+
+            //        // Update stats
+            //        dto.CurrentScore = 1500;
+            //        dto.CurrentLevel = 4;
+            //        dto.CurrentHp = 3;
+            //    })
+            //);
+            //Console.WriteLine($"UpdateRunInfo Result (Rows Affected): {linesChanged}\n");
+
+            //// 5. Verify the update
+            //runs = await api.GetAllRunInfo();
+            //Console.WriteLine($"Updated Run: {runs.Last()}\n");
+
+            //// 6. Delete the RunInfo
+            //linesChanged = await api.DeleteRunInfo(runs.Last().Idx);
+            //Console.WriteLine($"DeleteRunInfo Result (Rows Affected): {linesChanged}\n");
+            #endregion
+
+            #region Users:
+            //// 1. Get All Users
+            //UsersTable users = await api.GetAllUsers();
+
+            //// 2. Display initial list
+            //foreach (var item in users)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
+
+            //// 3. Insert new User
+            //linesChanged = await api.InsertUser(new User 
+            //{ 
+            //    Username = "new_test_user",
+            //    Password = "hashed_password_123",
+            //    Email = "test@user.com",
+            //    Id = "312345678",
+            //    Birthday = new DateTime(1995, 10, 10),
+            //    IsLoggedIn = false
+            //});
+            //Console.WriteLine($"InsertUser Result (Rows Affected): {linesChanged}\n");
+
+            //users = await api.GetAllUsers();
+            //Console.WriteLine($"Inserted User: {users.Last()}\n");
+
+            //// 4. Perform a Partial Update (Change Username and Email)
+            //// Password, Id, and Birthday remain null in the DTO action,
+            //// so they are not sent to the server and remain unchanged in DB.
+            //linesChanged = await api.UpdateUser(
+            //    UserDTO.FromEntity(users.Last(), dto =>
+            //    {
+            //        dto.Username = "updated_username_99";
+            //        dto.Email = "updated_email@user.com";
+            //        dto.IsLoggedIn = true;
+            //    })
+            //);
+            //Console.WriteLine($"UpdateUser Result (Rows Affected): {linesChanged}\n");
+
+            //// 5. Verify the update
+            //users = await api.GetAllUsers();
+            //Console.WriteLine($"Updated User: {users.Last()}\n");
+
+            //// 6. Delete the User
+            //linesChanged = await api.DeleteUser(users.Last().Idx);
+            //Console.WriteLine($"DeleteUser Result (Rows Affected): {linesChanged}\n");
+            #endregion
 
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
