@@ -536,43 +536,50 @@ namespace Test
             #endregion
 
             #region PlayersAndGroups:
-            // 1. Get initial data
-            PlayersAndGroupsTable playersAndGroups = await api.GetAllPlayersAndGroups();
+            //// 1. Get initial data
+            //PlayersAndGroupsTable playersAndGroups = await api.GetAllPlayersAndGroups();
 
-            // 2. Display initial list
-            foreach (var item in playersAndGroups)
-            {
-                Console.WriteLine(item + "\n");
-            }
+            //// 2. Display initial list
+            //foreach (var item in playersAndGroups)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
 
-            // 3. Insert new Group
-            linesChanged = await api.InsertPlayerAndGroup(
-                    new PlayerAndGroup
-                    {
-                        Player = new Player { Idx = 11 },
-                        Group = new Group { Idx = 4 }
-                    }
-                );
-            Console.WriteLine($"InsertGroup Result (Rows Affected): {linesChanged}\n");
+            //// 3. Insert new Group
+            //linesChanged = await api.InsertPlayerAndGroup(
+            //        new PlayerAndGroup
+            //        {
+            //            Player = new Player { Idx = 11 },
+            //            Group = new Group { Idx = 4 }
+            //        }
+            //    );
+            //Console.WriteLine($"InsertGroup Result" +
+            //    $" (Rows Affected): {linesChanged}\n");
+            //playersAndGroups = await api.GetAllPlayersAndGroups();
+            //Console.WriteLine($"Inserted Player And Group: " +
+            //    $"{playersAndGroups.Last()}");
 
-            // 3. Perform a Update
-            linesChanged = await api.UpdatePlayerAndGroup(
-                PlayerAndGroupDTO.FromEntity(playersAndGroups.Last(), dto =>
-                    {
-                        dto.Group = new GroupDTO { Idx = 3 };
-                    }
-                )
-            );
+            //// 3. Perform a Update
+            //linesChanged = await api.UpdatePlayerAndGroup(
+            //    PlayerAndGroupDTO.FromEntity(
+            //        playersAndGroups.Last(), dto =>
+            //        {
+            //            dto.Group = new GroupDTO { Idx = 3 };
+            //        }
+            //    )
+            //);
 
-            Console.WriteLine($"Update Result: {linesChanged} row(s) affected.");
-
-            // 4. Verify the switch
-            playersAndGroups = await api.GetAllPlayersAndGroups();
-            Console.WriteLine($"Updated Link: {playersAndGroups.Last()}");
-            // 6. Delete the Group
-            linesChanged = await api.DeletePlayerAndGroup(playersAndGroups.Last().Idx);
-            Console.WriteLine($"DeleteGroup Result (Rows Affected): {linesChanged}\n");
+            //Console.WriteLine($"Update Result: {linesChanged}" +
+            //    $" row(s) affected.");
+            //playersAndGroups = await api.GetAllPlayersAndGroups();
+            //Console.WriteLine($"Updated Player And Group:" +
+            //    $" {playersAndGroups.Last()}");
+            //// 6. Delete the Group
+            //linesChanged = await api.DeletePlayerAndGroup(playersAndGroups.Last().Idx);
+            //Console.WriteLine($"Delete Player And Group Result (Rows Affected): {linesChanged}\n");
             #endregion
+
+            
 
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
