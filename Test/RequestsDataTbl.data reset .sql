@@ -23,8 +23,8 @@ INSERT INTO dbo.RequestsDataTbl (RequestIdx, Field, OldValue, NewValue) VALUES
 (6, 'Email', 'blastr.a@game.com', 'astro_blast@game.com'),    
 (7, 'Email', 'hero.h@game.com', 'hyperhero@game.com'),        
 (8, 'Password', 'hashed_pass_P20', 'another_new_hash'),       
-(9, 'Username', 'NebulaNomad', 'NebulaNomad_X'),              
-(10, 'Birthday', '2003-12-03', '2003-12-04');                 
+(3, 'Username', 'NebulaNomad', 'NebulaNomad_X'),              
+(4, 'Birthday', '2003-12-03', '2003-12-04');                 
 
 -- 5. VERIFICATION
 -- If the tool still shows 13 after 1, it is 100% a tool setting (Lexicographical view).

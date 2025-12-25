@@ -755,6 +755,16 @@ namespace Server_Manager___API.Controllers
             // Check and update fields only if they are provided in the DTO
             // |= like += but for ||
             // 1. Strings (Nullable Reference Types)
+            ProfileEditRequestDTO OgRequstingprofileEditRequestDTO = (ProfileEditRequestDTO)MapFullEntityToDTO(
+                originalRequestData.Request,
+                typeof(ProfileEditRequest),
+                typeof(ProfileEditRequestDTO)
+            )!;
+            isModified |= TryUpdateProperty<ProfileEditRequest, ProfileEditRequestDTO>(
+                requestData.Request,
+                OgRequstingprofileEditRequestDTO,
+                val => originalRequestData.Request = val);
+
             isModified |= TryUpdateProperty(requestData.Field,
                 val => originalRequestData.Field = val);
             isModified |= TryUpdateProperty(requestData.NewValue,
