@@ -70,9 +70,8 @@ namespace ViewModel.DBs
             }
             catch (Exception e)
             {
-
-                System.Diagnostics.Debug.WriteLine(
-                    e.Message + "\nSQL:" + command.CommandText);
+                throw new ExpandedException("\nSQL:",
+                    command.CommandText, e);
             }
             finally
             {
@@ -87,40 +86,6 @@ namespace ViewModel.DBs
             }
             return list;
         }
-
-        protected async Task<List<BaseEntity>> SelectAsync(string sqlStr)
-        {
-            SqlConnection connection = new SqlConnection();
-            SqlCommand command = new SqlCommand();
-            List<BaseEntity> list = new List<BaseEntity>();
-
-            try
-            {
-                command.Connection = connection;
-                command.CommandText = sqlStr;
-                connection.Open();
-                reader = await command.ExecuteReaderAsync();
-
-
-                while (reader.Read())
-                {
-                    BaseEntity entity = NewEntity();
-                    list.Add(CreateModel(entity));
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message + "\nSQL:" + command.CommandText);
-            }
-            finally
-            {
-                if (reader != null) reader.Close();
-                //if (connection.State == ConnectionState.Open) connection.Close();
-            }
-            return list;
-        }
-
-
         protected virtual BaseEntity CreateModel(BaseEntity entity)
         {
             entity.Idx = (int)reader["Idx"];

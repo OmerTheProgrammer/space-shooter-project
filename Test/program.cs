@@ -181,7 +181,7 @@ namespace Test
             //Console.WriteLine();
             #endregion
 
-            #region RequestingData
+            #region RequestsData
             //RequestsDataDB RequestsDataDB = new RequestsDataDB();
             //RequestsDataTable rt = RequestsDataDB.SelectAll();
             //Console.WriteLine("RequestsData: ");
@@ -191,7 +191,7 @@ namespace Test
             //}
             //Console.WriteLine();
 
-            //RequestingData RequestsData = new RequestingData()
+            //RequestData RequestsData = new RequestData()
             //{
             //    Request = new ProfileEditRequest { Idx = 1 },
             //    Field = "3654"
@@ -694,55 +694,55 @@ namespace Test
             #endregion
 
             #region RequestData:
-            // 1. Get All RequestData
-            RequestsDataTable requestDataItems =
-                await api.GetAllRequestsData();
+            //// 1. Get All RequestData
+            //RequestsDataTable requestDataItems =
+            //    await api.GetAllRequestsData();
 
-            // 2. Display initial list
-            foreach (var item in requestDataItems)
-            {
-                Console.WriteLine(item + "\n");
-            }
+            //// 2. Display initial list
+            //foreach (var item in requestDataItems)
+            //{
+            //    Console.WriteLine(item + "\n");
+            //}
 
-            //3.Insert new RequestData
-            linesChanged = await api.InsertRequestData(new RequestData
-            {
-                Request = new ProfileEditRequest
-                {
-                    Idx = 6,
-                    RequestingPlayer = new Player { Idx = 20 },
-                    AdressingAdmin = new Admin { Idx = 8 },
-                },
-                Field = "Password",
-                OldValue = "hashed_pass_P20",
-                NewValue = "another_new_hash"
-            });
-            Console.WriteLine($"InsertRequestData Result (Rows Affected): {linesChanged}\n");
+            ////3.Insert new RequestData
+            //linesChanged = await api.InsertRequestData(new RequestData
+            //{
+            //    Request = new ProfileEditRequest
+            //    {
+            //        Idx = 6,
+            //        RequestingPlayer = new Player { Idx = 20 },
+            //        AdressingAdmin = new Admin { Idx = 8 },
+            //    },
+            //    Field = "Password",
+            //    OldValue = "hashed_pass_P20",
+            //    NewValue = "another_new_hash"
+            //});
+            //Console.WriteLine($"InsertRequestData Result (Rows Affected): {linesChanged}\n");
 
-            requestDataItems = await api.GetAllRequestsData();
-            Console.WriteLine($"Inserted RequestData: {requestDataItems.Last()}\n");
+            //requestDataItems = await api.GetAllRequestsData();
+            //Console.WriteLine($"Inserted RequestData: {requestDataItems.Last()}\n");
 
-            // 4. Perform a Partial Update (Reference Switch + Value Change)
-            linesChanged = await api.UpdateRequestData(
-                RequestDataDTO.FromEntity(requestDataItems.Last(), dto =>
-                {
-                    // Switch the connected request to 12 and change the value
-                    dto.Request = new ProfileEditRequestDTO { Idx = 12 };
-                    dto.NewValue = "99";
-                })
-            );
-            Console.WriteLine($"UpdateRequestData Result (Rows Affected): {linesChanged}\n");
+            //// 4. Perform a Partial Update (Reference Switch + Value Change)
+            //linesChanged = await api.UpdateRequestData(
+            //    RequestDataDTO.FromEntity(requestDataItems.Last(), dto =>
+            //    {
+            //        // Switch the connected request to 3 and change the value
+            //        dto.Request = new ProfileEditRequestDTO { Idx = 3 };
+            //        dto.NewValue = "99";
+            //    })
+            //);
+            //Console.WriteLine($"UpdateRequestData Result (Rows Affected): {linesChanged}\n");
 
-            // 5. Verify the update
-            requestDataItems = await api.GetAllRequestsData();
-            Console.WriteLine($"Updated RequestData: {requestDataItems.Last()}\n");
+            //// 5. Verify the update
+            //requestDataItems = await api.GetAllRequestsData();
+            //Console.WriteLine($"Updated RequestData: {requestDataItems.Last()}\n");
 
-            // 6. Delete the RequestData
-            linesChanged = await api.DeleteRequestData(requestDataItems.Last().Idx);
-            Console.WriteLine($"DeleteRequestData Result (Rows Affected): {linesChanged}\n");
-            // 5. Verify the delete
-            requestDataItems = await api.GetAllRequestsData();
-            Console.WriteLine($"Last RequestData: {requestDataItems.Last()}\n");
+            //// 6. Delete the RequestData
+            //linesChanged = await api.DeleteRequestData(requestDataItems.Last().Idx);
+            //Console.WriteLine($"DeleteRequestData Result (Rows Affected): {linesChanged}\n");
+            //// 5. Verify the delete
+            //requestDataItems = await api.GetAllRequestsData();
+            //Console.WriteLine($"Last RequestData: {requestDataItems.Last()}\n");
             #endregion
 
             #region RunsInfo:
