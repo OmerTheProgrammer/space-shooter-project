@@ -25,7 +25,6 @@ namespace Test
             {
                 Console.WriteLine("ServerFull mode activated: API Test.");
                 ServerFullMain();
-                Console.WriteLine("started!");
             }
             else
             {
