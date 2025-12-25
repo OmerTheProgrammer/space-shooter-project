@@ -20,6 +20,8 @@ namespace Client_Manager___API
         {
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUri);
+            //adds header to all requst to not trigger Microsoft "Anti-Phishing" landing page
+            client.DefaultRequestHeaders.Add("X-Tunnel-Skip-AntiPhishing-Page", "true");
         }
 
         private static readonly JsonSerializerOptions
@@ -31,6 +33,7 @@ namespace Client_Manager___API
             };
 
         // Default constructor pointing to dev tunnel
+        //https://localhost:7013/
         public ApiService() : this("https://32wpk9jk-7013.euw.devtunnels.ms/") { }
 
         #region select all:
