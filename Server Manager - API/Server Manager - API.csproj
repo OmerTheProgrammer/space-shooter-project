@@ -6,9 +6,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Server_Manager___API</RootNamespace>
 		<Configurations>Debug;Release;Test + Server</Configurations>
-
-		<DevTunnelId>32wpk9jk</DevTunnelId>
-		<DevTunnelEnabled>true</DevTunnelEnabled>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -9,9 +9,7 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7013;http://localhost:5049",
-      "devTunnelEnabled": true, // reactivate the dev tunnel
-      "devTunnelId": "32wpk9jk", // the id of the dev tunnel found in start of swagger link
-      "devTunnelAccess": "public" // reset the reactivated dev tunnel to be accsessable to the public
+
     },
     "http": {
       "commandName": "Project",
@@ -22,9 +20,6 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5049",
-      "devTunnelEnabled": true, // reactivate the dev tunnel
-      "devTunnelId": "32wpk9jk", // the id of the dev tunnel found in start of swagger link
-      "devTunnelAccess": "public" // reset the reactivated dev tunnel to be accsessable to the public
     },
     "IIS Express": {
       "commandName": "IISExpress",
