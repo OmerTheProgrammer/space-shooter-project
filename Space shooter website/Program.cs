@@ -1,4 +1,12 @@
+using Client_Manager___API;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// 1. Get the URL from the appsettings.Development.json
+string serverUrl = builder.Configuration["ConnectionStrings:SpaceShooterServer"];
+// 2. Inject it into your ApiService
+// This uses the constructor you wrote: public ApiService(string baseUri)
+builder.Services.AddScoped<IApiService>(sp => new ApiService(serverUrl));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -25,3 +33,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+

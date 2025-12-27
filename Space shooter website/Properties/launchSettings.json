@@ -9,15 +9,6 @@
     }
   },
   "profiles": {
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "http://localhost:5005",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,
@@ -25,7 +16,24 @@
       "applicationUrl": "https://localhost:7240;http://localhost:5005",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      //for app dev tunnel
+      "devTunnelEnabled": true,
+      "devTunnelAccessName": "Space Shooter's Server tunnel",
+      "devTunnelAccess": "public"
+    },
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5005",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      //for app dev tunnel
+      "devTunnelEnabled": true,
+      "devTunnelAccessName": "Space Shooter's Server tunnel",
+      "devTunnelAccess": "public"
     },
     "IIS Express": {
       "commandName": "IISExpress",

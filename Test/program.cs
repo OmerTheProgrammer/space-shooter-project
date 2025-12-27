@@ -1,4 +1,5 @@
 ﻿using Client_Manager___API;
+using Microsoft.Extensions.Configuration;
 using Model;
 using Model.Data_Transfer_Objects;
 using Model.Entitys;
@@ -15,6 +16,9 @@ namespace Test
 {
     public class Program
     {
+        //holds the config settings from appsettings.json
+        private static IConfiguration _config;
+
         public static async Task Main(string[] args)
         {
             //added unique debug mode to this project only and added to it:
@@ -24,6 +28,11 @@ namespace Test
             if (Environment.GetEnvironmentVariable("RUNNING_TEST_SERVER") == "true")
             {
                 Console.WriteLine("ServerFull mode activated: API Test.");
+                //get's the file with the server dev tunnel url
+                _config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
+                .Build();
                 ServerFullMain();
             }
             else
@@ -364,23 +373,26 @@ namespace Test
         }
         public static async Task ServerFullMain()
         {
-            ApiService api = new ApiService();
+            //extract the api url from the config file
+            string apiUrl = _config["ConnectionStrings:SpaceShooterServer"];
+            Console.WriteLine($"apiUrl: {apiUrl}");
+            ApiService api = new ApiService(apiUrl);
 
             Console.WriteLine("--- Starting API Demo Scenario ---\n");
             int linesChanged = 0;
             #region Admins:
-            //// 1. Get All (Initial list)
-            //AdminsTable admins = await api.GetAllAdmins();
+            // 1. Get All (Initial list)
+            AdminsTable admins = await api.GetAllAdmins();
 
-            //// 2. Write initial list
-            //foreach (var item in admins)
-            //{
-            //    Console.WriteLine(item + "\n");
-            //}
+            // 2. Write initial list
+            foreach (var item in admins)
+            {
+                Console.WriteLine(item + "\n");
+            }
 
             //// 3. Expected found message (Idx 2 exists)
             //Console.WriteLine(await api.GetAdminByIdx(2) + "\n");
-
+            
             //// 4. Expected not found message (Idx 12 does not exist)
             //// NOTE: The GetAdminsByIdx mock handles the error printing internally
             //Admin notFoundAdminResult = await api.GetAdminByIdx(12);

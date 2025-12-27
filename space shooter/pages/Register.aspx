@@ -287,7 +287,7 @@
                 </div>
                 <div class="m_card">
                     <p class="popup text">
-                        By playing Space Shooters, you agree to our terms:<br />
+                        By playing Space Shooter, you agree to our terms:<br />
                             1.Secure your account (you're responsible).<br/>
                             2.Game content is copyrighted (don't distribute).<br/>
                             3.Game is provided "as is" (no warranties), use at your own risk.<br/>
@@ -296,7 +296,7 @@
                             6.Governed by Israeli law.<br />
                             7.Disputes: omer17508@gmail.com.<br/>
                             8.These terms are the full agreement.<br/>
-                        Enjoy Space Shooters!<br/>
+                        Enjoy Space Shooter!<br/>
                     </p>
                 </div>
                 <div class="m_card">

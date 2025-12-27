@@ -21,7 +21,7 @@ namespace Client_Manager___API
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUri);
             //adds header to all requst to not trigger Microsoft "Anti-Phishing" landing page
-            client.DefaultRequestHeaders.Add("X-Tunnel-Skip-AntiPhishing-Page", "true");
+            client.DefaultRequestHeaders.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
         }
 
         private static readonly JsonSerializerOptions
@@ -31,10 +31,6 @@ namespace Client_Manager___API
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 PropertyNamingPolicy = null
             };
-
-        // Default constructor pointing to dev tunnel
-        //https://localhost:7013/
-        public ApiService() : this("https://32wpk9jk-7013.euw.devtunnels.ms/") { }
 
         #region select all:
         private async Task<T> GetTable<T>(string endpoint)
@@ -527,7 +523,7 @@ namespace Client_Manager___API
         public Task<int> DeleteUser(int idx)
         {
             // returns number of rows affected
-            return Delete($"/api/Delete/AdminDeletor", idx);
+            return Delete($"/api/Delete/UserDeletor", idx);
         }
         #endregion
     }

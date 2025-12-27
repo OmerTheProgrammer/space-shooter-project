@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Space_shooter_website</RootNamespace>
+    <RootNamespace>Space_Shooter_Website</RootNamespace>
     <Configurations>Debug;Release;Test + Server</Configurations>
   </PropertyGroup>
 
