@@ -33,7 +33,7 @@
         "DebugTarget": "https"
       },
       {
-        "Path": "Space shooter website\\Space Shooter Website.csproj",
+        "Path": "Space shooter website\\Space Shooters Website.csproj",
         "Action": "Start",
         "DebugTarget": "https"
       }
@@ -52,7 +52,7 @@
     "Name": "Website",
     "Projects": [
       {
-        "Path": "Space shooter website\\Space Shooter Website.csproj",
+        "Path": "Space shooter website\\Space Shooters Website.csproj",
         "Action": "Start",
         "DebugTarget": "https"
       }
