@@ -16,9 +16,6 @@ namespace Test
 {
     public class Program
     {
-        //holds the config settings from appsettings.json
-        private static IConfiguration _config;
-
         public static async Task Main(string[] args)
         {
             //added unique debug mode to this project only and added to it:
@@ -28,12 +25,7 @@ namespace Test
             if (Environment.GetEnvironmentVariable("RUNNING_TEST_SERVER") == "true")
             {
                 Console.WriteLine("ServerFull mode activated: API Test.");
-                //get's the file with the server dev tunnel url
-                _config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
-                .Build();
-                ServerFullMain();
+                ServerFullMain(GetServerUrl());
             }
             else
             {
@@ -44,6 +36,7 @@ namespace Test
             Console.ReadLine();
 
         }
+
         public static void ServerLessMain()
         {
             #region users
@@ -371,11 +364,9 @@ namespace Test
             //Console.WriteLine();
             #endregion
         }
-        public static async Task ServerFullMain()
+
+        public static async Task ServerFullMain(string apiUrl)
         {
-            //extract the api url from the config file
-            string apiUrl = _config["ConnectionStrings:SpaceShooterServer"];
-            Console.WriteLine($"apiUrl: {apiUrl}");
             ApiService api = new ApiService(apiUrl);
 
             Console.WriteLine("--- Starting API Demo Scenario ---\n");
@@ -392,7 +383,7 @@ namespace Test
 
             //// 3. Expected found message (Idx 2 exists)
             //Console.WriteLine(await api.GetAdminByIdx(2) + "\n");
-            
+
             //// 4. Expected not found message (Idx 12 does not exist)
             //// NOTE: The GetAdminsByIdx mock handles the error printing internally
             //Admin notFoundAdminResult = await api.GetAdminByIdx(12);
@@ -858,6 +849,55 @@ namespace Test
             #endregion
 
             Console.WriteLine("--- API Demo Scenario Complete ---");
+        }
+
+        private static string GetServerUrl()
+        {
+            // Load configuration from appsettings.Development.json
+            IConfiguration _config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.Development.json", optional: false)
+                .Build();
+
+            // The tunnel URL from configuration
+            string tunnelUrl = _config["ConnectionStrings:SpaceShooterServer"];
+
+            // Check if the tunnel is reachable by sending a HEAD request with a short timeout from unrlated HttpClient
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    // A short timeout for checking responsiveness
+                    client.Timeout = TimeSpan.FromSeconds(2);
+
+                    //just checks if the tunnel and server are up
+                    var request = new HttpRequestMessage(HttpMethod.Head, tunnelUrl);
+                    //the tunnel might have anti-phishing blocking HEAD requests
+                    request.Headers.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
+                    var response = client.Send(request);
+
+                    //are up and responsive or not found (server is running but endpoint doesn't exist yet)
+                    if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        Console.WriteLine(">>> [OK] Tunnel is alive. Using: " + tunnelUrl);
+                        return tunnelUrl;
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    // This happens specifically if the 2 seconds ran out
+                    Console.WriteLine(">>> [TIMEOUT] Tunnel is slow or server isn't running.");
+                }
+                catch (Exception ex)
+                {
+                    // This catches other errors (like no internet or bad URL)
+                    Console.WriteLine($">>> [ERROR] Tunnel unreachable: {ex.Message}");
+                }
+            }
+
+            // This fallback process
+            Console.WriteLine(">>> [FALLBACK] Switching to Localhost: ");
+            return "https://localhost:7013/";
         }
     }
 }

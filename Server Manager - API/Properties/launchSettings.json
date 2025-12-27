@@ -1,5 +1,19 @@
 {
   "profiles": {
+    "SpaceShooterTunnel": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7013;http://localhost:5049",
+      //for server dev tunnel
+      "devTunnelEnabled": true,
+      "devTunnelAccessName": "Space Shooter's Server tunnel",
+      "devTunnelAccess": "public"
+    },
     "https": {
       "commandName": "Project",
       "launchBrowser": true,

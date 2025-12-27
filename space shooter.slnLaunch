@@ -15,7 +15,7 @@
       {
         "Path": "Server Manager - API\\Server Manager - API.csproj",
         "Action": "Start",
-        "DebugTarget": "https"
+        "DebugTarget": "SpaceShooterTunnel"
       },
       {
         "Path": "Test\\Test.csproj",
@@ -30,12 +30,12 @@
       {
         "Path": "Server Manager - API\\Server Manager - API.csproj",
         "Action": "Start",
-        "DebugTarget": "https"
+        "DebugTarget": "SpaceShooterTunnel"
       },
       {
         "Path": "Space shooter website\\Space Shooter Website.csproj",
         "Action": "Start",
-        "DebugTarget": "https"
+        "DebugTarget": "SpaceShooterAppTunnel"
       }
     ]
   },
