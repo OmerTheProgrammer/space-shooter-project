@@ -1,5 +1,4 @@
-﻿<%@ Page Title="Home" Language="C#" MasterPageFile="~/website_master_page.Master" AutoEventWireup="true" CodeBehind="Home.aspx.cs" Inherits="space_shooter.Home" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" %><asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
         .pic_button{
             height: 14vh;

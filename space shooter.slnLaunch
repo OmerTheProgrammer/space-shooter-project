@@ -15,7 +15,7 @@
       {
         "Path": "Server Manager - API\\Server Manager - API.csproj",
         "Action": "Start",
-        "DebugTarget": "SpaceShooterTunnel"
+        "DebugTarget": "https"
       },
       {
         "Path": "Test\\Test.csproj",
@@ -30,7 +30,7 @@
       {
         "Path": "Server Manager - API\\Server Manager - API.csproj",
         "Action": "Start",
-        "DebugTarget": "SpaceShooterTunnel"
+        "DebugTarget": "https"
       },
       {
         "Path": "Space Shooter Website\\Space Shooter Website\\Space Shooter Website.csproj",
@@ -72,14 +72,13 @@
     "Name": "WebSites compare",
     "Projects": [
       {
-        "Path": "space shooter\\space shooter.csproj",
-        "Action": "Start",
-        "DebugTarget": "Web Server (Google Chrome)"
-      },
-      {
         "Path": "Space Shooter Website\\Space Shooter Website\\Space Shooter Website.csproj",
         "Action": "Start",
         "DebugTarget": "https"
+      },
+      {
+        "Path": "space shooter\\space shooter.csproj",
+        "Action": "Start"
       }
     ]
   }
