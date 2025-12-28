@@ -50,12 +50,12 @@ h1:focus {
     border-color: #929292;
 }
 
-<style >
 /*shows all objects
-            *{
-                border :1px solid red;
-            }
-            */
+*{
+    border :1px solid red;
+}
+*/
+            
 /*master page style: */
 body {
     background-image: url("/Assets/Backgrounds/black.png");
@@ -124,7 +124,7 @@ body {
 }
 
 .popup {
-    background-image: url("/Assets/Backgrounds/blue.png");
+    background-image: url('assets/backgrounds/blue.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -239,7 +239,8 @@ footer {
 
 /*nav: */
 #navbar {
-    height: 20%;
+    height: auto;
+    min-height: 80px;
 }
 
 nav {
@@ -253,7 +254,10 @@ nav {
 }
 
 .nav_text {
+    padding: 5px 10px;
     font-size: calc(16px + (40 - 16) * (100vh - 450px) / (1280 - 450));
+    min-width:120px;
+    transition: 0.3s;
 }
 
 nav ul {
@@ -264,7 +268,7 @@ nav ul {
 
 nav li {
     display: inline-block; /* Display list items inline */
-    margin-right: 2%; /* Add space between links */
+    margin-right: 3%; /* Add space between links */
 }
 
 nav a {
