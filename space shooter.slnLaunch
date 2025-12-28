@@ -67,5 +67,20 @@
         "DebugTarget": "https"
       }
     ]
+  },
+  {
+    "Name": "WebSites compare",
+    "Projects": [
+      {
+        "Path": "space shooter\\space shooter.csproj",
+        "Action": "Start",
+        "DebugTarget": "Web Server (Google Chrome)"
+      },
+      {
+        "Path": "Space Shooter Website\\Space Shooter Website\\Space Shooter Website.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
   }
 ]
