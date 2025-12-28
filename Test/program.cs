@@ -657,7 +657,10 @@ namespace Test
             linesChanged = await api.InsertProfileEditRequest(
                     new ProfileEditRequest
                     {
+                        RequestingPlayer = new Player { Idx = 14 },
+                        AdressingAdmin = new Admin { Idx = 7 },
                         RequestingDate = DateTime.Now,
+                        Status = Status.Pending
                     }
                 );
             Console.WriteLine($"InsertGroup Result" +
@@ -675,7 +678,7 @@ namespace Test
                         dto.RequestingPlayer =
                             new PlayerDTO()
                             {
-                                Idx = 14,
+                                Idx = 17,
                             };
                     }
                 )
@@ -684,9 +687,9 @@ namespace Test
             Console.WriteLine($"Update Result: {linesChanged}" +
                 $" row(s) affected.");
             profileEditRequests = await api.GetAllProfileEditRequests();
-            Console.WriteLine($"Updated Player And Group:" +
+            Console.WriteLine($"Updated profileEditRequest :" +
                 $" {profileEditRequests.Last()}");
-            // 6. Delete the Group
+            //6.Delete the profileEditRequest
             linesChanged = await api.DeleteProfileEditRequest(
             profileEditRequests.Last().Idx);
             Console.WriteLine($"Delete Player And Group Result " +
