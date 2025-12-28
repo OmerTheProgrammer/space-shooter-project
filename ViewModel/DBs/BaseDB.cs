@@ -70,8 +70,7 @@ namespace ViewModel.DBs
             }
             catch (Exception e)
             {
-                throw new ExpandedException("\nSQL:",
-                    command.CommandText, e);
+                throw new ExpandedException("\nSQL:", command.CommandText, e);
             }
             finally
             {
@@ -214,8 +213,7 @@ namespace ViewModel.DBs
             catch (Exception ex)
             {
                 trans.Rollback();
-                throw new ExpandedException("Sql error happend: ",
-                    command.CommandText, ex);
+                throw new ExpandedException("Sql error happend: ", command.CommandText, ex);
             }
             finally
             {
