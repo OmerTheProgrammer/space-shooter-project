@@ -1,8 +1,10 @@
-﻿using Model.Data_Transfer_Objects;
+﻿using Microsoft.Extensions.Configuration;
+using Model.Data_Transfer_Objects;
 using Model.Entitys;
 using Model.Tables;
 using System;
 using System.Collections.Generic;
+using System.IO; 
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
@@ -10,20 +12,15 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using System.IO; 
 
 namespace Client_Manager___API
 {
     public class ApiService : IApiService
     {
         private HttpClient client;
-        public ApiService(string baseUri)
+        public ApiService(HttpClient httpC)
         {
-            client = new HttpClient();
-            client.BaseAddress = new Uri(baseUri);
-            //adds header to all requst to not trigger Microsoft "Anti-Phishing" landing page
-            client.DefaultRequestHeaders.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
+            client = httpC;
         }
 
         private static readonly JsonSerializerOptions
@@ -34,18 +31,10 @@ namespace Client_Manager___API
                 PropertyNamingPolicy = null
             };
 
-        public ApiService():this(GetServerUrl()) { }
-
-        private static string GetServerUrl()
+        public static string GetServerUrl(IConfiguration config)
         {
-            // Load configuration from appsettings.Development.json
-            IConfiguration _config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.Development.json", optional: false)
-                .Build();
-
             // The tunnel URL from configuration
-            string tunnelUrl = _config["ConnectionStrings:SpaceShooterServer"];
+            string tunnelUrl = config["ConnectionStrings:SpaceShooterServer"];
 
             // Check if the tunnel is reachable by sending a HEAD request with a short timeout from unrlated HttpClient
             using (var client = new HttpClient())

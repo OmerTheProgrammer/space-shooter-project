@@ -10,6 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ViewModel;
 using ViewModel.DBs;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace Test
 {
@@ -24,7 +27,7 @@ namespace Test
             if (Environment.GetEnvironmentVariable("RUNNING_TEST_SERVER") == "true")
             {
                 Console.WriteLine("ServerFull mode activated: API Test.");
-                ServerFullMain();
+                await ServerFullMain(args);
             }
             else
             {
@@ -364,9 +367,9 @@ namespace Test
             #endregion
         }
 
-        public static async Task ServerFullMain()
+        public static async Task ServerFullMain(string[] args)
         {
-            ApiService api = new ApiService();
+            IApiService api = GetApiService(args);
 
             Console.WriteLine("--- Starting API Demo Scenario ---\n");
             int linesChanged = 0;
@@ -850,6 +853,27 @@ namespace Test
             #endregion
 
             Console.WriteLine("--- API Demo Scenario Complete ---");
+        }
+
+        public IApiService GetApiService(string[] args)
+        {
+            // 1. Setup the Builder - makes Console app as real app
+            //casues the logs to appear in the console proffesionally
+            HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+
+            // 2. Determine the URL of the server from config
+            var serverUrl = ApiService.GetServerUrl(builder.Configuration);
+
+            // 3. creates the ApiService, this is the way in real apps
+            builder.Services.AddHttpClient<IApiService, ApiService>(client =>
+            {
+                client.BaseAddress = new Uri(serverUrl);
+                client.DefaultRequestHeaders.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
+            });
+
+            // 4. Build the host and get the 'api' instance
+            using IHost host = builder.Build();
+            return host.Services.GetRequiredService<IApiService>();
         }
     }
 }
