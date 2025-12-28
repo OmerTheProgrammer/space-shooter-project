@@ -33,9 +33,9 @@
         "DebugTarget": "SpaceShooterTunnel"
       },
       {
-        "Path": "Space shooter website\\Space Shooter Website.csproj",
+        "Path": "Space Shooter Website\\Space Shooter Website\\Space Shooter Website.csproj",
         "Action": "Start",
-        "DebugTarget": "SpaceShooterAppTunnel"
+        "DebugTarget": "https"
       }
     ]
   },
@@ -52,7 +52,7 @@
     "Name": "Website",
     "Projects": [
       {
-        "Path": "Space shooter website\\Space Shooter Website.csproj",
+        "Path": "Space Shooter Website\\Space Shooter Website\\Space Shooter Website.csproj",
         "Action": "Start",
         "DebugTarget": "https"
       }
