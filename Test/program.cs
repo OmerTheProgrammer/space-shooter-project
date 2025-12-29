@@ -855,14 +855,14 @@ namespace Test
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
 
-        public IApiService GetApiService(string[] args)
+        public static IApiService GetApiService(string[] args)
         {
             // 1. Setup the Builder - makes Console app as real app
             //casues the logs to appear in the console proffesionally
             HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-            // 2. Determine the URL of the server from config
-            var serverUrl = ApiService.GetServerUrl(builder.Configuration);
+            // 2. Logic to get URL...
+            string serverUrl = ApiService.GetServerUrl(builder.Configuration);
 
             // 3. creates the ApiService, this is the way in real apps
             builder.Services.AddHttpClient<IApiService, ApiService>(client =>
@@ -872,7 +872,7 @@ namespace Test
             });
 
             // 4. Build the host and get the 'api' instance
-            using IHost host = builder.Build();
+            IHost host = builder.Build();
             return host.Services.GetRequiredService<IApiService>();
         }
     }

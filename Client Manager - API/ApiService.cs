@@ -51,7 +51,8 @@ namespace Client_Manager___API
                     var response = client.Send(request);
 
                     //are up and responsive or not found (server is running but endpoint doesn't exist yet)
-                    if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    if (response.IsSuccessStatusCode 
+                        || response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     {
                         Console.WriteLine(">>> [OK] Tunnel is alive. Using it");
                         return tunnelUrl;
@@ -73,6 +74,7 @@ namespace Client_Manager___API
             Console.WriteLine(">>> [FALLBACK] Switching to Localhost: ");
             return "https://localhost:7013/";
         }
+
 
         #region select all:
         private async Task<T> GetTable<T>(string endpoint)
