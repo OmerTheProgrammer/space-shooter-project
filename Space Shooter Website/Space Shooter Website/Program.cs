@@ -13,7 +13,12 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 // 3. Register your API Service for the Server (Prerendering)
-builder.Services.AddScoped<IApiService>(sp => new ApiService(serverUrl));
+builder.Services.AddHttpClient<IApiService, ApiService>(client => {
+    client.BaseAddress = new Uri(serverUrl); 
+    client.DefaultRequestHeaders.Add(
+        "X-Tunnel-Skip-AntiPhishing-Scan", "true");
+}
+);
 
 var app = builder.Build();
 

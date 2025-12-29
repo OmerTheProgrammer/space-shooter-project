@@ -855,24 +855,54 @@ namespace Test
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
 
-        public IApiService GetApiService(string[] args)
+        public static IApiService GetApiService(string[] args)
         {
             // 1. Setup the Builder - makes Console app as real app
             //casues the logs to appear in the console proffesionally
             HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-            // 2. Determine the URL of the server from config
-            var serverUrl = ApiService.GetServerUrl(builder.Configuration);
+            // 2. Logic to get URL...
+            string? tunnelUrl = builder.Configuration.
+                GetConnectionString("SpaceShooterServer");
+
+            string finalUrl = "https://localhost:7013"; // Default starting point
+
+            if (!string.IsNullOrEmpty(tunnelUrl))
+            {
+                try
+                {
+                    // 2.check if tunnel is reachable
+                    using var client = new HttpClient();
+                    client.Timeout = TimeSpan.FromSeconds(2);
+
+                    //we create the rquest
+                    var request = new HttpRequestMessage(HttpMethod.Head, tunnelUrl);
+                    request.Headers.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
+
+                    var response = client.Send(request);
+
+                    //500-502 errors mean the tunnel is down so any thing else is good
+                    if (response.IsSuccessStatusCode || (int)response.StatusCode < 500)
+                    {
+                        finalUrl = tunnelUrl;
+                        Console.WriteLine(">>> [SUCCESS] Tunnel is ONLINE. Using Dev Tunnel.");
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine(">>> [FALLBACK] Tunnel unreachable/closed. Switching to LOCALHOST.");
+                }
+            }
 
             // 3. creates the ApiService, this is the way in real apps
             builder.Services.AddHttpClient<IApiService, ApiService>(client =>
             {
-                client.BaseAddress = new Uri(serverUrl);
+                client.BaseAddress = new Uri(finalUrl);
                 client.DefaultRequestHeaders.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
             });
 
             // 4. Build the host and get the 'api' instance
-            using IHost host = builder.Build();
+            IHost host = builder.Build();
             return host.Services.GetRequiredService<IApiService>();
         }
     }

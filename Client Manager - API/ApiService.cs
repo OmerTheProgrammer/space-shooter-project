@@ -31,49 +31,6 @@ namespace Client_Manager___API
                 PropertyNamingPolicy = null
             };
 
-        public static string GetServerUrl(IConfiguration config)
-        {
-            // The tunnel URL from configuration
-            string tunnelUrl = config["ConnectionStrings:SpaceShooterServer"];
-
-            // Check if the tunnel is reachable by sending a HEAD request with a short timeout from unrlated HttpClient
-            using (var client = new HttpClient())
-            {
-                try
-                {
-                    // A short timeout for checking responsiveness
-                    client.Timeout = TimeSpan.FromSeconds(2);
-
-                    //just checks if the tunnel and server are up
-                    var request = new HttpRequestMessage(HttpMethod.Head, tunnelUrl);
-                    //the tunnel might have anti-phishing blocking HEAD requests
-                    request.Headers.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
-                    var response = client.Send(request);
-
-                    //are up and responsive or not found (server is running but endpoint doesn't exist yet)
-                    if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    {
-                        Console.WriteLine(">>> [OK] Tunnel is alive. Using it");
-                        return tunnelUrl;
-                    }
-                }
-                catch (TaskCanceledException)
-                {
-                    // This happens specifically if the 2 seconds ran out
-                    Console.WriteLine(">>> [TIMEOUT] Tunnel is slow or server isn't running.");
-                }
-                catch (Exception ex)
-                {
-                    // This catches other errors (like no internet or bad URL)
-                    Console.WriteLine($">>> [ERROR] Tunnel unreachable: {ex.Message}");
-                }
-            }
-
-            // This fallback process
-            Console.WriteLine(">>> [FALLBACK] Switching to Localhost: ");
-            return "https://localhost:7013/";
-        }
-
         #region select all:
         private async Task<T> GetTable<T>(string endpoint)
             where T : new()
