@@ -27,7 +27,7 @@ namespace Test
             if (Environment.GetEnvironmentVariable("RUNNING_TEST_SERVER") == "true")
             {
                 Console.WriteLine("ServerFull mode activated: API Test.");
-                await ServerFullMain(args);
+                await ServerFullMain();
             }
             else
             {
@@ -367,9 +367,14 @@ namespace Test
             #endregion
         }
 
-        public static async Task ServerFullMain(string[] args)
+        public static async Task ServerFullMain()
         {
-            IApiService api = GetApiService(args);
+            ApiService api = GetApiService() as ApiService;
+            if(api == null)
+            {
+                Console.WriteLine("API Service initialization failed.");
+                return;
+            }
 
             Console.WriteLine("--- Starting API Demo Scenario ---\n");
             int linesChanged = 0;
@@ -855,11 +860,11 @@ namespace Test
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
 
-        public static IApiService GetApiService(string[] args)
+        public static IApiService GetApiService()
         {
             // 1. Setup the Builder - makes Console app as real app
             //casues the logs to appear in the console professionally
-            HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+            HostApplicationBuilder builder = Host.CreateApplicationBuilder();
 
             // 2. Logic to get URL...
             string serverUrl = ApiService.GetServerUrl(builder.Configuration);
