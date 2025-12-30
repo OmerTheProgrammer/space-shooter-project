@@ -858,7 +858,7 @@ namespace Test
         public static IApiService GetApiService(string[] args)
         {
             // 1. Setup the Builder - makes Console app as real app
-            //casues the logs to appear in the console proffesionally
+            //casues the logs to appear in the console professionally
             HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
             // 2. Logic to get URL...
