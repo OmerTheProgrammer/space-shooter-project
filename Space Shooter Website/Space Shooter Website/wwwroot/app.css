@@ -1,276 +1,206 @@
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-a, .btn-link {
-    color: #006bb7;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.content {
-    padding-top: 1.1rem;
-}
-
-h1:focus {
-    outline: none;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid #e50000;
-}
-
-.validation-message {
-    color: #e50000;
-}
-
-.blazor-error-boundary {
-    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
-    padding: 1rem 1rem 1rem 3.7rem;
-    color: white;
-}
-
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
-
-.darker-border-checkbox.form-check-input {
-    border-color: #929292;
-}
-
-/*shows all objects
-*{
-    border :1px solid red;
-}
-*/
-            
-/*master page style: */
 body {
-    background-image: url("/Assets/Backgrounds/black.png");
+    background-image: url("/Assets/Backgrounds/black.png") !important;
     background-size: cover;
-    background-position: center;
     background-attachment: fixed;
-    background-repeat: no-repeat;
-    height: 100%;
+    min-height: 100vh;
     margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
-
-#icon {
-    margin-left: 10px;
-}
-
-#header {
-    width: 220px;
-    height: 80px;
-}
-
-/*general: */
-
-#error_text {
-    color: #EBDCDC;
-    background-color: #663333;
-    border: 1px solid #ff0000;
-    padding: 5px 10px;
-    border-radius: 4px;
-    display: none;
-    margin: 3%;
-    text-align: center;
-    margin-left: -7vw;
-    width: 28vw;
-}
-
-.entering_button {
-    font-size: 30px;
-    margin: 3%;
-}
-
-.logo {
-    width: 80px;
-    height: 80px;
-}
-
-    .logo.small {
-        height: 30px;
-        width: 30px;
-        margin: 8px;
-        margin-bottom: -5px;
-    }
-
-.m_container {
-    display: 10px;
-    justify-content: center;
-    align-content: center;
-    flex-direction: column;
-    height: 50vh;
-}
-
-.m_card {
-    margin: 1%;
-    padding: 0 1%;
-}
-
-.popup {
-    background-image: url('assets/backgrounds/blue.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    z-index: 15;
-}
-
-.back.button {
-    margin-left: 40%;
-    margin-bottom: 10%;
-}
-
-.popup.title {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    margin-left: 20%;
-    /*
-                    12 = base font size
-                    16 = min font size
-                    24 = max font size
-                    24 - 16 = range of changable fonts
-                    100vw = window width
-                    400px = needed width
-                    1280 = max width
-                */
-    font-size: calc(24px + (24 - 16) * (100vw - 400px) / (1280 - 400));
-}
-
-.popup.text {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    margin-left: 10%;
-    /*
-                    16 = min font size
-                    24 = max font size
-                    24 - 16 = range of changable fonts
-                    100vw = window width
-                    300px = needed width
-                    1280 = max width
-                */
-    font-size: calc(16px + (24 - 16) * (100vw - 300px) / (1280 - 300));
-}
-
-.popup.title.with_button {
-    margin-left: 10%;
-}
-
-.text {
-    margin-left: 30%;
-    color: aqua;
-    font-size: 30px;
-}
-
-.link {
-    color: green;
-    font-size: 25px;
-}
-
-    .link:hover {
-        color: rgba(10,250,10,0.9);
-    }
-
-.title {
-    text-decoration: underline;
-    color: aquamarine;
-    font-size: 45px;
-}
-
-.button {
-    color: #DEF7F6;
-    background-color: #3B5087;
-    border-color: #88DBD8;
-    margin: 1%;
-    margin-left: 3%;
-    width: 110px;
-    font-size: 20px;
-}
-
-    .button:hover {
-        color: rgba(237, 247, 246, 0.75);
-    }
-
-/*input: */
-.input_box {
-    margin-left: 1%;
-    font-size: 18px;
-    margin: 3%;
-}
-
-.input.text {
-    font-size: 20px;
-    margin-left: 0;
-}
-
-.input.button {
-    font-size: 30px;
-    margin-top: 3%;
-    margin-left: 8%;
-}
-
-/*footer: */
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 1rem;
-    text-align: center;
-    z-index: 10;
-    background-color: rgba(48, 58, 63,0.6);
-}
-
-/*nav: */
-#navbar {
-    height: auto;
-    min-height: 80px;
-}
-
-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(48, 54, 63,0.6);
-    width: 100%;
-    z-index: 10;
-    padding: 20px;
-}
-
-.nav_text {
-    padding: 5px 10px;
-    font-size: calc(16px + (40 - 16) * (100vh - 450px) / (1280 - 450));
-    min-width:120px;
+/* Link styles */
+a, .link {
+    color: #00FF41 !important; /* Bold Neon Green */
+    text-decoration: none;
+    font-weight: 700;
     transition: 0.3s;
 }
 
-nav ul {
-    list-style-type: none; /* Remove default bullet points */
-    margin: 0; /* Remove default margins */
-    padding: 0; /* Remove default paddings */
+a:hover, .link:hover {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 10px #00FF41;
 }
 
-nav li {
-    display: inline-block; /* Display list items inline */
-    margin-right: 3%; /* Add space between links */
+/* footer */
+footer {
+    position: fixed; /* Pins to bottom of screen */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Dark semi-transparent background */
+    padding: 15px 0;
+    text-align: center; /* Centers the GitHub link */
+    z-index: 100;
+    border-top: 1px solid #00FF41; /* Matching green border line */
 }
 
-nav a {
-    text-decoration: none; /* Remove underline from links */
+footer .link {
+    color: #00FF41 !important;
+    font-weight: 700 !important;
+    font-size: 18px;
+    text-decoration: none;
+    text-transform: uppercase; /* Makes it feel more like a UI element */
+    letter-spacing: 2px;
+}
+
+footer .link:hover {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 10px #00FF41;
+}
+
+/* --- Navigation --- */
+.navbar {
+    padding-top: 0;
+    padding-bottom: 0;
+    min-height: 80px; /* Set a consistent height */
+}
+
+.ms-auto {
+    margin-right: auto !important; /* Pushes links to the right */
+}
+
+#header {
+    max-width: 180px; /* Smaller for mobile */
+    height: auto;
+}
+
+/*un selected nav item*/
+.navbar.navbar-expand-lg .navbar-nav .nav-link.nav_text {
+    color: #007bff !important; /* Set Defult color to nav text*/
+    font-weight: 800 !important; /* Extra Bold */
+    opacity: 0.8; /* Slightly faded so the 'active' one pops more */
+    background: transparent;
+    padding: 20px 15px !important;
+    opacity: 1 !important; /* <--- THIS removes the "gray" tint */
+}
+
+.navbar-nav .nav-link .nav_text:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px #88DBD8;
+}
+
+.nav-link:hover {
+    background-color: rgba(136, 219, 216, 0.4);
+}
+
+/*selected nav item*/
+.nav-link.active {
+    color: #007bff !important; /* A bright neon color to stand out */
+    text-decoration: underline;
+    text-shadow: 0 0 20px #007bff;
+    opacity: 1 !important; /* <--- THIS removes the "gray" tint */
+}
+
+.nav-link {
+    height: 100%;
+    display: flex;
+    align-items: center; /* Centers text vertically while the box touches the edges */
+    padding: 20px 15px !important; /* Adjust vertical padding to fill the nav height */
+    margin: 0 !important; /* Remove margins that cause gaps */
+}
+
+#navbar {
+    height: auto;
+    padding: 10px;
+}
+
+.nav_text {
+    padding: 12px 20px; /* Larger touch target for fingers */
+    font-size: 1.2rem;
+    display: block;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.nav-link {
+    height: 100%;
+    display: flex;
+    align-items: center; /* Centers text vertically while the box touches the edges */
+    padding: 20px 15px !important; /* Adjust vertical padding to fill the nav height */
+    margin: 0 !important; /* Remove margins that cause gaps */
+}
+
+    /* Optional: Add a background color on hover that fills the whole height */
+    .nav-link:hover {
+        background-color: rgba(136, 219, 216, 0.1);
+    }
+
+/* --- Media Query for Phones (max-width: 992px) --- */
+@media (max-width: 991.98px) {
+    #header {
+        width: 130px; /* Prevents the header image from being huge on phones */
+    }
+
+    .navbar-collapse {
+        background: rgba(0, 0, 0, 0.9); /* Make menu readable on phone */
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    .nav_text {
+        text-align: center;
+        border-bottom: 1px solid #333;
+        padding: 15px !important;
+    }
+
+    .nav-item {
+        margin-right: 0 !important; /* Stack items vertically */
+        margin-bottom: 5px;
+    }
+
+    .logo {
+        width: 50px; /* Smaller icon on phones */
+        height: 50px;
+    }
+
+    .entering_button {
+        width: 80%; /* Buttons take up more width on phones */
+        font-size: 24px;
+    }
+}
+
+/* Remove the default Blazor sidebar margins */
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+/*Home Page:*/
+
+
+/*Credits Page:*/
+.credit-title {
+    color: #00FF41 !important; /* Bold Green */
+    font-weight: 900;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.credit-subtitle {
+    color: #007bff !important; /* Bold Blue to match Nav */
+    font-weight: 800;
+    margin-top: 20px;
+}
+
+.credit-text {
+    margin-left: 10%; /* Replaced your 15% to look better on phones */
+    margin-right: 10%;
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.credit-text a {
+    color: #00FF41 !important;
+    font-weight: 700;
+    text-decoration: underline;
+    /* This prevents some browser-link interference */
+    pointer-events: auto;
+}
+
+/* Adjust margins for mobile screens */
+@media (max-width: 768px) {
+    .credit-text {
+        margin-left: 5%;
+        margin-right: 5%;
+        text-align: center !important; /* Center text on phones for easier reading */
+    }
 }

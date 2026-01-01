@@ -14,6 +14,12 @@
     }
 }
 
+function openSafeLink(url) {
+    console.log("Opening safe link to: " + url);
+    const win = window.open(url, '_blank', 'noreferrer');
+    if (win) { win.opener = null; }
+}
+
 function print_error(msg) {
     var text = document.getElementById("error_text");
     if (text) {
