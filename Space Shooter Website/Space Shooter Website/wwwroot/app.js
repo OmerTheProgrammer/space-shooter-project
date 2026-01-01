@@ -14,11 +14,18 @@
     }
 }
 
-function openSafeLink(url) {
-    console.log("Opening safe link to: " + url);
-    const win = window.open(url, '_blank', 'noreferrer');
-    if (win) { win.opener = null; }
-}
+// Attach to window so the debugger always finds it
+window.openSafeLink = function (url) {
+    console.log("Debugger safe-opening: " + url);
+
+    // We use a slight delay to let the Blazor event finish
+    setTimeout(() => {
+        const win = window.open(url, '_blank', 'noreferrer,noopener');
+        if (win) {
+            win.opener = null;
+        }
+    }, 100);
+};
 
 function print_error(msg) {
     var text = document.getElementById("error_text");
