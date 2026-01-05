@@ -39,3 +39,19 @@
       }
     }
   }
+
+// {
+//   "version": "0.2.0",
+//   "configurations": [
+//     {
+//       "name": "Blazor: Debug Main Only",
+//       "type": "blazorwasm",
+//       "request": "launch",
+//       "url": "https://localhost:7020",
+//       "browser": "edge", // or chrome
+//       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+//       "trace": false,
+//       "internalConsoleOptions": "neverOpen"
+//     }
+//   ]
+// }

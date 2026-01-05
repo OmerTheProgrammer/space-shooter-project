@@ -54,7 +54,7 @@
       {
         "Path": "Space Shooter Website\\Space Shooter Website\\Space Shooter Website.csproj",
         "Action": "Start",
-        "DebugTarget": "https"
+        "DebugTarget": "Space Shooter Website"
       }
     ]
   },
