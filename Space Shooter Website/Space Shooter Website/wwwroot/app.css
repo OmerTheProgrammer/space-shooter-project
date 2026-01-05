@@ -1,14 +1,14 @@
-body {
+/*body {
     background-image: url("/Assets/Backgrounds/black.png") !important;
     background-size: cover;
     background-attachment: fixed;
     min-height: 100vh;
     margin: 0;
-}
+}*/
 /* Link styles */
-a, .link {
-    color: #00FF41 !important; /* Bold Neon Green */
-    text-decoration: none;
+/*a, .link {
+    color: #00FF41 !important;*/ /* Bold Neon Green */
+    /*text-decoration: none;
     font-weight: 700;
     transition: 0.3s;
 }
@@ -16,60 +16,60 @@ a, .link {
 a:hover, .link:hover {
     color: #FFFFFF !important;
     text-shadow: 0 0 10px #00FF41;
-}
+}*/
 
 /* footer */
-footer {
-    position: fixed; /* Pins to bottom of screen */
-    bottom: 0;
+/*footer {
+    position: fixed;*/ /* Pins to bottom of screen */
+    /*bottom: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* Dark semi-transparent background */
-    padding: 15px 0;
-    text-align: center; /* Centers the GitHub link */
-    z-index: 100;
-    border-top: 1px solid #00FF41; /* Matching green border line */
-}
+    background-color: rgba(0, 0, 0, 0.85);*/ /* Dark semi-transparent background */
+    /*padding: 15px 0;
+    text-align: center;*/ /* Centers the GitHub link */
+    /*z-index: 100;
+    border-top: 1px solid #00FF41;*/ /* Matching green border line */
+/*}
 
 footer .link {
     color: #00FF41 !important;
     font-weight: 700 !important;
     font-size: 18px;
     text-decoration: none;
-    text-transform: uppercase; /* Makes it feel more like a UI element */
-    letter-spacing: 2px;
+    text-transform: uppercase;*/ /* Makes it feel more like a UI element */
+    /*letter-spacing: 2px;
 }
 
 footer .link:hover {
     color: #FFFFFF !important;
     text-shadow: 0 0 10px #00FF41;
-}
+}*/
 
 /* --- Navigation --- */
-.navbar {
+/*.navbar {
     padding-top: 0;
     padding-bottom: 0;
-    min-height: 80px; /* Set a consistent height */
-}
+    min-height: 80px;*/ /* Set a consistent height */
+/*}
 
 .ms-auto {
-    margin-right: auto !important; /* Pushes links to the right */
-}
+    margin-right: auto !important;*/ /* Pushes links to the right */
+/*}
 
 #header {
-    max-width: 180px; /* Smaller for mobile */
-    height: auto;
-}
+    max-width: 180px;*/ /* Smaller for mobile */
+    /*height: auto;
+}*/
 
 /*un selected nav item*/
-.navbar.navbar-expand-lg .navbar-nav .nav-link.nav_text {
-    color: #007bff !important; /* Set Defult color to nav text*/
-    font-weight: 800 !important; /* Extra Bold */
-    opacity: 0.8; /* Slightly faded so the 'active' one pops more */
-    background: transparent;
+/*.navbar.navbar-expand-lg .navbar-nav .nav-link.nav_text {
+    color: #007bff !important;*/ /* Set Defult color to nav text*/
+    /*font-weight: 800 !important;*/ /* Extra Bold */
+    /*opacity: 0.8;*/ /* Slightly faded so the 'active' one pops more */
+    /*background: transparent;
     padding: 20px 15px !important;
-    opacity: 1 !important; /* <--- THIS removes the "gray" tint */
-}
+    opacity: 1 !important;*/ /* <--- THIS removes the "gray" tint */
+/*}
 
 .navbar-nav .nav-link .nav_text:hover {
     color: #ffffff !important;
@@ -78,23 +78,23 @@ footer .link:hover {
 
 .nav-link:hover {
     background-color: rgba(136, 219, 216, 0.4);
-}
+}*/
 
 /*selected nav item*/
-.nav-link.active {
-    color: #007bff !important; /* A bright neon color to stand out */
-    text-decoration: underline;
+/*.nav-link.active {
+    color: #007bff !important;*/ /* A bright neon color to stand out */
+    /*text-decoration: underline;
     text-shadow: 0 0 20px #007bff;
-    opacity: 1 !important; /* <--- THIS removes the "gray" tint */
-}
+    opacity: 1 !important;*/ /* <--- THIS removes the "gray" tint */
+/*}
 
 .nav-link {
     height: 100%;
     display: flex;
-    align-items: center; /* Centers text vertically while the box touches the edges */
-    padding: 20px 15px !important; /* Adjust vertical padding to fill the nav height */
-    margin: 0 !important; /* Remove margins that cause gaps */
-}
+    align-items: center;*/ /* Centers text vertically while the box touches the edges */
+    /*padding: 20px 15px !important;*/ /* Adjust vertical padding to fill the nav height */
+    /*margin: 0 !important;*/ /* Remove margins that cause gaps */
+/*}
 
 #navbar {
     height: auto;
@@ -102,8 +102,8 @@ footer .link:hover {
 }
 
 .nav_text {
-    padding: 12px 20px; /* Larger touch target for fingers */
-    font-size: 1.2rem;
+    padding: 12px 20px;*/ /* Larger touch target for fingers */
+    /*font-size: 1.2rem;
     display: block;
     text-align: center;
     transition: 0.3s;
@@ -112,25 +112,25 @@ footer .link:hover {
 .nav-link {
     height: 100%;
     display: flex;
-    align-items: center; /* Centers text vertically while the box touches the edges */
-    padding: 20px 15px !important; /* Adjust vertical padding to fill the nav height */
-    margin: 0 !important; /* Remove margins that cause gaps */
-}
+    align-items: center;*/ /* Centers text vertically while the box touches the edges */
+    /*padding: 20px 15px !important;*/ /* Adjust vertical padding to fill the nav height */
+    /*margin: 0 !important;*/ /* Remove margins that cause gaps */
+/*}*/
 
     /* Optional: Add a background color on hover that fills the whole height */
-    .nav-link:hover {
+    /*.nav-link:hover {
         background-color: rgba(136, 219, 216, 0.1);
-    }
+    }*/
 
 /* --- Media Query for Phones (max-width: 992px) --- */
-@media (max-width: 991.98px) {
+/*@media (max-width: 991.98px) {
     #header {
-        width: 130px; /* Prevents the header image from being huge on phones */
-    }
+        width: 130px;*/ /* Prevents the header image from being huge on phones */
+    /*}
 
     .navbar-collapse {
-        background: rgba(0, 0, 0, 0.9); /* Make menu readable on phone */
-        padding: 1rem;
+        background: rgba(0, 0, 0, 0.9);*/ /* Make menu readable on phone */
+        /*padding: 1rem;
         border-radius: 10px;
     }
 
@@ -141,48 +141,48 @@ footer .link:hover {
     }
 
     .nav-item {
-        margin-right: 0 !important; /* Stack items vertically */
-        margin-bottom: 5px;
+        margin-right: 0 !important;*/ /* Stack items vertically */
+        /*margin-bottom: 5px;
     }
 
     .logo {
-        width: 50px; /* Smaller icon on phones */
-        height: 50px;
+        width: 50px;*/ /* Smaller icon on phones */
+        /*height: 50px;
     }
 
     .entering_button {
-        width: 80%; /* Buttons take up more width on phones */
-        font-size: 24px;
+        width: 80%;*/ /* Buttons take up more width on phones */
+        /*font-size: 24px;
     }
-}
+}*/
 
 /* Remove the default Blazor sidebar margins */
-.main-wrapper {
+/*.main-wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
+}*/
 /*Home Page:*/
 
 
 /*Credits Page:*/
-.credit-title {
-    color: #00FF41 !important; /* Bold Green */
-    font-weight: 900;
+/*.credit-title {
+    color: #00FF41 !important;*/ /* Bold Green */
+    /*font-weight: 900;
     margin-top: 30px;
     margin-bottom: 20px;
     text-transform: uppercase;
 }
 
 .credit-subtitle {
-    color: #007bff !important; /* Bold Blue to match Nav */
-    font-weight: 800;
+    color: #007bff !important;*/ /* Bold Blue to match Nav */
+    /*font-weight: 800;
     margin-top: 20px;
 }
 
 .credit-text {
-    margin-left: 10%; /* Replaced your 15% to look better on phones */
-    margin-right: 10%;
+    margin-left: 10%;*/ /* Replaced your 15% to look better on phones */
+    /*margin-right: 10%;
     color: #ffffff;
     font-size: 1.1rem;
     line-height: 1.6;
@@ -191,16 +191,65 @@ footer .link:hover {
 .credit-text a {
     color: #00FF41 !important;
     font-weight: 700;
-    text-decoration: underline;
+    text-decoration: underline;*/
     /* This prevents some browser-link interference */
-    pointer-events: auto;
-}
+    /*pointer-events: auto;
+}*/
 
 /* Adjust margins for mobile screens */
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {
     .credit-text {
         margin-left: 5%;
         margin-right: 5%;
-        text-align: center !important; /* Center text on phones for easier reading */
+        text-align: center !important;*/ /* Center text on phones for easier reading */
+    /*}
+}*/
+
+/* --- Global Theme & Background --- */
+body {
+    background-image: url("/Assets/Backgrounds/black.png") !important;
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* --- Global Link Styles --- */
+a, .link {
+    color: #00FF41 !important; /* Bold Neon Green */
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+    a:hover, .link:hover {
+        color: #FFFFFF !important;
+        text-shadow: 0 0 10px #00FF41;
     }
+
+/* --- Global Footer --- */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 15px 0;
+    text-align: center;
+    z-index: 100;
+    border-top: 1px solid #00FF41;
+}
+
+footer .link {
+    color: #00FF41 !important;
+    font-weight: 700 !important;
+    font-size: 18px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+footer .link:hover {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 10px #00FF41;
 }

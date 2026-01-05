@@ -1,6 +1,5 @@
-﻿/*Credits Page:*/
-.credit-title {
-    color: #00FF41 !important; /* Bold Green */
+﻿.credit-title {
+    color: #00FF41 !important;
     font-weight: 900;
     margin-top: 30px;
     margin-bottom: 20px;
@@ -8,32 +7,23 @@
 }
 
 .credit-subtitle {
-    color: #007bff !important; /* Bold Blue to match Nav */
+    color: #007bff !important;
     font-weight: 800;
     margin-top: 20px;
 }
 
 .credit-text {
-    margin-left: 10%; /* Replaced your 15% to look better on phones */
+    margin-left: 10%;
     margin-right: 10%;
     color: #ffffff;
     font-size: 1.1rem;
     line-height: 1.6;
 }
 
-    .credit-text a {
-        color: #00FF41 !important;
-        font-weight: 700;
-        text-decoration: underline;
-        /* This prevents some browser-link interference */
-        pointer-events: auto;
-    }
-
-/* Adjust margins for mobile screens */
 @media (max-width: 768px) {
     .credit-text {
         margin-left: 5%;
         margin-right: 5%;
-        text-align: center !important; /* Center text on phones for easier reading */
+        text-align: center !important;
     }
 }
