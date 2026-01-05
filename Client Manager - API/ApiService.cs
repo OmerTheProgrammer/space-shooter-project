@@ -11,7 +11,8 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using System.IO; 
+using System.IO;
+using ViewModel;
 
 namespace Client_Manager___API
 {
@@ -38,10 +39,12 @@ namespace Client_Manager___API
 
         private static string GetServerUrl()
         {
-            // Load configuration from appsettings.Development.json
+            // Load configuration from appsettings.Development.json Use AppContext.BaseDirectory
+            // to find the folder where the json is located
             IConfiguration _config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.Development.json", optional: false)
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: true) // Standard name
+                .AddJsonFile("appsettings.Development.json", optional: true) // Overlay name
                 .Build();
 
             // The tunnel URL from configuration
@@ -96,10 +99,10 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
-                // Return an empty instance of the table type T
-                return new T(); //returns empty list = empty table
+                return new T();
             }
         }
 
@@ -183,13 +186,10 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
-                // Return an empty instance of the table type T
-                BaseEntity BemptyResult = new BaseEntity();
-                BemptyResult.Idx = -1;
-                T emptyResult = BemptyResult as T;
-                return emptyResult;
+                return new T();
             }
         }
 
@@ -286,6 +286,7 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
                 return changedRecords;
@@ -403,8 +404,9 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 //error logging
-                Console.WriteLine($"Error updating data at {endpoint}: {ex.Message}");
+                Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
                 return changedRecords;
             }
         }
@@ -518,10 +520,10 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 // Centralized error logging
-                Console.WriteLine($"Error deleting data via {endpoint}: {ex.Message}");
+                Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
                 return changedRecords;
-
             }
         }
 
