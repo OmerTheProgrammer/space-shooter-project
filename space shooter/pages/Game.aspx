@@ -534,7 +534,7 @@
                                 this.level_select_button.setInteractive();
                                 this.level_select_button.setVisible(false);
                                 this.level_select_button.on('pointerdown', () => {
-                                    window.location.href = 'Level selection.aspx';
+                                    window.location.href = '/pages/Level selection.aspx';
                                 });
 
                                 this.next_level_button = this.add.sprite((size[0] / 2) + 350, size[1] / 2 + 45, 'next level button');//next_level_button

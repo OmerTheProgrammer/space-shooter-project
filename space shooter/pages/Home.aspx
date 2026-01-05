@@ -51,7 +51,7 @@
             <div class="row">
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <a href="Log In.aspx">
+                    <a href="/pages/Log In.aspx">
                         <img src="\Assets\Main_Menu\Start_BTN.png" alt="START" class="pic_button"/></a>
                 </div>
                 <div class="col-md-4"></div>

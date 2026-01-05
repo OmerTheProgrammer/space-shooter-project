@@ -302,7 +302,7 @@
     <body>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="Home.aspx">
+                <a class="navbar-brand" href="/pages/Home.aspx">
                     <img src="\Assets\icon.png" id="icon" class="nav_text logo"/>
                     <img src="\Assets\Main_Menu\Header.png" id="header" class="nav_text"/>
                 </a>
@@ -414,7 +414,7 @@
                     <div class="m_card">
                     <button type="button" onclick="close_settings();" class="button back"
                         style="margin-left:30%;">Close</button>
-                    <button type="button" onclick="window.location.href = 'Level selection.aspx';" 
+                    <button type="button" onclick="window.location.href = '/pages/Level selection.aspx';" 
                         class="level_select button" id="level_select_button">
                     <img class="level_select" src="/Assets/Main_Menu/level_select_button.png"/>
                     </button>

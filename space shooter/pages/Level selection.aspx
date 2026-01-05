@@ -127,7 +127,7 @@
 
         function open_level(button) {
             //user.level = button.textContent;
-            window.location.href = 'Game.aspx';
+            window.location.href = '/pages/Game.aspx';
         }
 
         function music() {

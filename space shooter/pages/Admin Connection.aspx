@@ -19,7 +19,7 @@
             }
 
             if (key === "superbaruch@17") {
-                window.location.href = 'Admin View.aspx';
+                window.location.href = '/pages/Admin View.aspx';
                 //the register isn't working so i don't know if this works.
                 <% //SQL_Helper.DoProcedure("Space_Shooter_DB.mdf", "AddAdmin",null);%>
             }
@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="form-group">
                                         <input onclick="Submit()" class="btn btn-success btn-block btn-lg entering_button" id="Submit_button" type="button" value="Submit" />
-                                        <input onclick="window.location.href = 'Register.aspx';" class="btn btn-info btn-block btn-lg entering_button" type="button" value="Register" />
+                                        <input onclick="window.location.href = '/pages/Register.aspx';" class="btn btn-info btn-block btn-lg entering_button" type="button" value="Register" />
                                     </div>
                                 </div>
                                 <div class="col-md-2"></div>

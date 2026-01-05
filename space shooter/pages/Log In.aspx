@@ -32,7 +32,7 @@
             alert("password: " + password);
 
             //if () {
-                window.location.href = "Level selection.aspx";
+            window.location.href = "/pages/Level selection.aspx";
             //}
         }
 
@@ -87,7 +87,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <input onclick="window.location.href = 'Register.aspx';" 
+                                    <input onclick="window.location.href = '/pages/Register.aspx';" 
                                         class="btn btn-info btn-block btn-lg side entering_button" 
                                         type="button" value="To Register" />
                                 </div>
