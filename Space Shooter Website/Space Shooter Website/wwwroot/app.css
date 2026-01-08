@@ -207,7 +207,7 @@ footer .link:hover {
 
 /* --- Global Theme & Background --- */
 body {
-    background-image: url("/Assets/Backgrounds/black.png") !important;
+    background-image: url("/Assets/Backgrounds/black.png");
     background-size: cover;
     background-attachment: fixed;
     min-height: 100vh;
@@ -216,14 +216,14 @@ body {
 
 /* --- Global Link Styles --- */
 a, .link {
-    color: #00FF41 !important; /* Bold Neon Green */
+    color: #00FF41 ; /* Bold Neon Green */
     text-decoration: none;
     font-weight: 700;
     transition: 0.3s;
 }
 
     a:hover, .link:hover {
-        color: #FFFFFF !important;
+        color: #FFFFFF;
         text-shadow: 0 0 10px #00FF41;
     }
 
@@ -241,8 +241,8 @@ footer {
 }
 
 footer .link {
-    color: #00FF41 !important;
-    font-weight: 700 !important;
+    color: #00FF41;
+    font-weight: 700;
     font-size: 18px;
     text-decoration: none;
     text-transform: uppercase;
@@ -250,6 +250,6 @@ footer .link {
 }
 
 footer .link:hover {
-    color: #FFFFFF !important;
+    color: #FFFFFF;
     text-shadow: 0 0 10px #00FF41;
 }
