@@ -1,4 +1,7 @@
 ﻿@page "/credits"
+@using Microsoft.AspNetCore.Components.Web
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavManager
 
 <PageTitle>Credits - Space Shooter</PageTitle>
 
@@ -39,12 +42,11 @@
         <div class="col-md-6 text-center">
             <h3 class="credit-subtitle">For Graphic Design:</h3>
             <p class="credit-text text-md-start">
-                <a href="https://www.youtube.com/@@SimpleSnippets"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
+                <button type="button"
+                        class="btn-link-style"
+                        onclick="window.open('https://www.youtube.com/@@SimpleSnippets', '_blank');">
                     Visit Simple Snippets
-                </a>
+                </button>
                 <br />
                 Alex Chulkov (Graphic Designer).
             </p>
@@ -96,5 +98,18 @@
 <div style="height: 15vh;"></div>
 
 @code {
+    private readonly Dictionary<string, string> Urls = new()
+    {
+        { "youtube", "https://www.youtube.com/@SimpleSnippets" },
+        { "adobe", "https://stock.adobe.com/il" }
+    };
 
+    private void Open(string key)
+    {
+        if (Urls.TryGetValue(key, out var url))
+        {
+            // forceLoad: true is the secret sauce that stops the JS crash
+            NavManager.NavigateTo(url, forceLoad: true);
+        }
+    }
 }
