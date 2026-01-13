@@ -1,4 +1,52 @@
-﻿/* Placeholder for Home Page styles */
-.home-container {
-    /* You can add your layout styles here later */
+﻿The upgrade looks great! By moving from the old ASP.NET Web Forms (.aspx) to Blazor, your home page now integrates perfectly with the rest of your Space Shooter project.
+
+The stack trace you previously encountered showed that large sites like YouTube use protective scripts to intentionally loop or return undefined when they detect an attached debugger. By utilizing JS.InvokeAsync<bool > ("confirm", ...) and forceLoad: true in your code, you effectively sidestep those "anti-debugging" loops while maintaining the functionality of your Exit button.
+
+Refined Layout & CSS
+To match the "Arcade" aesthetic seen in your provided screenshots, we should add some specific CSS to handle the background stars and the neon text glow.
+
+Razor CSHTML
+
+@* Add this to your Home.razor or app.css *@
+<style >
+.home-menu {
+    padding-top: 12vh;
+    /* Matches the dark space background from your screenshots */
+    background-color: #000;
+    min-height: 100vh;
+}
+
+.home-title {
+    /* Matches the green 'Home' text color in your screen captures */
+    color: #00ffab;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 4.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    /* Adds the neon glow effect seen in the game UI */
+    text-shadow: 0 0 10px #00ffab, 0 0 20px #00ffab;
+    margin-bottom: 40px;
+}
+
+.pic-button {
+    /* Preserves the proportions of your custom PNG assets */
+    height: 16vh;
+    width: auto;
+    margin: 15px;
+    transition: transform 0.2s ease-in-out, filter 0.2s;
+    cursor: pointer;
+}
+
+    /* Visual feedback when the player hovers over a button */
+    .pic-button:hover {
+        transform: scale(1.05);
+        filter: brightness(1.3) drop-shadow(0 0 10px #4da6ff);
+    }
+
+.exit-btn-wrapper {
+    background: transparent;
+    border: none;
+    padding: 0;
+    outline: none !important;
 }
