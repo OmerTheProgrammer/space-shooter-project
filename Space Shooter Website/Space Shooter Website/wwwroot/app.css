@@ -46,3 +46,20 @@ footer .link:hover {
     color: #FFFFFF;
     text-shadow: 0 0 10px #00FF41;
 }
+
+footer .link i {
+    margin-right: 1px; /* Spaces the GitHub icon from the text */
+    font-size: 1.2rem;
+}
+
+@keyframes titlePulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
