@@ -1,0 +1,78 @@
+﻿.login-container {
+    padding-top: 10vh;
+    min-height: 80vh;
+}
+
+.login-card {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00FFAB;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
+}
+
+.user-avatar {
+    height: 20vh;
+    filter: drop-shadow(0 0 10px #00FFAB);
+}
+
+.login-label {
+    color: #00FFAB;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.login-input {
+    width: 100%;
+    background: #111;
+    border: 1px solid #444;
+    color: white;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    outline: none;
+}
+
+    .login-input:focus {
+        border-color: #00FFAB;
+        box-shadow: 0 0 10px rgba(0, 255, 171, 0.5);
+    }
+
+.btn-submit {
+    width: 100%;
+    background: #00FFAB;
+    color: black;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .btn-submit:hover {
+        background: white;
+        box-shadow: 0 0 15px white;
+    }
+
+.btn-side {
+    width: 100%;
+    background: transparent;
+    color: #00FFAB;
+    border: 1px solid #00FFAB;
+    padding: 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .btn-side:hover {
+        background: rgba(0, 255, 171, 0.1);
+        color: white;
+    }
+
+.error-text {
+    color: #ff4d4d;
+    font-weight: bold;
+    text-shadow: 0 0 5px black;
+}

@@ -1,7 +1,130 @@
 ﻿@page "/Log In"
+@* adding global vars*@
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject IApiService api
+@* adding global classes*@
+@using Model.Entitys
+@using Model.Tables
+@using Client_Manager___API
+@rendermode InteractiveServer
 
 <PageTitle>Log In - Space Shooter</PageTitle>
 
-<section class="container content-container">
+<section class="login-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 login-card">
+                <div class="text-center mb-4">
+                    <img src="Assets/User Avatars\user.png" class="user-avatar" alt="User Icon" />
+                    <h1 class="home-title mt-3">Log in</h1>
+                </div>
 
+                <div class="form-group mb-3">
+                    <label class="login-label">Pilot Name:</label>
+                    <input type="text" @bind="username" class="login-input" placeholder="Enter username..." />
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="login-label">Password:</label>
+                    <div class="password-wrapper" style="position: relative;">
+                        <input type="@passwordInputType" @bind="password" class="login-input" placeholder="Enter password..." />
+                        <button type="button" @onclick="TogglePasswordVisibility" class="btn-eye">
+                            @(passwordInputType == "password" ? "👁️" : "🙈")
+                        </button>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-text mb-3 text-center">@errorMessage</div>
+                }
+
+                <div class="row">
+                    <div class="col-4">
+                        <button class="btn-side" @onclick="FillDefault">DEFAULT</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn-submit" @onclick="HandleLogin">@(isProcessing ? "SCANNING..." : "SUBMIT")</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn-side" @onclick='() => NavManager.NavigateTo("register")'>REGISTER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string errorMessage = "";
+    private bool isProcessing = false; // Prevents double-clicks
+    private string loginCardClass = "col-md-6 login-card";
+    private string passwordInputType = "password"; // Default to hidden
+
+    private void TogglePasswordVisibility()
+    {
+        passwordInputType = (passwordInputType == "password") ? "text" : "password";
+    }
+
+    private void TriggerError(string message)
+    {
+        errorMessage = message;
+        loginCardClass = "col-md-6 login-card shake"; // Triggers the CSS shake
+    }
+
+    private void FillDefault()
+    {
+        username = "StarPilot_Ace";
+        password = "p@55word";
+        errorMessage = "";
+        loginCardClass = "col-md-6 login-card";
+    }
+
+    private async Task HandleLogin()
+    {
+        errorMessage = "";
+        isProcessing = true;
+        if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            TriggerError("INPUT ERROR: Please fill in all fields.");
+            isProcessing = false;
+            return;
+        }
+        try
+        {
+            var users_table = await api.GetAllUsers();
+
+            // If the API returned a 'new T()' because of a catch block in ApiService
+            if (users_table == null || !users_table.Any())
+            {
+                errorMessage = "COMMUNICATION FAILURE: Orbital Database is not responding.";
+                return;
+            }
+
+            var user = users_table.Find(u =>
+                u.Username == username &&
+                u.Password == PasswordHasher.Hash(password)
+            );
+
+            if (user == null)
+            {
+                errorMessage = "IDENTIFICATION FAILED: Invalid credentials.";
+            }
+            else
+            {
+                NavManager.NavigateTo("Level Selection");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "SYSTEM ERROR: " + ex.Message;
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+}

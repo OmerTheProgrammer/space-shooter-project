@@ -4,16 +4,13 @@ using Client_Manager___API;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Get the URL from appsettings
-string serverUrl = builder.Configuration.GetConnectionString("SpaceShooterServer") ?? "";
-
 // 2. Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
 // 3. Register your API Service for the Server (Prerendering)
-builder.Services.AddScoped<IApiService>(sp => new ApiService(serverUrl));
+builder.Services.AddScoped<IApiService, ApiService>();
 
 var app = builder.Build();
 
