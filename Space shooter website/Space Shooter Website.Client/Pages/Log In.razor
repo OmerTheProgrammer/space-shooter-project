@@ -14,7 +14,7 @@
 <section class="login-container">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6 login-card">
+            <div class=@loginCardClass>
                 <div class="text-center mb-4">
                     <img src="Assets/User Avatars\user.png" class="user-avatar" alt="User Icon" />
                     <h1 class="home-title mt-3">Log in</h1>
@@ -45,7 +45,9 @@
                         <button class="btn-side" @onclick="FillDefault">DEFAULT</button>
                     </div>
                     <div class="col-4">
-                        <button class="btn-submit" @onclick="HandleLogin">@(isProcessing ? "SCANNING..." : "SUBMIT")</button>
+                        <button class="btn-submit" @onclick="HandleLogin">
+                            @(isProcessing? scanningText : "SUBMIT")
+                        </button>
                     </div>
                     <div class="col-4">
                         <button class="btn-side" @onclick='() => NavManager.NavigateTo("register")'>REGISTER</button>
@@ -63,15 +65,22 @@
     private bool isProcessing = false; // Prevents double-clicks
     private string loginCardClass = "col-md-6 login-card";
     private string passwordInputType = "password"; // Default to hidden
+    private string scanningText = "SCANNING...";
+
 
     private void TogglePasswordVisibility()
     {
         passwordInputType = (passwordInputType == "password") ? "text" : "password";
     }
 
-    private void TriggerError(string message)
+    private async Task TriggerError(string message)
     {
         errorMessage = message;
+        loginCardClass = "col-md-6 login-card";
+        StateHasChanged(); // Force Blazor to render without the shake
+
+        await Task.Delay(10);
+
         loginCardClass = "col-md-6 login-card shake"; // Triggers the CSS shake
     }
 
@@ -81,18 +90,25 @@
         password = "p@55word";
         errorMessage = "";
         loginCardClass = "col-md-6 login-card";
+        StateHasChanged();
     }
-
     private async Task HandleLogin()
     {
         errorMessage = "";
         isProcessing = true;
-        if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+
+        // Reset the text immediately before starting the loop
+        scanningText = "SCANNING...";
+        _ = StartScanningAnimation();
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
-            TriggerError("INPUT ERROR: Please fill in all fields.");
+            // Use await here since TriggerError is now an async Task
+            await TriggerError("INPUT ERROR: Please fill in all fields.");
             isProcessing = false;
             return;
         }
+
         try
         {
             var users_table = await api.GetAllUsers();
@@ -100,7 +116,7 @@
             // If the API returned a 'new T()' because of a catch block in ApiService
             if (users_table == null || !users_table.Any())
             {
-                errorMessage = "COMMUNICATION FAILURE: Orbital Database is not responding.";
+                await TriggerError("COMMUNICATION FAILURE: Orbital Database is not responding.");
                 return;
             }
 
@@ -111,10 +127,12 @@
 
             if (user == null)
             {
-                errorMessage = "IDENTIFICATION FAILED: Invalid credentials.";
+                await TriggerError("IDENTIFICATION FAILED: Invalid credentials.");
+                return;
             }
             else
             {
+
                 NavManager.NavigateTo("Level Selection");
             }
         }
@@ -125,6 +143,20 @@
         finally
         {
             isProcessing = false;
+            scanningText = "SCANNING...";
         }
+    }
+    
+    private async Task StartScanningAnimation()
+    {
+        string[] frames = { "SCANNING...", "SCANNING..", "SCANNING.", "SCANNING" };
+        int i = 0;
+        while (isProcessing)
+        {
+            scanningText = frames[i % frames.Length];
+            i++;
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(300); // Speed of the dots disappearing
+        }   
     }
 }

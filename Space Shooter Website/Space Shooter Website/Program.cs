@@ -10,7 +10,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 // 3. Register your API Service for the Server (Prerendering)
-builder.Services.AddScoped<IApiService, ApiService>();
+//builder.Services.AddScoped<IApiService, ApiService>(); - For scoped: lifetime is per loading of the component
+builder.Services.AddSingleton<IApiService, ApiService>();// - For singleton: lifetime is per application
 
 var app = builder.Build();
 

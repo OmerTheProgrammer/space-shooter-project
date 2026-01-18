@@ -20,11 +20,18 @@
 
 /*input fields design*/
 .login-label {
-    color: #00FFAB;
+    color: #00f2ff;/*#00FFAB;*/
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     display: block;
     margin-bottom: 5px;
+}
+.login-card {
+    background: rgba(10, 10, 20, 0.9); /* Slightly deeper space blue */
+    border: 2px solid #00f2ff; /* Change green to match the "Home" glow */
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2); /* Cyan glow */
 }
 
 .login-input {
