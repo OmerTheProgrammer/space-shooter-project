@@ -1,6 +1,7 @@
 using Space_Shooter_Website.Client.Pages;
 using Space_Shooter_Website.Components;
 using Client_Manager___API;
+using Space_Shooter_Website.Client.Support_Classes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddRazorComponents()
 // 3. Register your API Service for the Server (Prerendering)
 //builder.Services.AddScoped<IApiService, ApiService>(); - For scoped: lifetime is per loading of the component
 builder.Services.AddSingleton<IApiService, ApiService>();// - For singleton: lifetime is per application
+builder.Services.AddSingleton<Session>(); // Session service to manage user between components
 
 var app = builder.Build();
 

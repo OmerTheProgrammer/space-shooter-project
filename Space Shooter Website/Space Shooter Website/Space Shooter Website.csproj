@@ -9,10 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Client Manager - API\Client Manager - API.csproj" />
     <ProjectReference Include="..\..\Model\Model.csproj" />
     <ProjectReference Include="..\Space Shooter Website.Client\Space Shooter Website.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
   </ItemGroup>
 
 </Project>

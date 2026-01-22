@@ -1,12 +1,14 @@
 ﻿@page "/Log In"
-@* adding global vars*@
-@inject NavigationManager NavManager
-@inject IJSRuntime JS
-@inject IApiService api
 @* adding global classes*@
 @using Model.Entitys
 @using Model.Tables
 @using Client_Manager___API
+@using Space_Shooter_Website.Client.Support_Classes
+@* adding global vars*@
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject IApiService api
+@inject Session session
 @rendermode InteractiveServer
 
 <PageTitle>Log In - Space Shooter</PageTitle>
@@ -122,7 +124,7 @@
 
             var user = users_table.Find(u =>
                 u.Username == username &&
-                u.Password == PasswordHasher.Hash(password)
+                u.Password == TextHasher.Hash(password)
             );
 
             if (user == null)
@@ -132,6 +134,9 @@
             }
             else
             {
+                session.CurrentUser = user;
+                var admins = await api.GetAllAdmins();
+                session.IsAdmin = admins.Any(a => a.Username == user.Username);
 
                 NavManager.NavigateTo("Level Selection");
             }
