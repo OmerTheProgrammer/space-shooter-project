@@ -1,4 +1,8 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark">
+﻿@using Space_Shooter_Website.Client.Support_Classes
+@inject Session session
+@inject NavigationManager NavManager
+
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="">
             <img src="/Assets/icon.png" class="logo" style="width:50px; height:50px; margin-right:10px;" alt="Ship" />
@@ -12,22 +16,55 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav justify-content-center w-75">
                 <li class="nav-item">
-                    <NavLink class="nav-link nav_text" href=""
-                        Match="NavLinkMatch.All">Home</NavLink>
+                    <NavLink class="nav-link nav_text" href="" Match="NavLinkMatch.All">Home</NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink class="nav-link nav_text" 
-                    href="Credits">Credits</NavLink>
+                    <NavLink class="nav-link nav_text" href="Credits">Credits</NavLink>
                 </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link nav_text" 
-                    href="Register">Register</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link nav_text" 
-                    href="Log In">Log In</NavLink>
-                </li>
+
+                @if (!session.IsLoggedIn)
+                {
+                    @* Only show these if no one is logged in *@
+                    <li class="nav-item">
+                        <NavLink class="nav-link nav_text" href="Register">Register</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link nav_text" href="Log In">Log In</NavLink>
+                    </li>
+                }
+                else
+                {
+                    @* Show Pilot specific links *@
+                    <li class="nav-item">
+                        <NavLink class="nav-link nav_text" href="Level Selection">Levels</NavLink>
+                    </li>
+
+                    @if (session.IsAdmin)
+                    {
+                        <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="AdminDashboard">Admin</NavLink>
+                        </li>
+                    }
+
+                    <li class="nav-item">
+                        <button class="nav-link nav_text btn btn-link" @onclick="HandleLogout">Logout (@session.CurrentUser?.Username)</button>
+                    </li>
+                }
             </ul>
         </div>
     </div>
 </nav>
+
+@code {
+    private void HandleLogout()
+    {
+        // 1. Clear the singleton data
+        session.Logout();
+
+        // 2. Force the Navbar to re-render (so 'Log In' button reappears)
+        StateHasChanged();
+
+        // 3. Redirect to home or login
+        NavManager.NavigateTo("Log In");
+    }
+}
