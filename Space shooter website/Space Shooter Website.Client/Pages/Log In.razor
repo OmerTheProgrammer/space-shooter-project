@@ -138,7 +138,7 @@
                 var admins = await api.GetAllAdmins();
                 session.IsAdmin = admins.Any(a => a.Username == user.Username);
 
-                NavManager.NavigateTo("Level Selection");
+                NavManager.NavigateTo("Level Selection", forceLoad: true);
             }
         }
         catch (Exception ex)
