@@ -20,6 +20,21 @@ a, .link {
         text-shadow: 0 0 10px #00FF41;
     }
 
+.title {
+    /* text size */
+    font-size: 2vw;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 900;
+    color: #00FFAB; /* Matches your neon green theme */
+    text-transform: uppercase;
+    letter-spacing: 1vw;
+    margin-bottom: 6vh;
+    /* Triple-layered glow for maximum 'Arcade' impact */
+    text-shadow: 0 0 10px rgba(0, 255, 171, 0.8), 0 0 30px rgba(0, 255, 171, 0.6), 0 0 60px rgba(0, 255, 171, 0.4);
+    /* Animation to make it feel alive */
+    animation: titlePulse 3s infinite ease-in-out;
+}
+
 /* --- Global Footer --- */
 footer {
     position: fixed;

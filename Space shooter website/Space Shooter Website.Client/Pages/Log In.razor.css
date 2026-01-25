@@ -14,7 +14,8 @@
 
 /*avatar design*/
 .user-avatar {
-    height: 20vh;
+    height: 24vh;
+    width: 12vw;
     filter: drop-shadow(0 0 10px #00FFAB);
 }
 
