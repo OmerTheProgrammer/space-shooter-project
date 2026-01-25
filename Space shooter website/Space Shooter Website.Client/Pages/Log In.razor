@@ -1,5 +1,5 @@
 ﻿@page "/Log In"
-@* adding global classes*@
+@* adding global libs*@
 @using Model.Entitys
 @using Model.Tables
 @using Client_Manager___API
@@ -19,7 +19,7 @@
             <div class=@loginCardClass>
                 <div class="text-center mb-4">
                     <img src="Assets/User Avatars\user.png" class="user-avatar" alt="User Icon" />
-                    <h1 class="home-title mt-3">Log in</h1>
+                    <h1 class="title mt-3">Log in</h1>
                 </div>
 
                 <div class="form-group mb-3">
@@ -94,6 +94,7 @@
         loginCardClass = "col-md-6 login-card";
         StateHasChanged();
     }
+
     private async Task HandleLogin()
     {
         errorMessage = "";
@@ -118,7 +119,7 @@
             // If the API returned a 'new T()' because of a catch block in ApiService
             if (users_table == null || !users_table.Any())
             {
-                await TriggerError("COMMUNICATION FAILURE: Orbital Database is not responding.");
+                await TriggerError("COMMUNICATION FAILURE: Database is not responding.");
                 return;
             }
 
