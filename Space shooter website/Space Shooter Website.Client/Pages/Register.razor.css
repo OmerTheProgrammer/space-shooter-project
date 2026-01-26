@@ -7,7 +7,7 @@
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid #00FFAB;
     border-radius: 15px;
-    padding: 40px;
+    padding: 20px;
     box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
     z-index : 1;
 }
@@ -15,6 +15,12 @@
 .user-avatar {
     height: 20vh;
     filter: drop-shadow(0 0 10px #00FFAB);
+}
+
+/*password hide button desgin*/
+.password-wrapper {
+    display: flex;
+    align-items: center;
 }
 
 .register-label {

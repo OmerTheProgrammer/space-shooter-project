@@ -9,7 +9,7 @@ body {
 
 /* --- Global Link Styles --- */
 a, .link {
-    color: #00FF41 ; /* Bold Neon Green */
+    color: #00FF41; /* Bold Neon Green */
     text-decoration: none;
     font-weight: 700;
     transition: 0.3s;
@@ -34,15 +34,15 @@ a, .link {
     /* Animation to make it feel alive */
     animation: titlePulse 3s infinite ease-in-out;
 }
+    .title.popup {
+        font-size: 1.5vw;
+        letter-spacing: 0.5vw;
+    }
 
-.title .popup {
-    font-size: 1vw;
-}
-
-.button {
-    border: 2px solid rgb(20, 80, 100);
-    background-color: rgb(20, 90, 100, 0.15);
-}
+    .button {
+        border: 2px solid rgb(20, 80, 100);
+        background-color: rgb(20, 90, 100, 0.15);
+    }
 
 /* --- Global Footer --- */
 footer {
@@ -57,24 +57,24 @@ footer {
     border-top: 1px solid #00FF41;
 }
 
-footer .link {
-    color: #00FF41;
-    font-weight: 700;
-    font-size: 18px;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+    footer .link {
+        color: #00FF41;
+        font-weight: 700;
+        font-size: 18px;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
 
-footer .link:hover {
-    color: #FFFFFF;
-    text-shadow: 0 0 10px #00FF41;
-}
+        footer .link:hover {
+            color: #FFFFFF;
+            text-shadow: 0 0 10px #00FF41;
+        }
 
-footer .link i {
-    margin-right: 1px; /* Spaces the GitHub icon from the text */
-    font-size: 1.2rem;
-}
+        footer .link i {
+            margin-right: 1px; /* Spaces the GitHub icon from the text */
+            font-size: 1.2rem;
+        }
 
 @keyframes titlePulse {
     0%, 100% {

@@ -52,12 +52,22 @@
                     @* Password *@
                     <div class="col-md-6 mb-3">
                         <label class="register-label">Password:</label>
-                        <input type="@(passwordInputType == "password" ? "👁️" : "🙈")" @bind="password" class="register-input" />
+                        <div class="password-wrapper" style="position: relative;">
+                            <input type="@passwordInputType" @bind="password" class="register-input" placeholder="Enter password..." />
+                            <button type="button" @onclick="TogglePasswordVisibility" class="btn-eye">
+                                @(passwordInputType == "password" ? "👁️" : "🙈")
+                            </button>
+                        </div>
                     </div>
                     @* Confirm Password *@
                     <div class="col-md-6 mb-3">
                         <label class="register-label">Repeat Password:</label>
-                        <input type="@(passwordInputType == "password" ? "👁️" : "🙈")" @bind="confirmPassword" class="register-input" />
+                        <div class="password-wrapper" style="position: relative;">
+                            <input type="@ConfirmpasswordInputType" @bind="confirmPassword" class="register-input" placeholder="Enter password..." />
+                            <button type="button" @onclick="ToggleConfirmPasswordVisibility" class="btn-eye">
+                                @(ConfirmpasswordInputType == "password" ? "👁️" : "🙈")
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -95,11 +105,19 @@
 {
     <div class="custom-modal-overlay">
         <div class="modal-content-card p-4 text-center" style="max-width: 600px;">
-            <h3 class="title">Terms of Service</h3>
+            <h3 class="title popup ">Terms of Service</h3>
             <p class="register-label text-start">
-                1. Secure your account.<br />
-                2. Don't distribute content.<br />
-                3. Use at your own risk.
+                By playing Space Shooter, you agree to our terms:<br />
+                    1.Secure your account (you're responsible).<br />
+                    2.Game content is copyrighted (don't distribute).<br />
+                    3.Game is provided "as is" (no warranties),<br />
+                    use at your own risk.<br />
+                    4.Terms may be updated (check website).<br />
+                    5.We reserve the right to terminate access.<br />
+                    6.Governed by Israeli law.<br />
+                    7.Disputes: omer17508@gmail.com.<br />
+                    8.These terms are the full agreement.<br />
+                Enjoy Space Shooter!<br />
             </p>
             <button class="btn-submit mt-3" @onclick="() => showTerms = false">CLOSE</button>
         </div>
@@ -118,6 +136,7 @@
 
     //UI fields
     private string passwordInputType = "password"; // Default to hidden
+    private string ConfirmpasswordInputType = "password";
     private string registerCardClass = "col-md-6 register-card";
     private string errorMessage = "";
     private bool showTerms = false;
@@ -125,6 +144,11 @@
     private void TogglePasswordVisibility()
     {
         passwordInputType = (passwordInputType == "password") ? "text" : "password";
+    }
+
+    private void ToggleConfirmPasswordVisibility()
+    {
+        ConfirmpasswordInputType = (ConfirmpasswordInputType == "password") ? "text" : "password";
     }
 
     private async Task TriggerError(string message)
