@@ -43,15 +43,18 @@
                 }
 
                 <div class="row">
-                    <div class="col-4">
-                        <button class="btn-side" @onclick="FillDefault">DEFAULT</button>
+                    <div class="col-3">
+                        <button class="btn-side" @onclick="FillPlayerDefault">Player Defult</button>
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
+                        <button class="btn-side" @onclick="FillAdminDefault">Admin Defult</button>
+                    </div>
+                    <div class="col-3">
                         <button class="btn-submit" @onclick="HandleLogin">
                             @(isProcessing? scanningText : "SUBMIT")
                         </button>
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <button class="btn-side" @onclick='() => NavManager.NavigateTo("register")'>REGISTER</button>
                     </div>
                 </div>
@@ -86,10 +89,19 @@
         loginCardClass = "col-md-6 login-card shake"; // Triggers the CSS shake
     }
 
-    private void FillDefault()
+    private void FillPlayerDefault()
     {
         username = "StarPilot_Ace";
         password = "p@55word";
+        errorMessage = "";
+        loginCardClass = "col-md-6 login-card";
+        StateHasChanged();
+    }
+
+    private void FillAdminDefault()
+    {
+        username = "AdminKappa";
+        password = "K@pr0pa";
         errorMessage = "";
         loginCardClass = "col-md-6 login-card";
         StateHasChanged();
@@ -122,7 +134,6 @@
                 await TriggerError("COMMUNICATION FAILURE: Database is not responding.");
                 return;
             }
-
             var user = users_table.Find(u =>
                 u.Username == username &&
                 u.Password == TextHasher.Hash(password)
