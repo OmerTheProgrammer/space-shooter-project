@@ -147,8 +147,10 @@
             else
             {
                 session.CurrentUser = user;
-                var admins = await api.GetAllAdmins();
-                session.IsAdmin = admins.Any(a => a.Username == user.Username);
+                var admin = await api.GetAdminByIdx(user.Idx);
+                var player = await api.GetPlayerByIdx(user.Idx);
+                session.IsAdmin = admin != null;
+                session.IsPlayer = player != null;
 
                 NavManager.NavigateTo("Level Selection", forceLoad: true);
             }
