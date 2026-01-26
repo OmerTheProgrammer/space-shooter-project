@@ -81,5 +81,24 @@
         "Action": "Start"
       }
     ]
+  },
+  {
+    "Name": "Websites compare With Server",
+    "Projects": [
+      {
+        "Path": "space shooter\\space shooter.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Server Manager - API\\Server Manager - API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "Space Shooter Website\\Space Shooter Website\\Space Shooter Website.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
   }
 ]

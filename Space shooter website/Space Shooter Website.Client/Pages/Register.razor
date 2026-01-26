@@ -1,43 +1,88 @@
 ﻿@page "/Register"
+@* adding global libs*@
+@using Model.Entitys
+@using Model.Tables
+@using Client_Manager___API
+@using Space_Shooter_Website.Client.Support_Classes
+@* adding global vars*@
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
+@inject IApiService api
+@inject Session session
 @rendermode InteractiveServer
 
 <PageTitle>Register - Space Shooter</PageTitle>
 
-<section class="login-container">
+<section class="register-container">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6 login-card">
+            <div class="col-md-8 register-card">
                 <div class="text-center mb-4">
-                    <img src="Assets/User Avatars\user.png" class="user-avatar" alt="User Icon" />
-                    <h1 class="title mt-3">Register</h1>
+                    <img src="Assets/User Avatars/user.png" class="user-avatar" style="height:20vh" alt="User Icon" />
+                    <h1 class="home-title mt-3">Pilot Registration</h1>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label class="login-label">Pilot Name:</label>
-                    <input type="text" @bind="username" class="login-input" placeholder="Enter username..." />
+                <div class="row">
+                    @* Name *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Pilot's System Name:</label>
+                        <input type="text" @bind="newPlayer.Username" class="register-input" placeholder="Enter username..." />
+                    </div>
+                    @* Government ID - NEW FIELD *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Government ID:</label>
+                        <input type="text" @bind="newPlayer.Id" class="register-input" placeholder="ID Number..." />
+                    </div>
                 </div>
 
-                <div class="form-group mb-4">
-                    <label class="login-label">Password:</label>
-                    <input type="password" @bind="password" class="login-input" placeholder="Enter password..." />
+                <div class="row">
+                    @* Email *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Pilot's Email:</label>
+                        <input type="email" @bind="newPlayer.Email" class="register-input" placeholder="example@space.com" />
+                    </div>
+                    @* Birthday *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Date of Birth:</label>
+                        <input type="date" @bind="newPlayer.Birthday" class="register-input" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    @* Password *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Password:</label>
+                        <input type="password" @bind="newPlayer.Password" class="register-input" />
+                    </div>
+                    @* Confirm Password *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Repeat Password:</label>
+                        <input type="password" @bind="confirmPassword" class="register-input" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    @* Terms Checkbox *@
+                    <div class="col-md-12 mb-3 d-flex align-items-center justify-content-center">
+                        <input type="checkbox" @bind="agreesToTerms" id="agrees" style="width:20px; height:20px; margin-right:10px;" />
+                        <label class="register-label mb-0">
+                            I agree to the
+                            <button type="button" class="btn btn-link p-0 text-info fw-bold" @onclick="() => showTerms = true">Terms of Service</button>
+                        </label>
+                    </div>
                 </div>
 
                 @if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    <div class="error-text mb-3 text-center">@errorMessage</div>
+                    <div class="error-text mb-3 text-center" style="color: #ff4d4d;">@errorMessage</div>
                 }
 
-                <div class="row">
-                    <div class="col-4">
-                        <button class="btn-side" @onclick="FillDefault">DEFAULT</button>
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn-submit w-100" @onclick="HandleRegister">SUBMIT</button>
                     </div>
-                    <div class="col-4">
-                        <button class="btn-submit" @onclick="HandleLogin">SUBMIT</button>
-                    </div>
-                    <div class="col-4">
-                        <button class="btn-side" @onclick='() => NavManager.NavigateTo("register")'>REGISTER</button>
+                    <div class="col-6">
+                        <button class="btn-side w-100" @onclick='() => NavManager.NavigateTo("Log In")'>LOG IN</button>
                     </div>
                 </div>
             </div>
@@ -45,19 +90,32 @@
     </div>
 </section>
 
+@* Simple Modal for Terms *@
+@if (showTerms)
+{
+    <div class="custom-modal-overlay">
+        <div class="register-card p-4 text-center" style="max-width: 500px;">
+            <h3 class="home-title">Terms of Service</h3>
+            <p class="register-label text-start">
+                1. Secure your account.<br />
+                2. Don't distribute content.<br />
+                3. Use at your own risk.
+            </p>
+            <button class="btn-submit mt-3" @onclick="() => showTerms = false">CLOSE</button>
+        </div>
+    </div>
+}
+
 @code {
     private string username = "";
     private string password = "";
     private string errorMessage = "";
+    private Player newPlayer = new Player();
+    private string confirmPassword = "";
+    private bool agreesToTerms = false;
+    private bool showTerms = false;
 
-    private void FillDefault()
-    {
-        username = "user";
-        password = "p@55word";
-        errorMessage = ""; // Clear errors
-    }
-
-    private async Task HandleLogin()
+    private async Task HandleRegister()
     {
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {

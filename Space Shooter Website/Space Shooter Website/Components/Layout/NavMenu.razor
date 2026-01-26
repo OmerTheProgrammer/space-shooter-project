@@ -24,7 +24,7 @@
                     <NavLink class="nav-link nav_text" href="Credits">Credits</NavLink>
                 </li>
 
-                @if (!session.IsLoggedIn)
+                @if (!session.IsLoggedIn) //isn't logged in
                 {
                     @* Only show these if no one is logged in *@
                     <li class="nav-item">
@@ -34,22 +34,31 @@
                         <NavLink class="nav-link nav_text" href="Log In">Log In</NavLink>
                     </li>
                 }
-                else
+                else // is logged in
                 {
-                    @* Show Pilot specific links *@
                     <li class="nav-item">
-                        <NavLink class="nav-link nav_text" href="Level Selection">Levels</NavLink>
+                        <NavLink class="nav-link nav_text" href="Profile Info">Hello (@session.CurrentUser?.Username)!</NavLink>
                     </li>
 
-                    @if (session.IsAdmin)
+                    <li class="nav-item">
+                        <NavLink class="nav-link nav_text" href="Level Selection">Level Selection</NavLink>
+                    </li>
+
+                    @if (session.IsAdmin) // and is an admin
                     {
                         <li class="nav-item">
-                            <NavLink class="nav-link nav_text" href="AdminDashboard">Admin</NavLink>
+                            <NavLink class="nav-link nav_text" href="Admin Dashboard">Admin Dashboard</NavLink>
+                        </li>
+                    }
+                    else // and is not an admin
+                    {
+                        <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="Admin Connection">Admin Connection</NavLink>
                         </li>
                     }
 
                     <li class="nav-item">
-                        <button class="nav-link nav_text btn btn-link" @onclick="HandleLogout">Logout (@session.CurrentUser?.Username)</button>
+                        <button class="nav-link nav_text btn btn-link button" @onclick="HandleLogout">Logout (@session.CurrentUser?.Username)</button>
                     </li>
                 }
             </ul>
