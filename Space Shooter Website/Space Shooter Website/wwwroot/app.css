@@ -87,3 +87,17 @@ footer {
         opacity: 0.8;
     }
 }
+
+/* Neon Warning Yellow */
+.text-warning {
+    color: #ffea00;
+    text-shadow: 0 0 8px rgba(255, 234, 0, 0.4);
+    font-weight: bold;
+}
+
+/* Neon Danger Red */
+.text-danger {
+    color: #ff4d4d;
+    text-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
+    font-weight: bold;
+}

@@ -816,7 +816,6 @@ namespace Test
             //    Email = "test@user.com",
             //    Id = "312345678",
             //    Birthday = new DateTime(1995, 10, 10),
-            //    IsLoggedIn = false
             //});
             //Console.WriteLine($"InsertUser Result (Rows Affected): {linesChanged}\n");
 
@@ -831,7 +830,6 @@ namespace Test
             //    {
             //        dto.Username = "updated_username_99";
             //        dto.Email = "updated_email@user.com";
-            //        dto.IsLoggedIn = true;
             //    })
             //);
             //Console.WriteLine($"UpdateUser Result (Rows Affected): {linesChanged}\n");

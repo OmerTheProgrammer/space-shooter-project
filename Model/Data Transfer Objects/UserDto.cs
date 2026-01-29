@@ -25,7 +25,6 @@ namespace Model.Data_Transfer_Objects
         public string? Username { get; set; }
         public string? Email { get; set; }
 
-        public bool? IsLoggedIn { get; set; } = null;
         public DateTime? Birthday { get; set; } = null;
 
         public override string ToString()
@@ -34,7 +33,6 @@ namespace Model.Data_Transfer_Objects
                 $" {this.Username}, ID: {this.Id}, " +
                 $"With password Hased: {this.Password},\n " +
                 $"With Birthday: {this.Birthday}, " +
-                $"Is {this.IsLoggedIn}ly logged in, " +
                 $"email: {this.Email}";
         }
     }

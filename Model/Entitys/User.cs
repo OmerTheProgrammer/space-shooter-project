@@ -9,14 +9,12 @@ namespace Model.Entitys
         private string username = "";
         private DateTime? birthday = new DateTime(1753,1,1,12,0,0);//sql's min time
         private string email = "";
-        private bool isLoggedIn = false;
 
         public string Id { get => id; set => id = value; }
         public string Password { get => password; set => password = value; }
         public string Username { get => username; set => username = value; }
         public DateTime? Birthday { get => birthday; set => birthday = value; }
         public string Email { get => email; set => email = value; }
-        public bool IsLoggedIn { get => isLoggedIn; set => isLoggedIn = value; }
 
         public override string ToString()
         {
@@ -24,7 +22,6 @@ namespace Model.Entitys
                 $" {this.Username}, ID: {this.Id}, " +
                 $"With password Hased: {this.Password},\n " +
                 $"With Birthday: {this.Birthday}, " +
-                $"Is {this.IsLoggedIn}ly logged in, " +
                 $"email: {this.Email}";
         }
     }

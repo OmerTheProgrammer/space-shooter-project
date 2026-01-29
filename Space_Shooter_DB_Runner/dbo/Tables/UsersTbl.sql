@@ -11,7 +11,6 @@ CREATE TABLE [dbo].[UsersTbl] (
     [Username]   VARCHAR (50)  NOT NULL,
     [Birthday]   DATE          NULL,
     [Email]      VARCHAR (100) NOT NULL,
-    [IsLoggedIn] BIT           DEFAULT ((0)) NOT NULL,
     PRIMARY KEY CLUSTERED ([idx] ASC),
 	CONSTRAINT Unique_Users_Username UNIQUE NONCLUSTERED ([Username] ASC),
 	CONSTRAINT Unique_Users_ID UNIQUE NONCLUSTERED ([ID] ASC),

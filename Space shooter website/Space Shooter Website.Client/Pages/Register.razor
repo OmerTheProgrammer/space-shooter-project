@@ -77,7 +77,7 @@
                         <input type="checkbox" @bind="agreesToTerms" id="agrees" style="width:20px; height:20px; margin-right:10px;" />
                         <label class="register-label mb-0">
                             I agree to the
-                            <button type="button" class="btn btn-link p-0 text-info fw-bold" @onclick="() => showTerms = true">Terms of Service</button>
+                            <button type="button" class="btn link p-0 fw-bold" @onclick="() => showTerms = true">Terms of Service</button>
                         </label>
                     </div>
                 </div>
@@ -105,20 +105,30 @@
 {
     <div class="custom-modal-overlay">
         <div class="modal-content-card p-4 text-center" style="max-width: 600px;">
-            <h3 class="title popup ">Terms of Service</h3>
-            <p class="register-label text-start">
-                By playing Space Shooter, you agree to our terms:<br />
-                    1.Secure your account (you're responsible).<br />
-                    2.Game content is copyrighted (don't distribute).<br />
-                    3.Game is provided "as is" (no warranties),<br />
-                    <tab/>use at your own risk.<br />
-                    4.Terms may be updated (check website).<br />
-                    5.We reserve the right to terminate access.<br />
-                    6.Governed by Israeli law.<br />
-                    7.Disputes: omer17508@gmail.com.<br />
-                    8.These terms are the full agreement.<br />
-                Enjoy Space Shooter!<br />
-            </p>
+            <h3 class="register-label" style="font-size: 2rem;">Terms of Service</h3>
+
+            <div class="terms-scroll-box">
+                <p class="register-label text-start" style="line-height: 1.8;">
+                    By playing Space Shooter, you agree to our terms:<br /><br />
+
+                    1. Secure your account (you're responsible).<br />
+                    2. Game content is copyrighted (don't distribute).<br />
+
+                    <span class="text-warning">3. Game is provided "as is" (no warranties).</span><br />
+                    <span class="text-warning">4. USE AT YOUR OWN RISK.</span><br />
+
+                    5. Terms may be updated (check website).<br />
+
+                    <span class="text-danger">6. We reserve the right to terminate access.</span><br />
+                    <span class="text-danger">7. Governed by Israeli law.</span><br />
+
+                    8. Disputes: omer17508@gmail.com.<br />
+                    9. These terms are the full agreement.<br /><br />
+
+                    <span style="color: #00FFAB;">Enjoy Space Shooter!</span>
+                </p>
+            </div>
+
             <button class="btn-submit mt-3" @onclick="() => showTerms = false">CLOSE</button>
         </div>
     </div>
@@ -164,6 +174,7 @@
 
     private async Task HandleRegister()
     {
+        //empty fields check
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) ||
             string.IsNullOrWhiteSpace(confirmPassword) || string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(id) || birthday == new DateTime())
@@ -172,14 +183,119 @@
             return;
         }
 
+        //terms and conditions check
         if (!agreesToTerms)
         {
             TriggerError("Read and Agree to Terms and Conditions!");
             return;
         }
 
-        // For now, mirroring your old logic: show alert and move to selection
-        await JS.InvokeVoidAsync("alert", $"Pilot Identified: {username}");
+        // email validations
+        var emailFormat = new System.Text.RegularExpressions.Regex(@"^[\w-.]+@([\w-.]+\.)+[a-zA-Z]{2,}$");
+        int attIndex = email.IndexOf('@');
+        int eLength = email.Length;
+
+        if (eLength < 8)
+        {
+            await TriggerError("Email too short, shorter than 8 characters");
+            return;
+        }
+        else if (eLength > 25)
+        {
+            await TriggerError("Email too long, longer than 25 characters");
+            return;
+        }
+        else if (attIndex < 2)
+        {
+            await TriggerError("The @ sign must be 2 digits away from start.");
+            return;
+        }
+        else if (attIndex >= eLength - 2)
+        {
+            await TriggerError("The @ sign must be 2 digits away from end.");
+            return;
+        }
+        else if (email.LastIndexOf('.') == -1)
+        {
+            await TriggerError("A .(Dot) sign must be in the email address.");
+            return;
+        }
+        else if (email.IndexOf('.', attIndex + 2) == (attIndex + 2))
+        {
+            await TriggerError("A .(Dot) sign must be at least 2 digits away from the @ sign.");
+            return;
+        }
+        else if (email.IndexOf('.', attIndex + 2) == -1)
+        {
+            await TriggerError("A .(Dot) sign must be after the @ sign.");
+            return;
+        }
+        else if (email.LastIndexOf('.') >= eLength - 2)
+        {
+            await TriggerError("A .(Dot) sign must be at least 2 digits away from the end.");
+            return;
+        }
+        else if (email.IndexOf('.') < 2)
+        {
+            await TriggerError("A .(Dot) sign must be at least 2 digits away from the start.");
+            return;
+        }
+        else if (!emailFormat.IsMatch(email))
+        {
+            await TriggerError("Email format invalid: example@example.com");
+            return;
+        }
+
+        // password check
+        const int minPasswordLength = 8, maxPasswordLength = 20;
+        if (password != confirmPassword)
+        {
+            await TriggerError("Passwords do not match!");
+            return;
+        }
+        else if (password.Length < minPasswordLength)
+        {
+            await TriggerError($"Password must be at least {minPasswordLength} characters long. But it's {password.Length} characters long.");
+            return;
+        }
+        else if (password.Length > maxPasswordLength)
+        {
+            await TriggerError($"Password must be less than 20 characters long. But it's {password.Length} characters long.");
+            return;
+        }
+        // בדיקת סימנים מיוחדים (Symbols)
+        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[^\w\s]"))
+        {
+            await TriggerError("Password must contain at least one symbol.");
+            return;
+        }
+        // בדיקת מספרים (Numbers)
+        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[\d]"))
+        {
+            await TriggerError("Password must contain at least one number.");
+            return;
+        }
+
+        //age check
+        DateTime now = DateTime.Now;
+        // חישוב מילי-שניות ב-120 שנה (כמו בקוד המקורי שלך)
+        // 1000ms * 60s * 60m * 24h * 365.25d * 120y
+        double msIn120Years = 1000.0 * 60 * 60 * 24 * 365.25 * 120;
+        // יצירת תאריך של לפני 120 שנה
+        DateTime date120YearsAgo = now.AddMilliseconds(-msIn120Years);
+
+        if (birthday < date120YearsAgo)
+        {
+            await TriggerError("Too old, you are dead.");
+            return;
+        }
+        else if (birthday > now)
+        {
+            await TriggerError("Too young, you were never born.");
+            return;
+        }
+        
+        int IsSecsesfull = await api.InsertPlayer(new Player() { Username = username, Password = password, Email = email, Id = id, Birthday = birthday });
 
         // Eventually, you'll put your DB check here!
         NavManager.NavigateTo("Level Selection");

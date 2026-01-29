@@ -91,7 +91,7 @@
       },
       {
         "Path": "Server Manager - API\\Server Manager - API.csproj",
-        "Action": "Start",
+        "Action": "StartWithoutDebugging",
         "DebugTarget": "https"
       },
       {

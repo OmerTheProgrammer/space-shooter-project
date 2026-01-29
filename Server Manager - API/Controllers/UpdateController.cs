@@ -365,8 +365,6 @@ namespace Server_Manager___API.Controllers
                 val => originalAdmin.StartDate = val);
             isModified |= TryUpdateProperty(admin.Birthday,
                 val => originalAdmin.Birthday = val);
-            isModified |= TryUpdateProperty(admin.IsLoggedIn,
-                val => originalAdmin.IsLoggedIn = val);
             #endregion
             int changedRecords = 0;
             if (isModified)
@@ -614,8 +612,6 @@ namespace Server_Manager___API.Controllers
                 // 2. Nullable Value Types (DateTime?, bool?)
                 isModified |= TryUpdateProperty(player.Birthday,
                     val => originalPlayer.Birthday = val);
-                isModified |= TryUpdateProperty(player.IsLoggedIn,
-                    val => originalPlayer.IsLoggedIn = val);
                 isModified |= TryUpdateProperty(player.IsMusicOn,
                     val => originalPlayer.IsMusicOn = val);
                 isModified |= TryUpdateProperty(player.IsSoundOn,
@@ -903,8 +899,6 @@ namespace Server_Manager___API.Controllers
             // 2. Nullable Value Types (DateTime?, bool?)
             isModified |= TryUpdateProperty(user.Birthday,
                 val => originalUser.Birthday = val);
-            isModified |= TryUpdateProperty(user.IsLoggedIn,
-                val => originalUser.IsLoggedIn = val);
             #endregion
             int changedRecords = 0;
             if (isModified)
