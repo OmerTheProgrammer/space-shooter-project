@@ -53,71 +53,71 @@ namespace Client_Manager___API
         #endregion
 
         #region Insert:
-            public Task<int> InsertAdmin(Admin admin);
+            public Task<(int rows, string? error)> InsertAdmin(Admin admin);
 
-            public Task<int> InsertEnemyInLastLevel(
+            public Task<(int rows, string? error)> InsertEnemyInLastLevel(
                 EnemyInLastLevel admin);
 
-            public Task<int> InsertGroup(Group group);
+            public Task<(int rows, string? error)> InsertGroup(Group group);
 
-            public Task<int> InsertPlayerAndGroup(
+            public Task<(int rows, string? error)> InsertPlayerAndGroup(
                 PlayerAndGroup playerAndGroup);
 
-            public Task<int> InsertPlayer(Player player);
+            public Task<(int rows, string? error)> InsertPlayer(Player player);
 
-            public Task<int> InsertProfileEditRequest(
+            public Task<(int rows, string? error)> InsertProfileEditRequest(
                 ProfileEditRequest profileEditRequest);
 
-            public Task<int> InsertRequestData(
+            public Task<(int rows, string? error)> InsertRequestData(
                 RequestData RequestData);
 
-            public Task<int> InsertRunInfo(RunInfo runInfo);
+            public Task<(int rows, string? error)> InsertRunInfo(RunInfo runInfo);
 
-            public Task<int> InsertUser(User user);
+            public Task<(int rows, string? error)> InsertUser(User user);
         #endregion
 
         #region Update:
-            public Task<int> UpdateAdmin(AdminDTO admin);
+            public Task<(int rows, string? error)> UpdateAdmin(AdminDTO admin);
             
-            public Task<int> UpdateEnemyInLastLevel(
+            public Task<(int rows, string? error)> UpdateEnemyInLastLevel(
                 EnemyInLastLevelDTO enemyInLastLevel);
 
-            public Task<int> UpdateGroup(GroupDTO group);
+            public Task<(int rows, string? error)> UpdateGroup(GroupDTO group);
 
-            public Task<int> UpdatePlayerAndGroup(
+            public Task<(int rows, string? error)> UpdatePlayerAndGroup(
                 PlayerAndGroupDTO playerAndGroup);
 
-            public Task<int> UpdatePlayer(PlayerDTO player);
+            public Task<(int rows, string? error)> UpdatePlayer(PlayerDTO player);
 
-            public Task<int> UpdateProfileEditRequest(
+            public Task<(int rows, string? error)> UpdateProfileEditRequest(
                 ProfileEditRequestDTO profileEditRequest);
             
-            public Task<int> UpdateRequestData(
+            public Task<(int rows, string? error)> UpdateRequestData(
                 RequestDataDTO requestData);
             
-            public Task<int> UpdateRunInfo(RunInfoDTO runInfo);
+            public Task<(int rows, string? error)> UpdateRunInfo(RunInfoDTO runInfo);
             
-            public Task<int> UpdateUser(UserDTO user);
+            public Task<(int rows, string? error)> UpdateUser(UserDTO user);
         #endregion
 
         #region Delete:
-            public Task<int> DeleteAdmin(int idx);
+            public Task<(int rows, string? error)> DeleteAdmin(int idx);
             
-            public Task<int> DeleteEnemyInLastLevel(int idx);
+            public Task<(int rows, string? error)> DeleteEnemyInLastLevel(int idx);
 
-            public Task<int> DeleteGroup(int idx);
+            public Task<(int rows, string? error)> DeleteGroup(int idx);
 
-            public Task<int> DeletePlayerAndGroup(int idx);
+            public Task<(int rows, string? error)> DeletePlayerAndGroup(int idx);
 
-            public Task<int> DeletePlayer(int idx);
+            public Task<(int rows, string? error)> DeletePlayer(int idx);
 
-            public Task<int> DeleteProfileEditRequest(int idx);
+            public Task<(int rows, string? error)> DeleteProfileEditRequest(int idx);
 
-            public Task<int> DeleteRequestData(int idx);
+            public Task<(int rows, string? error)> DeleteRequestData(int idx);
 
-            public Task<int> DeleteRunInfo(int idx);
+            public Task<(int rows, string? error)> DeleteRunInfo(int idx);
 
-            public Task<int> DeleteUser(int idx);
+            public Task<(int rows, string? error)> DeleteUser(int idx);
         #endregion
     }
 }

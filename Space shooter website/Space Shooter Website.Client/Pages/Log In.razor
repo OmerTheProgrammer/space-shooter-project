@@ -110,6 +110,10 @@
 
     private async Task HandleLogin()
     {
+        if (isProcessing)
+        {
+            return; // Prevent multiple submissions
+        }
         errorMessage = "";
         isProcessing = true;
 

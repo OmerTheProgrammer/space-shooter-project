@@ -4,6 +4,7 @@
 @using Model.Tables
 @using Client_Manager___API
 @using Space_Shooter_Website.Client.Support_Classes
+@using Regex = System.Text.RegularExpressions.Regex;
 @* adding global vars*@
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
@@ -16,7 +17,7 @@
 <section class="register-container">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8 register-card">
+            <div class="@registerCardClass">
                 <div class="text-center mb-4">
                     <img src="Assets/User Avatars/user.png" class="user-avatar" style="height:20vh" alt="User Icon" />
                     <h1 class="title mt-3">Pilot Registration</h1>
@@ -179,6 +180,8 @@
 
     private async Task HandleRegister()
     {
+        if (isProcessing)
+            return; // Prevent multiple submissions
         errorMessage = "";
         isProcessing = true;
 
@@ -191,6 +194,7 @@
             string.IsNullOrWhiteSpace(confirmPassword) || string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(id) || birthday == new DateTime())
         {
+            await Task.Delay(100); // wait a moment to show scanning
             await TriggerError("Please fill in all fields!");
             return;
         }
@@ -198,6 +202,7 @@
         //terms and conditions check
         if (!agreesToTerms)
         {
+            await Task.Delay(100); // wait a moment to show scanning
             await TriggerError("Read and Agree to Terms and Conditions!");
             return;
         }
@@ -209,7 +214,7 @@
         }
 
         // email validations
-        var emailFormat = new System.Text.RegularExpressions.Regex(@"^[\w-.]+@([\w-.]+\.)+[a-zA-Z]{2,}$");
+        var emailFormat = new Regex(@"^[\w-.]+@([\w-.]+\.)+[a-zA-Z]{2,}$");
         int attIndex = email.IndexOf('@');
         int eLength = email.Length;
 
@@ -282,25 +287,25 @@
             return;
         }
         // בדיקת סימנים מיוחדים (Symbols)
-        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[^\w\s]"))
+        else if (!Regex.IsMatch(password, @"[^\w\s]"))
         {
             await TriggerError("Password must contain at least one symbol.");
             return;
         }
         // בדיקת מספרים (Numbers)
-        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[\d]"))
+        else if (!Regex.IsMatch(password, @"[\d]"))
         {
             await TriggerError("Password must contain at least one number.");
             return;
         }
         // בדיקת אותיות גדולות (Uppercase)
-        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[A-Z]"))
+        else if (!Regex.IsMatch(password, @"[A-Z]"))
         {
             await TriggerError("Password must contain at least one uppercase letter.");
             return;
         }
         // בדיקת אותיות קטנות (Lowercase)
-        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[a-z]"))
+        else if (!Regex.IsMatch(password, @"[a-z]"))
         {
             await TriggerError("Password must contain at least one lowercase letter.");
             return;
@@ -335,8 +340,8 @@
         };
         try
         {
-            int rowsChanged = await api.InsertPlayer(newPlayer);
-            if (rowsChanged >= 1)
+            var (rowsChanged, serverError) = await api.InsertPlayer(newPlayer);
+            if (rowsChanged == 2)
             {
                 session.CurrentUser = newPlayer;
                 session.IsPlayer = true;
@@ -345,9 +350,21 @@
                 await JS.InvokeVoidAsync("alert", $"Welcome aboard, Pilot {username}!");
                 NavManager.NavigateTo("Level Selection", forceLoad: true);
             }
-            else if (rowsChanged == 0)
+            else //if(rowsChanged == -1)
             {
-                await TriggerError("Pilot already registered or system error. Try a different Username/Email.");
+                if (serverError != null)
+                {
+                    //turn server error json into readable string
+                    var match = Regex.Match(serverError, @"The\s+(\w+)\s+already exists",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    string field = "Personal Detail";
+                    if (match.Success)
+                    {
+                        field = match.Groups[1].Value; // יחלץ את המילה ID או Username
+                    }
+                    await TriggerError($"Pilot already registered or system error. Try a different {field}.");
+                    return;
+                }
                 return;
             }
         }
