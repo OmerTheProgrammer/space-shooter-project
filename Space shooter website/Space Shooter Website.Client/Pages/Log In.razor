@@ -82,6 +82,7 @@
     {
         errorMessage = message;
         loginCardClass = "col-md-6 login-card";
+        isProcessing = false;
         StateHasChanged(); // Force Blazor to render without the shake
 
         await Task.Delay(10);
@@ -120,7 +121,6 @@
         {
             // Use await here since TriggerError is now an async Task
             await TriggerError("INPUT ERROR: Please fill in all fields.");
-            isProcessing = false;
             return;
         }
 
@@ -171,7 +171,7 @@
         }
         catch (Exception ex)
         {
-            errorMessage = "SYSTEM ERROR: " + ex.Message;
+            TriggerError("SYSTEM ERROR: " + ex.Message);
         }
         finally
         {

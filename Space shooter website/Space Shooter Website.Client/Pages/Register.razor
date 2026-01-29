@@ -89,7 +89,9 @@
 
                 <div class="row mt-4">
                     <div class="col-6">
-                        <button class="btn-submit w-100" @onclick="HandleRegister">SUBMIT</button>
+                        <button class="btn-submit" @onclick="HandleRegister">
+                            @(isProcessing? scanningText : "SUBMIT")
+                        </button>
                     </div>
                     <div class="col-6">
                         <button class="btn-side w-100" @onclick='() => NavManager.NavigateTo("Log In")'>LOG IN</button>
@@ -150,6 +152,8 @@
     private string registerCardClass = "col-md-6 register-card";
     private string errorMessage = "";
     private bool showTerms = false;
+    private string scanningText = "SCANNING...";
+    private bool isProcessing = false; // Prevents double-clicks
 
     private void TogglePasswordVisibility()
     {
@@ -165,6 +169,7 @@
     {
         errorMessage = message;
         registerCardClass = "col-md-6 register-card";
+        isProcessing = false;
         StateHasChanged(); // Force Blazor to render without the shake
 
         await Task.Delay(10);
@@ -174,19 +179,32 @@
 
     private async Task HandleRegister()
     {
+        errorMessage = "";
+        isProcessing = true;
+
+        // Reset the text immediately before starting the loop
+        scanningText = "SCANNING...";
+        _ = StartScanningAnimation();
+
         //empty fields check
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) ||
             string.IsNullOrWhiteSpace(confirmPassword) || string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(id) || birthday == new DateTime())
         {
-            TriggerError("Please fill in all fields!");
+            await TriggerError("Please fill in all fields!");
             return;
         }
 
         //terms and conditions check
         if (!agreesToTerms)
         {
-            TriggerError("Read and Agree to Terms and Conditions!");
+            await TriggerError("Read and Agree to Terms and Conditions!");
+            return;
+        }
+
+        if (id.Length < 5)
+        {
+            await TriggerError("Invalid Government ID. Must be at least 5 characters.");
             return;
         }
 
@@ -242,7 +260,7 @@
         }
         else if (!emailFormat.IsMatch(email))
         {
-            await TriggerError("Email format invalid: example@example.com");
+            await TriggerError("Email format invalid: example@space.com");
             return;
         }
 
@@ -275,6 +293,18 @@
             await TriggerError("Password must contain at least one number.");
             return;
         }
+        // בדיקת אותיות גדולות (Uppercase)
+        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[A-Z]"))
+        {
+            await TriggerError("Password must contain at least one uppercase letter.");
+            return;
+        }
+        // בדיקת אותיות קטנות (Lowercase)
+        else if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[a-z]"))
+        {
+            await TriggerError("Password must contain at least one lowercase letter.");
+            return;
+        }
 
         //age check
         DateTime now = DateTime.Now;
@@ -294,10 +324,54 @@
             await TriggerError("Too young, you were never born.");
             return;
         }
-        
-        int IsSecsesfull = await api.InsertPlayer(new Player() { Username = username, Password = password, Email = email, Id = id, Birthday = birthday });
 
-        // Eventually, you'll put your DB check here!
-        NavManager.NavigateTo("Level Selection");
+        Player newPlayer = new Player()
+        {
+            Username = username,
+            Password = TextHasher.Hash(password),
+            Email = email,
+            Id = id,
+            Birthday = birthday
+        };
+        try
+        {
+            int rowsChanged = await api.InsertPlayer(newPlayer);
+            if (rowsChanged >= 1)
+            {
+                session.CurrentUser = newPlayer;
+                session.IsPlayer = true;
+                session.IsAdmin = false;
+
+                await JS.InvokeVoidAsync("alert", $"Welcome aboard, Pilot {username}!");
+                NavManager.NavigateTo("Level Selection", forceLoad: true);
+            }
+            else if (rowsChanged == 0)
+            {
+                await TriggerError("Pilot already registered or system error. Try a different Username/Email.");
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            await TriggerError("SYSTEM ERROR: " + ex.Message);
+        }
+        finally
+        {
+            isProcessing = false;
+            scanningText = "SCANNING...";
+        }
+    }
+
+    private async Task StartScanningAnimation()
+    {
+        string[] frames = { "SCANNING...", "SCANNING..", "SCANNING.", "SCANNING" };
+        int i = 0;
+        while (isProcessing)
+        {
+            scanningText = frames[i % frames.Length];
+            i++;
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(300); // Speed of the dots disappearing
+        }
     }
 }
