@@ -1,116 +1,125 @@
-﻿@page "/Level Selection"
-@using Microsoft.AspNetCore.Components.Web
-@rendermode InteractiveWebAssembly
+﻿@page "/LevelSelection"
+@using Space_Shooter_Website.Client.Support_Classes
+@inject Session session
 @inject NavigationManager NavManager
+@rendermode InteractiveWebAssembly
 
-<PageTitle>Level Selection - Space Shooter</PageTitle>
+<PageTitle>Mission Control - Space Shooter</PageTitle>
 
-<section class="container content-container">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h1 class="credit-title">Level Selection:</h1>
+<div class="selection-screen">
+    @* --- Header עם כפתורי בקרה --- *@
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h1 class="title">LEVEL SELECTION</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="top-btn" @onclick="() => showScores = true">
+                <img src="Assets/UI/achievement.png" class="btn-icon" />
+            </button>
+            <button class="top-btn" @onclick="() => showSettings = true">
+                <img src="Assets/UI/cogwheel.png" class="btn-icon" />
+            </button>
+            <button class="top-btn" @onclick="() => showInfo = true">
+                <img src="Assets/UI/info.png" class="btn-icon" />
+            </button>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 text-center">
-            <h3 class="credit-subtitle">For Game Ideas:</h3>
-            <p class="credit-text text-md-start">
-                Project: Space Shooter (Redux, plus fonts and sounds) <br />
-                by <a href="https://www.kenney.nl/" target="_blank" rel="noopener noreferrer">Kenney Vleugels</a>,
-                <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">License (CC0)</a>.<br />
-                You may use these graphics in personal and commercial projects.
-            </p>
-            <p class="credit-text text-md-start">
-                Ron Michalashvili (Full Stack Developer) For The Draw Screen Idea.
-            </p>
+    @* --- אזור בחירת השלבים (Scrollable) --- *@
+    <div class="level-container shadow-lg">
+        @for (int i = 1; i <= 30; i++)
+        {
+            int levelNum = i;
+            bool isLocked = levelNum > maxUnlockedLevel;
+
+            <button class="level-btn @(isLocked ? "locked" : "")"
+                    disabled="@isLocked"
+                    @onclick="() => StartLevel(levelNum)">
+                @if (isLocked)
+                {
+                    <img src="Assets/UI/lock.png" class="lock-img" />
+                }
+                else
+                {
+                    @levelNum
+                }
+            </button>
+        }
+    </div>
+</div>
+
+@* --- פופאפים (Modals) --- *@
+
+@if (showScores)
+{
+    <div class="custom-modal-overlay">
+        <div class="custom-modal p-4">
+            <h2 class="text-cyan mb-3">Scoreboard</h2>
+            <div class="score-list">
+                @* כאן תבוא לולאה על הציונים מה-DB בעתיד *@
+                <p class="text-white">Last Score: 1,000 pts</p>
+                <p class="text-muted small">More scores coming soon...</p>
+            </div>
+            <button class="btn-side mt-3" @onclick="() => showScores = false">CLOSE</button>
         </div>
     </div>
+}
 
-    <div class="row">
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">For Music:</h3>
-            <p class="credit-text text-md-start">
-                Piece: Rumores de la Caleta. <br />
-                Artist: Isaac Albéniz (1860–1909). <br />
-                Instruments: Piano. <br />
-                Written: 1887. <br />
-                License: Public Domain. <br />
-                Edited by: <a href="https://theouterlinux.gitlab.io" target="_blank" rel="noopener noreferrer">TheOuterLinux</a>.
-            </p>
-        </div>
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">For Graphic Design:</h3>
-            <p class="credit-text text-md-start">
-                <a href="https://www.youtube.com/@@SimpleSnippets"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Simple Snippets
-                </a>
-                <br />
-                Alex Chulkov (Graphic Designer).
-            </p>
+@if (showSettings)
+{
+    <div class="custom-modal-overlay">
+        <div class="custom-modal p-4">
+            <img src="Assets/Main_Menu/Setting/Header.png" class="img-fluid mb-4" style="max-height: 50px;" />
+
+            <div class="d-flex align-items-center mb-3">
+                <button class="btn-icon-only" @onclick="ToggleMusic">
+                    <img src="@(isMusicOn ? "Assets/Main_Menu/BTNs_Active/Music_BTN.png" : "Assets/Main_Menu/Setting/Music_BTN.png")" />
+                </button>
+                <img src="Assets/Main_Menu/Setting/Music.png" class="setting-text-img" />
+            </div>
+
+            <div class="d-flex align-items-center mb-4">
+                <button class="btn-icon-only" @onclick="ToggleSound">
+                    <img src="@(isSoundOn ? "Assets/Main_Menu/BTNs_Active/Sound_BTN.png" : "Assets/Main_Menu/Setting/Sound_BTN.png")" />
+                </button>
+                <img src="Assets/Main_Menu/Setting/Sound.png" class="setting-text-img" />
+            </div>
+
+            <button class="btn-side" @onclick="() => showSettings = false">SAVE & CLOSE</button>
         </div>
     </div>
+}
 
-    <div class="row mb-5">
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">Textures:</h3>
-            <p class="credit-text text-md-start">
-                Project: Space Shooter, with Redux, plus fonts and sound, <br />
-                by <a href="https://www.kenney.nl/" target="_blank" rel="noopener noreferrer">Kenney Vleugels</a>,
-                <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">License (CC0)</a>.<br />
-                You may use these graphics in personal and commercial projects.
-            </p>
-            <p class="credit-text text-md-start">
-                <a href="https://www.youtube.com/@@SimpleSnippets"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Simple Snippets
-                </a> <br />
-                Alex Chulkov (Graphic Designer), For Buttons Design. <br />
-                <a href="https://stock.adobe.com/il?msockid=366afa902dce68d00efdefce2cb369ce"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Adobe stock
-                </a>
-            </p>
-        </div>
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">Code Assistance:</h3>
-            <p class="credit-text text-md-start">
-                <a href="https://www.youtube.com/@@SimpleSnippets"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Simple Snippets
-                </a> <br />
-                Gemini. <br />
-                Chat GPT 4 - Website Generator.
-            </p>
+@if (showInfo)
+{
+    <div class="custom-modal-overlay">
+        <div class="custom-modal info-modal p-4 text-start">
+            <h2 class="text-cyan border-bottom">CONTROLS</h2>
+            <p class="mt-3"><strong>Move:</strong> Arrow Keys or WASD</p>
+            <p><strong>Shoot:</strong> Space Bar</p>
+            <p><strong>Pause:</strong> P Key</p>
+            <p class="text-danger mt-3"><em>Tip: If buttons get stuck, click them again.</em></p>
+            <button class="btn-side mt-4 w-100" @onclick="() => showInfo = false">UNDERSTOOD</button>
         </div>
     </div>
-</section>
-
-@* This div creates space so the footer doesn't overlap the text *@
-<div style="height: 15vh;"></div>
+}
 
 @code {
-    private readonly Dictionary<string, string> Urls = new()
-    {
-        { "youtube", "https://www.youtube.com/@SimpleSnippets" },
-        { "adobe", "https://stock.adobe.com/il" }
-    };
+    private int maxUnlockedLevel = 1; // ימשך מה-DB בעתיד
+    private bool showScores, showSettings, showInfo;
+    private bool isMusicOn = true, isSoundOn = true;
 
-    private void Open(string key)
+    protected override void OnInitialized()
     {
-        if (Urls.TryGetValue(key, out var url))
-        {
-            // forceLoad: true is the secret sauce that stops the JS crash
-            NavManager.NavigateTo(url, forceLoad: true);
-        }
+        // בעתיד: maxUnlockedLevel = session.CurrentUser.MaxLevel;
     }
+
+    private void StartLevel(int level)
+    {
+        // session.CurrentLevel = level;
+        NavManager.NavigateTo("Game");
+    }
+
+    private void ToggleMusic() => isMusicOn = !isMusicOn;
+    private void ToggleSound() => isSoundOn = !isSoundOn;
 }
