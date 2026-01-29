@@ -1,0 +1,126 @@
+﻿@page "/Profile"
+@using Model.Entitys
+@using Model.Tables
+@using Client_Manager___API
+@using Space_Shooter_Website.Client.Support_Classes
+@inject IApiService api
+@inject Session session
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>User Profile - Space Shooter</PageTitle>
+
+<section class="container mt-5">
+    <div class="row">
+        @* --- צד שמאל: עריכת פרטי פרופיל --- *@
+        <div class="col-lg-6 mb-4">
+            <div class="profile-card p-4">
+                <div class="text-center mb-4">
+                    <img src="Assets/User Avatars/user.png" class="user-avatar" style="height:15vh" alt="Pilot Icon" />
+                    <h2 class="title mt-2">Pilot Profile</h2>
+                    <span class="badge rounded-pill bg-info text-dark">
+                        @(session.IsAdmin ? "System Administrator" : "Active Pilot")
+                    </span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">System ID (Read Only):</label>
+                        <input type="text" class="profile-input" value="@session.CurrentUser?.Id" disabled />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">Pilot Name:</label>
+                        <input type="text" @bind="username" class="profile-input" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="profile-label">Email Address:</label>
+                    <input type="email" @bind="email" class="profile-input" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">New Password:</label>
+                        <input type="password" @bind="newPassword" class="profile-input" placeholder="Leave empty to keep current" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">Birth Date:</label>
+                        <input type="date" @bind="birthday" class="profile-input" />
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(statusMessage))
+                {
+                    <div class="alert @statusClass text-center">@statusMessage</div>
+                }
+
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-link button w-100" @onclick="HandleUpdate">UPDATE</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-link button w-100" @onclick="Logout">LOG OUT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* --- צד ימין: הישגים וקרדיטים --- *@
+        <div class="col-lg-6">
+            <div class="profile-card p-4 h-100 shadow-sm">
+                <h3 class="credit-subtitle text-center">Mission Briefing & Credits</h3>
+                <hr style="border-color: #00FFAB;" />
+
+                <div class="terms-scroll-box" style="max-height: 50vh;">
+                    <p class="error-text">will hold RunInfo stuff, best achivants - not built yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private string username = "";
+    private string email = "";
+    private DateTime? birthday;
+    private string newPassword = "";
+
+    private string statusMessage = "";
+    private string statusClass = "";
+
+    protected override void OnInitialized()
+    {
+        if (session.CurrentUser != null)
+        {
+            username = session.CurrentUser.Username;
+            email = session.CurrentUser.Email;
+            birthday = session.CurrentUser.Birthday;
+        }
+        else //user is not logged in - impossible to access this page, but just in case
+        {
+            NavManager.NavigateTo("profile");
+        }
+    }
+
+    private async Task HandleUpdate()
+    {
+        // כאן תוכל להוסיף לוגיקה לקריאה ל-API לעדכון
+        statusMessage = "Syncing with Command Center...";
+        statusClass = "alert-info";
+
+        // סימולציה של עדכון
+        await Task.Delay(1000);
+        statusMessage = "Profile Synced Successfully!";
+        statusClass = "alert-success";
+    }
+
+    private void Logout()
+    {
+        session.CurrentUser = null;
+        session.IsPlayer = false;
+        session.IsAdmin = false;
+        NavManager.NavigateTo("Log In", forceLoad: true);
+    }
+}
