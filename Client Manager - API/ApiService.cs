@@ -189,7 +189,7 @@ namespace Client_Manager___API
                 //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
-                return new T();
+                return null;
             }
         }
 

@@ -40,9 +40,12 @@
                         <NavLink class="nav-link nav_text" href="Profile Info">Hello (@session.CurrentUser?.Username)!</NavLink>
                     </li>
 
-                    <li class="nav-item">
-                        <NavLink class="nav-link nav_text" href="Level Selection">Level Selection</NavLink>
-                    </li>
+                    @if (session.IsPlayer)
+                    {
+                        <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="Level Selection">Level Selection</NavLink>
+                        </li>
+                    }
 
                     @if (session.IsAdmin) // and is an admin
                     {
