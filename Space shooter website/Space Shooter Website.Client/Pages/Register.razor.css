@@ -24,7 +24,7 @@
 }
 
 .register-label {
-    color: #00FFAB;
+    color: #00d4ff;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     display: block;
@@ -170,3 +170,11 @@
     background: rgba(0,0,0,0.3);
     border-radius: 5px;
 }
+
+/*little calender*/
+input[type="date"]::-webkit-calendar-picker-indicator {
+    /*does color funcs (invert is black to white, Sepia - gives brown yellow, Saturate & Hue-rotate - change the colors to the right blue*/
+    filter: invert(72%) sepia(93%) saturate(400%) hue-rotate(115deg) brightness(103%) contrast(105%);
+    cursor: pointer;
+}
+
