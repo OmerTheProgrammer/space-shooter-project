@@ -117,13 +117,13 @@
                     1. Secure your account (you're responsible).<br />
                     2. Game content is copyrighted (don't distribute).<br />
 
-                    <span class="text-warning">3. Game is provided "as is" (no warranties).</span><br />
-                    <span class="text-warning">4. USE AT YOUR OWN RISK.</span><br />
+                    <span class="text warning">3. Game is provided "as is" (no warranties).</span><br />
+                    <span class="text warning">4. USE AT YOUR OWN RISK.</span><br />
 
                     5. Terms may be updated (check website).<br />
 
-                    <span class="text-danger">6. We reserve the right to terminate access.</span><br />
-                    <span class="text-danger">7. Governed by Israeli law.</span><br />
+                    <span class="text danger">6. We reserve the right to terminate access.</span><br />
+                    <span class="text danger">7. Governed by Israeli law.</span><br />
 
                     8. Disputes: omer17508@gmail.com.<br />
                     9. These terms are the full agreement.<br /><br />
@@ -357,13 +357,12 @@
                     //turn server error json into readable string
                     var match = Regex.Match(serverError, @"The\s+(\w+)\s+already exists",
                         System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                    string field = "Personal Detail";
+                    string field = "Personal Detail"; //just in case the regex fails
                     if (match.Success)
                     {
                         field = match.Groups[1].Value; // יחלץ את המילה ID או Username
                     }
                     await TriggerError($"Pilot already registered or system error. Try a different {field}.");
-                    return;
                 }
                 return;
             }

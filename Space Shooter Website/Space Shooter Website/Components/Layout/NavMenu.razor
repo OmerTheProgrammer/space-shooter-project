@@ -60,9 +60,9 @@
                         </li>
                     }
 
-                    <li class="nav-item">
+@*                     <li class="nav-item">
                         <button class="nav-link nav_text btn btn-link button" @onclick="HandleLogout">Logout (@session.CurrentUser?.Username)</button>
-                    </li>
+                    </li> *@
                 }
             </ul>
         </div>
@@ -70,15 +70,15 @@
 </nav>
 
 @code {
-    private void HandleLogout()
-    {
-        // 1. Clear the singleton data
-        session.Logout();
+    // private void HandleLogout()
+    // {
+    //     // 1. Clear the singleton data
+    //     session.Logout();
 
-        // 2. Force the Navbar to re-render (so 'Log In' button reappears)
-        StateHasChanged();
+    //     // 2. Force the Navbar to re-render (so 'Log In' button reappears)
+    //     StateHasChanged();
 
-        // 3. Redirect to home or login
-        NavManager.NavigateTo("Log In");
-    }
+    //     // 3. Redirect to home or login
+    //     NavManager.NavigateTo("Log In");
+    // }
 }

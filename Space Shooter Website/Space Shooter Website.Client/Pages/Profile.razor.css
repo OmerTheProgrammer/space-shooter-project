@@ -24,4 +24,16 @@
     box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
     z-index: 1;
 }
+.profile.subtitle {
+    color: #00d4ff;
+    font-weight: 800;
+    margin-top: 20px;
+}
 
+.profile.text {
+    margin-left: 10%;
+    margin-right: 10%;
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}

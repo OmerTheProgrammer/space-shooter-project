@@ -14,11 +14,11 @@
 <section class="container mt-5">
     <div class="row">
         @* --- צד שמאל: עריכת פרטי פרופיל --- *@
-        <div class="col-lg-6 mb-4">
+        <div class=@(session.IsPlayer ? "col-lg-6 mb-4" : "col-lg-12 mb-4")>
             <div class="profile-card p-4">
                 <div class="text-center mb-4">
                     <img src="Assets/User Avatars/user.png" class="user-avatar" style="height:15vh" alt="Pilot Icon" />
-                    <h2 class="title mt-2">Pilot Profile</h2>
+                    <h2 class="title mt-2">User Profile</h2>
                     <span class="badge rounded-pill bg-info text-dark">
                         @(session.IsAdmin ? "System Administrator" : "Active Pilot")
                     </span>
@@ -26,8 +26,8 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="profile-label">System ID (Read Only):</label>
-                        <input type="text" class="profile-input" value="@session.CurrentUser?.Id" disabled />
+                        <label class="profile-label">Gov ID:</label>
+                        <input type="text" class="profile-input" value="@session.CurrentUser?.Id" />
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="profile-label">Pilot Name:</label>
@@ -67,17 +67,20 @@
             </div>
         </div>
 
-        @* --- צד ימין: הישגים וקרדיטים --- *@
-        <div class="col-lg-6">
-            <div class="profile-card p-4 h-100 shadow-sm">
-                <h3 class="credit-subtitle text-center">Mission Briefing & Credits</h3>
-                <hr style="border-color: #00FFAB;" />
+        @if (session.IsPlayer)
+        {
+            @* --- צד ימין: הישגים וקרדיטים --- *@
+            <div class="col-lg-6">
+                <div class="profile-card p-4 h-100 shadow-sm">
+                    <h3 class="profile subtitle text-center">Your Achievements: </h3>
+                    <hr style="border-color: #00FFAB;" />
 
-                <div class="terms-scroll-box" style="max-height: 50vh;">
-                    <p class="error-text">will hold RunInfo stuff, best achivants - not built yet</p>
+                    <div class="terms-scroll-box" style="max-height: 50vh;">
+                        <p class="error text">will hold RunInfo stuff, best achivants - not built yet</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 </section>
 
