@@ -1,4 +1,9 @@
 ﻿@inherits LayoutComponentBase
+@using Space_Shooter_Website.Client.Added_Layouts
+@using Space_Shooter_Website.Client.Support_Classes
+@using Model.Entitys
+@inject IJSRuntime JS
+@inject Session session
 
 <div class="game-container">
     <nav class="navbar navbar-expand-lg">
@@ -17,14 +22,14 @@
                     </li>
                     <li class="nav-item nav_text">
                         <div class="m_card" id="life_bar">
-                            <img src="/Assets/Game Elements/player.png" alt="Player Avatar" class="top_button_pic" id="nav_player_pic" />
+                            <img src="/Assets/Game Elements/Images/player.png" alt="Player Avatar" class="top_button_pic" id="nav_player_pic" />
                             <span id="life_text" class="nav_text">x @Health.ToString("D3")</span>
                         </div>
                     </li>
                     <li class="nav-item nav_text">
                         <div class="progress-bar-container">
                             <div id="progress-bar" style="width: @(Progress)%">
-                                @(IsEndless ? "Endless!" : $"{Progress}%")
+                                @(IsEndless ? "Endless!" : Progress == 0 ? "Won!" : $"{Progress}%")
                             </div>
                         </div>
                     </li>
@@ -41,6 +46,7 @@
 
     @* The ContentPlaceHolder equivalent *@
     <main>
+        <div style="height:20vh"></div>
         @Body
     </main>
 
@@ -72,7 +78,59 @@
     public int CurrentLevel { get; set; } = 1;
     public bool IsEndless { get; set; } = false;
     public bool ShowSettings { get; set; } = false;
+    private Player currentPlayer;
+
+    protected override void OnInitialized()
+    {
+        // 1. Get the player
+        currentPlayer = session.CurrentUser as Player;
+    }
+
+    private DotNetObjectReference<GameLayout>? objRef;
+    public void Dispose() => objRef?.Dispose();
+
+    [JSInvokable]
+    public void UpdateHUD(int health, int score, int level, int killed, int created, bool isEndless)
+    {
+        Health = health;
+        Score = score;
+        CurrentLevel = level;
+        IsEndless = isEndless;
+
+        // Calculate progress logic
+        if (created > 0 && !isEndless)
+        {
+            double livingPercent = (1.0 - ((double)killed / created));
+            Progress = (int)Math.Floor(livingPercent * 100);
+        }
+        else
+        {
+            Progress = 100;
+        }
+
+        // Tell Blazor to re-render the HTML with new values
+        StateHasChanged();
+    }
 
     private void OpenSettings() => ShowSettings = true;
     private void CloseSettings() => ShowSettings = false;
+
+    private void ToggleMusic()
+    {
+        if (currentPlayer != null)
+        {
+            currentPlayer.IsMusicOn = !currentPlayer.IsMusicOn;
+
+            StateHasChanged(); // Force UI refresh for the icon toggle
+        }
+    }
+
+    private void ToggleSound()
+    {
+        if (currentPlayer != null)
+        {
+            currentPlayer.IsSoundOn = !currentPlayer.IsSoundOn;
+            StateHasChanged();
+        }
+    }
 }

@@ -9,6 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\GameLogic.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\GameLogic.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
   </ItemGroup>
 

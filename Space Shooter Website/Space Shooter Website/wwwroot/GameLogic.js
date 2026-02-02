@@ -2,13 +2,14 @@
 //scenes = The_game_scene, The_end_scene, A_boss_scene [1800, 730]
 let currentScene, scenes = [], The_counter, counter_ended = false;
 let killed = 0, maxEnemies = 0, counter_running = false, shield_life_decrese_count = 0;
-let music_isnt_active = true, sound_isnt_active = true, level = 1/* user.level */, level_drop_rate = 60;
+let music_isnt_active = true, sound_isnt_active = true, level_drop_rate = 60;
 let win = false, tico = false, is_endless = false, shield_next_level_was_hidden = false;
 let gameover = false, invulnerable = false, og_x = size[0] / 2, og_y = size[1] - 100, health = 5, score = 0;
 let power_up_types, shield_life = 0, player_lasers_count = 1, shield_max_life = 0;
 let score_coldown = 0, ending_coldown = 0, whoosh_coldown = 0, hide_setting_coldown = 0;
 let cursors, player, Lasers, enemies, enemyLasers, power_ups, shield, explosionSprite;
 let gameover_text, tico_text, win_text, bg_music;
+let is_music_on = true, is_sound_on = true, level = 1, paused = false;
 
 function print() {
     const displayList = currentScene.children.list;
@@ -83,32 +84,33 @@ class Game_scene extends Phaser.Scene {
         //backgrounds
         this.load.image('background', "/Assets/Backgrounds/blue.png");
         //music
-        this.load.audio('battle music', '/Assets/battle_music.ogg');
-        this.load.audio('player laser sound', '/Assets/Sounds/sfx_laser1.ogg');
-        this.load.audio('enemy laser sound', '/Assets/Sounds/sfx_laser2.ogg');
-        this.load.audio('taking damage', '/Assets/Sounds/sfx_twoTone.ogg');
-        this.load.audio('whoosh', '/Assets/Sounds/Whoosh.mp3');
+        this.load.audio('battle music', '/Assets/Game Elements/Sounds/battle_music.ogg');
+        this.load.audio('player laser sound', '/Assets/Game Elements/Sounds/sfx_laser1.ogg');
+        this.load.audio('enemy laser sound', '/Assets/Game Elements/Sounds/sfx_laser2.ogg');
+        this.load.audio('taking damage', '/Assets/Game Elements/Sounds/sfx_twoTone.ogg');
+        this.load.audio('whoosh', '/Assets/Game Elements/Sounds/Whoosh.mp3');
         //main sprites
-        this.load.image('player', '/Assets/player.png');
-        this.load.image('player laser', '/Assets/laserRed.png');
-        this.load.image('enemy', '/Assets/enemyShip.png');
-        this.load.image('enemy laser', '/Assets/laserGreen.png');
+        this.load.image('player', '/Assets/Game Elements/Images/player.png');
+        this.load.image('player laser', '/Assets/Game Elements/Images/laserRed.png');
+        this.load.image('enemy', '/Assets/Game Elements/Images/enemyShip.png');
+        this.load.image('enemy laser', '/Assets/Game Elements/Images/laserGreen.png');
         //power_ups
         power_up_types = ["gold bolt", "gold star", "red pill", "silver shield"];
-        this.load.image('powerUp ' + power_up_types[0], '/Assets/Power-ups/bolt_gold.png');
-        this.load.image('powerUp ' + power_up_types[1], '/Assets/Power-ups/star_gold.png');
-        this.load.image('powerUp ' + power_up_types[2], '/Assets/Power-ups/pill_red.png');
-        this.load.image('powerUp ' + power_up_types[3], '/Assets/Power-ups/shield_silver.png');
-        //shield
-        this.load.image('full shield', '/Assets/Effects/shield3.png');
-        this.load.image('mid shield', '/Assets/Effects/shield2.png');
-        this.load.image('sliver shield', '/Assets/Effects/shield1.png');
-        this.load.audio('shield up sound', '/Assets/Sounds/sfx_shieldDown.ogg');
-        this.load.audio('shield down sound', '/Assets/Sounds/sfx_shieldUp.ogg');
+        this.load.image('powerUp ' + power_up_types[0], '/Assets/Game Elements/Images/PowerUps/bolt_gold.png');
+        this.load.image('powerUp ' + power_up_types[1], '/Assets/Game Elements/Images/PowerUps/star_gold.png');
+        this.load.image('powerUp ' + power_up_types[2], '/Assets/Game Elements/Images/PowerUps/pill_red.png');
+        this.load.image('powerUp ' + power_up_types[3], '/Assets/Game Elements/Images/PowerUps/shield_silver.png');
 
+        //shield
+        this.load.image('full shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield1.png');
+        this.load.image('mid shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield2.png');
+        this.load.image('sliver shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield3.png');
+        this.load.audio('shield up sound', '/Assets/Game Elements/Sounds/sfx_shieldDown.ogg');
+        this.load.audio('shield down sound', '/Assets/Game Elements/Sounds/sfx_shieldUp.ogg');
+        
         //explosion loding
         for (let i = 1; i <= 64; i++) {
-            this.load.image('explosion ' + i, '/Assets/explosion/explosion' + i + '.png');
+            this.load.image('explosion ' + i, '/Assets/Game Elements/Images/Explosion Frames/explosion' + i + '.png');
         }
         //cabom_animation if this.anims didn't load
         if (!this.anims) {
@@ -370,7 +372,10 @@ class Game_scene extends Phaser.Scene {
                 break;
         }
 
-        update_level(level);
+        //save level reached with score c# function
+        DotNet.invokeMethodAsync('Space_Shooter_Website.Client', 'SaveGameResult', score, level);
+
+        The_counter = new Counter();
         The_counter.CreateCountDownCounter(3, () => {
             player.setVisible(true);
             player.setActive(true);
@@ -411,9 +416,7 @@ class Game_scene extends Phaser.Scene {
             }
         }
 
-        update_progress_bar(killed, maxEnemies, is_endless);
-        update_help_bar(health);
-        update_score(score);
+        update_hud_in_blazor()
     }
 }
 
@@ -439,7 +442,7 @@ class End_scene extends Phaser.Scene {
                 score += 5000;
                 end_text(tico_text, 'losing');
             }
-            update_level(level);
+            DotNet.invokeMethodAsync('Space_Shooter_Website.Client', 'SaveGameResult', score, level);
             ending_coldown = currentScene.time.now + 5000;
         }
     }
@@ -448,11 +451,11 @@ class End_scene extends Phaser.Scene {
         currentScene = this;
         scenes[1] = this;
         //music
-        this.load.audio('losing music', '/Assets/Sounds/sfx_lose.ogg');
-        this.load.audio('wining music', '/Assets/Sounds/sfx_zap.ogg');
+        this.load.audio('losing music', '/Assets/Game Elements/Sounds//sfx_lose.ogg');
+        this.load.audio('wining music', '/Assets/Game Elements/Sounds//sfx_win.ogg');
         //buttons
-        this.load.image('Level selection button', "/Assets/Main_Menu/level_select_button.png");
-        this.load.image('next level button', "/Assets/Main_Menu/next_level_button.png");
+        this.load.image('Level selection button', "/Assets/Settings/Buttons/Off/level_select_button.png");
+        this.load.image('next level button', "/Assets/Settings/Buttons/Off/next_level_button.png");
     }
 
     create() {
@@ -946,9 +949,9 @@ function update_music() {
 }
 
 function resize() {
-    game.scale.resize(size[0], size[1]);
-    size[0] = game.canvas.width;
-    size[1] = game.canvas.height;
+    window.gameInstance.scale.resize(size[0], size[1]);
+    size[0] = window.gameInstance.canvas.width;
+    size[1] = window.gameInstance.canvas.height;
     if (currentScene === scenes[0]) {
         og_x = size[0] / 2;
         og_y = size[1] - 100;
@@ -1188,33 +1191,47 @@ function swoop_by(enemy1, enemy2) {
     }
 }
 
-const config = {
-    type: Phaser.AUTO,
-    scale: {
-        parent: 'game_section',
-        mode: Phaser.Scale.FIT,
-        min: {
-            width: 225,
-            height: 325
-        },
-        max: {
-            width: 2000,
-            height: 1000
-        },
-    },
-    width: size[0],
-    height: size[1],
-    scene: [Game_scene, End_scene],
-    physics: {
-        default: 'arcade',
-        arcade: {
-            debug: false
-        }
+function update_hud_in_blazor() {
+    // 'dotNetHelper' should be a reference to your Blazor component
+    // You can pass this helper when you call RunGame
+    if (window.dotNetHelper) {
+        window.dotNetHelper.invokeMethodAsync('UpdateHUD',
+            health,
+            score,
+            level,
+            killed,
+            maxEnemies,
+            is_endless
+        );
     }
-};
-
-function RunGame() {
-    alert('Loading Game...');
-    The_counter = new Counter();
-    const game = new Phaser.Game(config);
 }
+
+window.RunGame = (IsMusicOn, IsSoundOn, selectedLevel) => {
+    const config = {
+        type: Phaser.AUTO,
+        scale: {
+            parent: 'game_section', // Matches your <section> id
+            mode: Phaser.Scale.FIT,
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+            width: size[0],
+            height: size[1],
+        },
+        scene: [Game_scene, End_scene], // Ensure these classes are defined above
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 0 },
+                debug: false
+            }
+        }
+    };
+
+    is_music_on = IsMusicOn;
+    is_sound_on = IsSoundOn;
+    level = selectedLevel;
+
+    if (window.gameInstance) {
+        window.gameInstance.destroy(true);
+    }
+    window.gameInstance = new Phaser.Game(config);
+};
