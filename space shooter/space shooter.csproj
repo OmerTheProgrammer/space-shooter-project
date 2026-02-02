@@ -554,9 +554,11 @@
     <Content Include="Assets\sfx_shieldUp.ogg" />
     <Content Include="Assets\Spritesheet\sheet.png" />
     <Content Include="Assets\Spritesheet\spreeadout_sheet.png" />
+    <Content Include="Assets\UI\achievement.png" />
     <Content Include="Assets\UI\buttonBlue.png" />
     <Content Include="Assets\UI\buttonGreen.png" />
     <Content Include="Assets\UI\buttonYellow.png" />
+    <Content Include="Assets\UI\cogwheel.png" />
     <Content Include="Assets\UI\cursor.png" />
     <Content Include="Assets\UI\digit_0.png" />
     <Content Include="Assets\UI\digit_1.png" />
@@ -568,6 +570,8 @@
     <Content Include="Assets\UI\digit_7.png" />
     <Content Include="Assets\UI\digit_8.png" />
     <Content Include="Assets\UI\digit_9.png" />
+    <Content Include="Assets\UI\info.png" />
+    <Content Include="Assets\UI\lock.png" />
     <Content Include="Assets\UI\playerLife1_blue.png" />
     <Content Include="Assets\UI\playerLife1_green.png" />
     <Content Include="Assets\UI\playerLife1_orange.png" />

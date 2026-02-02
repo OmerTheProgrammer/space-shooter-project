@@ -1,5 +1,7 @@
-﻿@page "/LevelSelection"
+﻿@page "/Level Selection"    
 @using Space_Shooter_Website.Client.Support_Classes
+@using Model.Entitys
+@using Model.Tables
 @inject Session session
 @inject NavigationManager NavManager
 @rendermode InteractiveWebAssembly
@@ -14,13 +16,13 @@
         </div>
         <div class="col-md-6 text-end">
             <button class="top-btn" @onclick="() => showScores = true">
-                <img src="Assets/UI/achievement.png" class="btn-icon" />
+                <img src="Assets/UI Icons/achievement.png" class="btn-icon" />
             </button>
             <button class="top-btn" @onclick="() => showSettings = true">
-                <img src="Assets/UI/cogwheel.png" class="btn-icon" />
+                <img src="Assets/UI Icons/cogwheel.png" class="btn-icon" />
             </button>
             <button class="top-btn" @onclick="() => showInfo = true">
-                <img src="Assets/UI/info.png" class="btn-icon" />
+                <img src="Assets/UI Icons/info.png" class="btn-icon" />
             </button>
         </div>
     </div>
@@ -111,7 +113,11 @@
 
     protected override void OnInitialized()
     {
-        // בעתיד: maxUnlockedLevel = session.CurrentUser.MaxLevel;
+        Player CurrentPlayer = session.CurrentUser as Player;
+        if (CurrentPlayer != null)
+        {
+            maxUnlockedLevel = CurrentPlayer.MaxLevel;
+        }//else keep default value of 1
     }
 
     private void StartLevel(int level)
