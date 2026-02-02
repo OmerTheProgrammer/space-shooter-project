@@ -1,35 +1,81 @@
-﻿.credit-title {
-    color: #00FF41 !important;
-    font-weight: 900;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    font-size: 6vw;
+﻿/* --- Level Selection Grid --- */
+.level-container {
+    display: flex; /* Changed to flex for a smooth horizontal row */
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 1.5rem;
+    padding: 2rem;
+    margin: 2vh auto;
+    max-width: 95%;
+    /* Neon Aesthetic */
+    border: 2px solid rgba(0, 255, 171, 0.4);
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0 0 15px rgba(0, 255, 171, 0.2), 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Level Buttons --- */
+.level-btn {
+    flex: 0 0 auto; /* Prevents buttons from shrinking */
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Font Adjustment: 4rem was too big! */
+    font-size: 2rem;
     font-family: 'Courier New', Courier, monospace;
-    text-shadow: 0 0 10px rgba(0, 255, 65, 0.8),
-        0 0 30px rgba(0, 255, 65, 0.6),
-        0 0 60px rgba(0, 255, 65, 0.4);
-    animation: titlePulse 3s infinite ease-in-out;
+    font-weight: 900;
+    color: #00FFAB;
+    background: rgba(20, 90, 100, 0.1);
+    border: 2px solid #00FFAB;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.credit-subtitle {
-    color: #007bff !important;
-    font-weight: 800;
-    margin-top: 20px;
-}
-
-.credit-text {
-    margin-left: 10%;
-    margin-right: 10%;
-    color: #ffffff;
-    font-size: 1.1rem;
-    line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-    .credit-text {
-        margin-left: 5%;
-        margin-right: 5%;
-        text-align: center !important;
+    /* Hover effect */
+    .level-btn:not(.locked):hover {
+        background: #00FFAB;
+        color: #000;
+        box-shadow: 0 0 25px #00FFAB;
+        transform: scale(1.1) translateY(-5px);
     }
+
+    /* Locked State overrides */
+    .level-btn.locked {
+        border-color: #444;
+        background: rgba(255, 255, 255, 0.05);
+        filter: grayscale(1);
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+.lock-img {
+    width: 40px;
+    height: auto;
+}
+
+/* Custom Scrollbar for the horizontal row */
+.level-container::-webkit-scrollbar {
+    height: 10px;
+}
+
+.level-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(to right, transparent, #00FFAB, transparent);
+    border-radius: 10px;
+}
+
+/* --- Top Control Buttons Fix --- */
+.top-btn {
+    background: none;
+    border: none;
+    padding: 10px;
+}
+
+.btn-icon.icon {
+    width: 60px; /* Consistent sizing for top icons */
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 171, 0.5));
 }

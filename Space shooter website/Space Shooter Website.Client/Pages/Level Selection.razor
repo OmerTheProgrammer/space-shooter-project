@@ -4,25 +4,27 @@
 @using Model.Tables
 @inject Session session
 @inject NavigationManager NavManager
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveServer
+
 
 <PageTitle>Mission Control - Space Shooter</PageTitle>
 
 <div class="selection-screen">
     @* --- Header עם כפתורי בקרה --- *@
     <div class="row align-items-center mb-4">
+        <div class="col-md-3"/>
         <div class="col-md-6">
             <h1 class="title">LEVEL SELECTION</h1>
         </div>
-        <div class="col-md-6 text-end">
+        <div class="col-md-3 text-end">
             <button class="top-btn" @onclick="() => showScores = true">
-                <img src="Assets/UI Icons/achievement.png" class="btn-icon" />
+                <img src="Assets/UI Icons/achievement.png" class="btn-icon button icon" />
             </button>
             <button class="top-btn" @onclick="() => showSettings = true">
-                <img src="Assets/UI Icons/cogwheel.png" class="btn-icon" />
+                <img src="Assets/UI Icons/cogwheel.png" class="btn-icon button icon" />
             </button>
             <button class="top-btn" @onclick="() => showInfo = true">
-                <img src="Assets/UI Icons/info.png" class="btn-icon" />
+                <img src="Assets/UI Icons/info.png" class="btn-icon button icon" />
             </button>
         </div>
     </div>
@@ -34,12 +36,12 @@
             int levelNum = i;
             bool isLocked = levelNum > maxUnlockedLevel;
 
-            <button class="level-btn @(isLocked ? "locked" : "")"
+            <button class="level-btn @(isLocked ? "locked" : "") button icon"
                     disabled="@isLocked"
                     @onclick="() => StartLevel(levelNum)">
                 @if (isLocked)
                 {
-                    <img src="Assets/UI/lock.png" class="lock-img" />
+                    <img src="Assets/UI Icons/lock.png" class="lock-img button icon" />
                 }
                 else
                 {
@@ -56,13 +58,13 @@
 {
     <div class="custom-modal-overlay">
         <div class="custom-modal p-4">
-            <h2 class="text-cyan mb-3">Scoreboard</h2>
+            <p class="subtitle mb-3">Scoreboard:</p>
             <div class="score-list">
                 @* כאן תבוא לולאה על הציונים מה-DB בעתיד *@
-                <p class="text-white">Last Score: 1,000 pts</p>
-                <p class="text-muted small">More scores coming soon...</p>
+                <p class="text">Last Score: 1,000 pts</p>
+                <p class="text warning">More scores coming soon...</p>
             </div>
-            <button class="btn-side mt-3" @onclick="() => showScores = false">CLOSE</button>
+            <button class="btn-side mt-3 button" @onclick="() => showScores = false">CLOSE</button>
         </div>
     </div>
 }
@@ -71,23 +73,24 @@
 {
     <div class="custom-modal-overlay">
         <div class="custom-modal p-4">
-            <img src="Assets/Main_Menu/Setting/Header.png" class="img-fluid mb-4" style="max-height: 50px;" />
-
+            <img src="Assets/Settings/Texts/Title.png" class="img-fluid mb-4" style="max-height: 50px;" />
             <div class="d-flex align-items-center mb-3">
-                <button class="btn-icon-only" @onclick="ToggleMusic">
-                    <img src="@(isMusicOn ? "Assets/Main_Menu/BTNs_Active/Music_BTN.png" : "Assets/Main_Menu/Setting/Music_BTN.png")" />
+                <button class="btn-icon button" @onclick="ToggleMusic">
+                    <img src="@(currentPlayer.IsMusicOn ? "Assets/Settings/Buttons/On/Music_BTN.png" :
+                        "Assets/Settings/Buttons/Off/Music_BTN.png")" class="button icon" />
                 </button>
-                <img src="Assets/Main_Menu/Setting/Music.png" class="setting-text-img" />
+            <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
             </div>
 
             <div class="d-flex align-items-center mb-4">
-                <button class="btn-icon-only" @onclick="ToggleSound">
-                    <img src="@(isSoundOn ? "Assets/Main_Menu/BTNs_Active/Sound_BTN.png" : "Assets/Main_Menu/Setting/Sound_BTN.png")" />
+                <button class="btn-icon button" @onclick="ToggleSound">
+                    <img src="@(currentPlayer.IsSoundOn ? "Assets/Settings/Buttons/On/Sound_BTN.png" :
+                        "Assets/Settings/Buttons/Off/Sound_BTN.png")" class="button icon" />
                 </button>
-                <img src="Assets/Main_Menu/Setting/Sound.png" class="setting-text-img" />
+            <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
             </div>
 
-            <button class="btn-side" @onclick="() => showSettings = false">SAVE & CLOSE</button>
+            <button class="btn-side button" @onclick="() => showSettings = false">SAVE & CLOSE</button>
         </div>
     </div>
 }
@@ -96,28 +99,42 @@
 {
     <div class="custom-modal-overlay">
         <div class="custom-modal info-modal p-4 text-start">
-            <h2 class="text-cyan border-bottom">CONTROLS</h2>
-            <p class="mt-3"><strong>Move:</strong> Arrow Keys or WASD</p>
-            <p><strong>Shoot:</strong> Space Bar</p>
-            <p><strong>Pause:</strong> P Key</p>
-            <p class="text-danger mt-3"><em>Tip: If buttons get stuck, click them again.</em></p>
-            <button class="btn-side mt-4 w-100" @onclick="() => showInfo = false">UNDERSTOOD</button>
+            <p class="subtitle"> Controls:</p>
+            <p class="text">
+                Use the Arrow Keys or WASD Keys to move:<br />
+                Up Arrow \ W: Move Up<br />
+                Down Arrow \ S: Move Down<br />
+                Left Arrow \ A: Move Left<br />
+                Right Arrow \ D: Move Right<br />
+                Press the Space Bar to shoot projectiles.<br />
+                P: Pause/Resume the game<br />
+            </p>
+            <p class="text danger">If the <b>buttons get stuck</b>, release and click again.</p>
+            <p class="subtitle"> Ending screen:</p>
+            <p class="text">
+                Enter: Proceed to the next level<br />
+                Backspace: Return to the Level selection screen
+            </p>
+            <button class="btn-side mt-4 w-100 button" @onclick="() => showInfo = false">UNDERSTOOD</button>
         </div>
     </div>
 }
 
 @code {
-    private int maxUnlockedLevel = 1; // ימשך מה-DB בעתיד
+    private int maxUnlockedLevel = 1; // Default to 1 to avoid null issues
     private bool showScores, showSettings, showInfo;
-    private bool isMusicOn = true, isSoundOn = true;
+    private Player currentPlayer = null;
 
     protected override void OnInitialized()
     {
-        Player CurrentPlayer = session.CurrentUser as Player;
-        if (CurrentPlayer != null)
+        // 1. Get the player
+        currentPlayer = session.CurrentUser as Player;
+
+        // 2. Only update if the player actually exists
+        if (currentPlayer != null)
         {
-            maxUnlockedLevel = CurrentPlayer.MaxLevel;
-        }//else keep default value of 1
+            maxUnlockedLevel = currentPlayer.MaxLevel;
+        }
     }
 
     private void StartLevel(int level)
@@ -126,6 +143,22 @@
         NavManager.NavigateTo("Game");
     }
 
-    private void ToggleMusic() => isMusicOn = !isMusicOn;
-    private void ToggleSound() => isSoundOn = !isSoundOn;
+    private void ToggleMusic()
+    {
+        if (currentPlayer != null)
+        {
+            currentPlayer.IsMusicOn = !currentPlayer.IsMusicOn;
+
+            StateHasChanged(); // Force UI refresh for the icon toggle
+        }
+    }
+
+    private void ToggleSound()
+    {
+        if (currentPlayer != null)
+        {
+            currentPlayer.IsSoundOn = !currentPlayer.IsSoundOn;
+            StateHasChanged();
+        }
+    }
 }

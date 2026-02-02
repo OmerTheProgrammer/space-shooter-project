@@ -133,34 +133,6 @@
         text-shadow: 0 0 8px #00f2ff;
     }
 
-
-/* Darkens the background and centers the popup */
-.custom-modal-overlay {
-    position: fixed; /* Sticks to the screen, not the container */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.8); /* Darken background */
-    backdrop-filter: blur(1px); /* Optional: Blurs the register card behind it */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999; /* Higher than the register card */
-}
-
-/* The actual card inside the popup */
-.modal-content-card {
-    background: #1a1a1a;
-    border: 2px solid #00d4ff; /* Space blue border */
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 600px;
-    width: 90%;
-    box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
-    text-align: center;
-}
-
 .terms-scroll-box {
     max-height: 40vh;
     overflow-y: auto;
