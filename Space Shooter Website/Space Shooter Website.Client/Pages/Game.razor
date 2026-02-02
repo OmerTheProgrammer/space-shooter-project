@@ -1,0 +1,23 @@
+﻿@page "/game"
+@using Space_Shooter_Website.Client.Added_Layouts
+@layout GameLayout
+@inject IJSRuntime JS
+
+<PageTitle>Space Shooter - Game</PageTitle>
+
+<div class="game-container">
+    <section id="game_section">
+        <script src="\pages\game.razor.js"></script>
+    </section>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Initialize your Phaser game after the component has rendered
+            await JS.InvokeVoidAsync("RunGame");
+        }
+    }
+}

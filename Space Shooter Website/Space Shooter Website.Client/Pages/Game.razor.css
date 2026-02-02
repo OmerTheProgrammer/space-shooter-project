@@ -1,0 +1,18 @@
+﻿.game-container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    height: 15vh;
+    width: 80vw;
+}
+
+canvas {
+    display: inline-block;
+    padding: 0 1%;
+}
+
+#game_section {
+    padding: 1%;
+    padding-left: 12%;
+}

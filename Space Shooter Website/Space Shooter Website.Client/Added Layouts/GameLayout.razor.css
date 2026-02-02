@@ -1,0 +1,211 @@
+﻿/*master page style: */
+#navbar {
+    height: 20%;
+}
+
+#nav_player_pic {
+    width: 5vw;
+    margin-left: 1%;
+}
+
+#life_bar {
+    width: 200px;
+}
+
+#level_select_button {
+    background-color: transparent;
+    border: hidden;
+}
+
+.top_button_pic {
+    height: 7.5vh;
+    width: 4vw;
+}
+
+#icon {
+    margin-left: 10px;
+    height: 7.5vh;
+    width: 4vw;
+}
+
+#header {
+    margin-left: 10px;
+    width: 220px;
+    height: 80px;
+}
+
+#settings {
+    position: fixed; /* Ensures the popup stays in place when scrolling */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Positions the popup in the center */
+    padding: 20px;
+    border: 1px solid #ccc;
+    display: none; /* Hide the popup initially */
+    height: 52vh;
+}
+
+.top.button {
+    padding: 0.2%;
+    padding-top: 0.7%;
+    height: 8vh;
+    width: 4.6vw;
+}
+
+.pic_text {
+    width: 50%;
+    height: 50%;
+}
+
+.pic_button {
+    height: 12vh;
+    width: 6vw;
+}
+
+.level_select {
+    height: 10vh;
+    width: 10vw;
+}
+
+    .level_select.button {
+        height: 10vh;
+        width: 10vw;
+    }
+
+/*proggres bar*/
+.progress-bar-container {
+    margin-top: 1.5%;
+    width: 48vw;
+    height: 30px;
+    background-color: rgba(242, 255, 255, 0.85);
+    border-radius: 5px;
+    overflow: hidden; /* Added for clipping child elements */
+}
+
+#progress-bar {
+    width: 100%; /* Represents progress */
+    height: inherit;
+    background-color: aqua; /* Progress bar color */
+    border-radius: inherit;
+    transition: width 1s ease-in-out; /* Add smooth transition */
+    font-weight: bold;
+    font-size: 20px;
+    color: rgb(5, 58, 61);
+    padding: 0.1%;
+    padding-left: 2%;
+}
+
+/*general*/
+.popup {
+    background-image: url("/Assets/Backgrounds/blue.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    z-index: 15;
+}
+
+    .popup.title {
+        margin-top: 1%;
+        margin-bottom: 1%;
+        margin-left: 20%;
+        /*
+                    12 = base font size
+                    16 = min font size
+                    24 = max font size
+                    24 - 16 = range of changable fonts
+                    100vw = window width
+                    400px = needed width
+                    1280 = max width
+                */
+        font-size: calc(24px + (24 - 16) * (100vw - 400px) / (1280 - 400));
+    }
+
+    .popup.text {
+        margin-top: 1%;
+        margin-bottom: 1%;
+        margin-left: 10%;
+        /*
+                    16 = min font size
+                    24 = max font size
+                    24 - 16 = range of changable fonts
+                    100vw = window width
+                    300px = needed width
+                    1280 = max width
+                */
+        font-size: calc(16px + (24 - 16) * (100vw - 300px) / (1280 - 300));
+    }
+
+    .popup.title.with_button {
+        margin-left: 10%;
+    }
+
+.button {
+    color: #DEF8F6;
+    background-color: #3B5088;
+    border-color: #88DBD8;
+    margin: 1%;
+    margin-left: 3%;
+    font-size: 20px;
+}
+
+    .button:hover {
+        color: rgba(238, 248, 246, 0.85);
+    }
+
+.m_container {
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    height: 15vh;
+}
+
+.m_card {
+    margin: 1%;
+    padding: 0 1%;
+}
+
+body {
+    background-image: url("/Assets/Backgrounds/black.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+/*nav: */
+.nav_text {
+    font-size: calc(16px + (40 - 16) * (100vh - 450px) / (1280 - 450));
+}
+
+nav {
+    color: #DEF8F6;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #333333a6;
+    width: 125%;
+    z-index: 10;
+    padding: 10px;
+}
+
+    nav ul {
+        list-style-type: none; /* Remove default bullet points */
+        margin: 0; /* Remove default margins */
+        padding: 0; /* Remove default paddings */
+    }
+
+    nav ul {
+        list-style-type: none; /* Remove default bullet points */
+        margin: 0; /* Remove default margins */
+        padding: 0; /* Remove default paddings */
+    }
+
+    nav li {
+        display: inline-block; /* Display list items inline */
+        margin-right: 2%; /* Add space between links */
+    }
+
+    nav a {
+        text-decoration: none; /* Remove underline from links */
+    }
