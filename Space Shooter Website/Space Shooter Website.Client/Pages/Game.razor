@@ -1,0 +1,39 @@
+﻿@page "/game"
+@using Space_Shooter_Website.Client.Added_Layouts
+@using Space_Shooter_Website.Client.Support_Classes
+@using Model.Entitys
+@layout GameLayout
+@inject IJSRuntime JS
+@inject Session session
+@rendermode InteractiveAuto
+
+<PageTitle>Space Shooter - Game</PageTitle>
+
+<div class="game-container">
+    <section id="game_section">
+
+    </section>
+</div>
+
+@code {
+    [JSInvokable]
+    public async Task SaveGameResult(int CourrentScore, int reachedLevel)
+    {
+        Console.WriteLine("got to level: " + reachedLevel + " Score: " + CourrentScore);
+        // Save the game result to the database
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var player = session.CurrentUser as Player;
+
+            bool music = player?.IsMusicOn ?? true;
+            bool sound = player?.IsSoundOn ?? true;
+            int level = session.SelectedLevel;
+
+            await JS.InvokeVoidAsync("RunGame", music, sound, level);
+        }
+    }
+}

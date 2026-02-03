@@ -27,7 +27,6 @@ namespace ViewModel.DBs
             p.Username = reader["Username"].ToString();
             p.Birthday = DateTime.Parse(reader["Birthday"].ToString());
             p.Email = reader["Email"].ToString();
-            p.IsLoggedIn = bool.Parse(reader["IsLoggedIn"].ToString());
             base.CreateModel(entity);
             return p;
         }
@@ -69,8 +68,8 @@ namespace ViewModel.DBs
             User c = entity as User;
             if (c != null)
             {
-                string sqlStr = $"INSERT INTO dbo.UsersTbl(ID, Password, Username, Birthday, Email, IsLoggedIn) " +
-                        $"VALUES (@ID, @Password, @Username, @Birthday, @Email, @IsLoggedIn)";
+                string sqlStr = $"INSERT INTO dbo.UsersTbl(ID, Password, Username, Birthday, Email) " +
+                        $"VALUES (@ID, @Password, @Username, @Birthday, @Email)";
                 command.CommandText = sqlStr;
 
                 command.Parameters.Add(new SqlParameter("@ID", c.Id));
@@ -78,7 +77,6 @@ namespace ViewModel.DBs
                 command.Parameters.Add(new SqlParameter("@Username", c.Username));
                 command.Parameters.Add(new SqlParameter("@Birthday", c.Birthday));
                 command.Parameters.Add(new SqlParameter("@Email", c.Email));
-                command.Parameters.Add(new SqlParameter("@IsLoggedIn", c.IsLoggedIn));
             }
         }
 
@@ -87,13 +85,12 @@ namespace ViewModel.DBs
             User c = entity as User;
             if (c != null)
             {
-                string sqlStr = $"UPDATE dbo.UsersTbl SET Username=@Username, Birthday=@Birthday, IsLoggedIn=@IsLoggedIn, " +
+                string sqlStr = $"UPDATE dbo.UsersTbl SET Username=@Username, Birthday=@Birthday," +
                     $"Email=@Email, ID=@ID, Password=@Password WHERE Idx=@Idx";
                 cmd.CommandText = sqlStr;
 
                 cmd.Parameters.Add(new SqlParameter("@Username", c.Username));
                 cmd.Parameters.Add(new SqlParameter("@Birthday", c.Birthday));
-                cmd.Parameters.Add(new SqlParameter("@IsLoggedIn", c.IsLoggedIn));
                 cmd.Parameters.Add(new SqlParameter("@Email", c.Email));
                 cmd.Parameters.Add(new SqlParameter("@ID", c.Id));
                 cmd.Parameters.Add(new SqlParameter("@Password", c.Password));

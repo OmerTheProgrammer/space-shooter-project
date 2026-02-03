@@ -9,7 +9,7 @@ namespace Model.Data_Transfer_Objects
 {
     public class AdminDTO : UserDTO<Admin, AdminDTO>
     {
-        // Inherits Id, Password, Username, Email, IsLoggedIn, Birthday from UserDTO
+        // Inherits Id, Password, Username, Email, Birthday from UserDTO
 
         public DateTime? StartDate { get; set; } = null;
 

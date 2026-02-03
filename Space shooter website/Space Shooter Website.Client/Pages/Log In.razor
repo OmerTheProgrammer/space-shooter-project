@@ -82,6 +82,7 @@
     {
         errorMessage = message;
         loginCardClass = "col-md-6 login-card";
+        isProcessing = false;
         StateHasChanged(); // Force Blazor to render without the shake
 
         await Task.Delay(10);
@@ -109,6 +110,10 @@
 
     private async Task HandleLogin()
     {
+        if (isProcessing)
+        {
+            return; // Prevent multiple submissions
+        }
         errorMessage = "";
         isProcessing = true;
 
@@ -120,7 +125,6 @@
         {
             // Use await here since TriggerError is now an async Task
             await TriggerError("INPUT ERROR: Please fill in all fields.");
-            isProcessing = false;
             return;
         }
 
@@ -147,17 +151,31 @@
             else
             {
                 session.CurrentUser = user;
-                var admin = await api.GetAdminByIdx(user.Idx);
-                var player = await api.GetPlayerByIdx(user.Idx);
+                Admin admin = null;
+                Player player = null;
+                try
+                {
+                    admin = await api.GetAdminByIdx(user.Idx);
+                    player = await api.GetPlayerByIdx(user.Idx);
+
+                }catch(Exception ex)
+                {
+                    // Ignore exceptions here; admin/player will be null if not found
+                    Console.WriteLine("Intended exception: " + ex.Message);
+                }
                 session.IsAdmin = admin != null;
-                session.IsPlayer = player != null;
+                if(player != null)
+                {
+                    session.CurrentUser = player;
+                    session.IsPlayer = true;
+                }
 
                 NavManager.NavigateTo("Level Selection", forceLoad: true);
             }
         }
         catch (Exception ex)
         {
-            errorMessage = "SYSTEM ERROR: " + ex.Message;
+            TriggerError("SYSTEM ERROR: " + ex.Message);
         }
         finally
         {

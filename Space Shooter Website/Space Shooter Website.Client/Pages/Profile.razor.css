@@ -1,0 +1,39 @@
+﻿.profile-label {
+    color: #00d4ff;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.profile-input {
+    width: 100%;
+    background: #111;
+    border: 1px solid #444;
+    color: white;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    outline: none;
+}
+
+.profile-card {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00FFAB;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
+    z-index: 1;
+}
+.profile.subtitle {
+    color: #00d4ff;
+    font-weight: 800;
+    margin-top: 20px;
+}
+
+.profile.text {
+    margin-left: 10%;
+    margin-right: 10%;
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
