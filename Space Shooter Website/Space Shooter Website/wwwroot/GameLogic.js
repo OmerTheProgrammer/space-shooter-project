@@ -89,7 +89,7 @@ class Game_scene extends Phaser.Scene {
         this.load.audio('enemy laser sound', '/Assets/Game Elements/Sounds/sfx_laser2.ogg');
         this.load.audio('taking damage', '/Assets/Game Elements/Sounds/sfx_twoTone.ogg');
         this.load.audio('whoosh', '/Assets/Game Elements/Sounds/Whoosh.mp3');
-        //main sprites
+        //main sprites  
         this.load.image('player', '/Assets/Game Elements/Images/player.png');
         this.load.image('player laser', '/Assets/Game Elements/Images/laserRed.png');
         this.load.image('enemy', '/Assets/Game Elements/Images/enemyShip.png');
@@ -102,9 +102,9 @@ class Game_scene extends Phaser.Scene {
         this.load.image('powerUp ' + power_up_types[3], '/Assets/Game Elements/Images/PowerUps/shield_silver.png');
 
         //shield
-        this.load.image('full shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield1.png');
+        this.load.image('full shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield3.png');
         this.load.image('mid shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield2.png');
-        this.load.image('sliver shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield3.png');
+        this.load.image('small shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield1.png');
         this.load.audio('shield up sound', '/Assets/Game Elements/Sounds/sfx_shieldDown.ogg');
         this.load.audio('shield down sound', '/Assets/Game Elements/Sounds/sfx_shieldUp.ogg');
         
@@ -501,8 +501,9 @@ class End_scene extends Phaser.Scene {
         this.level_select_button.setScale(0.15, 0.15);
         this.level_select_button.setInteractive();
         this.level_select_button.setVisible(false);
+        //change to better url change by location like api
         this.level_select_button.on('pointerdown', () => {
-            window.location.href = '/pages/Level selection.aspx';
+            window.location.href = 'https://localhost:7020/Level%20Selection';
         });
 
         this.next_level_button = this.add.sprite((size[0] / 2) + 350, size[1] / 2 + 45, 'next level button');//next_level_button
@@ -1143,7 +1144,7 @@ function shield_update() {
         shield.setTexture('mid shield');
     }
     else {
-        shield.setTexture('sliver shield');
+        shield.setTexture('small shield');
     }
 }
 
