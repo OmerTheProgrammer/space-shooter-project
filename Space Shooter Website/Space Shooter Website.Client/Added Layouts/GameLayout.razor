@@ -2,6 +2,7 @@
 @using Space_Shooter_Website.Client.Added_Layouts
 @using Space_Shooter_Website.Client.Support_Classes
 @using Model.Entitys
+@implements IDisposable
 @inject IJSRuntime JS
 @inject Session session
 
@@ -16,28 +17,28 @@
             <div class="collapse navbar-collapse" id="navbarNav" style="width:100vw">
                 <ul class="navbar-nav" style="width:80vw">
                     <li class="nav-item nav_text">
-                        <button type="button" class="top button" @onclick="OpenSettings">
+                        <button type="button" class="top button " @onclick="OpenSettings">
                             <img alt="settings" src="/Assets/UI Icons/cogwheel.png" class="top_button_pic" />
                         </button>
                     </li>
                     <li class="nav-item nav_text">
                         <div class="m_card" id="life_bar">
                             <img src="/Assets/Game Elements/Images/player.png" alt="Player Avatar" class="top_button_pic" id="nav_player_pic" />
-                            <span id="life_text" class="nav_text">x @Health.ToString("D3")</span>
+                            <span id="life_text" class="nav_text">x @session.CurrentRun.CurrentHp.ToString("D3")</span>
                         </div>
                     </li>
                     <li class="nav-item nav_text">
                         <div class="progress-bar-container">
-                            <div id="progress-bar" style="width: @(Progress)%">
-                                @(IsEndless ? "Endless!" : Progress == 0 ? "Won!" : $"{Progress}%")
+                            <div id="progress-bar" style="width: @session.Progress">
+                                @CalculateProgressWidth()
                             </div>
                         </div>
                     </li>
                     <li class="nav-item nav_text">
-                        <span id="score_board" class="nav_text">@Score.ToString("D6")</span>
+                        <span id="score_board" class="nav_text">@session.CurrentRun.CurrentScore.ToString("D6")</span>
                     </li>
                     <li class="nav-item nav_text">
-                        <span id="level" class="nav_text">Level @CurrentLevel.ToString("D2")</span>
+                        <span id="level" class="nav_text">Level @session.CurrentRun.CurrentLevel.ToString("D2")</span>
                     </li>
                 </ul>
             </div>
@@ -46,11 +47,11 @@
 
     <main>
         <div style="height:16vh"></div>
-        @Body
+            @Body
     </main>
 
     @* Settings Popup *@
-    @if (ShowSettings)
+    @if (IsSettingsVisible)
     {
         <div class="popup" id="settings" style="display: block;">
             <div class="m_container">
@@ -70,49 +71,25 @@
 </div>
 
 @code {
-    // These properties would ideally come from a Scoped Service or CascadingValue
-    public int Health { get; set; } = 5;
-    public int Score { get; set; } = 0;
-    public int Progress { get; set; } = 0;
-    public int CurrentLevel { get; set; } = 1;
     public bool IsEndless { get; set; } = false;
-    public bool ShowSettings { get; set; } = false;
+    public bool IsSettingsVisible { get; set; } = false;
     private Player currentPlayer;
 
-    protected override void OnInitialized()
-    {
-        // 1. Get the player
-        currentPlayer = session.CurrentUser as Player;
-    }
+    private void OpenSettings() => IsSettingsVisible = true;
+    private void CloseSettings() => IsSettingsVisible = false;
 
-    private DotNetObjectReference<GameLayout>? objRef;
-    public void Dispose() => objRef?.Dispose();
+    private double CalculateProgressWidth()
+    {
+        
+        return (session.CurrentRun.CurrentLevel * 10); // Simple example: 10% per level - incase the rest fails
+    }
 
     [JSInvokable]
-    public void UpdateHUD(int health, int score, int level, int killed, int created, bool isEndless)
+    public void ToggleSettingsMenu()
     {
-        Health = health;
-        Score = score;
-        CurrentLevel = level;
-        IsEndless = isEndless;
-
-        // Calculate progress logic
-        if (created > 0 && !isEndless)
-        {
-            double livingPercent = (1.0 - ((double)killed / created));
-            Progress = (int)Math.Floor(livingPercent * 100);
-        }
-        else
-        {
-            Progress = 100;
-        }
-
-        // Tell Blazor to re-render the HTML with new values
-        StateHasChanged();
+        IsSettingsVisible = !IsSettingsVisible;
+        StateHasChanged(); // Updates the UI
     }
-
-    private void OpenSettings() => ShowSettings = true;
-    private void CloseSettings() => ShowSettings = false;
 
     private void ToggleMusic()
     {
@@ -132,4 +109,14 @@
             StateHasChanged();
         }
     }
+
+    protected override void OnInitialized()
+    {
+        // Subscribe to updates from the Session
+        session.OnGameStateChanged += StateHasChanged;
+        // 1. Get the player
+        currentPlayer = session.CurrentUser as Player;
+    }
+
+    public void Dispose() => session.OnGameStateChanged -= StateHasChanged;
 }

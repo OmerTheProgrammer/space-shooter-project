@@ -23,17 +23,10 @@
         // Save the game result to the database
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    [JSInvokable]
+    public void UpdateHUD(int hp, int score, int level, int shield, int blasters, int killed, int maxEnemies, bool isEndless)
     {
-        if (firstRender)
-        {
-            var player = session.CurrentUser as Player;
-
-            bool music = player?.IsMusicOn ?? true;
-            bool sound = player?.IsSoundOn ?? true;
-            int level = session.SelectedLevel;
-
-            await JS.InvokeVoidAsync("RunGame", music, sound, level);
-        }
+        session.UpdateGameStats(hp, score, level, killed, shield, blasters, maxEnemies, isEndless);
     }
+
 }

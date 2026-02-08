@@ -991,12 +991,19 @@ function manu_actions() {
     //pause button
     if (cursors.P_key.isDown && !cursors.P_key.wasClicked) {
         cursors.P_key.wasClicked = true;
-        if (settings.style.display === 'block' && currentScene.time.now > hide_setting_coldown) {
-            close_settings();
-            hide_setting_coldown = currentScene.time.now + 500;
-        }
-        else if (currentScene.time.now > hide_setting_coldown) {
-            open_settings();
+        if (currentScene.time.now > hide_setting_coldown) {
+            if (window.dotNetHelper) {
+                window.dotNetHelper.invokeMethodAsync('ToggleSettingsMenu');
+            }
+
+            // Toggle local game pause state
+            paused = !paused;
+            if (paused) {
+                currentScene.physics.pause();
+            } else {
+                currentScene.physics.resume();
+            }
+
             hide_setting_coldown = currentScene.time.now + 500;
         }
     }
@@ -1207,7 +1214,15 @@ function update_hud_in_blazor() {
     }
 }
 
-window.RunGame = (IsMusicOn, IsSoundOn, selectedLevel) => {
+window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
+
+    //recives data from c#
+    window.dotNetHelper = dotNetHelper;
+    is_music_on = IsMusicOn;
+    is_sound_on = IsSoundOn;
+    level = selectedLevel;
+
+    //game config
     const config = {
         type: Phaser.AUTO,
         scale: {
@@ -1227,10 +1242,7 @@ window.RunGame = (IsMusicOn, IsSoundOn, selectedLevel) => {
         }
     };
 
-    is_music_on = IsMusicOn;
-    is_sound_on = IsSoundOn;
-    level = selectedLevel;
-
+    //start's the game
     if (window.gameInstance) {
         window.gameInstance.destroy(true);
     }

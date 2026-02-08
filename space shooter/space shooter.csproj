@@ -99,6 +99,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Space Shooter Website\Space Shooter Website\wwwroot\manu_actions.js">
+      <Link>manu_actions.js</Link>
+    </Content>
     <Content Include="Assets\Albéniz - Rumores de la caleta.ogg" />
     <Content Include="Assets\Backgrounds\black.png" />
     <Content Include="Assets\Backgrounds\blue.png" />

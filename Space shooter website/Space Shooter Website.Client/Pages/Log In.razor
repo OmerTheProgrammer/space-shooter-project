@@ -170,7 +170,14 @@
                     session.IsPlayer = true;
                 }
 
-                NavManager.NavigateTo("Level Selection", forceLoad: true);
+                if (session.IsPlayer)
+                {
+                    NavManager.NavigateTo("Level Selection", forceLoad: true);
+                }
+                else if(session.IsAdmin) //just else no other user type for now
+                {
+                    NavManager.NavigateTo("Admin Dashboard", forceLoad: true);
+                }
             }
         }
         catch (Exception ex)
