@@ -107,7 +107,7 @@ class Game_scene extends Phaser.Scene {
         this.load.image('small shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield1.png');
         this.load.audio('shield up sound', '/Assets/Game Elements/Sounds/sfx_shieldDown.ogg');
         this.load.audio('shield down sound', '/Assets/Game Elements/Sounds/sfx_shieldUp.ogg');
-        
+
         //explosion loding
         for (let i = 1; i <= 64; i++) {
             this.load.image('explosion ' + i, '/Assets/Game Elements/Images/Explosion Frames/explosion' + i + '.png');
@@ -372,8 +372,12 @@ class Game_scene extends Phaser.Scene {
                 break;
         }
 
-        //save level reached with score c# function
-        DotNet.invokeMethodAsync('Space_Shooter_Website.Client', 'SaveGameResult', score, level);
+        update_hud_in_blazor();
+        if (window.dotNetHelper) {
+            window.dotNetHelper.invokeMethodAsync('SaveGameResult',
+                win,
+            );
+        }
 
         The_counter = new Counter();
         The_counter.CreateCountDownCounter(3, () => {
@@ -992,16 +996,16 @@ function manu_actions() {
     if (cursors.P_key.isDown && !cursors.P_key.wasClicked) {
         cursors.P_key.wasClicked = true;
         if (currentScene.time.now > hide_setting_coldown) {
-            if (window.dotNetHelper) {
-                window.dotNetHelper.invokeMethodAsync('ToggleSettingsMenu');
-            }
-
             // Toggle local game pause state
             paused = !paused;
             if (paused) {
                 currentScene.physics.pause();
             } else {
                 currentScene.physics.resume();
+            }
+
+            if (window.dotNetHelper) {
+                window.dotNetHelper.invokeMethodAsync('ToggleSettingsMenu');
             }
 
             hide_setting_coldown = currentScene.time.now + 500;
@@ -1200,16 +1204,11 @@ function swoop_by(enemy1, enemy2) {
 }
 
 function update_hud_in_blazor() {
-    // 'dotNetHelper' should be a reference to your Blazor component
-    // You can pass this helper when you call RunGame
+    // 'dotNetHelper'a reference we set to the Blazor component
+    // connects to the C#
     if (window.dotNetHelper) {
         window.dotNetHelper.invokeMethodAsync('UpdateHUD',
-            health,
-            score,
-            level,
-            killed,
-            maxEnemies,
-            is_endless
+            health, score, level, shield_life, player_lasers_count, killed, maxEnemies, is_endless
         );
     }
 }

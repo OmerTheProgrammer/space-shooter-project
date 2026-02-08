@@ -2,10 +2,12 @@
 @using Space_Shooter_Website.Client.Added_Layouts
 @using Space_Shooter_Website.Client.Support_Classes
 @using Model.Entitys
+@using Client_Manager___API;
 @layout GameLayout
 @inject IJSRuntime JS
 @inject Session session
-@rendermode InteractiveAuto
+@inject IApiService api
+@rendermode InteractiveServer
 
 <PageTitle>Space Shooter - Game</PageTitle>
 
@@ -16,17 +18,55 @@
 </div>
 
 @code {
-    [JSInvokable]
-    public async Task SaveGameResult(int CourrentScore, int reachedLevel)
+    private Player? currentPlayer;
+    private DotNetObjectReference<Game>? objRef;
+    public void Dispose()
     {
-        Console.WriteLine("got to level: " + reachedLevel + " Score: " + CourrentScore);
-        // Save the game result to the database
+        // Clean up the reference when the user navigates away
+        objRef?.Dispose();
+        session.OnGameStateChanged -= StateHasChanged;
+    }
+
+    [JSInvokable]
+    public async Task SaveGameResult(bool won)
+    {
+        if (api is ApiService apiService && currentPlayer != null)
+        {
+            session.SaveRun(apiService, won);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            currentPlayer = session.CurrentUser as Player;
+
+            if (currentPlayer != null)
+            {
+                // Create the reference to THIS C# instance
+                objRef = DotNetObjectReference.Create(this);
+
+                // Start the game and pass the helper to JS
+                await JS.InvokeVoidAsync("RunGame",
+                    objRef,
+                    currentPlayer.IsMusicOn,
+                    currentPlayer.IsSoundOn,
+                    session.SelectedLevel
+                );
+            }
+        }
+    }
+
+    [JSInvokable]
+    public void ToggleSettingsMenu()
+    {
+        session.ToggleSettings();
     }
 
     [JSInvokable]
     public void UpdateHUD(int hp, int score, int level, int shield, int blasters, int killed, int maxEnemies, bool isEndless)
     {
-        session.UpdateGameStats(hp, score, level, killed, shield, blasters, maxEnemies, isEndless);
+        session.UpdateGameStats(hp, score, level, shield, blasters, killed, maxEnemies, isEndless);
     }
-
 }

@@ -14,6 +14,9 @@ builder.Services.AddRazorComponents()
 //builder.Services.AddScoped<IApiService, ApiService>(); - For scoped: lifetime is per loading of the component
 builder.Services.AddSingleton<IApiService, ApiService>();// - For singleton: lifetime is per application
 builder.Services.AddSingleton<Session>(); // Session service to manage user between components
+//better js errors?
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
+
 
 var app = builder.Build();
 
