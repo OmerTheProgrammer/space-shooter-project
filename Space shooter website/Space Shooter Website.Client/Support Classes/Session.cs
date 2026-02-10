@@ -86,6 +86,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                     //    CurrentRun
                     //);
                     Console.WriteLine("Saving " + CurrentRun + " To DB.");
+
                 }
                 catch (Exception ex)
                 {

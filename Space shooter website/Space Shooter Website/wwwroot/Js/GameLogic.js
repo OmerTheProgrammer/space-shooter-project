@@ -446,7 +446,11 @@ class End_scene extends Phaser.Scene {
                 score += 5000;
                 end_text(tico_text, 'losing');
             }
-            DotNet.invokeMethodAsync('Space_Shooter_Website.Client', 'SaveGameResult', score, level);
+            if (window.dotNetHelper) {
+                window.dotNetHelper.invokeMethodAsync('SaveGameResult',
+                    win,
+                );
+            }
             ending_coldown = currentScene.time.now + 5000;
         }
     }
@@ -736,7 +740,7 @@ function collectPowerUp(sprite, powerUp) {
                     score += 140
                 }
             } else if (powerUp.texture.key === 'powerUp ' + power_up_types[1]) {//gold star
-                score += 500;
+                score += 5000;
             }
             if (powerUp.texture.key === 'powerUp ' + power_up_types[2]) {//red pill
                 score += 5;
@@ -939,7 +943,7 @@ function update_music() {
     }
     if (is_music_on && music_isnt_active && bg_music.coldown < scenes[0].time.now) {
         if (!bg_music) {
-            bg_music = scenes[0].sound.add('battle music', { volume: 0.1, loop: true });
+            bg_music = scenes[0].sound.add('battle music', { volume: 0.3, loop: true });
         }
         bg_music.play();
         music_isnt_active = false;
