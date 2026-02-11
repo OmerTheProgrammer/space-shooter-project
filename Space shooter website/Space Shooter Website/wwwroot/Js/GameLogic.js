@@ -1217,6 +1217,16 @@ function update_hud_in_blazor() {
     }
 }
 
+window.UpdateUserMusicPrefrence = (IsMusicOn) => {
+    //boolean IsMusicOn is sent from c# when the user changes his music prefrence in the settings menu
+    is_music_on = IsMusicOn; //to trigger the music update in the next frame
+}
+
+window.UpdateUserSoundPrefrence = (IsSoundOn) => {
+    //boolean IsSoundOn is sent from c# when the user changes his sound prefrence in the settings menu
+    is_sound_on = IsSoundOn; //to trigger the sound update in the next frame
+}
+
 window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
 
     //recives data from c#

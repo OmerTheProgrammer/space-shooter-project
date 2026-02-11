@@ -1,6 +1,7 @@
-﻿using Model.Entitys;
-using Client_Manager___API;
+﻿using Client_Manager___API;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Model.Entitys;
 using ViewModel;
 
 namespace Space_Shooter_Website.Client.Support_Classes
@@ -20,6 +21,30 @@ namespace Space_Shooter_Website.Client.Support_Classes
         public void ToggleSettings()
         {
             IsSettingsVisible = !IsSettingsVisible;
+            // This triggers StateHasChanged in the Layout because it's subscribed
+            OnGameStateChanged?.Invoke();
+        }
+
+        public void ToggleMusic(IJSRuntime JSRuntime)
+        {
+            Player CurrentPlayer = CurrentUser as Player;
+            if (CurrentPlayer != null)
+            {
+                CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
+                JSRuntime.InvokeVoidAsync("UpdateUserMusicPrefrence", CurrentPlayer.IsMusicOn);
+            }
+            // This triggers StateHasChanged in the Layout because it's subscribed
+            OnGameStateChanged?.Invoke();
+        }
+
+        public void ToggleSound(IJSRuntime JSRuntime)
+        {
+            Player CurrentPlayer = CurrentUser as Player;
+            if (CurrentPlayer != null)
+            {
+                CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
+                JSRuntime.InvokeVoidAsync("UpdateUserSoundPrefrence", CurrentPlayer.IsSoundOn);
+            }
             // This triggers StateHasChanged in the Layout because it's subscribed
             OnGameStateChanged?.Invoke();
         }

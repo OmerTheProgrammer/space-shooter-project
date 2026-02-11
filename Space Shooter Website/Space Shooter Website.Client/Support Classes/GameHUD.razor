@@ -2,6 +2,7 @@
 @using Model.Entitys
 @implements IDisposable
 @inject Session session
+@inject IJSRuntime Js
 @rendermode InteractiveServer
 
 <nav class="navbar navbar-expand-lg">
@@ -51,9 +52,14 @@
                 <button type="button" class="button top" @onclick="CloseSettings">
                     <img alt="back" src="Assets/Settings/Buttons/Off/Backward_btn.png" class="top_button_pic" />
                 </button>
-                <img alt="Settings" class="pic_text" src="Assets/Settings/Buttons/Header.png" />
+                <img alt="Settings" class="pic_text" src="Assets/Settings/Buttons/Header.png" />.
+                <button type="button" class="button top" @onclick="ToggleMusic">
+                    <img alt=@GetAlt(currentPlayer.IsMusicOn, "Music") class="pic_text" src="Assets/Settings/Buttons/Off/Sound_BTN.png" />
+                </button>
+                <button type="button" class="button top" @onclick="ToggleSound">
+                    <img alt=@GetAlt(currentPlayer.IsSoundOn, "Sound") class="pic_text" src="Assets/Settings/Buttons/Off/Music_BTN.png" />
+                </button>
             </div>
-            @* Add Sound/Music buttons here similarly *@
             <div class="m_card">
                 <button type="button" @onclick="CloseSettings" class="button">Close</button>
             </div>
@@ -64,6 +70,13 @@
 @code {
     public bool IsSettingsVisible { get; set; } = false;
     private Player currentPlayer;
+
+    public string GetAlt(bool condition, string ValueName)
+    {
+        string baseAlt = ValueName + " is currently ";
+        return baseAlt + (condition ? "On" : "Off");
+    }
+
 
     private void HandleStateChange()
     {
@@ -94,21 +107,12 @@
 
     private void ToggleMusic()
     {
-        if (currentPlayer != null)
-        {
-            currentPlayer.IsMusicOn = !currentPlayer.IsMusicOn;
-
-            StateHasChanged(); // Force UI refresh for the icon toggle
-        }
+        session.ToggleMusic(Js);
     }
 
     private void ToggleSound()
     {
-        if (currentPlayer != null)
-        {
-            currentPlayer.IsSoundOn = !currentPlayer.IsSoundOn;
-            StateHasChanged();
-        }
+        session.ToggleSound(Js);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
