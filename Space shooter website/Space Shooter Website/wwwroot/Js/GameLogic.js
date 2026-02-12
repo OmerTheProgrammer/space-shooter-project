@@ -45,6 +45,8 @@ class Counter {
             align: 'center',
         });
         this.timeText.setOrigin(0.5, 0.5); // Center the text
+        //to unpause to run counter
+        paused = false
 
         this.countdownEvent = currentScene.time.addEvent({
             delay: 1000,
