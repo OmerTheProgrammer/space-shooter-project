@@ -77,7 +77,7 @@
             <div class="d-flex align-items-center mb-3">
                 <button class="btn-icon button" @onclick="ToggleMusic">
                     <img src="@(currentPlayer.IsMusicOn ? "Assets/Settings/Buttons/On/Music_BTN.png" :
-                        "Assets/Settings/Buttons/Off/Music_BTN.png")" class="button icon" />
+                        "Assets/Settings/Buttons/Off/Music_BTN.png")" class="icon" />
                 </button>
             <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
             </div>
@@ -85,9 +85,9 @@
             <div class="d-flex align-items-center mb-4">
                 <button class="btn-icon button" @onclick="ToggleSound">
                     <img src="@(currentPlayer.IsSoundOn ? "Assets/Settings/Buttons/On/Sound_BTN.png" :
-                        "Assets/Settings/Buttons/Off/Sound_BTN.png")" class="button icon" />
+                        "Assets/Settings/Buttons/Off/Sound_BTN.png")" class="icon" />
                 </button>
-            <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
+            <img src="Assets/Settings/Texts/Sound.png" class="setting-text-img" />
             </div>
 
             <button class="btn-side button" @onclick="() => showSettings = false">SAVE & CLOSE</button>

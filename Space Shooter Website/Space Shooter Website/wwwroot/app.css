@@ -59,7 +59,7 @@ a:hover, .link:hover {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    max-width: 100%; 
+    max-width : 100%; 
     height: auto;
 }
 

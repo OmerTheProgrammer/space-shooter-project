@@ -56,6 +56,12 @@ class Counter {
     }
 
     UpdateCounter() {
+        if (paused) {
+            this.countdownEvent.paused = true;
+            return;
+        }
+        
+        this.countdownEvent.paused = false;
         this.timeText.setText(this.remainingTime);
         this.remainingTime -= 1;
 
@@ -1234,7 +1240,11 @@ window.UpdateUserSoundPrefrence = (IsSoundOn) => {
 
 window.UpdatePaused = (IsSettingsVisible) => {
     //pause when Settings Is Visible
-    paused = IsSettingsVisible
+    paused = IsSettingsVisible;
+    //update the counter to pause/unpause
+    if (The_counter && The_counter.countdownEvent) {
+        The_counter.countdownEvent.paused = paused;
+    }
     UpdatePauseGameState();
 }
 
