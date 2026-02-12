@@ -18,9 +18,11 @@ namespace Space_Shooter_Website.Client.Support_Classes
         public bool IsEndless { get; set; } = false;
 
         public bool IsSettingsVisible { get; set; } = false;
-        public void ToggleSettings()
+
+        public void ToggleSettings(IJSRuntime JSRuntime)
         {
             IsSettingsVisible = !IsSettingsVisible;
+            JSRuntime.InvokeVoidAsync("UpdatePaused", IsSettingsVisible);
             // This triggers StateHasChanged in the Layout because it's subscribed
             OnGameStateChanged?.Invoke();
         }

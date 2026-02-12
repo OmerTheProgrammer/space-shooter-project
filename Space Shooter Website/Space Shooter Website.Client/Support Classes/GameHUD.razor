@@ -91,7 +91,7 @@
         if (!session.IsSettingsVisible)
         {
             //opens settings through the session
-            session.ToggleSettings();
+            session.ToggleSettings(Js);
         }
     }
 
@@ -101,7 +101,7 @@
         if (session.IsSettingsVisible)
         {
             //closes settings through the session
-            session.ToggleSettings();
+            session.ToggleSettings(Js);
         }
     }
 

@@ -989,6 +989,15 @@ function rescale(scale) {
     }
 
 }
+
+function UpdatePauseGameState() {
+    if (paused) {
+        currentScene.physics.pause();
+    } else {
+        currentScene.physics.resume();
+    }
+}
+
 function manu_actions() {
     resize();
     //hides counter
@@ -1002,11 +1011,7 @@ function manu_actions() {
         if (currentScene.time.now > hide_setting_coldown) {
             // Toggle local game pause state
             paused = !paused;
-            if (paused) {
-                currentScene.physics.pause();
-            } else {
-                currentScene.physics.resume();
-            }
+            UpdatePauseGameState();
 
             if (window.dotNetHelper) {
                 window.dotNetHelper.invokeMethodAsync('ToggleSettingsMenu');
@@ -1226,6 +1231,13 @@ window.UpdateUserSoundPrefrence = (IsSoundOn) => {
     //boolean IsSoundOn is sent from c# when the user changes his sound prefrence in the settings menu
     is_sound_on = IsSoundOn; //to trigger the sound update in the next frame
 }
+
+window.UpdatePaused = (IsSettingsVisible) => {
+    //pause when Settings Is Visible
+    paused = IsSettingsVisible
+    UpdatePauseGameState();
+}
+
 
 window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
 
