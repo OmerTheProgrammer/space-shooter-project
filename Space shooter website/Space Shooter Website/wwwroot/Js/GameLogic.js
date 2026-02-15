@@ -1032,13 +1032,15 @@ function manu_actions() {
         cursors.P_key.wasClicked = false;
     }
 
-    //next level button
-    if (cursors.ENTER_key.isDown && scenes[1].next_level_button.visible) {
-        scenes[1].next_level_button.emit('pointerdown');
-    }
-    //Level selection button
-    if (cursors.BACKSPACE_key.isDown && scenes[1].level_select_button.visible) {
-        scenes[1].level_select_button.emit('pointerdown');
+    if (currentScene == scenes[1]) {
+        //next level button
+        if (cursors.ENTER_key.isDown && scenes[1].next_level_button.visible) {
+            scenes[1].next_level_button.emit('pointerdown');
+        }
+        //Level selection button
+        if (cursors.BACKSPACE_key.isDown && scenes[1].level_select_button.visible) {
+            scenes[1].level_select_button.emit('pointerdown');
+        }
     }
 }
 
@@ -1230,6 +1232,20 @@ function update_hud_in_blazor() {
     }
 }
 
+//stop game when out of the page
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        //if the game isn't already paused
+        if (!paused) {
+            console.log("Tab hidden: Pausing game");
+            // Use the existing bridge to sync with Blazor
+            if (window.dotNetHelper) {
+                window.dotNetHelper.invokeMethodAsync('ToggleSettingsMenu');
+            }
+        }
+    }
+});
+
 window.UpdateUserMusicPrefrence = (IsMusicOn) => {
     //boolean IsMusicOn is sent from c# when the user changes his music prefrence in the settings menu
     is_music_on = IsMusicOn; //to trigger the music update in the next frame
@@ -1249,6 +1265,17 @@ window.UpdatePaused = (IsSettingsVisible) => {
     }
     UpdatePauseGameState();
 }
+
+window.DestroyGame = () => {
+    window.dotNetHelper = null;
+    if (window.gameInstance) {
+        // true = removes the canvas element from the DOM
+        // true = stops all plugins and event listeners (audio, input, etc.)
+        window.gameInstance.destroy(true, true);
+        window.gameInstance = null;
+        console.log("Game Instance Closed.");
+    }
+};
 
 
 window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
