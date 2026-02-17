@@ -1269,10 +1269,14 @@ window.UpdatePaused = (IsSettingsVisible) => {
 window.DestroyGame = () => {
     window.dotNetHelper = null;
     if (window.gameInstance) {
-        // true = removes the canvas element from the DOM
-        // true = stops all plugins and event listeners (audio, input, etc.)
-        window.gameInstance.destroy(true, true);
+        // only destroy the instance but keep the global plugins intact
+        window.gameInstance.destroy(false);
         window.gameInstance = null;
+
+        // Force-clear the HTML so the old canvas is definitely gone
+        const container = document.getElementById('game_section');
+        if (container) container.innerHTML = "";
+
         console.log("Game Instance Closed.");
     }
 };
@@ -1309,6 +1313,9 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
     //start's the game
     if (window.gameInstance) {
         window.gameInstance.destroy(true);
+        window.gameInstance = null;
     }
+    console.log("Attempting to boot Phaser...");
     window.gameInstance = new Phaser.Game(config);
+    console.log("Phaser constructor finished.");
 };

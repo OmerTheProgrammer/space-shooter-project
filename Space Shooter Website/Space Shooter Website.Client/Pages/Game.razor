@@ -20,9 +20,12 @@
 
 @code {
     private Player? currentPlayer;
+    private bool IsGameStarted = false;
+
     private DotNetObjectReference<Game>? objRef;
     public async void Dispose()
     {
+        IsGameStarted = false; // Reset the flag so it can restart next time
         //close game
         _ = JS.InvokeVoidAsync("DestroyGame"); 
         // Clean up the reference when the user navigates away
@@ -42,13 +45,16 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await Task.Delay(100);
+        // If it's the first time OR we are returning to the page and game isn't running
+        if (firstRender || !IsGameStarted){
+            IsGameStarted = true;
+            await Task.Delay(300);//time for DOM to load
             currentPlayer = session.CurrentUser as Player;
 
             if (currentPlayer != null)
             {
+                // Dispose old reference if it exists to be safe
+                objRef?.Dispose();
                 // Create the reference to THIS C# instance
                 objRef = DotNetObjectReference.Create(this);
 
