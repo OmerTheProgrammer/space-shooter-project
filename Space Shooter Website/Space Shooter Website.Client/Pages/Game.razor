@@ -31,7 +31,7 @@
         // Clean up the reference when the user navigates away
         objRef?.Dispose();
         //updated screen
-        session.OnGameStateChanged -= StateHasChanged;
+        session.UpdateScreenFunc -= StateHasChanged;
     }
 
     [JSInvokable]
@@ -39,7 +39,7 @@
     {
         if (api is ApiService apiService && currentPlayer != null)
         {
-            session.SaveRun(apiService, won);
+            session.SaveRun(apiService, won, JS);
         }
     }
 

@@ -122,11 +122,11 @@
         if (firstRender)
         {
             // Subscribe to updates from the Session
-            session.OnGameStateChanged += HandleStateChange;
+            session.UpdateScreenFunc += HandleStateChange;
             // 1. Get the player
             currentPlayer = session.CurrentUser as Player;
         }
     }
 
-    public void Dispose() => session.OnGameStateChanged -= HandleStateChange;
+    public void Dispose() => session.UpdateScreenFunc -= HandleStateChange;
 }

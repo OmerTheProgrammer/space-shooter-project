@@ -70,15 +70,21 @@
 </nav>
 
 @code {
-    // private void HandleLogout()
-    // {
-    //     // 1. Clear the singleton data
-    //     session.Logout();
+    protected override void OnInitialized()
+    {
+        // Subscribe to session changes
+        session.UpdateScreenFunc += RefreshNavbar;
+    }
 
-    //     // 2. Force the Navbar to re-render (so 'Log In' button reappears)
-    //     StateHasChanged();
+    private void RefreshNavbar()
+    {
+        // InvokeAsync ensures the refresh happens on the UI thread
+        InvokeAsync(StateHasChanged);
+    }
 
-    //     // 3. Redirect to home or login
-    //     NavManager.NavigateTo("Log In");
-    // }
+    public void Dispose()
+    {
+        // Always unsubscribe to avoid memory leaks
+        session.UpdateScreenFunc -= RefreshNavbar;
+    }
 }
