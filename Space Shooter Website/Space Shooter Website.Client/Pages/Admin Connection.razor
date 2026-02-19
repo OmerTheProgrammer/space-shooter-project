@@ -52,6 +52,13 @@
 @code {
     private string adminKey = "";
     private string errorMessage = "";
+    private string secretKeyFromApi?;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Pull the key from your API service when the page loads
+        secretKeyFromApi = await api.GetAdminKeyAsync();
+    }
 
     // The logic formerly in the JavaScript Submit() function
     private async void HandleSubmit()
@@ -64,11 +71,12 @@
             return;
         }
 
-        if (adminKey == "superbaruch@17")
+        if (TextHasher.Hash(adminKey) == secretKeyFromApi)
         {
             // Update the Session state
             session.IsAdmin = true;
-            await JS.InvokeVoidAsync("print", "Admin needs to be inserted in DB");
+            await JS.InvokeVoidAsync("ShowAlert", "Admin needs to be inserted in DB");
+            Console.WriteLine("Admin needs to be inserted in DB");
             // Redirect to Admin View
             NavManager.NavigateTo("/Admin Dashboard");
         }

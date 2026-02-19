@@ -29,6 +29,6 @@
 //    return false;
 //}
 
-function print(msg) {
+window.ShowAlert = (msg) => {
     alert(msg);
 }

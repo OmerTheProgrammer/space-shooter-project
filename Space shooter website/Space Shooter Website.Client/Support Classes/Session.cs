@@ -114,8 +114,8 @@ namespace Space_Shooter_Website.Client.Support_Classes
                     //    CurrentRun
                     //);
                     //temp remamber to delete in call Game.SaveGameResult() and here at func title
-                    await JS.InvokeVoidAsync("print", "Saving " + CurrentRun + " To DB.");
-                    Console.WriteLine();
+                    await JS.InvokeVoidAsync("ShowAlert", "Saving " + CurrentRun + " To DB.");
+                    Console.WriteLine("Saving " + CurrentRun + " To DB.");
 
                 }
                 catch (Exception ex)
