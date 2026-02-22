@@ -1315,7 +1315,5 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
         window.gameInstance.destroy(true);
         window.gameInstance = null;
     }
-    console.log("Attempting to boot Phaser...");
     window.gameInstance = new Phaser.Game(config);
-    console.log("Phaser constructor finished.");
 };
