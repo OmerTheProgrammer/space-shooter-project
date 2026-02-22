@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Client_Manager___API
 {
-    public class AdminSettings
+    public class ConfigSettings
     {
         public string AdminKey { get; set; } = string.Empty;
     }

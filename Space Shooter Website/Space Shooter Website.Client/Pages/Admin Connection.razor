@@ -52,12 +52,18 @@
 @code {
     private string adminKey = "";
     private string errorMessage = "";
-    private string secretKeyFromApi?;
+    private string? secretKeyFromApi;
 
     protected override async Task OnInitializedAsync()
     {
         // Pull the key from your API service when the page loads
-        secretKeyFromApi = await api.GetAdminKeyAsync();
+        ConfigSettings configSettings = await api.GetAdminKey();
+        secretKeyFromApi = configSettings.AdminKey;
+        if (secretKeyFromApi == "")
+        {
+            errorMessage = "Key Not Found, try a diffrent time.";
+            return;
+        }
     }
 
     // The logic formerly in the JavaScript Submit() function
@@ -68,6 +74,12 @@
         if (string.IsNullOrWhiteSpace(adminKey))
         {
             errorMessage = "Please fill in the field.";
+            return;
+        }
+
+        if (secretKeyFromApi == "")
+        {
+            errorMessage = "Key Not Found, try a diffrent time.";
             return;
         }
 

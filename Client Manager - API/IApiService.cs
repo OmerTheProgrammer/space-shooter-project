@@ -12,8 +12,10 @@ namespace Client_Manager___API
 {
     public interface IApiService
     {
+        public Task<ConfigSettings> GetAdminKey();
+
         #region select all:
-            public Task<AdminsTable> GetAllAdmins();
+        public Task<AdminsTable> GetAllAdmins();
         
             public Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel();
 
