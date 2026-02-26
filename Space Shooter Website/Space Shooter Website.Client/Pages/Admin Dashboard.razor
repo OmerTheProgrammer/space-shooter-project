@@ -1,4 +1,5 @@
 ﻿@page "/Admin Dashboard"
+@using System.Reflection
 @using Model.Tables
 @using Model.Entitys
 @using Client_Manager___API
@@ -14,8 +15,8 @@
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col text-center">
-                <h1 class="display-4 text">Admin Management System</h1>
-                <p class="text-muted text">Connected to: @apiBaseUrl</p>
+                <h1 class="display-4 text">Reflection Admin Management</h1>
+                <p class="text-muted text">Managing: @activeTab.ToUpper()</p>
             </div>
         </div>
 
@@ -31,84 +32,103 @@
         {
             <div class="card shadow">
                 <div class="card-header bg-dark">
-                    <ul class="nav nav-tabs card-header-tabs" id="adminTabs" role="tablist">
+                    <ul class="nav nav-tabs card-header-tabs">
                         <li class="nav-item">
                             <button class="nav-link @(activeTab == "users" ? "active" : "")"
-                            @onclick='() => SetTab("users")'>Users</button>
+                                @onclick='() => SetTab("users")'>
+                                Users
+                            </button>
                         </li>
                         <li class="nav-item">
                             <button class="nav-link @(activeTab == "admins" ? "active" : "")"
-                            @onclick='() => SetTab("admins")'>Admins</button>
+                                @onclick='() => SetTab("admins")'>
+                                Admins
+                        </button>
                         </li>
                         <li class="nav-item">
                             <button class="nav-link @(activeTab == "players" ? "active" : "")"
-                            @onclick='() => SetTab("players")'>Players</button>
+                                    @onclick='() => SetTab("players")'>
+                                Players
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "groups" ? "active" : "")"
+                                    @onclick='() => SetTab("groups")'>
+                                Groups
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "playersAndgroups" ? "active" : "")"
+                                    @onclick='() => SetTab("playersAndgroups")'>
+                                PlayersAndGroups
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "enemiesInLastLevel" ? "active" : "")"
+                                    @onclick='() => SetTab("enemiesInLastLevel")'>
+                                EnemiesInLastLevel
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "profileEditRequests" ? "active" : "")"
+                                    @onclick='() => SetTab("profileEditRequests")'>
+                                ProfileEditRequests
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "requestsData" ? "active" : "")"
+                                    @onclick='() => SetTab("requestsData")'>
+                                RequestsData
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "runsInfo" ? "active" : "")"
+                                    @onclick='() => SetTab("runsInfo")'>
+                                RunsInfo
+                            </button>
                         </li>
                     </ul>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4 border-end">
-                            <h4 class="title">Manage @activeTab.ToUpper()</h4>
+                        <div class="col-md-3 border-end">
+                            <h4 class="title">Controls</h4>
                             <div class="form-group mb-3">
                                 <label class="subtitle">Target ID:</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" @bind="targetId" placeholder="ID" />
-                                    <button class="btn btn-outline-primary" @onclick="FetchItemById">Go</button>
+                                    <input type="number" class="form-control" @bind="targetId" />
+                                    <button class="btn btn-primary" @onclick="FetchItemById">Go</button>
                                 </div>
                             </div>
-
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                                <button class="btn btn-success">Add New</button>
-                                <button class="btn btn-warning">Update</button>
-                                <button class="btn btn-danger">Delete</button>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success" @onclick="RefreshData">Refresh Table</button>
+                                <button class="btn btn-danger">Delete Selected</button>
                             </div>
                         </div>
 
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="table-responsive" style="max-height: 600px;">
-                                @if (activeTab == "users")
-                                {
-                                    <table class="table table-hover table-striped">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th class="subtitle">ID</th>
-                                                <th class="subtitle">Username</th>
-                                                <th class="subtitle">Email</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var user in usersTable)
+                                <table class="table table-hover table-striped border">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            @foreach (var prop in GetCurrentProperties())
                                             {
-                                                <tr>
-                                                    <td class ="text">@user.Idx</td>
-                                                    <td class="text">@user.Username</td>
-                                                    <td class="text">@user.Email</td>
-                                                </tr>
+                                                <th class="subtitle">@prop.Name</th>
                                             }
-                                        </tbody>
-                                    </table>
-                                }
-                                else if (activeTab == "admins")
-                                {
-                                    <table class="table table-hover table-striped">
-                                        <thead class="table-dark">
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in GetCurrentData())
+                                        {
                                             <tr>
-                                                <th class="subtitle">ID</th>
-                                                <th class="subtitle">Admin Name</th>
+                                                @foreach (var prop in GetCurrentProperties())
+                                                {
+                                                    <td class="text">@prop.GetValue(item)</td>
+                                                }
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var admin in adminsTable)
-                                            {
-                                                <tr>
-                                                    <td class="text">@admin.Idx</td>
-                                                    <td class ="text">@admin.Username</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -122,22 +142,24 @@
     private bool isLoading = true;
     private string activeTab = "users";
     private int targetId;
-    private string apiBaseUrl = "";
 
-    // Data Tables from your API
     private UsersTable usersTable = new();
     private AdminsTable adminsTable = new();
     private PlayersTable playersTable = new();
+    private GroupsTable groupsTable = new();
+    private PlayersAndGroupsTable playersAndgroupsTable = new();
+    private EnemiesInLastLevelTable enemiesInLastLevelTable = new();
+    private ProfileEditRequestsTable profileEditRequestsTable = new();
+    private RequestsDataTable requestsDataTable = new();
+    private RunsInfoTable runsInfoTable = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // Security Check: Ensure user is admin
         if (!session.IsAdmin)
         {
             NavManager.NavigateTo("/Admin Connection");
             return;
         }
-
         await RefreshData();
     }
 
@@ -146,26 +168,55 @@
         isLoading = true;
         try
         {
-            // Fetching data using your newly fixed API Service
             usersTable = await api.GetAllUsers();
             adminsTable = await api.GetAllAdmins();
             playersTable = await api.GetAllPlayers();
+            groupsTable = await api.GetAllGroups();
+            playersAndgroupsTable = await api.GetAllPlayersAndGroups();
+            enemiesInLastLevelTable = await api.GetAllEnemiesInLastLevel();
+            profileEditRequestsTable = await api.GetAllProfileEditRequests();
+            requestsDataTable = await api.GetAllRequestsData();
+            runsInfoTable = await api.GetAllRunsInfo();
         }
-        finally
-        {
-            isLoading = false;
-        }
+        finally { isLoading = false; }
     }
 
     private void SetTab(string tabName) => activeTab = tabName;
 
+    // --- Reflection Funcs ---
+    ///<summary>
+    ///returns the full table based on activeTab's name
+    ///</summary>
+    private IEnumerable<object> GetCurrentData()
+    {
+        return activeTab switch
+        {
+            "admins" => adminsTable,
+            "users" => usersTable, //these implement IEnumerable
+            "players" => playersTable,
+            "groups" => groupsTable,
+            "playersAndgroups" => playersAndgroupsTable,
+            "enemiesInLastLevel" => enemiesInLastLevelTable,
+            "profileEditRequests" => profileEditRequestsTable,
+            "requestsData" => requestsDataTable,
+            "runsInfo" => runsInfoTable,
+            _ => new List<object>()
+        };
+    }
+
+    private PropertyInfo[] GetCurrentProperties()
+    {
+        var data = GetCurrentData();
+        var firstItem = data.Cast<object>().FirstOrDefault();//gets the first item 
+        if (firstItem == null) return Array.Empty<PropertyInfo>(); // or empty prop set if first item is null.
+
+        // Gets all public properties of the specific object (User, Admin, Player or others)
+        return firstItem.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+    }
+
     private async Task FetchItemById()
     {
-        // Example: Fetching specific admin using your GetAdminByIdx method
-        if (activeTab == "admins")
-        {
-            var admin = await api.GetAdminByIdx(targetId);
-            // logic to populate form...
-        }
+        if (activeTab == "admins") await api.GetAdminByIdx(targetId);
+        //not done?
     }
 }
