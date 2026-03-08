@@ -13,7 +13,7 @@ namespace Client_Manager___API
     public interface IApiService
     {
         #region select all:
-        public Task<AdminsTable> GetAllAdmins();
+            public Task<AdminsTable> GetAllAdmins();
         
             public Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel();
 
@@ -119,5 +119,7 @@ namespace Client_Manager___API
 
             public Task<(int rows, string? error)> DeleteUser(int idx);
         #endregion
+
+        public Task<ConfigSettings> GetAdminKey();
     }
 }
