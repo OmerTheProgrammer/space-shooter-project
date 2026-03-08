@@ -3,7 +3,7 @@
   <Class Name="Client_Manager___API.ApiService" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="4.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEwQIUIsIANBCIVMAAABBgEGA4EEQQQAAQCAhaUAAVE=</HashCode>
+      <HashCode>AEwYIUIsIANBCIVMAEABBgEGA4EEQQQAAQCAhaUAAVE=</HashCode>
       <FileName>ApiService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Orientation="Left" Position="0.1" />
@@ -18,7 +18,7 @@
   <Interface Name="Client_Manager___API.IApiService" Collapsed="true">
     <Position X="2" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAgAAQIsIANBCIXMAAABBgEEA4AEQQQAAQCAgaUAAVE=</HashCode>
+      <HashCode>AAgAAQIsIANBCIVMAEABBgEEA4AEQQQAAQCAgaUAAVE=</HashCode>
       <FileName>IApiService.cs</FileName>
     </TypeIdentifier>
   </Interface>
