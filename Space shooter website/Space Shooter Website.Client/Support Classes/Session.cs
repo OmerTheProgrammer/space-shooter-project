@@ -1,6 +1,7 @@
-﻿using Model.Entitys;
-using Client_Manager___API;
+﻿using Client_Manager___API;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Model.Entitys;
 using ViewModel;
 
 namespace Space_Shooter_Website.Client.Support_Classes
@@ -17,11 +18,37 @@ namespace Space_Shooter_Website.Client.Support_Classes
         public bool IsEndless { get; set; } = false;
 
         public bool IsSettingsVisible { get; set; } = false;
-        public void ToggleSettings()
+
+        public void ToggleSettings(IJSRuntime JSRuntime)
         {
             IsSettingsVisible = !IsSettingsVisible;
+            JSRuntime.InvokeVoidAsync("UpdatePaused", IsSettingsVisible);
             // This triggers StateHasChanged in the Layout because it's subscribed
-            OnGameStateChanged?.Invoke();
+            UpdateScreenFunc?.Invoke();
+        }
+
+        public void ToggleMusic(IJSRuntime JSRuntime)
+        {
+            Player CurrentPlayer = CurrentUser as Player;
+            if (CurrentPlayer != null)
+            {
+                CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
+                JSRuntime.InvokeVoidAsync("UpdateUserMusicPrefrence", CurrentPlayer.IsMusicOn);
+            }
+            // This triggers StateHasChanged in the Layout because it's subscribed
+            UpdateScreenFunc?.Invoke();
+        }
+
+        public void ToggleSound(IJSRuntime JSRuntime)
+        {
+            Player CurrentPlayer = CurrentUser as Player;
+            if (CurrentPlayer != null)
+            {
+                CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
+                JSRuntime.InvokeVoidAsync("UpdateUserSoundPrefrence", CurrentPlayer.IsSoundOn);
+            }
+            // This triggers StateHasChanged in the Layout because it's subscribed
+            UpdateScreenFunc?.Invoke();
         }
 
         public RunInfo CurrentRun { get; set; } = new RunInfo();
@@ -31,10 +58,11 @@ namespace Space_Shooter_Website.Client.Support_Classes
             CurrentUser = null;
             IsAdmin = false;
             IsPlayer = false;
+            UpdateScreenFunc?.Invoke();
         }
 
         //HUD
-        public event Action? OnGameStateChanged;
+        public event Action? UpdateScreenFunc;
         public void UpdateGameStats(int hp, int score, int level, int shield, int blasters, int killed, int maxEnemies, bool isEndless)
         {
             if(CurrentRun != null)
@@ -62,7 +90,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
             }
 
             // Notify the Layout to re-render the HUD
-            OnGameStateChanged?.Invoke();
+            UpdateScreenFunc?.Invoke();
         }
 
         //public void ResetRun()
@@ -70,10 +98,10 @@ namespace Space_Shooter_Website.Client.Support_Classes
         //    CurrentRun = new RunInfo();
         //    Progress = "0%";
         //    IsEndless = false;
-        //    OnGameStateChanged?.Invoke();
+        //    UpdateScreenFunc?.Invoke();
         //}
 
-        public async void SaveRun(ApiService api, bool HadWon)
+        public async void SaveRun(ApiService api, bool HadWon, IJSRuntime JS)
         {
             CurrentRun.Player = CurrentUser as Player;
             if (CurrentUser != null && CurrentRun.Player != null)
@@ -85,7 +113,10 @@ namespace Space_Shooter_Website.Client.Support_Classes
                     //await api.InsertRunInfo(
                     //    CurrentRun
                     //);
+                    //temp remamber to delete in call Game.SaveGameResult() and here at func title
+                    await JS.InvokeVoidAsync("ShowAlert", "Saving " + CurrentRun + " To DB.");
                     Console.WriteLine("Saving " + CurrentRun + " To DB.");
+
                 }
                 catch (Exception ex)
                 {

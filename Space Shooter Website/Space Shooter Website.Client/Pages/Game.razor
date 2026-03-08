@@ -7,7 +7,8 @@
 @inject IJSRuntime JS
 @inject Session session
 @inject IApiService api
-@rendermode InteractiveServer
+@implements IDisposable
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 
 <PageTitle>Space Shooter - Game</PageTitle>
 
@@ -19,12 +20,18 @@
 
 @code {
     private Player? currentPlayer;
+    private bool IsGameStarted = false;
+
     private DotNetObjectReference<Game>? objRef;
-    public void Dispose()
+    public async void Dispose()
     {
+        IsGameStarted = false; // Reset the flag so it can restart next time
+        //close game
+        _ = JS.InvokeVoidAsync("DestroyGame"); 
         // Clean up the reference when the user navigates away
         objRef?.Dispose();
-        session.OnGameStateChanged -= StateHasChanged;
+        //updated screen
+        session.UpdateScreenFunc -= StateHasChanged;
     }
 
     [JSInvokable]
@@ -32,18 +39,22 @@
     {
         if (api is ApiService apiService && currentPlayer != null)
         {
-            session.SaveRun(apiService, won);
+            session.SaveRun(apiService, won, JS);
         }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
+        // If it's the first time OR we are returning to the page and game isn't running
+        if (firstRender || !IsGameStarted){
+            IsGameStarted = true;
+            await Task.Delay(300);//time for DOM to load
             currentPlayer = session.CurrentUser as Player;
 
             if (currentPlayer != null)
             {
+                // Dispose old reference if it exists to be safe
+                objRef?.Dispose();
                 // Create the reference to THIS C# instance
                 objRef = DotNetObjectReference.Create(this);
 
@@ -61,7 +72,7 @@
     [JSInvokable]
     public void ToggleSettingsMenu()
     {
-        session.ToggleSettings();
+        session.ToggleSettings(JS);
     }
 
     [JSInvokable]

@@ -59,7 +59,7 @@ a:hover, .link:hover {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    max-width: 100%; 
+    max-width : 100%; 
     height: auto;
 }
 
@@ -167,4 +167,20 @@ footer {
     color: #ff4d4d;
     text-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
     font-weight: bold;
+}
+
+.card {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00FFAB;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
+    z-index: 1;
+}
+
+/*avatar design*/
+.user-avatar {
+    height: 24vh;
+    width: 12vw;
+    filter: drop-shadow(0 0 10px #00FFAB);
 }

@@ -1,8 +1,10 @@
-﻿using Model.Data_Transfer_Objects;
+﻿using Microsoft.Extensions.Configuration;
+using Model.Data_Transfer_Objects;
 using Model.Entitys;
 using Model.Tables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
@@ -10,9 +12,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using System.IO;
 using ViewModel;
+using ViewModel.DBs;
 
 namespace Client_Manager___API
 {
@@ -36,20 +37,29 @@ namespace Client_Manager___API
             };
 
         public ApiService():this(GetServerUrl()) { }
+        private static IConfiguration _config;
 
         private static string GetServerUrl()
         {
             // Load configuration from appsettings.Development.json Use AppContext.BaseDirectory
             // to find the folder where the json is located
-            IConfiguration _config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
+            // Climb up to the project root where the .json files actually live
+            // 1. Start at ...\Space Shooter Website\Space Shooter Website\bin\Debug\net8.0\
+            // 2. Climb 5 levels to reach the 'space-shooter-project' root
+            // Level 1: net8.0 -> Debug
+            // Level 2: Debug -> bin
+            // Level 3: bin -> Inner Project Folder
+            // Level 4: Inner Project Folder -> Outer Project Folder
+            // Level 5: Outer Project Folder -> Repository Root
+            string projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "Client Manager - API"));
+            _config = new ConfigurationBuilder()
+                .SetBasePath(projectRoot)
                 .AddJsonFile("appsettings.json", optional: true) // Standard name
                 .AddJsonFile("appsettings.Development.json", optional: true) // Overlay name
                 .Build();
 
             // The tunnel URL from configuration
             string tunnelUrl = _config["ConnectionStrings:SpaceShooterServer"];
-
             // Check if the tunnel is reachable by sending a HEAD request with a short timeout from unrlated HttpClient
             using (var client = new HttpClient())
             {
@@ -64,8 +74,8 @@ namespace Client_Manager___API
                     request.Headers.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
                     var response = client.Send(request);
 
-                    //are up and responsive or not found (server is running but endpoint doesn't exist yet)
-                    if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    //are up and responsive?
+                    if (response.IsSuccessStatusCode)
                     {
                         Console.WriteLine(">>> [OK] Tunnel is alive. Using it");
                         return tunnelUrl;
@@ -581,5 +591,12 @@ namespace Client_Manager___API
             return Delete($"/api/Delete/UserDeletor", idx);
         }
         #endregion
+
+        public async Task<ConfigSettings> GetAdminKey()
+        {
+            return new ConfigSettings() {
+                AdminKey = TextHasher.Hash(_config["AdminSettings:AdminKey"] ?? "")
+            };
+        }
     }
 }

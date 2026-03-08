@@ -4,19 +4,12 @@
     min-height: 80vh;
 }
 
-.login-card {
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid #00FFAB;
+.login.card {
+    background: rgba(10, 10, 20, 0.9); /* Slightly deeper space blue */
+    border: 2px solid #00f2ff; /* Change green to match the "Home" glow */
     border-radius: 15px;
     padding: 40px;
-    box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
-}
-
-/*avatar design*/
-.user-avatar {
-    height: 24vh;
-    width: 12vw;
-    filter: drop-shadow(0 0 10px #00FFAB);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2); /* Cyan glow */
 }
 
 /*input fields design*/
@@ -28,11 +21,7 @@
     margin-bottom: 5px;
 }
 .login-card {
-    background: rgba(10, 10, 20, 0.9); /* Slightly deeper space blue */
-    border: 2px solid #00f2ff; /* Change green to match the "Home" glow */
-    border-radius: 15px;
-    padding: 40px;
-    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2); /* Cyan glow */
+
 }
 
 .login-input {

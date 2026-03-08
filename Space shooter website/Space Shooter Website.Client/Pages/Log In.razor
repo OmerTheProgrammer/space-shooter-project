@@ -68,7 +68,7 @@
     private string password = "";
     private string errorMessage = "";
     private bool isProcessing = false; // Prevents double-clicks
-    private string loginCardClass = "col-md-6 login-card";
+    private string loginCardClass = "col-md-6 login card";
     private string passwordInputType = "password"; // Default to hidden
     private string scanningText = "SCANNING...";
 
@@ -81,13 +81,13 @@
     private async Task TriggerError(string message)
     {
         errorMessage = message;
-        loginCardClass = "col-md-6 login-card";
+        loginCardClass = "col-md-6 login card";
         isProcessing = false;
         StateHasChanged(); // Force Blazor to render without the shake
 
         await Task.Delay(10);
 
-        loginCardClass = "col-md-6 login-card shake"; // Triggers the CSS shake
+        loginCardClass = "col-md-6 login card shake"; // Triggers the CSS shake
     }
 
     private void FillPlayerDefault()
@@ -95,7 +95,7 @@
         username = "StarPilot_Ace";
         password = "p@55word";
         errorMessage = "";
-        loginCardClass = "col-md-6 login-card";
+        loginCardClass = "col-md-6 login card";
         StateHasChanged();
     }
 
@@ -104,7 +104,7 @@
         username = "AdminKappa";
         password = "K@pr0pa";
         errorMessage = "";
-        loginCardClass = "col-md-6 login-card";
+        loginCardClass = "col-md-6 login card";
         StateHasChanged();
     }
 

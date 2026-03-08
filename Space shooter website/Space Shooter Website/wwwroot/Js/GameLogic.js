@@ -45,6 +45,8 @@ class Counter {
             align: 'center',
         });
         this.timeText.setOrigin(0.5, 0.5); // Center the text
+        //to unpause to run counter
+        paused = false
 
         this.countdownEvent = currentScene.time.addEvent({
             delay: 1000,
@@ -56,6 +58,12 @@ class Counter {
     }
 
     UpdateCounter() {
+        if (paused) {
+            this.countdownEvent.paused = true;
+            return;
+        }
+        
+        this.countdownEvent.paused = false;
         this.timeText.setText(this.remainingTime);
         this.remainingTime -= 1;
 
@@ -446,7 +454,11 @@ class End_scene extends Phaser.Scene {
                 score += 5000;
                 end_text(tico_text, 'losing');
             }
-            DotNet.invokeMethodAsync('Space_Shooter_Website.Client', 'SaveGameResult', score, level);
+            if (window.dotNetHelper) {
+                window.dotNetHelper.invokeMethodAsync('SaveGameResult',
+                    win,
+                );
+            }
             ending_coldown = currentScene.time.now + 5000;
         }
     }
@@ -736,7 +748,7 @@ function collectPowerUp(sprite, powerUp) {
                     score += 140
                 }
             } else if (powerUp.texture.key === 'powerUp ' + power_up_types[1]) {//gold star
-                score += 500;
+                score += 5000;
             }
             if (powerUp.texture.key === 'powerUp ' + power_up_types[2]) {//red pill
                 score += 5;
@@ -939,7 +951,7 @@ function update_music() {
     }
     if (is_music_on && music_isnt_active && bg_music.coldown < scenes[0].time.now) {
         if (!bg_music) {
-            bg_music = scenes[0].sound.add('battle music', { volume: 0.1, loop: true });
+            bg_music = scenes[0].sound.add('battle music', { volume: 0.3, loop: true });
         }
         bg_music.play();
         music_isnt_active = false;
@@ -985,6 +997,15 @@ function rescale(scale) {
     }
 
 }
+
+function UpdatePauseGameState() {
+    if (paused) {
+        currentScene.physics.pause();
+    } else {
+        currentScene.physics.resume();
+    }
+}
+
 function manu_actions() {
     resize();
     //hides counter
@@ -998,11 +1019,7 @@ function manu_actions() {
         if (currentScene.time.now > hide_setting_coldown) {
             // Toggle local game pause state
             paused = !paused;
-            if (paused) {
-                currentScene.physics.pause();
-            } else {
-                currentScene.physics.resume();
-            }
+            UpdatePauseGameState();
 
             if (window.dotNetHelper) {
                 window.dotNetHelper.invokeMethodAsync('ToggleSettingsMenu');
@@ -1015,13 +1032,15 @@ function manu_actions() {
         cursors.P_key.wasClicked = false;
     }
 
-    //next level button
-    if (cursors.ENTER_key.isDown && scenes[1].next_level_button.visible) {
-        scenes[1].next_level_button.emit('pointerdown');
-    }
-    //Level selection button
-    if (cursors.BACKSPACE_key.isDown && scenes[1].level_select_button.visible) {
-        scenes[1].level_select_button.emit('pointerdown');
+    if (currentScene == scenes[1]) {
+        //next level button
+        if (cursors.ENTER_key.isDown && scenes[1].next_level_button.visible) {
+            scenes[1].next_level_button.emit('pointerdown');
+        }
+        //Level selection button
+        if (cursors.BACKSPACE_key.isDown && scenes[1].level_select_button.visible) {
+            scenes[1].level_select_button.emit('pointerdown');
+        }
     }
 }
 
@@ -1213,6 +1232,56 @@ function update_hud_in_blazor() {
     }
 }
 
+//stop game when out of the page
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        //if the game isn't already paused
+        if (!paused) {
+            console.log("Tab hidden: Pausing game");
+            // Use the existing bridge to sync with Blazor
+            if (window.dotNetHelper) {
+                window.dotNetHelper.invokeMethodAsync('ToggleSettingsMenu');
+            }
+        }
+    }
+});
+
+window.UpdateUserMusicPrefrence = (IsMusicOn) => {
+    //boolean IsMusicOn is sent from c# when the user changes his music prefrence in the settings menu
+    is_music_on = IsMusicOn; //to trigger the music update in the next frame
+}
+
+window.UpdateUserSoundPrefrence = (IsSoundOn) => {
+    //boolean IsSoundOn is sent from c# when the user changes his sound prefrence in the settings menu
+    is_sound_on = IsSoundOn; //to trigger the sound update in the next frame
+}
+
+window.UpdatePaused = (IsSettingsVisible) => {
+    //pause when Settings Is Visible
+    paused = IsSettingsVisible;
+    //update the counter to pause/unpause
+    if (The_counter && The_counter.countdownEvent) {
+        The_counter.countdownEvent.paused = paused;
+    }
+    UpdatePauseGameState();
+}
+
+window.DestroyGame = () => {
+    window.dotNetHelper = null;
+    if (window.gameInstance) {
+        // only destroy the instance but keep the global plugins intact
+        window.gameInstance.destroy(false);
+        window.gameInstance = null;
+
+        // Force-clear the HTML so the old canvas is definitely gone
+        const container = document.getElementById('game_section');
+        if (container) container.innerHTML = "";
+
+        console.log("Game Instance Closed.");
+    }
+};
+
+
 window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
 
     //recives data from c#
@@ -1244,6 +1313,7 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
     //start's the game
     if (window.gameInstance) {
         window.gameInstance.destroy(true);
+        window.gameInstance = null;
     }
     window.gameInstance = new Phaser.Game(config);
 };

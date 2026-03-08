@@ -1,61 +1,47 @@
 ﻿@page "/Admin Connection"
-@* adding global libs*@
-@using Model.Entitys
-@using Model.Tables
-@using Client_Manager___API
 @using Space_Shooter_Website.Client.Support_Classes
-@* adding global vars*@
+@using Client_Manager___API;
 @inject NavigationManager NavManager
+@inject Session session
 @inject IJSRuntime JS
 @inject IApiService api
-@inject Session session
 @rendermode InteractiveServer
 
-<PageTitle>Admin Connection - Space Shooter</PageTitle>
-
-<section class="login-container">
+<PageTitle>Admin Connection</PageTitle>
+<section>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class=@loginCardClass>
-                <div class="text-center mb-4">
-                    <img src="Assets/User Avatars\user.png" class="user-avatar" alt="User Icon" />
-                    <h1 class="title mt-3">Log in</h1>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label class="login-label">Pilot Name:</label>
-                    <input type="text" @bind="username" class="login-input" placeholder="Enter username..." />
-                </div>
-
-                <div class="form-group mb-4">
-                    <label class="login-label">Password:</label>
-                    <div class="password-wrapper" style="position: relative;">
-                        <input type="@passwordInputType" @bind="password" class="login-input" placeholder="Enter password..." />
-                        <button type="button" @onclick="TogglePasswordVisibility" class="btn-eye">
-                            @(passwordInputType == "password" ? "👁️" : "🙈")
-                        </button>
-                    </div>
-                </div>
-
-                @if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    <div class="error-text mb-3 text-center">@errorMessage</div>
-                }
-
-                <div class="row">
-                    <div class="col-3">
-                        <button class="btn-side" @onclick="FillPlayerDefault">Player Defult</button>
-                    </div>
-                    <div class="col-3">
-                        <button class="btn-side" @onclick="FillAdminDefault">Admin Defult</button>
-                    </div>
-                    <div class="col-3">
-                        <button class="btn-submit" @onclick="HandleLogin">
-                            @(isProcessing? scanningText : "SUBMIT")
-                        </button>
-                    </div>
-                    <div class="col-3">
-                        <button class="btn-side" @onclick='() => NavManager.NavigateTo("register")'>REGISTER</button>
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col text-center">
+                                <img src="Assets/User Avatars\admin.png" class="user-avatar" alt="Admin Icon" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <h1 class="admin-connection title">Admin Connection</h1>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-7">
+                                <label class="input text">Key: </label>
+                                <div class="form-group">
+                                    @* bind-value updates the 'adminKey' variable automatically *@
+                                    <input type="password" class="input_box" @bind-value="adminKey" placeholder="Key: " />
+                                    <div class="text-center">
+                                        <p id="error_text" class="error-msg">@errorMessage</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button @onclick="HandleSubmit" class="btn btn-success btn-block btn-lg entering_button">Submit</button>
+                                    <button @onclick="ReLogAsAdmin" class="btn btn-info btn-block btn-lg entering_button">ReLog as Admin</button>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -64,116 +50,58 @@
 </section>
 
 @code {
-    private string username = "";
-    private string password = "";
+    private string adminKey = "";
     private string errorMessage = "";
-    private bool isProcessing = false; // Prevents double-clicks
-    private string loginCardClass = "col-md-6 login-card";
-    private string passwordInputType = "password"; // Default to hidden
-    private string scanningText = "SCANNING...";
+    private string? secretKeyFromApi;
 
-
-    private void TogglePasswordVisibility()
+    protected override async Task OnInitializedAsync()
     {
-        passwordInputType = (passwordInputType == "password") ? "text" : "password";
-    }
-
-    private async Task TriggerError(string message)
-    {
-        errorMessage = message;
-        loginCardClass = "col-md-6 login-card";
-        StateHasChanged(); // Force Blazor to render without the shake
-
-        await Task.Delay(10);
-
-        loginCardClass = "col-md-6 login-card shake"; // Triggers the CSS shake
-    }
-
-    private void FillPlayerDefault()
-    {
-        username = "StarPilot_Ace";
-        password = "p@55word";
-        errorMessage = "";
-        loginCardClass = "col-md-6 login-card";
-        StateHasChanged();
-    }
-
-    private void FillAdminDefault()
-    {
-        username = "AdminKappa";
-        password = "K@pr0pa";
-        errorMessage = "";
-        loginCardClass = "col-md-6 login-card";
-        StateHasChanged();
-    }
-
-    private async Task HandleLogin()
-    {
-        errorMessage = "";
-        isProcessing = true;
-
-        // Reset the text immediately before starting the loop
-        scanningText = "SCANNING...";
-        _ = StartScanningAnimation();
-
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        // Pull the key from your API service when the page loads
+        ConfigSettings configSettings = await api.GetAdminKey();
+        secretKeyFromApi = configSettings.AdminKey;
+        if (secretKeyFromApi == "")
         {
-            // Use await here since TriggerError is now an async Task
-            await TriggerError("INPUT ERROR: Please fill in all fields.");
-            isProcessing = false;
+            errorMessage = "Key Not Found, try a diffrent time.";
+            return;
+        }
+    }
+
+    // The logic formerly in the JavaScript Submit() function
+    private async void HandleSubmit()
+    {
+        errorMessage = "";
+
+        if (string.IsNullOrWhiteSpace(adminKey))
+        {
+            errorMessage = "Please fill in the field.";
             return;
         }
 
-        try
+        if (secretKeyFromApi == "")
         {
-            var users_table = await api.GetAllUsers();
-
-            // If the API returned a 'new T()' because of a catch block in ApiService
-            if (users_table == null || !users_table.Any())
-            {
-                await TriggerError("COMMUNICATION FAILURE: Database is not responding.");
-                return;
-            }
-            var user = users_table.Find(u =>
-                u.Username == username &&
-                u.Password == TextHasher.Hash(password)
-            );
-
-            if (user == null)
-            {
-                await TriggerError("IDENTIFICATION FAILED: Invalid credentials.");
-                return;
-            }
-            else
-            {
-                session.CurrentUser = user;
-                var admins = await api.GetAllAdmins();
-                session.IsAdmin = admins.Any(a => a.Username == user.Username);
-
-                NavManager.NavigateTo("Level Selection", forceLoad: true);
-            }
+            errorMessage = "Key Not Found, try a diffrent time.";
+            return;
         }
-        catch (Exception ex)
+
+        if (TextHasher.Hash(adminKey) == secretKeyFromApi)
         {
-            errorMessage = "SYSTEM ERROR: " + ex.Message;
+            // Update the Session state
+            session.IsAdmin = true;
+            await JS.InvokeVoidAsync("ShowAlert", "Admin needs to be inserted in DB");
+            Console.WriteLine("Admin needs to be inserted in DB");
+            // Redirect to Admin View
+            NavManager.NavigateTo("/Admin Dashboard");
         }
-        finally
+        else
         {
-            isProcessing = false;
-            scanningText = "SCANNING...";
+            errorMessage = "Wrong Key!!!";
         }
     }
-    
-    private async Task StartScanningAnimation()
+
+    private void ReLogAsAdmin()
     {
-        string[] frames = { "SCANNING...", "SCANNING..", "SCANNING.", "SCANNING" };
-        int i = 0;
-        while (isProcessing)
-        {
-            scanningText = frames[i % frames.Length];
-            i++;
-            await InvokeAsync(StateHasChanged);
-            await Task.Delay(300); // Speed of the dots disappearing
-        }   
+        session.Logout();
+        NavManager.NavigateTo("/Log In");
+        StateHasChanged();
     }
 }

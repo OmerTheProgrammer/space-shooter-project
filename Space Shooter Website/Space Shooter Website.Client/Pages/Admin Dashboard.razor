@@ -1,116 +1,222 @@
 ﻿@page "/Admin Dashboard"
-@using Microsoft.AspNetCore.Components.Web
-@rendermode InteractiveWebAssembly
+@using System.Reflection
+@using Model.Tables
+@using Model.Entitys
+@using Client_Manager___API
+@using Space_Shooter_Website.Client.Support_Classes
+@inject IApiService api
 @inject NavigationManager NavManager
+@inject Session session
+@rendermode InteractiveServer
 
-<PageTitle>Admin Dashboard - Space Shooter</PageTitle>
+<PageTitle>Admin Dashboard</PageTitle>
 
-<section class="container content-container">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h1 class="credit-title">Thanks</h1>
+<section class="admin-dashboard">
+    <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col text-center">
+                <h1 class="display-4 text">Reflection Admin Management</h1>
+                <p class="text-muted text">Managing: @activeTab.ToUpper()</p>
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-12 text-center">
-            <h3 class="credit-subtitle">For Game Ideas:</h3>
-            <p class="credit-text text-md-start">
-                Project: Space Shooter (Redux, plus fonts and sounds) <br />
-                by <a href="https://www.kenney.nl/" target="_blank" rel="noopener noreferrer">Kenney Vleugels</a>,
-                <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">License (CC0)</a>.<br />
-                You may use these graphics in personal and commercial projects.
-            </p>
-            <p class="credit-text text-md-start">
-                Ron Michalashvili (Full Stack Developer) For The Draw Screen Idea.
-            </p>
-        </div>
-    </div>
+        @if (isLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading Data...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card shadow">
+                <div class="card-header bg-dark">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "users" ? "active" : "")"
+                                @onclick='() => SetTab("users")'>
+                                Users
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "admins" ? "active" : "")"
+                                @onclick='() => SetTab("admins")'>
+                                Admins
+                        </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "players" ? "active" : "")"
+                                    @onclick='() => SetTab("players")'>
+                                Players
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "groups" ? "active" : "")"
+                                    @onclick='() => SetTab("groups")'>
+                                Groups
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "playersAndgroups" ? "active" : "")"
+                                    @onclick='() => SetTab("playersAndgroups")'>
+                                PlayersAndGroups
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "enemiesInLastLevel" ? "active" : "")"
+                                    @onclick='() => SetTab("enemiesInLastLevel")'>
+                                EnemiesInLastLevel
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "profileEditRequests" ? "active" : "")"
+                                    @onclick='() => SetTab("profileEditRequests")'>
+                                ProfileEditRequests
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "requestsData" ? "active" : "")"
+                                    @onclick='() => SetTab("requestsData")'>
+                                RequestsData
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(activeTab == "runsInfo" ? "active" : "")"
+                                    @onclick='() => SetTab("runsInfo")'>
+                                RunsInfo
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 border-end">
+                            <h4 class="title">Controls</h4>
+                            <div class="form-group mb-3">
+                                <label class="subtitle">Target ID:</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" @bind="targetId" />
+                                    <button class="btn btn-primary" @onclick="FetchItemById">Go</button>
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success" @onclick="RefreshData">Refresh Table</button>
+                                <button class="btn btn-danger">Delete Selected</button>
+                            </div>
+                        </div>
 
-    <div class="row">
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">For Music:</h3>
-            <p class="credit-text text-md-start">
-                Piece: Rumores de la Caleta. <br />
-                Artist: Isaac Albéniz (1860–1909). <br />
-                Instruments: Piano. <br />
-                Written: 1887. <br />
-                License: Public Domain. <br />
-                Edited by: <a href="https://theouterlinux.gitlab.io" target="_blank" rel="noopener noreferrer">TheOuterLinux</a>.
-            </p>
-        </div>
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">For Graphic Design:</h3>
-            <p class="credit-text text-md-start">
-                <a href="https://www.youtube.com/@@SimpleSnippets"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Simple Snippets
-                </a>
-                <br />
-                Alex Chulkov (Graphic Designer).
-            </p>
-        </div>
-    </div>
-
-    <div class="row mb-5">
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">Textures:</h3>
-            <p class="credit-text text-md-start">
-                Project: Space Shooter, with Redux, plus fonts and sound, <br />
-                by <a href="https://www.kenney.nl/" target="_blank" rel="noopener noreferrer">Kenney Vleugels</a>,
-                <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">License (CC0)</a>.<br />
-                You may use these graphics in personal and commercial projects.
-            </p>
-            <p class="credit-text text-md-start">
-                <a href="https://www.youtube.com/@@SimpleSnippets"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Simple Snippets
-                </a> <br />
-                Alex Chulkov (Graphic Designer), For Buttons Design. <br />
-                <a href="https://stock.adobe.com/il?msockid=366afa902dce68d00efdefce2cb369ce"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Adobe stock
-                </a>
-            </p>
-        </div>
-        <div class="col-md-6 text-center">
-            <h3 class="credit-subtitle">Code Assistance:</h3>
-            <p class="credit-text text-md-start">
-                <a href="https://www.youtube.com/@@SimpleSnippets"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   data-enhance-nav="false">
-                    Visit Simple Snippets
-                </a> <br />
-                Gemini. <br />
-                Chat GPT 4 - Website Generator.
-            </p>
-        </div>
+                        <div class="col-md-9">
+                            <div class="table-responsive" style="max-height: 600px;">
+                                <table class="table table-hover table-striped border">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            @foreach (var prop in GetCurrentProperties())
+                                            {
+                                                <th class="subtitle">@prop.Name</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in GetCurrentData())
+                                        {
+                                            <tr>
+                                                @foreach (var prop in GetCurrentProperties())
+                                                {
+                                                    <td class="text">@prop.GetValue(item)</td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </section>
 
-@* This div creates space so the footer doesn't overlap the text *@
-<div style="height: 15vh;"></div>
-
 @code {
-    private readonly Dictionary<string, string> Urls = new()
-    {
-        { "youtube", "https://www.youtube.com/@SimpleSnippets" },
-        { "adobe", "https://stock.adobe.com/il" }
-    };
+    private bool isLoading = true;
+    private string activeTab = "users";
+    private int targetId;
 
-    private void Open(string key)
+    private UsersTable usersTable = new();
+    private AdminsTable adminsTable = new();
+    private PlayersTable playersTable = new();
+    private GroupsTable groupsTable = new();
+    private PlayersAndGroupsTable playersAndgroupsTable = new();
+    private EnemiesInLastLevelTable enemiesInLastLevelTable = new();
+    private ProfileEditRequestsTable profileEditRequestsTable = new();
+    private RequestsDataTable requestsDataTable = new();
+    private RunsInfoTable runsInfoTable = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        if (Urls.TryGetValue(key, out var url))
+        if (!session.IsAdmin)
         {
-            // forceLoad: true is the secret sauce that stops the JS crash
-            NavManager.NavigateTo(url, forceLoad: true);
+            NavManager.NavigateTo("/Admin Connection");
+            return;
         }
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        isLoading = true;
+        try
+        {
+            usersTable = await api.GetAllUsers();
+            adminsTable = await api.GetAllAdmins();
+            playersTable = await api.GetAllPlayers();
+            groupsTable = await api.GetAllGroups();
+            playersAndgroupsTable = await api.GetAllPlayersAndGroups();
+            enemiesInLastLevelTable = await api.GetAllEnemiesInLastLevel();
+            profileEditRequestsTable = await api.GetAllProfileEditRequests();
+            requestsDataTable = await api.GetAllRequestsData();
+            runsInfoTable = await api.GetAllRunsInfo();
+        }
+        finally { isLoading = false; }
+    }
+
+    private void SetTab(string tabName) => activeTab = tabName;
+
+    // --- Reflection Funcs ---
+    ///<summary>
+    ///returns the full table based on activeTab's name
+    ///</summary>
+    private IEnumerable<object> GetCurrentData()
+    {
+        return activeTab switch
+        {
+            "admins" => adminsTable,
+            "users" => usersTable, //these implement IEnumerable
+            "players" => playersTable,
+            "groups" => groupsTable,
+            "playersAndgroups" => playersAndgroupsTable,
+            "enemiesInLastLevel" => enemiesInLastLevelTable,
+            "profileEditRequests" => profileEditRequestsTable,
+            "requestsData" => requestsDataTable,
+            "runsInfo" => runsInfoTable,
+            _ => new List<object>()
+        };
+    }
+
+    private PropertyInfo[] GetCurrentProperties()
+    {
+        var data = GetCurrentData();
+        var firstItem = data.Cast<object>().FirstOrDefault();//gets the first item 
+        if (firstItem == null) return Array.Empty<PropertyInfo>(); // or empty prop set if first item is null.
+
+        // Gets all public properties of the specific object (User, Admin, Player or others)
+        return firstItem.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+    }
+
+    private async Task FetchItemById()
+    {
+        if (activeTab == "admins") await api.GetAdminByIdx(targetId);
+        //not done?
     }
 }
