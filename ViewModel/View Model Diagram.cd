@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="ViewModel.DBs.AdminsDB" Collapsed="true">
-    <Position X="2.75" Y="5.75" Width="1.5" />
+    <Position X="2.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAkAAAKACAAAAAAAAgAAAAgEAIAAAAAAAAAACAAA=</HashCode>
       <FileName>DBs\AdminsDB.cs</FileName>
@@ -36,7 +36,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ViewModel.DBs.PlayersDB" Collapsed="true">
-    <Position X="4.75" Y="5.75" Width="1.5" />
+    <Position X="4.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAkAAAKACAAAAAAAAgAAAAgEAIAAAAAAAAAACAAA=</HashCode>
       <FileName>DBs\PlayersDB.cs</FileName>
@@ -64,14 +64,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ViewModel.DBs.UsersDB" Collapsed="true">
-    <Position X="3.75" Y="4.5" Width="1.5" />
+    <Position X="3.75" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgAAAKACAAAAAAAAgAAAAgAAIAAAAAAAAAACAAA=</HashCode>
       <FileName>DBs\UsersDB.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ViewModel.ChangeEntity" Collapsed="true">
-    <Position X="4.5" Y="1.25" Width="1.5" />
+    <Position X="5.25" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EAAAABAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAQABAAAA=</HashCode>
       <FileName>Support Classes\ChangeEntity.cs</FileName>
@@ -81,14 +81,14 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ViewModel.ExpandedException" Collapsed="true">
-    <Position X="6.75" Y="1.25" Width="2" />
+    <Position X="8" Y="1.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Support Classes\ExpandedException.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Delegate Name="ViewModel.CreateSql" Collapsed="true">
-    <Position X="4.5" Y="2.25" Width="1.5" />
+    <Position X="5.25" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Support Classes\ChangeEntity.cs</FileName>
