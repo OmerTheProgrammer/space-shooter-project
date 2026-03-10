@@ -108,6 +108,7 @@ namespace Client_Manager___API
                 return await client.GetFromJsonAsync<T>(endpoint);
             }
             catch (Exception ex)
+
             {
                 //can't throw from here
                 // Centralized error logging
