@@ -1,57 +1,85 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Space_Shooter_Website.Client.Support_Classes.Session" Collapsed="true">
-    <Position X="5.75" Y="0.5" Width="1.5" />
-    <TypeIdentifier />
-  </Class>
-  <Class Name="Space_Shooter_Website.Client.Support_Classes.GameHUD" Collapsed="true">
-    <Position X="9.75" Y="2.75" Width="1.5" />
+  <Class Name="Space_Shooter_Website.Client.Added_Layouts.GameLayout" Collapsed="true">
+    <Position X="12.25" Y="3.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="Space_Shooter_Website.Client.Pages.Admin_Connection" Collapsed="true">
-    <Position X="5.25" Y="4" Width="1.75" />
+    <Position X="7" Y="4.5" Width="1.75" />
     <TypeIdentifier />
   </Class>
   <Class Name="Space_Shooter_Website.Client.Pages.Admin_Dashboard" Collapsed="true">
-    <Position X="5.25" Y="2.75" Width="1.75" />
+    <Position X="4" Y="4.5" Width="1.75" />
     <TypeIdentifier />
   </Class>
   <Class Name="Space_Shooter_Website.Client.Pages.Credits" Collapsed="true">
-    <Position X="1.25" Y="2.75" Width="1.5" />
+    <Position X="2.5" Y="2.25" Width="1.25" />
     <TypeIdentifier />
   </Class>
-  <Class Name="Space_Shooter_Website.Client.Pages.Game" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="9.75" Y="4" Width="1.5" />
+  <Class Name="Space_Shooter_Website.Client.Pages.Game" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="Space_Shooter_Website.Client.Pages.Level_Selection" Collapsed="true">
-    <Position X="3" Y="4" Width="1.5" />
+    <Position X="7" Y="3.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="Space_Shooter_Website.Client.Pages.Log_In" Collapsed="true">
-    <Position X="7.5" Y="4" Width="1.5" />
+    <Position X="10.5" Y="2.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="Space_Shooter_Website.Client.Pages.Profile" Collapsed="true">
-    <Position X="3.25" Y="2.75" Width="1.5" />
+    <Position X="4" Y="3.5" Width="1.75" />
     <TypeIdentifier />
   </Class>
   <Class Name="Space_Shooter_Website.Client.Pages.Register" Collapsed="true">
-    <Position X="7.5" Y="2.75" Width="1.5" />
+    <Position X="8.75" Y="2.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="Space_Shooter_Website.Client.Added_Layouts.GameLayout" Collapsed="true">
-    <Position X="11.75" Y="2.75" Width="1.75" />
+  <Class Name="Space_Shooter_Website.Client.Support_Classes.Session" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="Microsoft.AspNetCore.Components.LayoutComponentBase" Collapsed="true">
-    <Position X="11.75" Y="1.75" Width="1.75" />
+  <Class Name="Space_Shooter_Website.Client.Support_Classes.GameHUD" Collapsed="true">
+    <Position X="8.75" Y="3.5" Width="1.5" />
     <TypeIdentifier />
+  </Class>
+  <Class Name="Space_Shooter_Website.Components.Layout.NavMenu" Collapsed="true">
+    <Position X="7" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\Layout\NavMenu.razor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Space_Shooter_Website.Components.Layout.MainLayout" Collapsed="true">
+    <Position X="14" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\Layout\MainLayout.razor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Space_Shooter_Website.Components.Pages.App" Collapsed="true">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\Pages\App.razor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Space_Shooter_Website.Components.Pages.Home" Collapsed="true">
+    <Position X="4" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\Pages\Home.razor.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.AspNetCore.Components.ComponentBase" Collapsed="true">
-    <Position X="8.5" Y="0.5" Width="1.5" />
+    <Position X="5.75" Y="0.5" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Orientation="Right" Position="0.1" />
+  </Class>
+  <Class Name="Microsoft.AspNetCore.Components.LayoutComponentBase" Collapsed="true">
+    <Position X="13.25" Y="2.25" Width="1.75" />
+    <TypeIdentifier />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
