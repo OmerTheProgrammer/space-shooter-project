@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace Components
+namespace Space_Shooter_Website.Components
 {
     public partial class App
     {

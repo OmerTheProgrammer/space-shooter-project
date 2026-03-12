@@ -7,6 +7,7 @@
 @inject IApiService api
 @inject NavigationManager NavManager
 @inject Session session
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 <PageTitle>Admin Dashboard</PageTitle>
@@ -15,12 +16,12 @@
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col text-center">
-                <h1 class="display-4 text">Reflection Admin Management</h1>
-                <p class="text-muted text">Managing: @activeTab.ToUpper()</p>
+                <h1 class="display-4 text" style="margin-bottom:0px;">Dashboard</h1>
+                <p class="text-muted text" style="margin-bottom:0px;">Managing: @activeTab</p>
             </div>
         </div>
 
-        @if (isLoading)
+         @if (isLoading) @*מסך טעינה*@
         {
             <div class="text-center">
                 <div class="spinner-border text-primary" role="status">
@@ -28,7 +29,71 @@
                 </div>
             </div>
         }
-        else
+        else if (!string.IsNullOrEmpty(pageErrorMessage)) @*מסך שגיאה*@
+        {
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Error:</strong> @pageErrorMessage
+                <button type="button" class="btn-close" @onclick="GoBackFromError" aria-label="Close"></button>
+            </div>
+        }
+        else if (SingleEntity != null) @*מסך Select By Id*@
+        {
+            <div class="card mt-4 border-primary shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Details for ID: @targetId</h5>
+                </div>
+                <div class="card-body bg-light">
+                    <div class="row">
+                        @foreach (var prop in GetSingleProperties())
+                        {
+                            <div class="col-md-4 mb-3">
+                                <label class="fw-bold text-dark">@prop.Name:</label>
+                                <div class="p-2 border rounded bg-white text-dark">
+                                    @prop.GetValue(SingleEntity)
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button class="btn btn-secondary btn-sm" @onclick="() => SingleEntity = null">Clear View</button>
+                </div>
+            </div>
+        }
+        else if (isInsertMode)@*מסך Insert*@
+        {
+            <div class="card mb-4 border-success shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Add New Entry to @activeTab</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var key in newEntryData.Keys.ToList())
+                        {
+                            <div class="col-md-4 mb-3">
+                                <label class="fw-bold text">@key</label>
+                                @if (newEntryData[key] is int)
+                                {
+                                    <input type="number" class="form-control"
+                                           value="@newEntryData[key]"
+                                           @onchange="@(e => newEntryData[key] = int.Parse(e.Value.ToString()))" />
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control"
+                                           value="@newEntryData[key]"
+                                           @onchange="@(e => newEntryData[key] = e.Value.ToString())" />
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-primary" @onclick="HandleInsert">Save Entry</button>
+                        <button class="btn btn-secondary" @onclick="() => isInsertMode = false">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        }
+        else @*מסך Select ALL*@
         {
             <div class="card shadow">
                 <div class="card-header bg-dark">
@@ -101,8 +166,22 @@
                                 </div>
                             </div>
                             <div class="d-grid gap-2">
-                                <button class="btn btn-success" @onclick="RefreshData">Refresh Table</button>
-                                <button class="btn btn-danger">Delete Selected</button>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-success" @onclick="RefreshData">Refresh Table</button>
+
+                                    @if (targetId > 0)
+                                    {
+                                        <button class="btn btn-danger" @onclick="HandleDelete">
+                                            Delete ID: @targetId from @activeTab
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <p class="text">Search for an entity, if you wish to delete it.</p>
+                                    }
+
+                                    <button class="btn btn-success" @onclick="OpenInsertModal">Add New Entry</button>
+                                </div>
                             </div>
                         </div>
 
@@ -141,7 +220,10 @@
 @code {
     private bool isLoading = true;
     private string activeTab = "users";
+    private string pageErrorMessage;
     private int targetId;
+    private Dictionary<string, object> newEntryData = new();
+    private bool isInsertMode = false;
 
     private UsersTable usersTable = new();
     private AdminsTable adminsTable = new();
@@ -152,6 +234,26 @@
     private ProfileEditRequestsTable profileEditRequestsTable = new();
     private RequestsDataTable requestsDataTable = new();
     private RunsInfoTable runsInfoTable = new();
+
+    private BaseEntity SingleEntity;
+    private PropertyInfo[] GetSingleProperties()
+    {
+        if (SingleEntity == null) return Array.Empty<PropertyInfo>();
+        return SingleEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+    }
+
+    private void GoBackFromError()
+    {
+        // Clear the error message to return to the default view
+        pageErrorMessage = null;
+
+        // Ensure we aren't stuck in Insert mode or Single Entity view
+        isInsertMode = false;
+        SingleEntity = null;
+
+        // Optional: Reset targetId if the error was caused by a bad search
+        targetId = 0;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -216,7 +318,170 @@
 
     private async Task FetchItemById()
     {
-        if (activeTab == "admins") await api.GetAdminByIdx(targetId);
-        //not done?
+        if (targetId <= 0) return;
+
+        isLoading = true;
+        try
+        {
+            // just ensure the result is assigned to SingleEntity
+            SingleEntity = activeTab switch
+            {
+                "users" => await api.GetUserByIdx(targetId),
+                "admins" => await api.GetAdminByIdx(targetId),
+                "players" => await api.GetPlayerByIdx(targetId),
+                "groups" => await api.GetGroupByIdx(targetId),
+                "playersAndgroups" => await api.GetPlayerAndGroupByIdx(targetId),
+                "enemiesInLastLevel" => await api.GetEnemyInLastLevelByIdx(targetId),
+                "profileEditRequests" => await api.GetProfileEditRequestByIdx(targetId),
+                "requestsData" => await api.GetRequestDataByIdx(targetId),
+                "runsInfo" => await api.GetRunInfoByIdx(targetId),
+                _ => null
+            };
+
+            if (SingleEntity == null)
+            {
+                pageErrorMessage = "No record found with that ID.";
+            }
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = $"Fetch failed: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleDelete()
+    {
+        if (targetId <= 0)
+        {
+            pageErrorMessage = "Please select a valid ID to delete.";
+            return;
+        }
+
+        // Confirmation logic (Simple browser confirm for now)
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete ID {targetId} from {activeTab}?");
+        if (!confirmed) return;
+
+        isLoading = true;
+        pageErrorMessage = null;
+
+        try
+        {
+            (int rows, string? error) result = activeTab switch
+            {
+                "users" => await api.DeleteUser(targetId),
+                "admins" => await api.DeleteAdmin(targetId),
+                "players" => await api.DeletePlayer(targetId),
+                "groups" => await api.DeleteGroup(targetId),
+                "playersAndgroups" => await api.DeletePlayerAndGroup(targetId),
+                "enemiesInLastLevel" => await api.DeleteEnemyInLastLevel(targetId),
+                "runsInfo" => await api.DeleteRunInfo(targetId),
+                "requestsData" => await api.DeleteRequestData(targetId),
+                "profileEditRequests" => await api.DeleteProfileEditRequest(targetId),
+                _ => (0, "Delete logic not implemented for this table.")
+            };
+
+            if (result.rows > 0)
+            {
+                // Success! Clear the view and refresh
+                SingleEntity = null;
+                targetId = 0;
+                await RefreshData();
+                // Optional: Success message
+                Console.WriteLine("Deleted successfully.");
+            }
+            else
+            {
+                pageErrorMessage = result.error ?? "Delete failed. Record might not exist or is protected by a foreign key.";
+            }
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = $"Delete Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void OpenInsertModal()
+    {
+        isLoading = true;
+        newEntryData.Clear();
+        var props = GetCurrentProperties();
+
+        foreach (var prop in props)
+        {
+            // Skip 'idx' or 'Idx' because the Database generates it automatically (IDENTITY)
+            if (prop.Name.Equals("idx", StringComparison.OrdinalIgnoreCase)) continue;
+
+            // Initialize with default values based on type
+            if (prop.PropertyType == typeof(int)) newEntryData[prop.Name] = 0;
+            else if (prop.PropertyType == typeof(string)) newEntryData[prop.Name] = "";
+            else newEntryData[prop.Name] = null;
+        }
+        isInsertMode = true;
+        isLoading = false;
+    }
+
+    private async Task HandleInsert()
+    {
+        isLoading = true;
+        try
+        {
+            (int rows, string? error) result = (0, "Table not mapped");
+
+            switch (activeTab)
+            {
+                case "users":
+                    var newUser = new User
+                    {
+                        Username = newEntryData["Username"].ToString(),
+                        Email = newEntryData["Email"].ToString(),
+                        //must pull all data to every entity, 
+                    };
+                    //result = await api.InsertUser(newUser);
+                    pageErrorMessage = newUser.ToString();
+                    break;
+
+                case "admins":
+                    var newAdmin = new Admin {
+                        Username = newEntryData["Username"].ToString()
+
+                    };
+                    //result = await api.InsertAdmin(newAdmin);
+                    pageErrorMessage = newAdmin.ToString();
+                    break;
+
+                case "groups":
+                    var newGroup = new Group
+                    {
+                        Name = newEntryData["Name"].ToString(),
+                        Score = (int)newEntryData["Score"]
+                    };
+                    pageErrorMessage = newGroup.ToString();
+                    //result = await api.InsertGroup(newGroup);
+                    break;
+            }
+
+            if (result.rows > 0)
+            {
+                isInsertMode = false;
+                await RefreshData();
+            }
+            else
+            {
+                pageErrorMessage = result.error ?? "Insert failed.";
+            }
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = "Insert Error: " + ex.Message;
+        }
+        finally { isLoading = false; }
     }
 }
