@@ -69,6 +69,7 @@
         }
         else if (isInsertMode && !isLookupMode && !isNestedInsertMode)@*מסך Insert*@
         {
+            @* the fields have no input protaction!!! *@
             <div class="card mb-4 border-success shadow">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">Add New Entry to @activeTab</h5>
@@ -216,6 +217,7 @@
 
         else if (isNestedInsertMode)@*מסך הוספת ישות של Insert*@
         {
+            @* the fields have no input protaction!!! *@
             <div class="NestedInsert-modal shadow-lg text-center">
                 <div class="NestedInsert-header">
                 <h3 class= "title" > New @CurrentNestedType.Name </h3 >
@@ -954,6 +956,7 @@
                     pageErrorMessage = $"Lookup not supported for type: {NestedEntityType.Name}";
                 }
 
+                //take the last entity - *hopes* it is the last inserted, better way -> DB returns the new idx no rows changed in insert.
                 if (NestedEntityIE != null)
                 {
                     entity = NestedEntityIE.Cast<BaseEntity>().OrderBy(e => e.Idx).LastOrDefault();
