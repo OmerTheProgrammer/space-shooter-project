@@ -163,16 +163,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var run in playerRuns.OrderByDescending(r => r.RunStopDate).Take(15))
+                                        @foreach (var run in playerRuns.OrderByDescending(r => r.RunStopDate))
                                         {
                                             <tr>
-                                                <td class="small opacity-75">@run.RunStopDate.ToString("MM/dd HH:mm")</td>
-                                                <td class="text-warning">@run.CurrentScore</td>
-                                                <td class="text-danger">@run.CurrentHp HP</td>
-                                                <td>
-                                                    <span class="badge @(run.IsRunOver ? "bg-danger" : "bg-success") px-1 py-0" style="font-size: 0.6rem;">
-                                                        @(run.IsRunOver ? "KILLED" : "ACTIVE")
-                                                    </span>
+                                                <td class="small opacity-75 align-middle">
+                                                    @run.RunStopDate.ToString("MM/dd HH:mm")
+                                                </td>
+                                                <td class="text-warning align-middle">@run.CurrentScore</td>
+                                                <td class="text-info align-middle">Lvl @run.CurrentLevel</td>
+                                                <td class="text-center">
+                                                    @if (!run.IsRunOver)
+                                                    {
+                                                        @* Action button for active missions *@
+                                                        <button class="btn btn-outline-success btn-xs fw-bold px-3"
+                                                                @onclick="() => ContinueMission(run.Idx)"
+                                                                style="font-size: 0.65rem;">
+                                                            RESUME
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        @* Status badge for finished missions *@
+                                                        <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-2"
+                                                              style="font-size: 0.6rem;">
+                                                            KILLED
+                                                        </span>
+                                                    }
                                                 </td>
                                             </tr>
                                         }
@@ -193,11 +209,14 @@
     private DateTime? birthday;
     private string newPassword = "";
 
+    private ProfileEditRequestsTable myPendingRequests = new();
+    private bool isSubmitting = false;
+
     private string statusMessage = "";
     private string statusClass = "";
     private bool isDataLoading = true;
 
-    private List<RunInfo> playerRuns = new();
+    private RunsInfoTable playerRuns = new();
 
     private RunInfo? personalBestScore;
     private RunInfo? personalBestLevel;
@@ -205,21 +224,7 @@
     private int totalShieldUpgrades = 0;
     private double avgLevel = 0;
     private int maxBlastersReached = 0;
-
-
-    protected override void OnInitialized()
-    {
-        if (session.CurrentUser != null)
-        {
-            username = session.CurrentUser.Username;
-            email = session.CurrentUser.Email;
-            birthday = session.CurrentUser.Birthday;
-        }
-        else //user is not logged in - impossible to access this page, but just in case
-        {
-            NavManager.NavigateTo("profile");
-        }
-    }
+    private RunsInfoTable activeRuns = new();
 
     private async Task HandleUpdate()
     {
@@ -268,7 +273,7 @@
             var allRuns = await api.GetAllRunsInfo();
 
             // 2. Filter for this specific player
-            playerRuns = allRuns.Where(r => r.Player.Idx == session.CurrentUser.Idx).ToList();
+            playerRuns = new RunsInfoTable(allRuns.Where(r => r.Player.Idx == session.CurrentUser.Idx).ToList());
 
             if (playerRuns.Any())
             {
@@ -279,6 +284,11 @@
                 avgLevel = Math.Round(playerRuns.Average(r => r.CurrentLevel), 1);
                 totalShieldUpgrades = playerRuns.Sum(r => r.CurrentShieldLevel);
                 maxBlastersReached = playerRuns.Max(r => r.CurrentBlasterCount);
+
+                activeRuns = new RunsInfoTable(playerRuns
+                    .Where(r => !r.IsRunOver)
+                    .OrderByDescending(r => r.RunStopDate)
+                    .ToList());
             }
         }
         catch (Exception ex)
@@ -290,5 +300,13 @@
             isDataLoading = false;
         }
     }
+
+    private void ContinueMission(int runIdx)
+    {
+        // Navigate to the game page with the specific Run ID - does nothing
+        NavManager.NavigateTo($"game?resume={runIdx}");
+    }
+
+
 }
 }
