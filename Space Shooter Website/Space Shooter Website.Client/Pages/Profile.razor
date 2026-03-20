@@ -66,18 +66,121 @@
                 </div>
             </div>
         </div>
-
+        @* --- צד ימין: הישגים --- *@
         @if (session.IsPlayer)
         {
-            @* --- צד ימין: הישגים וקרדיטים --- *@
-            <div class="col-lg-6">
-                <div class="profile-card p-4 h-100 shadow-sm">
-                    <h3 class="profile subtitle text-center">Your Achievements: </h3>
-                    <hr style="border-color: #00FFAB;" />
-
-                    <div class="terms-scroll-box" style="max-height: 50vh;">
-                        <p class="error text">will hold RunInfo stuff, best achivants - not built yet</p>
+            <div class="col-lg-6 mb-4">
+                <div class="profile-card p-4 h-100 border-info shadow-lg">
+                    <div class="text-center mb-3">
+                        <h3 class="title text-info"><i class="bi bi-shield-shaded me-2"></i>Tactical Dossier</h3>
+                        <p class="text-muted small">Combat History & Performance Metrics</p>
+                        <hr class="border-info opacity-50" />
                     </div>
+
+                    @if (isDataLoading)
+                    {
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-info" role="status"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row g-3">
+                            @* Primary Stats Row *@
+                            <div class="col-6">
+                                <div class="stat-box p-3 text-center rounded bg-dark border border-warning border-opacity-50">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <small class="text-muted d-block">All-Time High</small>
+                                    <span class="h4 text-warning fw-bold">@personalBestScore?.CurrentScore</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-box p-3 text-center rounded bg-dark border border-info border-opacity-50">
+                                    <i class="bi bi-rocket-takeoff text-info"></i>
+                                    <small class="text-muted d-block">Deepest Sector</small>
+                                    <span class="h4 text-info fw-bold">Lvl @personalBestLevel?.CurrentLevel</span>
+                                </div>
+                            </div>
+
+                            @* Secondary Technical Stats *@
+                            <div class="col-4">
+                                <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
+                                    <small class="text-muted d-block small-label">Avg. Depth</small>
+                                    <span class="text-white fw-bold">@avgLevel</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
+                                    <small class="text-muted d-block small-label">Max Shield Health</small>
+                                    <span class="text-success fw-bold">@totalShieldUpgrades</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
+                                    <small class="text-muted d-block small-label">Max Firepower</small>
+                                    <span class="text-danger fw-bold">@maxBlastersReached</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @* Achievement Badges *@
+                        <div class="mt-4 p-3 rounded bg-black bg-opacity-50 border border-info border-opacity-10">
+                            <h6 class="text-info mb-3 small"><i class="bi bi-award me-1"></i>Earned Ribbons</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (totalRuns >= 10)
+                                {
+                                    <span class="badge border border-info text-info">Veteran Pilot (10+ Runs)</span>
+                                }
+                                @if (maxBlastersReached >= 5)
+                                {
+                                    <span class="badge border border-danger text-danger">Heavy Gunner (Got more then 5 blasters at once)</span>
+                                }
+                                @if (personalBestLevel?.CurrentLevel > 5)
+                                {
+                                    <span class="badge border border-warning text-warning">Sector Specialist (Passed Level 5)</span>
+                                }
+                                @if (totalShieldUpgrades >= 20)
+                                {
+                                    <span class="badge border border-success text-success">Iron Hull (Earned at least 20 Shield PowerUps overall)</span>
+                                }
+                            </div>
+                        </div>
+
+                        @* Mission Logs Table *@
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-white small mb-0 uppercase">Flight Data Logs</h6>
+                                <span class="badge bg-secondary">Total: @totalRuns</span>
+                            </div>
+                            <div class="custom-scrollbar" style="max-height: 150px; overflow-y: auto;">
+                                <table class="table table-dark table-sm table-hover mb-0">
+                                    <thead class="sticky-top bg-dark">
+                                        <tr class="text-muted small border-bottom border-secondary">
+                                            <th>Date</th>
+                                            <th>Score</th>
+                                            <th>Health</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var run in playerRuns.OrderByDescending(r => r.RunStopDate).Take(15))
+                                        {
+                                            <tr>
+                                                <td class="small opacity-75">@run.RunStopDate.ToString("MM/dd HH:mm")</td>
+                                                <td class="text-warning">@run.CurrentScore</td>
+                                                <td class="text-danger">@run.CurrentHp HP</td>
+                                                <td>
+                                                    <span class="badge @(run.IsRunOver ? "bg-danger" : "bg-success") px-1 py-0" style="font-size: 0.6rem;">
+                                                        @(run.IsRunOver ? "KILLED" : "ACTIVE")
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         }
@@ -92,6 +195,17 @@
 
     private string statusMessage = "";
     private string statusClass = "";
+    private bool isDataLoading = true;
+
+    private List<RunInfo> playerRuns = new();
+
+    private RunInfo? personalBestScore;
+    private RunInfo? personalBestLevel;
+    private int totalRuns = 0;
+    private int totalShieldUpgrades = 0;
+    private double avgLevel = 0;
+    private int maxBlastersReached = 0;
+
 
     protected override void OnInitialized()
     {
@@ -128,4 +242,53 @@
         session.IsAdmin = false;
         NavManager.NavigateTo("Log In", forceLoad: true);
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (session.CurrentUser != null)
+        {
+            username = session.CurrentUser.Username;
+            email = session.CurrentUser.Email;
+            birthday = session.CurrentUser.Birthday;
+
+            await LoadAchievements();
+        }
+        else
+        {
+            NavManager.NavigateTo("login"); // Ensure they are logged in
+        }
+    }
+
+    private async Task LoadAchievements()
+    {
+        isDataLoading = true;
+        try
+        {
+            // 1. Get all runs from DB
+            var allRuns = await api.GetAllRunsInfo();
+
+            // 2. Filter for this specific player
+            playerRuns = allRuns.Where(r => r.Player.Idx == session.CurrentUser.Idx).ToList();
+
+            if (playerRuns.Any())
+            {
+                // 3. Extract the "Best Achieving" ones
+                personalBestScore = playerRuns.OrderByDescending(r => r.CurrentScore).FirstOrDefault();
+                personalBestLevel = playerRuns.OrderByDescending(r => r.CurrentLevel).FirstOrDefault();
+                totalRuns = playerRuns.Count;
+                avgLevel = Math.Round(playerRuns.Average(r => r.CurrentLevel), 1);
+                totalShieldUpgrades = playerRuns.Sum(r => r.CurrentShieldLevel);
+                maxBlastersReached = playerRuns.Max(r => r.CurrentBlasterCount);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading achievements: {ex.Message}");
+        }
+        finally
+        {
+            isDataLoading = false;
+        }
+    }
+}
 }

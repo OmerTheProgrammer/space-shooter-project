@@ -50,7 +50,7 @@
         {
             <div class="card mt-4 border-primary shadow">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Details for ID: @targetId</h5>
+                    <h5 class="mb-0">Details for Idx: @targetId</h5>
                 </div>
                 <div class="card-body bg-light">
                     <div class="row">
@@ -1210,7 +1210,7 @@
             {
                 var dtoProps = typeof(TDTO).GetProperties();
                 var entityProps = typeof(TEntity).GetProperties();
-
+                bool IsSameHush = false;
                 foreach (var prop in dtoProps)
                 {
                     // Skip Idx (Primary Key) - FromEntity handles it
@@ -1220,9 +1220,12 @@
                     {
                         var originalProp = entityProps.FirstOrDefault(p => p.Name == prop.Name);
                         var oldValue = originalProp?.GetValue(SingleEntity);
-
+                        if (prop.Name.Contains("Password")){
+                            IsSameHush = uiValue == oldValue;
+                            uiValue = TextHasher.Hash((string)uiValue);
+                        }
                         // Only shove if the value actually changed
-                        if (uiValue?.ToString() != oldValue?.ToString())
+                        if (uiValue?.ToString() != oldValue?.ToString() && !IsSameHush)
                         {
                             try
                             {
@@ -1311,7 +1314,18 @@
                         pageSuccessMessage = $"Successfully edited record to {activeTab}!";
                         InvokeAsync(StateHasChanged);
                         //removes pageSuccessMessage after 2.5 sec
-                        _ = Task.Delay(2500).ContinueWith(_ =>
+                        _ = Task.Delay(2000).ContinueWith(_ =>
+                        {
+                            ResetPage();
+                            pageSuccessMessage = null;
+                            InvokeAsync(StateHasChanged);
+                        });
+                    }
+                    else if (result.rows == 0){
+                        isEditMode = false;
+                        pageSuccessMessage = $"No changes Made!";
+                        //removes pageSuccessMessage after 2.5 sec
+                        _ = Task.Delay(2000).ContinueWith(_ =>
                         {
                             ResetPage();
                             pageSuccessMessage = null;
@@ -1327,7 +1341,10 @@
                 {
                     pageErrorMessage = "Update Error: " + ex.Message;
                 }
-                finally { isLoading = false; }
+                finally {
+                    isLoading = false;
+                    InvokeAsync(StateHasChanged);
+                }
         }
     #endregion
 }

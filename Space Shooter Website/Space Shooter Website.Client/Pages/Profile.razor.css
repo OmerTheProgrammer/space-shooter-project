@@ -37,3 +37,46 @@
     font-size: 1.1rem;
     line-height: 1.6;
 }
+
+.stat-box {
+    transition: transform 0.2s ease-in-out;
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    background: rgba(0, 150, 255, 0.1) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #0dcaf0;
+    border-radius: 10px;
+}
+
+.small-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.table-dark {
+    background: transparent !important;
+}
+
+.sticky-top {
+    z-index: 2;
+    background-color: #000;
+}
+
+.badge.border {
+    background: transparent;
+    font-weight: normal;
+}
+
+/* Make the log table rows slightly transparent */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 212, 255, 0.1) !important;
+}
