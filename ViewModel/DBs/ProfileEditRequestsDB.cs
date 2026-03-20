@@ -131,9 +131,23 @@ namespace ViewModel.DBs
                 {
                     command.Parameters.Add(new SqlParameter("@AdminIdx", DBNull.Value));
                 }
-                command.Parameters.Add(new SqlParameter("@RequestingDate", c.RequestingDate));
+                if(c.RequestingDate != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@RequestingDate", c.RequestingDate));
+                }
+                else
+                {
+                    command.Parameters.Add(new SqlParameter("@RequestingDate", DBNull.Value));
+                }
+                if (c.ReviewingDate != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@ReviewingDate", c.ReviewingDate));
+                }
+                else
+                {
+                    command.Parameters.Add(new SqlParameter("@ReviewingDate", DBNull.Value));
+                }
                 command.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
-                command.Parameters.Add(new SqlParameter("@ReviewingDate", c.ReviewingDate));
             }
         }
 
@@ -145,11 +159,24 @@ namespace ViewModel.DBs
                 string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, RequestingDate=@RequestingDate, Status=@Status, " +
                     $"ReviewingDate=@ReviewingDate WHERE Idx=@Idx";
                 cmd.CommandText = sqlStr;
-
                 cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
-                cmd.Parameters.Add(new SqlParameter("@RequestingDate", c.RequestingDate));
                 cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
-                cmd.Parameters.Add(new SqlParameter("@ReviewingDate", c.ReviewingDate));
+                if (c.RequestingDate != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@RequestingDate", c.RequestingDate));
+                }
+                else
+                {
+                    command.Parameters.Add(new SqlParameter("@RequestingDate", DBNull.Value));
+                }
+                if (c.ReviewingDate != null)
+                {
+                    command.Parameters.Add(new SqlParameter("@ReviewingDate", c.ReviewingDate));
+                }
+                else
+                {
+                    command.Parameters.Add(new SqlParameter("@ReviewingDate", DBNull.Value));
+                }
                 if (c.AdressingAdmin != null)
                 {
                     command.Parameters.Add(new SqlParameter("@AdminIdx", c.AdressingAdmin.Idx));

@@ -1,8 +1,10 @@
 ﻿@page "/Profile"
 @using Model.Entitys
 @using Model.Tables
+@using Model.Data_Transfer_Objects
 @using Client_Manager___API
 @using Space_Shooter_Website.Client.Support_Classes
+@using Regex = System.Text.RegularExpressions.Regex;
 @inject IApiService api
 @inject Session session
 @inject NavigationManager NavManager
@@ -157,8 +159,11 @@
                                     <thead class="sticky-top bg-dark">
                                         <tr class="text-muted small border-bottom border-secondary">
                                             <th>Date</th>
+                                            <th>Level</th>
                                             <th>Score</th>
-                                            <th>Health</th>
+                                            <th>Health Points</th>
+                                            <th>Shield Health Points</th>
+                                            <th>Blaster Count</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -169,8 +174,11 @@
                                                 <td class="small opacity-75 align-middle">
                                                     @run.RunStopDate.ToString("MM/dd HH:mm")
                                                 </td>
-                                                <td class="text-warning align-middle">@run.CurrentScore</td>
                                                 <td class="text-info align-middle">Lvl @run.CurrentLevel</td>
+                                                <td class="text-success align-middle">@run.CurrentScore</td>
+                                                <td class="text-danger align-middle">@run.CurrentHp</td>
+                                                <td class="text align-middle">@run.CurrentShieldLevel</td>
+                                                <td class="text-warning align-middle">@run.CurrentBlasterCount</td>
                                                 <td class="text-center">
                                                     @if (!run.IsRunOver)
                                                     {
@@ -226,20 +234,6 @@
     private int maxBlastersReached = 0;
     private RunsInfoTable activeRuns = new();
 
-    private async Task HandleUpdate()
-    {
-        // כאן תוכל להוסיף לוגיקה לקריאה ל-API לעדכון
-        statusMessage = "Syncing with Command Center...";
-        statusClass = "alert-info";
-
-        // סימולציה של עדכון
-        await Task.Delay(1000);
-        statusMessage = "UnImplamented Yet";
-        statusClass = "alert-info";
-        // statusMessage = "Profile Synced Successfully!";
-        // statusClass = "alert-success";
-    }
-
     private void Logout()
     {
         session.CurrentUser = null;
@@ -257,6 +251,7 @@
             birthday = session.CurrentUser.Birthday;
 
             await LoadAchievements();
+            await LoadMyRequests();
         }
         else
         {
@@ -307,6 +302,122 @@
         NavManager.NavigateTo($"game?resume={runIdx}");
     }
 
+    private async Task LoadMyRequests()
+    {
+        try
+        {
+            var allReqs = await api.GetAllProfileEditRequests(); // Assuming this API exists
+            myPendingRequests = new ProfileEditRequestsTable(
+                allReqs.Where(r => r.RequestingPlayer?.Idx == session.CurrentUser.Idx && r.Status == Status.Pending).ToList());
+        }
+        catch { /* Handle silent fail */ }
+    }
 
-}
+    private async Task HandleUpdate()
+    {
+        if (isSubmitting) return;
+        isSubmitting = true;
+
+        statusMessage = "Analyzing tactical changes...";
+        statusClass = "alert-info";
+
+        try
+        {
+            // 1. Password Format Validation (Only if a new password is entered)
+            if (!string.IsNullOrWhiteSpace(newPassword))
+            {
+                // Length Check
+                if (newPassword.Length < 8 || newPassword.Length > 20)
+                {
+                    throw new Exception("Password must be between 8 and 20 characters.");
+                }
+
+                // Format Checks
+                bool hasSymbol = Regex.IsMatch(newPassword, @"[^\w\s]");
+                bool hasNumber = Regex.IsMatch(newPassword, @"[\d]");
+                bool hasUpper = Regex.IsMatch(newPassword, @"[A-Z]");
+                bool hasLower = Regex.IsMatch(newPassword, @"[a-z]");
+
+                if (!hasSymbol || !hasNumber || !hasUpper || !hasLower)
+                {
+                    throw new Exception("Format Error: Password requires a symbol, number, and mixed case letters.");
+                }
+
+                // Hashing and API Update
+                string hashedNew = TextHasher.Hash(newPassword);
+                UserDTO userDTO = UserDTO.FromEntity(session.CurrentUser, dto => {
+                    dto.Password = hashedNew;
+                });
+                var result = await api.UpdateUser(userDTO);
+
+                if (result.rows > 0)
+                {
+                    session.CurrentUser.Password = hashedNew; // Update local session
+                }
+                else
+                {
+                    throw new Exception("System rejected password update." + result.error?.ToString());
+                }
+            }
+
+            // 2. Identify Profile Field Changes that need admin aproval
+            var changes = new List<(string Field, string Old, string New)>();
+            if (username != session.CurrentUser.Username)
+                changes.Add(("Username", session.CurrentUser.Username, username));
+            if (email != session.CurrentUser.Email)
+                changes.Add(("Email", session.CurrentUser.Email, email));
+            if (birthday != session.CurrentUser.Birthday)
+                changes.Add(("Birthday", session.CurrentUser.Birthday?.ToString("yyyy-MM-dd") ?? "N/A", birthday?.ToString("yyyy-MM-dd") ?? "N/A"));
+
+            // 3. Submit Profile Edit Request if fields changed
+            if (changes.Any())
+            {
+                var newRequest = new ProfileEditRequest
+                {
+                    RequestingPlayer = session.CurrentUser as Player,
+                    RequestingDate = DateTime.Now,
+                    Status = Status.Pending
+                };
+
+                var requestResponse = await api.InsertProfileEditRequest(newRequest);
+                if (requestResponse.rows > 0)
+                {
+                    foreach (var change in changes)
+                    {
+                        await api.InsertRequestData(new RequestData
+                        {
+                            Request = newRequest,
+                            Field = change.Field,
+                            OldValue = change.Old,
+                            NewValue = change.New
+                        });
+                    }
+                    statusMessage = "Profile request sent! Password updated.";
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(newPassword))
+            {
+                statusMessage = "Password updated successfully, Pilot.";
+            }
+            else
+            {
+                statusMessage = "No changes detected.";
+                statusClass = "alert-warning";
+                isSubmitting = false;
+                return;
+            }
+
+            statusClass = "alert-success";
+            newPassword = ""; // Clear the field after success
+        }
+        catch (Exception ex)
+        {
+            statusMessage = "Transmission Error: " + ex.Message;
+            statusClass = "alert-danger";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
 }
