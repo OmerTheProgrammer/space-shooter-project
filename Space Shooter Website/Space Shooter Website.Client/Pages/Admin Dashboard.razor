@@ -585,6 +585,15 @@
             targetId = 0;
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            // Every time a new page loads, we ensure the exit handler is armed
+            if (firstRender)
+            {
+                await JS.InvokeVoidAsync("resetInternalNav");
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             if (!session.IsAdmin)

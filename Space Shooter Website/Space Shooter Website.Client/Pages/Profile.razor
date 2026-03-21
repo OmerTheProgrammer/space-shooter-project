@@ -114,7 +114,7 @@
                             <div class="col-4">
                                 <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
                                     <small class="text-muted d-block small-label">Max Shield Health</small>
-                                    <span class="text-success fw-bold">@totalShieldUpgrades</span>
+                                    <span class="text-success fw-bold">@totalShieldHealth</span>
                                 </div>
                             </div>
                             <div class="col-4">
@@ -129,22 +129,17 @@
                         <div class="mt-4 p-3 rounded bg-black bg-opacity-50 border border-info border-opacity-10">
                             <h6 class="text-info mb-3 small"><i class="bi bi-award me-1"></i>Earned Ribbons</h6>
                             <div class="d-flex flex-wrap gap-2">
-                                @if (totalRuns >= 10)
-                                {
-                                    <span class="badge border border-info text-info">Veteran Pilot (10+ Runs)</span>
-                                }
-                                @if (maxBlastersReached >= 5)
-                                {
-                                    <span class="badge border border-danger text-danger">Heavy Gunner (Got more then 5 blasters at once)</span>
-                                }
-                                @if (personalBestLevel?.CurrentLevel > 5)
-                                {
-                                    <span class="badge border border-warning text-warning">Sector Specialist (Passed Level 5)</span>
-                                }
-                                @if (totalShieldUpgrades >= 20)
-                                {
-                                    <span class="badge border border-success text-success">Iron Hull (Earned at least 20 Shield PowerUps overall)</span>
-                                }
+                                <div class="badge-container mt-3">
+                                    @RenderBadge(totalRuns >= 10, "Veteran Pilot", "Complete 10 runs.", "info", $"({totalRuns}/10)")
+
+                                    @RenderBadge(maxBlastersReached >= 5, "Heavy Gunner", "Equip 5+ blasters.", "danger")
+
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 5, "Sector Specialist", "Advance past Sector 5.", "warning")
+
+                                    @RenderBadge(totalShieldHealth >= 20, "Iron Hull", "Earn 20 Shield PowerUps.", "success", $"({totalShieldHealth}/20)")
+
+
+                                </div>
                             </div>
                         </div>
 
@@ -172,7 +167,7 @@
                                         {
                                             <tr>
                                                 <td class="small opacity-75 align-middle">
-                                                    @run.RunStopDate.ToString("MM/dd HH:mm")
+                                                    @run.RunStopDate.ToString("yyyy/MM/dd")
                                                 </td>
                                                 <td class="text-info align-middle">Lvl @run.CurrentLevel</td>
                                                 <td class="text-success align-middle">@run.CurrentScore</td>
@@ -184,7 +179,7 @@
                                                     {
                                                         @* Action button for active missions *@
                                                         <button class="btn btn-outline-success btn-xs fw-bold px-3"
-                                                                @onclick="() => ContinueMission(run.Idx)"
+                                                                @onclick="() => ContinueMission(run)"
                                                                 style="font-size: 0.65rem;">
                                                             RESUME
                                                         </button>
@@ -229,17 +224,17 @@
     private RunInfo? personalBestScore;
     private RunInfo? personalBestLevel;
     private int totalRuns = 0;
-    private int totalShieldUpgrades = 0;
+    private int totalShieldHealth = 0;
     private double avgLevel = 0;
     private int maxBlastersReached = 0;
     private RunsInfoTable activeRuns = new();
 
-    private void Logout()
+    private async Task Logout()
     {
-        session.CurrentUser = null;
-        session.IsPlayer = false;
-        session.IsAdmin = false;
-        NavManager.NavigateTo("Log In", forceLoad: true);
+        if (api is ApiService apiService)
+        {
+            await session.Logout(apiService, JS, NavManager);
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -256,6 +251,15 @@
         else
         {
             NavManager.NavigateTo("login"); // Ensure they are logged in
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
         }
     }
 
@@ -277,7 +281,7 @@
                 personalBestLevel = playerRuns.OrderByDescending(r => r.CurrentLevel).FirstOrDefault();
                 totalRuns = playerRuns.Count;
                 avgLevel = Math.Round(playerRuns.Average(r => r.CurrentLevel), 1);
-                totalShieldUpgrades = playerRuns.Sum(r => r.CurrentShieldLevel);
+                totalShieldHealth = playerRuns.Sum(r => r.CurrentShieldLevel);
                 maxBlastersReached = playerRuns.Max(r => r.CurrentBlasterCount);
 
                 activeRuns = new RunsInfoTable(playerRuns
@@ -296,10 +300,28 @@
         }
     }
 
-    private void ContinueMission(int runIdx)
+    private async void ContinueMission(RunInfo run)
     {
-        // Navigate to the game page with the specific Run ID - does nothing
-        NavManager.NavigateTo($"game?resume={runIdx}");
+        if (run != null)
+        {
+            session.SelectedLevel = run.CurrentLevel;
+            session.CurrentRun = run;
+            session.IsContuiningRun = true;
+
+            //delete the run, becouse will save next time
+            (int rows, string? error) result = (0, "Table not mapped");
+            try
+            {
+                result = await api.DeleteRunInfo(run.Idx);
+            }
+            catch(Exception ex)
+            {
+                statusMessage = "Delete Run To Replace Error: " + ex.Message + " API Error:" + result.error;
+                statusClass = "alert-danger";
+            }
+            // Navigate to the game page
+            NavManager.NavigateTo($"game");
+        }
     }
 
     private async Task LoadMyRequests()
@@ -420,4 +442,28 @@
             isSubmitting = false;
         }
     }
+
+    ///
+    /// </summary>
+    /// <param name="condition"></param>
+    /// <param name="title"></param>
+    /// <param name="description"></param>
+    /// <param name="colorClass"></param>
+    /// <param name="progress"></param>
+    ///  brings you the html that creates the baduges with all you data
+    ///   ////<summary>
+    /// 
+    RenderFragment RenderBadge(bool condition, string title, string description, string colorClass, string progress = "") =>
+    __builder => {
+            if (condition)
+            {
+                <span class="badge border border-@colorClass text-@colorClass game-badge"
+                  data-tooltip="@description">@title</span>
+            }
+            else
+            {
+                <span class="badge border badge-locked game-badge"
+                  data-tooltip="Locked: @description @progress">@title</span>
+            }
+    };
 }

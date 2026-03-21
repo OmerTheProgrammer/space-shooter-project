@@ -1,5 +1,6 @@
 ﻿@using Space_Shooter_Website.Client.Support_Classes
 @inject Session session
+@inject IJSRuntime JS
 @inject NavigationManager NavManager
 
 @rendermode InteractiveServer
@@ -74,6 +75,8 @@
     {
         // Subscribe to session changes
         session.UpdateScreenFunc += RefreshNavbar;
+        //updated the game we move in site not left it.
+        NavManager.LocationChanged += HandleLocationChanged;
     }
 
     private void RefreshNavbar()
@@ -82,9 +85,17 @@
         InvokeAsync(StateHasChanged);
     }
 
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        //Set to true so the current page's 'beforeunload' (if any) is ignored
+        await JS.InvokeVoidAsync("markAsInternalNav");
+        //Reset to false on  new loaded page
+    }
+
     public void Dispose()
     {
         // Always unsubscribe to avoid memory leaks
         session.UpdateScreenFunc -= RefreshNavbar;
+        NavManager.LocationChanged -= HandleLocationChanged;
     }
 }

@@ -4,6 +4,7 @@
 @using Model.Tables
 @inject Session session
 @inject NavigationManager NavManager
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 
@@ -137,9 +138,24 @@
         }
     }
 
-    private void StartLevel(int level)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
+    private async void StartLevel(int level)
+    {
+        if (session.IsContuiningRun) //if from save will lose previous save
+        {
+            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete Current Run Progress?");
+            if (!confirmed) return; //if not we don't go
+        }
         session.SelectedLevel = level;
+        session.IsContuiningRun = false;
         NavManager.NavigateTo("Game");
     }
 

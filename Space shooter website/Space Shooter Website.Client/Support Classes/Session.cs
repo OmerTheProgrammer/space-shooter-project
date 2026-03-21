@@ -9,10 +9,11 @@ namespace Space_Shooter_Website.Client.Support_Classes
     public class Session
     {
         public User? CurrentUser { get; set; }
-        public int SelectedLevel { get; set; } = 1;
+        public int SelectedLevel { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsPlayer { get; set; }
         public bool IsLoggedIn => CurrentUser != null;
+        public bool IsContuiningRun = false;
 
         public string Progress = "100%";
         public bool IsEndless { get; set; } = false;
@@ -53,12 +54,28 @@ namespace Space_Shooter_Website.Client.Support_Classes
 
         public RunInfo CurrentRun { get; set; } = new RunInfo();
 
-        public void Logout()
+        public async Task Logout(ApiService api, IJSRuntime JS, NavigationManager NavManager)
         {
-            CurrentUser = null;
-            IsAdmin = false;
-            IsPlayer = false;
-            UpdateScreenFunc?.Invoke();
+            string message = "Are you sure you want to Logout?";
+            
+            if (!IsContuiningRun && IsPlayer && Progress != "100%")//new run to save with any progress
+            {
+                message += $"this will save the current Run, you're In Lvl{CurrentRun.CurrentLevel}?";
+            }
+            // Confirmation logic (Simple browser confirm for now)
+            bool confirmed = await JS.InvokeAsync<bool>("confirm", message);
+            if (confirmed){
+                if (IsPlayer)
+                {
+                    await SendRunToServer(api, JS);
+                    CurrentRun = new RunInfo();
+                }
+                CurrentUser = null;
+                IsAdmin = false;
+                IsPlayer = false;
+                NavManager.NavigateTo("Log In", forceLoad: true);
+                UpdateScreenFunc?.Invoke();
+            }
         }
 
         //HUD
@@ -72,6 +89,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 CurrentRun.CurrentLevel = level;
                 CurrentRun.CurrentShieldLevel = shield;
                 CurrentRun.CurrentBlasterCount = blasters;
+                CurrentRun.CurrentLevel = level;
                 IsEndless = isEndless;
             }
 
@@ -100,28 +118,52 @@ namespace Space_Shooter_Website.Client.Support_Classes
         //    IsEndless = false;
         //    UpdateScreenFunc?.Invoke();
         //}
+       
 
-        public async void SaveRun(ApiService api, bool HadWon, IJSRuntime JS)
+        public async Task SendRunToServer(ApiService api, IJSRuntime JS)
         {
-            CurrentRun.Player = CurrentUser as Player;
-            if (CurrentUser != null && CurrentRun.Player != null)
+            // We only sync if there is a run and a logged-in user
+            if (Progress != "100%" && CurrentUser != null)//the run was started and at least 1 enemy died
             {
-                CurrentRun.RunStopDate = DateTime.Now;
-                CurrentRun.IsRunOver = HadWon; //Set Wrong - temporary before DB changes
                 try
                 {
-                    //await api.InsertRunInfo(
-                    //    CurrentRun
-                    //);
-                    //temp remamber to delete in call Game.SaveGameResult() and here at func title
-                    await JS.InvokeVoidAsync("ShowAlert", "Saving " + CurrentRun + " To DB.");
-                    Console.WriteLine("Saving " + CurrentRun + " To DB.");
-
+                    // This is where we actually hit the DB
+                    var result = await api.InsertRunInfo(CurrentRun);
+                    await JS.InvokeVoidAsync("ShowAlert", "Saved Run to Command Center!");
+                    Console.WriteLine("Synced Run to Command Center. Run ID: " + CurrentRun.Idx);
                 }
                 catch (Exception ex)
                 {
-                    throw new ExpandedException("Error saving run info: ", ex.Message);
+                    // 2. Try to tell the user, but don't crash if they already left
+                    try
+                    {
+                        await JS.InvokeVoidAsync("ShowAlert", "Sync Failed: " + ex.Message);
+                    }
+                    catch (JSDisconnectedException)
+                    {
+                        // Ignore: The user closed the tab, they don't need the alert anyway
+                    }
+                    // Log error but don't crash the game
+                    Console.WriteLine("Sync Failed: " + ex.Message);
                 }
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("ShowAlert", "Sync Failed: no current run or player isn't logged in.");
+                Console.WriteLine("Sync Failed: no current run or player isn't logged in.");
+            }
+        }
+
+        public void UpdateRunLocal(bool gameover)
+        {
+            if (CurrentRun != null)
+            {
+                CurrentRun.RunStopDate = DateTime.Now;
+                CurrentRun.IsRunOver = gameover; // 'gameover' comes from JS (t = died, f = in level or end of level)
+                CurrentRun.Player = CurrentUser as Player;
+
+                // This is strictly local. No API calls here.
+                Console.WriteLine($"Local stats updated. Mission status: {(gameover ? "FAILED" : "SUCCESS")}");
             }
         }
     }

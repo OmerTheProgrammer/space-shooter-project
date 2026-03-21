@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavManager
+@inject IJSRuntime JS
 
 <PageTitle>Credits - Space Shooter</PageTitle>
 
@@ -115,6 +116,15 @@
         {
             // forceLoad: true is the secret sauce that stops the JS crash
             NavManager.NavigateTo(url, forceLoad: true);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
         }
     }
 }

@@ -72,6 +72,14 @@
     private string passwordInputType = "password"; // Default to hidden
     private string scanningText = "SCANNING...";
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
 
     private void TogglePasswordVisibility()
     {

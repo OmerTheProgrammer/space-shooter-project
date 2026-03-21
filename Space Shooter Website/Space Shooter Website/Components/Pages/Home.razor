@@ -34,6 +34,15 @@
 </section>
 
 @code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
     private async Task ConfirmExit()
     {
         // Using native JS confirm to avoid the debugger crash loop we saw earlier

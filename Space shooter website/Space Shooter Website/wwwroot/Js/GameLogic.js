@@ -4,12 +4,47 @@ let currentScene, scenes = [], The_counter, counter_ended = false;
 let killed = 0, maxEnemies = 0, counter_running = false, shield_life_decrese_count = 0;
 let music_isnt_active = true, sound_isnt_active = true, level_drop_rate = 60;
 let win = false, tico = false, is_endless = false, shield_next_level_was_hidden = false;
-let gameover = false, invulnerable = false, og_x = size[0] / 2, og_y = size[1] - 100, health = 5, score = 0;
-let power_up_types, shield_life = 0, player_lasers_count = 1, shield_max_life = 0;
+let gameover = false, invulnerable = false, og_x = size[0] / 2, og_y = size[1] - 100;
+let power_up_types, shield_life, player_lasers_count, shield_max_life, health, score;
 let score_coldown = 0, ending_coldown = 0, whoosh_coldown = 0, hide_setting_coldown = 0;
 let cursors, player, Lasers, enemies, enemyLasers, power_ups, shield, explosionSprite;
 let gameover_text, tico_text, win_text, bg_music;
-let is_music_on = true, is_sound_on = true, level = 1, paused = false;
+let is_music_on, is_sound_on, level, paused = false;
+
+let isInternalNavigation = false;
+window.markAsInternalNav = () => {
+    isInternalNavigation = true;
+    console.log("Internal navigation flagged. Emergency save disabled for this transition.");
+};
+window.resetInternalNav = () => {
+    isInternalNavigation = false;
+    console.log("Navigation flag reset. Emergency save re-enabled.");
+};
+
+if (!health) {//defults
+    health = 5;
+}
+if (!score) {//defults
+    score = 0;
+}
+if (!player_lasers_count) {//defults
+    player_lasers_count = 1;
+}
+if (!shield_life) {//defults
+    shield_life = 0
+}
+if (!shield_max_life) {
+    shield_max_life = 0
+}
+if (!level) {
+    level = 1;
+}
+if (!is_music_on) {
+    is_music_on = true
+}
+if (!is_sound_on) {
+    is_sound_on = true
+}
 
 function print() {
     const displayList = currentScene.children.list;
@@ -90,7 +125,7 @@ class Game_scene extends Phaser.Scene {
         currentScene = this;
         scenes[0] = this;
         //backgrounds
-        this.load.image('background', "/Assets/Backgrounds/blue.png");
+        this.load.image('background', "/Assets/Backgrounds/darkPurple.png");
         //music
         this.load.audio('battle music', '/Assets/Game Elements/Sounds/battle_music.ogg');
         this.load.audio('player laser sound', '/Assets/Game Elements/Sounds/sfx_laser1.ogg');
@@ -454,9 +489,11 @@ class End_scene extends Phaser.Scene {
                 score += 5000;
                 end_text(tico_text, 'losing');
             }
+
+            update_hud_in_blazor();//also updates session.CurrentRun that sent to DB
             if (window.dotNetHelper) {
                 window.dotNetHelper.invokeMethodAsync('SaveGameResult',
-                    win,
+                    gameover
                 );
             }
             ending_coldown = currentScene.time.now + 5000;
@@ -519,7 +556,9 @@ class End_scene extends Phaser.Scene {
         this.level_select_button.setVisible(false);
         //change to better url change by location like api
         this.level_select_button.on('pointerdown', () => {
-            window.location.href = 'https://localhost:7020/Level%20Selection';
+            //do not add the blazer move to level select crushes by hiding the dotNetHelper
+            isInternalNavigation = true;
+            window.location.href = '/Level Selection';
         });
 
         this.next_level_button = this.add.sprite((size[0] / 2) + 350, size[1] / 2 + 45, 'next level button');//next_level_button
@@ -530,6 +569,7 @@ class End_scene extends Phaser.Scene {
         this.next_level_button.on('pointerdown', () => {
             level += 1;
             restart_level();
+            currentScene.scene.start('Game_scene');
         });
 
         cursors = this.input.keyboard.createCursorKeys();//arrow keys, space, shift
@@ -592,8 +632,6 @@ function end_text(text, music) {
             callbackScope: scenes[1]
         });
     }
-    //user.score = score;
-    //user.level = level;
 }
 
 function hide_all(is_next_level) {
@@ -834,7 +872,11 @@ function hitEnemy(laser, enemy) {
     if (laser.active && enemy.active) {
         laser.setActive(false);
         laser.setVisible(false);
-        kill_enemy(enemy);
+        flashRed(enemy, 150);
+        enemy.Hp -= 1;
+        if (enemy.Hp <= 0) {
+            kill_enemy(enemy);
+        }
     }
 }
 
@@ -870,6 +912,7 @@ function kamikaza(sprite, enemy) {
     if (player.active && enemy.active && sprite.active) {//if sprite is shield, he has to active too
         if (health > 0 && !invulnerable) {
             handlePlayerHit(player);
+            enemy.Hp = 0;
             kill_enemy(enemy);
         }
     }
@@ -935,15 +978,20 @@ function spawn_enemy() {
         let x = Phaser.Math.Between(0, size[0]);
         let enemy = enemies.get(x, -50);
         if (enemy) {
+            enemy.clearTint();
             enemy.setActive(true);
             enemy.setVisible(true);
             enemy.setVelocityY(50);
+            enemy.Hp = 5;
             enemy.was_hidden = false;
         }
     }
 }
 
 function update_music() {
+    if (!bg_music) {
+        return;
+    }
     //is_music_on/is_sound_on updates in master page
     // Update music state only after the timeout (here 1s)
     if (!bg_music.coldown) {
@@ -1205,13 +1253,17 @@ function restart_level() {
     invulnerable = false;
     score_coldown = 0;
 
-    scenes[1].level_select_button.setVisible(false);
-    scenes[1].next_level_button.setVisible(false);
-
-    currentScene.sound.stopAll();
+    if (scenes[1] && scenes[1].level_select_button && scenes[1].next_level_button) {
+        scenes[1].level_select_button.setVisible(false);
+        scenes[1].next_level_button.setVisible(false);
+    }
+    
+    if (currentScene) {
+        if (currentScene.sound) {
+            currentScene.sound.stopAll();
+        }
+    }
     update_music();
-
-    currentScene.scene.start('Game_scene');
 }
 
 function swoop_by(enemy1, enemy2) {
@@ -1222,15 +1274,35 @@ function swoop_by(enemy1, enemy2) {
     }
 }
 
-function update_hud_in_blazor() {
-    // 'dotNetHelper'a reference we set to the Blazor component
-    // connects to the C#
-    if (window.dotNetHelper) {
-        window.dotNetHelper.invokeMethodAsync('UpdateHUD',
-            health, score, level, shield_life, player_lasers_count, killed, maxEnemies, is_endless
-        );
-    }
+function flashRed(sprite, duration) {
+    sprite.setTint(0xff0000); // Change color to red
+
+    currentScene.time.delayedCall(duration, () => {
+        if (sprite && sprite.active) {
+            sprite.clearTint(); // Revert to original colors
+        }
+    });
 }
+
+function update_hud_in_blazor() {
+    //if game is ShuttingDown and c# talk object is null return
+    if (!window.dotNetHelper) {
+        return;
+    }
+    try {
+            // otherwise Call the C# method
+            window.dotNetHelper.invokeMethodAsync('UpdateHUD',
+                health, score, level, shield_life, player_lasers_count, killed, maxEnemies, is_endless
+            ).catch(err => {
+                // 3. This catches the 'JSDisconnectedException' on the JS side
+                // We do nothing here because the page is closing anyway.
+                console.log("HUD update skipped: Circuit disconnected.");
+            });
+        } catch (e) {
+            // Final safety net for synchronous execution errors
+        }
+    }
+
 
 //stop game when out of the page
 document.addEventListener("visibilitychange", () => {
@@ -1281,14 +1353,34 @@ window.DestroyGame = () => {
     }
 };
 
+window.setupExitHandler = () => {
+    window.addEventListener("beforeunload", (event) => {
+        // Trigger the C# Save method immediately
+        if (window.dotNetHelper != null && !isInternalNavigation) { //dotNetHelper != null and isn't Internal Navigation
+            window.dotNetHelper.invokeMethodAsync("SaveGameResultToServer");
+        }
+    });
+};
 
-window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
 
+window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Currentscore, shieldHealth, blasterCount) => {
     //recives data from c#
     window.dotNetHelper = dotNetHelper;
     is_music_on = IsMusicOn;
     is_sound_on = IsSoundOn;
     level = selectedLevel;
+    health = hp;
+    score = Currentscore;
+    shield_life = shieldHealth;
+    player_lasers_count = blasterCount;
+
+    if (health <= 0) {// restart if died
+        health = 5;
+        score = 0;
+        player_lasers_count = 1;
+        shield_life = 0;
+        shield_max_life = 0;
+    }
 
     //game config
     const config = {
@@ -1316,4 +1408,7 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel) => {
         window.gameInstance = null;
     }
     window.gameInstance = new Phaser.Game(config);
+    shield_max_life = 3 + 3 * Math.floor((shieldHealth / 3));
+    killed = 0;
+    restart_level();
 };

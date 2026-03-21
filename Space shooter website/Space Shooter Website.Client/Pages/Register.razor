@@ -150,11 +150,20 @@
     //UI fields
     private string passwordInputType = "password"; // Default to hidden
     private string ConfirmpasswordInputType = "password";
-    private string registerCardClass = "col-md-6 register-card";
+    private string registerCardClass = "col-md-6 register card";
     private string errorMessage = "";
     private bool showTerms = false;
     private string scanningText = "SCANNING...";
     private bool isProcessing = false; // Prevents double-clicks
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
 
     private void TogglePasswordVisibility()
     {
@@ -169,13 +178,13 @@
     private async Task TriggerError(string message)
     {
         errorMessage = message;
-        registerCardClass = "col-md-6 register-card";
+        registerCardClass = "col-md-6 register card";
         isProcessing = false;
         StateHasChanged(); // Force Blazor to render without the shake
 
         await Task.Delay(10);
 
-        registerCardClass = "col-md-6 register-card shake"; // Triggers the CSS shake
+        registerCardClass = "col-md-6 register card shake"; // Triggers the CSS shake
     }
 
     private async Task HandleRegister()

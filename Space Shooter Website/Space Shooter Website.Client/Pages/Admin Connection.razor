@@ -1,6 +1,7 @@
 ﻿@page "/Admin Connection"
 @using Space_Shooter_Website.Client.Support_Classes
 @using Client_Manager___API;
+@using Model.Entitys
 @inject NavigationManager NavManager
 @inject Session session
 @inject IJSRuntime JS
@@ -66,6 +67,16 @@
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+            session.UpdateScreenFunc += StateHasChanged;
+        }
+    }
+
     // The logic formerly in the JavaScript Submit() function
     private async void HandleSubmit()
     {
@@ -87,8 +98,19 @@
         {
             // Update the Session state
             session.IsAdmin = true;
-            await JS.InvokeVoidAsync("ShowAlert", "Admin needs to be inserted in DB");
-            Console.WriteLine("Admin needs to be inserted in DB");
+            try
+            {
+                Admin Newadmin = session.CurrentUser as Admin;
+                Newadmin.StartDate = DateTime.Now;
+                await api.InsertAdmin(Newadmin);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = "Admin Insertion Failed: " + ex.Message;
+            }
+
+            await JS.InvokeVoidAsync("ShowAlert", "Admin inserted in DB!");
+            Console.WriteLine("Admin inserted in DB");
             // Redirect to Admin View
             NavManager.NavigateTo("/Admin Dashboard");
         }
@@ -98,10 +120,16 @@
         }
     }
 
-    private void ReLogAsAdmin()
+    private async Task ReLogAsAdmin()
     {
-        session.Logout();
-        NavManager.NavigateTo("/Log In");
-        StateHasChanged();
+        if (api is ApiService apiService)
+        {
+            await session.Logout(apiService, JS, NavManager);
+        }
+    }
+
+    public async void Dispose()
+    {
+        session.UpdateScreenFunc -= StateHasChanged;
     }
 }
