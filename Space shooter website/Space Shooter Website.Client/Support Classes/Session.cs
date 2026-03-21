@@ -1,7 +1,9 @@
 ﻿using Client_Manager___API;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Model.Data_Transfer_Objects;
 using Model.Entitys;
+using System.Threading.Tasks;
 using ViewModel;
 
 namespace Space_Shooter_Website.Client.Support_Classes
@@ -28,28 +30,57 @@ namespace Space_Shooter_Website.Client.Support_Classes
             UpdateScreenFunc?.Invoke();
         }
 
-        public void ToggleMusic(IJSRuntime JSRuntime)
+        public async Task ToggleMusic(IJSRuntime JSRuntime, ApiService apiService)
         {
             Player CurrentPlayer = CurrentUser as Player;
             if (CurrentPlayer != null)
             {
                 CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
-                JSRuntime.InvokeVoidAsync("UpdateUserMusicPrefrence", CurrentPlayer.IsMusicOn);
+                try
+                {
+                    JSRuntime.InvokeVoidAsync("UpdateUserMusicPrefrence", CurrentPlayer.IsMusicOn);
+                    await apiService.UpdatePlayer(
+                        PlayerDTO.FromEntity(CurrentPlayer, dto =>
+                        {
+                            dto.IsMusicOn = CurrentPlayer.IsMusicOn;
+                        })
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Updateing Music Currently Failed: " + ex.Message);
+                    JSRuntime.InvokeVoidAsync("ShowAlert", "Updateing Music Currently Failed: " + ex.Message);
+                }
             }
+
             // This triggers StateHasChanged in the Layout because it's subscribed
             UpdateScreenFunc?.Invoke();
         }
 
-        public void ToggleSound(IJSRuntime JSRuntime)
+        public async void ToggleSound(IJSRuntime JSRuntime, ApiService apiService)
         {
             Player CurrentPlayer = CurrentUser as Player;
             if (CurrentPlayer != null)
             {
                 CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
-                JSRuntime.InvokeVoidAsync("UpdateUserSoundPrefrence", CurrentPlayer.IsSoundOn);
+                try
+                {
+                    JSRuntime.InvokeVoidAsync("UpdateUserSoundPrefrence", CurrentPlayer.IsSoundOn);
+                    await apiService.UpdatePlayer(
+                        PlayerDTO.FromEntity(CurrentPlayer, dto =>
+                        {
+                            dto.IsSoundOn = CurrentPlayer.IsSoundOn;
+                        })
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Updateing Sound Currently Failed: " + ex.Message);
+                    JSRuntime.InvokeVoidAsync("ShowAlert", "Updateing Sound Currently Failed: " + ex.Message);
+                }
+                // This triggers StateHasChanged in the Layout because it's subscribed
+                UpdateScreenFunc?.Invoke();
             }
-            // This triggers StateHasChanged in the Layout because it's subscribed
-            UpdateScreenFunc?.Invoke();
         }
 
         public RunInfo CurrentRun { get; set; } = new RunInfo();
@@ -57,14 +88,15 @@ namespace Space_Shooter_Website.Client.Support_Classes
         public async Task Logout(ApiService api, IJSRuntime JS, NavigationManager NavManager)
         {
             string message = "Are you sure you want to Logout?";
-            
-            if (!IsContuiningRun && IsPlayer && Progress != "100%")//new run to save with any progress
+
+            if (!IsContuiningRun && IsPlayer && CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0))
             {
-                message += $"this will save the current Run, you're In Lvl{CurrentRun.CurrentLevel}?";
+                message += $"\nthis will save the current Run, you're In Lvl {CurrentRun.CurrentLevel}?";
             }
             // Confirmation logic (Simple browser confirm for now)
             bool confirmed = await JS.InvokeAsync<bool>("confirm", message);
-            if (confirmed){
+            if (confirmed)
+            {
                 if (IsPlayer)
                 {
                     await SendRunToServer(api, JS);
@@ -82,7 +114,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
         public event Action? UpdateScreenFunc;
         public void UpdateGameStats(int hp, int score, int level, int shield, int blasters, int killed, int maxEnemies, bool isEndless)
         {
-            if(CurrentRun != null)
+            if (CurrentRun != null)
             {
                 CurrentRun.CurrentHp = hp;
                 CurrentRun.CurrentScore = score;
@@ -101,7 +133,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
             else if (maxEnemies > 0)
             {
                 // Percentage of enemies killed vs total level enemies
-                double progressPercent = (1-(((double)killed / maxEnemies))) * 100;
+                double progressPercent = (1 - (((double)killed / maxEnemies))) * 100;
                 // Add 'public int Progress {get; set;}' to RunInfo. and the rest
                 // for now: field here - a way to move the data between pages
                 Progress = progressPercent.ToString("F2") + "%";
@@ -118,12 +150,12 @@ namespace Space_Shooter_Website.Client.Support_Classes
         //    IsEndless = false;
         //    UpdateScreenFunc?.Invoke();
         //}
-       
+
 
         public async Task SendRunToServer(ApiService api, IJSRuntime JS)
         {
             // We only sync if there is a run and a logged-in user
-            if (Progress != "100%" && CurrentUser != null)//the run was started and at least 1 enemy died
+            if (CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0) && CurrentUser != null)//the run was saved once at least
             {
                 try
                 {

@@ -2,9 +2,12 @@
 @using Space_Shooter_Website.Client.Support_Classes
 @using Model.Entitys
 @using Model.Tables
+@using Model.Data_Transfer_Objects
+@using Client_Manager___API
 @inject Session session
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
+@inject IApiService api
 @rendermode InteractiveServer
 
 
@@ -96,27 +99,49 @@
     </div>
 }
 
-@if (showInfo)
+@if (showScores)
 {
     <div class="custom-modal-overlay">
-        <div class="custom-modal info-modal p-4 text-start">
-            <p class="subtitle"> Controls:</p>
-            <p class="text">
-                Use the Arrow Keys or WASD Keys to move:<br />
-                Up Arrow \ W: Move Up<br />
-                Down Arrow \ S: Move Down<br />
-                Left Arrow \ A: Move Left<br />
-                Right Arrow \ D: Move Right<br />
-                Press the Space Bar to shoot projectiles.<br />
-                P: Pause/Resume the game<br />
-            </p>
-            <p class="text danger">If the <b>buttons get stuck</b>, release and click again.</p>
-            <p class="subtitle"> Ending screen:</p>
-            <p class="text">
-                Enter: Proceed to the next level<br />
-                Backspace: Return to the Level selection screen
-            </p>
-            <button class="btn-side mt-4 w-100 button" @onclick="() => showInfo = false">UNDERSTOOD</button>
+        <div class="custom-modal p-4" style="min-width: 90vw;">
+            <h2 class="subtitle mb-3 text-center">🏆 GLOBAL TOP 10 🏆</h2>
+
+            <div class="score-list" style="max-height: 300px; overflow-y: auto;">
+                @if (isLoadingScores)
+                {
+                    <p class="text-info text-center">Scanning deep space for transmissions...</p>
+                }
+                else if (topScores == null || !topScores.Any())
+                {
+                    <p class="text-warning text-center">No pilot data found in the archives.</p>
+                }
+                else
+                {
+                    <table class="table table-dark table-borderless text-start">
+                        <thead>
+                            <tr class="text-info border-bottom">
+                                <th>#</th>
+                                <th>Pilot Username</th>
+                                <th>Score</th>
+                                <th>Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < topScores.Count; i++)
+                            {
+                                var run = topScores[i];
+                                <tr class="@(run.Player.Idx == currentPlayer?.Idx ? "table-active text-warning" : "")">
+                                    <td>@(i + 1)</td>
+                                    <td>@run.Player.Username</td>
+                                    <td class="fw-bold">@run.CurrentScore.ToString("N0")</td>
+                                    <td>Sector @run.CurrentLevel</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            <button class="btn-side mt-3 w-100 button" @onclick="() => showScores = false">BACK TO MISSION</button>
         </div>
     </div>
 }
@@ -125,8 +150,10 @@
     private int maxUnlockedLevel = 1; // Default to 1 to avoid null issues
     private bool showScores, showSettings, showInfo;
     private Player currentPlayer = null;
+    private RunsInfoTable topScores = new(); // List to hold global top 10
+    private bool isLoadingScores = false;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         // 1. Get the player
         currentPlayer = session.CurrentUser as Player;
@@ -134,8 +161,11 @@
         // 2. Only update if the player actually exists
         if (currentPlayer != null)
         {
+            await SyncPlayerStats();
             maxUnlockedLevel = currentPlayer.MaxLevel;
         }
+        session.UpdateScreenFunc += StateHasChanged;
+        _ = LoadTopScores(10);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -144,6 +174,64 @@
         if (firstRender)
         {
             await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
+    private async Task SyncPlayerStats()
+    {
+        if (currentPlayer == null) return;
+
+        try 
+        {
+            // 1. Fetch all runs for THIS player
+            var allRuns = await api.GetAllRunsInfo();
+            var playerRuns = allRuns.Where(r => r.Player.Idx == currentPlayer.Idx).ToList();
+
+            if (playerRuns.Any())
+            {
+                // 2. Find the highest level they ever reached
+                int highestLevelReached = playerRuns.Max(r => r.CurrentLevel);
+
+                // 3. Update MaxLevel if they broke their record
+                if (highestLevelReached > currentPlayer.MaxLevel)
+                {
+                    currentPlayer.MaxLevel = highestLevelReached;
+                    maxUnlockedLevel = highestLevelReached; // Update UI immediately
+                    
+                    // 4. Persist to DB
+                    await api.UpdatePlayer(
+                        PlayerDTO.FromEntity(currentPlayer, dto =>
+                        {
+                            dto.IsMusicOn = currentPlayer.IsMusicOn;
+                        })
+                    );
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Stats sync failed: {ex.Message}");
+        }
+    }
+
+    private async Task LoadTopScores(int Count)
+    {
+        isLoadingScores = true;
+        try
+        {
+            // Assuming your API has a method to get all runs
+            var allRuns = await api.GetAllRunsInfo();
+            // Filter top 10 by score descending
+            topScores = new RunsInfoTable(allRuns.OrderByDescending(r => r.CurrentScore).Take(Count).ToList());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading scores: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingScores = false;
+            StateHasChanged();
         }
     }
 
@@ -161,20 +249,22 @@
 
     private void ToggleMusic()
     {
-        if (currentPlayer != null)
+        if (api is ApiService apiService)
         {
-            currentPlayer.IsMusicOn = !currentPlayer.IsMusicOn;
-
-            StateHasChanged(); // Force UI refresh for the icon toggle
+            session.ToggleMusic(JS, apiService);
         }
     }
 
     private void ToggleSound()
     {
-        if (currentPlayer != null)
+        if (api is ApiService apiService)
         {
-            currentPlayer.IsSoundOn = !currentPlayer.IsSoundOn;
-            StateHasChanged();
+            session.ToggleMusic(JS, apiService);
         }
+    }
+
+    public async void Dispose()
+    {
+        session.UpdateScreenFunc -= StateHasChanged;
     }
 }

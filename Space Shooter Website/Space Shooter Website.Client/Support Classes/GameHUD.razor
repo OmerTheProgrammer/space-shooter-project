@@ -1,8 +1,10 @@
 ﻿@using Space_Shooter_Website.Client.Support_Classes
 @using Model.Entitys
+@using Client_Manager___API
 @implements IDisposable
 @inject Session session
 @inject IJSRuntime Js
+@inject IApiService api
 @rendermode InteractiveServer
 
 <nav class="navbar navbar-expand-lg">
@@ -109,12 +111,18 @@
 
     private void ToggleMusic()
     {
-        session.ToggleMusic(Js);
+        if(api is ApiService apiService)
+        {
+            session.ToggleMusic(Js, apiService);
+        }
     }
 
     private void ToggleSound()
     {
-        session.ToggleSound(Js);
+        if (api is ApiService apiService)
+        {
+            session.ToggleSound(Js, apiService);
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
