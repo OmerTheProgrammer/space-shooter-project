@@ -136,10 +136,10 @@ class Game_scene extends Phaser.Scene {
         this.load.image('player', '/Assets/Game Elements/Images/player.png');
         this.load.image('enemy', '/Assets/Game Elements/Images/enemyShip.png');
         //lasers
-        this.load.image('player laser', '/Assets/Game Elements/Images/laserRed.png');
+        this.load.image('player laser', '/Assets/Game Elements/Images/Lasers/laserRed.png');
         this.load.image('laser split main', 'Assets/Game Elements/Images/Lasers/Blue/laserBlueThick.png');
         this.load.image('player split laser frag', 'Assets/Game Elements/Images/Lasers/Blue/laserBlue.png');
-        this.load.image('enemy laser', '/Assets/Game Elements/Images/laserGreen.png');
+        this.load.image('enemy laser', '/Assets/Game Elements/Images/Lasers/laserGreen.png');
         //power_ups
         power_up_types = ["gold bolt", "gold star", "red pill", "silver shield", "Blue Splitter"];
         this.load.image('powerUp ' + power_up_types[0], '/Assets/Game Elements/Images/PowerUps/bolt_gold.png');
