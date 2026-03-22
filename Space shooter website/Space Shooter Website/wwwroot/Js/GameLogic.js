@@ -692,6 +692,20 @@ function hide_all(is_next_level) {
             });
         }
 
+        if (splittingMainLasers.getChildren().length > 0) {
+            splittingMainLasers.getChildren().forEach(function (splittingMainLaser) {
+                splittingMainLaser.setActive(false);
+                splittingMainLaser.setVisible(false);
+            });
+        }
+
+        if (splitFragments.getChildren().length > 0) {
+            splitFragments.getChildren().forEach(function (splitFragment) {
+                splitFragment.setActive(false);
+                splitFragment.setVisible(false);
+            });
+        }
+
         if (power_ups.getChildren().length > 0) {
             power_ups.getChildren().forEach(function (powerUp) {
                 powerUp.setActive(false);
@@ -748,6 +762,20 @@ function show_all() {
                 laser.setActive(true);
                 laser.setVisible(true);
             });
+
+            if (splittingMainLasers.getChildren().length > 0) {
+                splittingMainLasers.getChildren().forEach(function (splittingMainLaser) {
+                    splittingMainLaser.setActive(true);
+                    splittingMainLaser.setVisible(true);
+                });
+            }
+
+            if (splitFragments.getChildren().length > 0) {
+                splitFragments.getChildren().forEach(function (splitFragment) {
+                    splitFragment.setActive(true);
+                    splitFragment.setVisible(true);
+                });
+            }
 
             power_ups.getChildren().forEach(function (powerUp) {
                 activatePowerup(powerUp);
@@ -1381,22 +1409,16 @@ function flashRed(sprite, duration) {
 
 function update_hud_in_blazor() {
     //if game is ShuttingDown and c# talk object is null return
-    if (!window.dotNetHelper) {
-        return;
-    }
-    try {
-            // otherwise Call the C# method
+    if (window.dotNetHelper) {
+        try {
             window.dotNetHelper.invokeMethodAsync('UpdateHUD',
                 health, score, level, shield_life, player_lasers_count, killed, maxEnemies, is_endless
-            ).catch(err => {
-                // 3. This catches the 'JSDisconnectedException' on the JS side
-                // We do nothing here because the page is closing anyway.
-                console.log("HUD update skipped: Circuit disconnected.");
-            });
+            );
         } catch (e) {
-            // Final safety net for synchronous execution errors
+            console.log("HUD update skipped: Circuit disconnected.");
         }
     }
+}
 
 
 //stop game when out of the page
@@ -1505,5 +1527,11 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Current
     window.gameInstance = new Phaser.Game(config);
     shield_max_life = 3 + 3 * Math.floor((shieldHealth / 3));
     killed = 0;
-    restart_level();
+    //restart_level(): rest of this crushes often
+    killed = 0;
+    gameover = false;
+    win = false;
+    tico = false;
+    invulnerable = false;
+    score_coldown = 0;
 };
