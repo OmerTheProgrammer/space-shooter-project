@@ -26,6 +26,16 @@
     line-height: 1.6;
 }
 
+#Purple_Shit {
+    text-shadow: 0 0 8px rgba(130, 0, 250, 1);
+    color: #8900ff;
+    font-weight: bold;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
 @media (max-width: 768px) {
     .credit.text {
         margin-left: 5%;

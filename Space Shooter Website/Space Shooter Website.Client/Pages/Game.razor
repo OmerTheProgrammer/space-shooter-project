@@ -57,6 +57,7 @@
         if (api is ApiService apiService && currentPlayer != null)
         {
             session.UpdateRunLocal(gameover);
+            IsGameStarted = false; // TURN OFF the guard after a successful save
         }
     }
 
@@ -76,6 +77,7 @@
         {
             // Every time a new page loads, we ensure the exit handler is armed
             await JS.InvokeVoidAsync("resetInternalNav");
+            session.UpdateScreenFunc += RefreshUI;//HUD
             if (!IsGameStarted)
             {
                 IsGameStarted = true;
@@ -104,6 +106,17 @@
                 }
             }
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        session.UpdateScreenFunc += RefreshUI;//HUD
+    }
+
+    private async void RefreshUI()
+    {
+        // This ensures the update always happens on the correct thread
+        await InvokeAsync(StateHasChanged);
     }
 
     [JSInvokable]

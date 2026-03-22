@@ -22,12 +22,19 @@ namespace Space_Shooter_Website.Client.Support_Classes
 
         public bool IsSettingsVisible { get; set; } = false;
 
-        public void ToggleSettings(IJSRuntime JSRuntime)
+        public async void ToggleSettings(IJSRuntime JSRuntime)
         {
             IsSettingsVisible = !IsSettingsVisible;
             JSRuntime.InvokeVoidAsync("UpdatePaused", IsSettingsVisible);
             // This triggers StateHasChanged in the Layout because it's subscribed
-            UpdateScreenFunc?.Invoke();
+            try
+            {
+                UpdateScreenFunc?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message); 
+            }
         }
 
         public async Task ToggleMusic(IJSRuntime JSRuntime, ApiService apiService)
@@ -89,7 +96,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
         {
             string message = "Are you sure you want to Logout?";
 
-            if (!IsContuiningRun && IsPlayer && CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0))
+            if (IsPlayer && CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0))
             {
                 message += $"\nthis will save the current Run, you're In Lvl {CurrentRun.CurrentLevel}?";
             }
@@ -107,6 +114,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 IsPlayer = false;
                 NavManager.NavigateTo("Log In", forceLoad: true);
                 UpdateScreenFunc?.Invoke();
+                UpdateScreenFunc = null;
             }
         }
 
@@ -181,7 +189,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
             }
             else
             {
-                await JS.InvokeVoidAsync("ShowAlert", "Sync Failed: no current run or player isn't logged in.");
+                await JS.InvokeVoidAsync("ShowAlert", "No current run to save!");
                 Console.WriteLine("Sync Failed: no current run or player isn't logged in.");
             }
         }
