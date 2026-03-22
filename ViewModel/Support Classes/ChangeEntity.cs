@@ -18,6 +18,14 @@ namespace ViewModel
 
         public BaseEntity Entity { get => entity; set => entity = value; }
         public CreateSql CreateSql { get => createSql; set => createSql = value; }
+
+        public CreateSql CreateSql_Prop
+        {
+            get => default;
+            set
+            {
+            }
+        }
     }
 
     public delegate void CreateSql(BaseEntity entity, SqlCommand command);

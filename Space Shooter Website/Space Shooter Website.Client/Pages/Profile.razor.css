@@ -1,0 +1,122 @@
+﻿.profile-label {
+    color: #00d4ff;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.profile-input {
+    width: 100%;
+    background: #111;
+    border: 1px solid #444;
+    color: white;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    outline: none;
+}
+
+.profile-card {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00FFAB;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
+    z-index: 1;
+}
+.profile.subtitle {
+    color: #00d4ff;
+    font-weight: 800;
+    margin-top: 20px;
+}
+
+.profile.text {
+    margin-left: 10%;
+    margin-right: 10%;
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.stat-box {
+    transition: transform 0.2s ease-in-out;
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    background: rgba(0, 150, 255, 0.1) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #0dcaf0;
+    border-radius: 10px;
+}
+
+.small-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.table-dark {
+    background: transparent !important;
+}
+
+.sticky-top {
+    z-index: 2;
+    background-color: #000;
+}
+
+.badge.border {
+    background: transparent;
+    font-weight: normal;
+}
+
+/* Make the log table rows slightly transparent */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 212, 255, 0.1) !important;
+}
+
+/* Tooltip container */
+.badge-locked {
+    background-color: rgba(128, 128, 128, 0.1); /* Very faint gray */
+    color: #6c757d !important; /* Dull gray text */
+    border-color: #6c757d !important; /* Dull gray border */
+    opacity: 0.5; /* Faded look */
+    filter: grayscale(100%); /* Removes any hint of color */
+    cursor: not-allowed;
+}
+
+.game-badge {
+    position: relative;
+    cursor: help;
+}
+
+/* Tooltip text */
+.game-badge::after {
+    content: attr(data-tooltip); /* Pulls text from data-tooltip attribute */
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+    border: 1px solid #777;
+}
+
+.game-badge:hover::after {
+    visibility: visible;
+    opacity: 1;
+}

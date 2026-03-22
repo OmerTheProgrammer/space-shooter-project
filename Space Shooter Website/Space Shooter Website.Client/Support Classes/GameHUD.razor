@@ -1,0 +1,141 @@
+﻿@using Space_Shooter_Website.Client.Support_Classes
+@using Model.Entitys
+@using Client_Manager___API
+@implements IDisposable
+@inject Session session
+@inject IJSRuntime Js
+@inject IApiService api
+@rendermode InteractiveServer
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="/Assets/icon.png" id="icon" class="nav_text logo" />
+            <img src="/Assets/Header.png" id="header" class="nav_text" />
+        </a>
+
+        <div class="collapse navbar-collapse" id="navbarNav" style="width:100vw">
+            <ul class="navbar-nav" style="width:80vw">
+                <li class="nav-item nav_text">
+                    <button type="button" class="top button " @onclick="OpenSettings">
+                        <img alt="settings" src="/Assets/UI Icons/cogwheel.png" class="top_button_pic" />
+                    </button>
+                </li>
+                <li class="nav-item nav_text">
+                    <div class="m_card" id="life_bar">
+                        <img src="/Assets/Game Elements/Images/player.png" alt="Player Avatar" class="top_button_pic" id="nav_player_pic" />
+                        <span id="life_text" class="nav_text">x @session.CurrentRun.CurrentHp.ToString("D3")</span>
+                    </div>
+                </li>
+                <li class="nav-item nav_text">
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" style="width: @session.Progress">
+                            <p id="progress-text">@session.Progress</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item nav_text">
+                    <span id="score_board" class="nav_text">@session.CurrentRun.CurrentScore.ToString("D6")</span>
+                </li>
+                <li class="nav-item nav_text">
+                    <span id="level" class="nav_text">Level @session.CurrentRun.CurrentLevel.ToString("D2")</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+@* Settings Popup *@
+@if (IsSettingsVisible)
+{
+    <div class="custom-modal-overlay">
+        <div class="custom-modal p-4">
+            <img src="Assets/Settings/Texts/Title.png" class="img-fluid mb-4" style="max-height: 50px;" />
+            <div class="d-flex align-items-center mb-3">
+                <button class="btn-icon button" @onclick="ToggleMusic">
+                    <img src="@(currentPlayer.IsMusicOn ? "Assets/Settings/Buttons/On/Music_BTN.png" :
+                                                 "Assets/Settings/Buttons/Off/Music_BTN.png")" class="icon" />
+            </button>
+            <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
+        </div>
+
+            <div class="d-flex align-items-center mb-4">
+                <button class="btn-icon button" @onclick="ToggleSound" style="height: 24vh; width: 13.5vw;">
+                    <img src="@(currentPlayer.IsSoundOn ? "Assets/Settings/Buttons/On/Sound_BTN.png" :
+                                             "Assets/Settings/Buttons/Off/Sound_BTN.png")" class="icon" />
+            </button>
+            <img src="Assets/Settings/Texts/Sound.png" class="setting-text-img" />
+        </div>
+
+            <button class="btn-side button" @onclick="SaveAndCloseSettings">SAVE & CLOSE</button>
+        </div>
+    </div>
+}
+@code {
+    public bool IsSettingsVisible { get; set; } = false;
+    private Player currentPlayer;
+
+    public string GetAlt(bool condition, string ValueName)
+    {
+        string baseAlt = ValueName + " is currently ";
+        return baseAlt + (condition ? "On" : "Off");
+    }
+
+
+    private void HandleStateChange()
+    {
+        // The HUD 'hears' the session changed and pulls the latest visibility state
+        IsSettingsVisible = session.IsSettingsVisible;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OpenSettings()
+    {
+        // If it's already open, we do nothing. If closed, we toggle it.
+        if (!session.IsSettingsVisible)
+        {
+            //opens settings through the session
+            session.ToggleSettings(Js);
+        }
+    }
+
+    private void ToggleMusic()
+    {
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
+    }
+
+    private void ToggleSound()
+    {
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
+    }
+
+    private void SaveAndCloseSettings()
+    {
+        // Only toggle if it's actually open
+        if (session.IsSettingsVisible)
+        {
+            //closes settings through the session
+            session.ToggleSettings(Js);
+        }
+        if (api is ApiService apiService)
+        {
+            session.SaveSettings(Js, apiService);
+        }
+        IsSettingsVisible = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Subscribe to updates from the Session
+            session.UpdateScreenFunc += HandleStateChange;
+            // 1. Get the player
+            currentPlayer = session.CurrentUser as Player;
+        }
+    }
+
+    public void Dispose() => session.UpdateScreenFunc -= HandleStateChange;
+}

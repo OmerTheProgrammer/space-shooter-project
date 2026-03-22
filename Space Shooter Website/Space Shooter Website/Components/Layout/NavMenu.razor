@@ -1,30 +1,101 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Space_Shooter_Website.Client.Support_Classes
+@inject Session session
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
+
+@rendermode InteractiveServer
+
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Space Shooter Website</a>
+        <a class="navbar-brand d-flex align-items-center" href="">
+            <img src="/Assets/icon.png" class="logo" style="width:50px; height:50px; margin-right:10px;" alt="Ship" />
+            <img src="/Assets/Header.png" id="header" style="max-width:200px;" alt="Space Shooter" />
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav justify-content-center w-75">
+                <li class="nav-item">
+                    <NavLink class="nav-link nav_text" href="" Match="NavLinkMatch.All">Home</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link nav_text" href="Credits">Credits</NavLink>
+                </li>
+
+                @if (!session.IsLoggedIn) //isn't logged in
+                {
+                    @* Only show these if no one is logged in *@
+                    <li class="nav-item">
+                        <NavLink class="nav-link nav_text" href="Register">Register</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link nav_text" href="Log In">Log In</NavLink>
+                    </li>
+                }
+                else // is logged in
+                {
+                    <li class="nav-item">
+                        <NavLink class="nav-link nav_text" href="Profile">Hello (@session.CurrentUser?.Username)!</NavLink>
+                    </li>
+
+                    @if (session.IsPlayer)
+                    {
+                        <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="Level Selection">Level Selection</NavLink>
+                        </li>
+                    }
+
+                    @if (session.IsAdmin) // and is an admin
+                    {
+                        <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="Admin Dashboard">Admin Dashboard</NavLink>
+                        </li>
+                    }
+                    else // and is not an admin
+                    {
+                        <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="Admin Connection">Admin Connection</NavLink>
+                        </li>
+                    }
+
+@*                     <li class="nav-item">
+                        <button class="nav-link nav_text btn btn-link button" @onclick="HandleLogout">Logout (@session.CurrentUser?.Username)</button>
+                    </li> *@
+                }
+            </ul>
+        </div>
     </div>
-</div>
+</nav>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@code {
+    protected override void OnInitialized()
+    {
+        // Subscribe to session changes
+        session.UpdateScreenFunc += RefreshNavbar;
+        //updated the game we move in site not left it.
+        NavManager.LocationChanged += HandleLocationChanged;
+    }
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    private void RefreshNavbar()
+    {
+        // InvokeAsync ensures the refresh happens on the UI thread
+        InvokeAsync(StateHasChanged);
+    }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        //Set to true so the current page's 'beforeunload' (if any) is ignored
+        await JS.InvokeVoidAsync("markAsInternalNav");
+        //Reset to false on  new loaded page
+    }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
+    public void Dispose()
+    {
+        // Always unsubscribe to avoid memory leaks
+        session.UpdateScreenFunc -= RefreshNavbar;
+        NavManager.LocationChanged -= HandleLocationChanged;
+    }
+}

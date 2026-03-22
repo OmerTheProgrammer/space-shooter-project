@@ -1,0 +1,214 @@
+﻿@page "/Log In"
+@* adding global libs*@
+@using Model.Entitys
+@using Model.Tables
+@using Client_Manager___API
+@using Space_Shooter_Website.Client.Support_Classes
+@* adding global vars*@
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject IApiService api
+@inject Session session
+@rendermode InteractiveServer
+
+<PageTitle>Log In - Space Shooter</PageTitle>
+
+<section class="login-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class=@loginCardClass>
+                <div class="text-center mb-4">
+                    <img src="Assets/User Avatars\user.png" class="user-avatar" alt="User Icon" />
+                    <h1 class="title mt-3">Log in</h1>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="login-label">Pilot Name:</label>
+                    <input type="text" @bind="username" class="login-input" placeholder="Enter username..." />
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="login-label">Password:</label>
+                    <div class="password-wrapper" style="position: relative;">
+                        <input type="@passwordInputType" @bind="password" class="login-input" placeholder="Enter password..." />
+                        <button type="button" @onclick="TogglePasswordVisibility" class="btn-eye">
+                            @(passwordInputType == "password" ? "👁️" : "🙈")
+                        </button>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-text mb-3 text-center">@errorMessage</div>
+                }
+
+                <div class="row">
+                    <div class="col-3">
+                        <button class="btn-side" @onclick="FillPlayerDefault">Player Defult</button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn-side" @onclick="FillAdminDefault">Admin Defult</button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn-submit" @onclick="HandleLogin">
+                            @(isProcessing? scanningText : "SUBMIT")
+                        </button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn-side" @onclick='() => NavManager.NavigateTo("register")'>REGISTER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string errorMessage = "";
+    private bool isProcessing = false; // Prevents double-clicks
+    private string loginCardClass = "col-md-6 login card";
+    private string passwordInputType = "password"; // Default to hidden
+    private string scanningText = "SCANNING...";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        passwordInputType = (passwordInputType == "password") ? "text" : "password";
+    }
+
+    private async Task TriggerError(string message)
+    {
+        errorMessage = message;
+        loginCardClass = "col-md-6 login card";
+        isProcessing = false;
+        StateHasChanged(); // Force Blazor to render without the shake
+
+        await Task.Delay(10);
+
+        loginCardClass = "col-md-6 login card shake"; // Triggers the CSS shake
+    }
+
+    private void FillPlayerDefault()
+    {
+        username = "StarPilot_Ace";
+        password = "p@55word";
+        errorMessage = "";
+        loginCardClass = "col-md-6 login card";
+        StateHasChanged();
+    }
+
+    private void FillAdminDefault()
+    {
+        username = "AdminKappa";
+        password = "K@pr0pa";
+        errorMessage = "";
+        loginCardClass = "col-md-6 login card";
+        StateHasChanged();
+    }
+
+    private async Task HandleLogin()
+    {
+        if (isProcessing)
+        {
+            return; // Prevent multiple submissions
+        }
+        errorMessage = "";
+        isProcessing = true;
+
+        // Reset the text immediately before starting the loop
+        scanningText = "SCANNING...";
+        _ = StartScanningAnimation();
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            // Use await here since TriggerError is now an async Task
+            await TriggerError("INPUT ERROR: Please fill in all fields.");
+            return;
+        }
+
+        try
+        {
+            var users_table = await api.GetAllUsers();
+
+            // If the API returned a 'new T()' because of a catch block in ApiService
+            if (users_table == null || !users_table.Any())
+            {
+                await TriggerError("COMMUNICATION FAILURE: Database is not responding.");
+                return;
+            }
+            var user = users_table.Find(u =>
+                u.Username == username &&
+                u.Password == TextHasher.Hash(password)
+            );
+
+            if (user == null)
+            {
+                await TriggerError("IDENTIFICATION FAILED: Invalid credentials.");
+                return;
+            }
+            else
+            {
+                session.CurrentUser = user;
+                Admin admin = null;
+                Player player = null;
+                try
+                {
+                    admin = await api.GetAdminByIdx(user.Idx);
+                    player = await api.GetPlayerByIdx(user.Idx);
+
+                }catch(Exception ex)
+                {
+                    // Ignore exceptions here; admin/player will be null if not found
+                    Console.WriteLine("Intended exception: " + ex.Message);
+                }
+                session.IsAdmin = admin != null;
+                if(player != null)
+                {
+                    session.CurrentUser = player;
+                    session.IsPlayer = true;
+                }
+
+                if (session.IsPlayer)
+                {
+                    NavManager.NavigateTo("Level Selection", forceLoad: true);
+                }
+                else if(session.IsAdmin) //just else no other user type for now
+                {
+                    NavManager.NavigateTo("Admin Dashboard", forceLoad: true);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TriggerError("SYSTEM ERROR: " + ex.Message);
+        }
+        finally
+        {
+            isProcessing = false;
+            scanningText = "SCANNING...";
+        }
+    }
+    
+    private async Task StartScanningAnimation()
+    {
+        string[] frames = { "SCANNING...", "SCANNING..", "SCANNING.", "SCANNING" };
+        int i = 0;
+        while (isProcessing)
+        {
+            scanningText = frames[i % frames.Length];
+            i++;
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(300); // Speed of the dots disappearing
+        }   
+    }
+}

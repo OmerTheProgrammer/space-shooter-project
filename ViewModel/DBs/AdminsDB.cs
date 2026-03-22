@@ -40,7 +40,7 @@ namespace ViewModel.DBs
             list = db.SelectAll();
 
             Admin g = list.Find(item => item.Idx == idx);
-            if(g == null)
+            if (g == null)
             {
                 throw new ExpandedException($"Admin with Idx {idx} not found.");
             }
@@ -51,11 +51,16 @@ namespace ViewModel.DBs
         public override void Delete(BaseEntity entity)
         {
             BaseEntity reqEntity = NewEntity();
-            if (entity != null & entity.GetType() == reqEntity.GetType())
+            if (PlayersDB.SelectByIdx(entity.Idx) != null)
+            {
+                deleted.Add(new ChangeEntity(CreateDeletedSQL, reqEntity));//לא מוחקים את הuser שהplayer תלוי בו
+            }
+            else if (entity != null & entity.GetType() == reqEntity.GetType())
             {
                 deleted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
-                deleted.Add(new ChangeEntity(CreateDeletedSQL, entity));
+                deleted.Add(new ChangeEntity(CreateDeletedSQL, reqEntity));
             }
+
         }
 
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)

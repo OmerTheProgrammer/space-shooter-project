@@ -1,8 +1,10 @@
-﻿using Model.Data_Transfer_Objects;
+﻿using Microsoft.Extensions.Configuration;
+using Model.Data_Transfer_Objects;
 using Model.Entitys;
 using Model.Tables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
@@ -10,8 +12,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using System.IO; 
+using ViewModel;
+using ViewModel.DBs;
 
 namespace Client_Manager___API
 {
@@ -35,18 +37,29 @@ namespace Client_Manager___API
             };
 
         public ApiService():this(GetServerUrl()) { }
+        private static IConfiguration _config;
 
         private static string GetServerUrl()
         {
-            // Load configuration from appsettings.Development.json
-            IConfiguration _config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.Development.json", optional: false)
+            // Load configuration from appsettings.Development.json Use AppContext.BaseDirectory
+            // to find the folder where the json is located
+            // Climb up to the project root where the .json files actually live
+            // 1. Start at ...\Space Shooter Website\Space Shooter Website\bin\Debug\net8.0\
+            // 2. Climb 5 levels to reach the 'space-shooter-project' root
+            // Level 1: net8.0 -> Debug
+            // Level 2: Debug -> bin
+            // Level 3: bin -> Inner Project Folder
+            // Level 4: Inner Project Folder -> Outer Project Folder
+            // Level 5: Outer Project Folder -> Repository Root
+            string projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "Client Manager - API"));
+            _config = new ConfigurationBuilder()
+                .SetBasePath(projectRoot)
+                .AddJsonFile("appsettings.json", optional: true) // Standard name
+                .AddJsonFile("appsettings.Development.json", optional: true) // Overlay name
                 .Build();
 
             // The tunnel URL from configuration
             string tunnelUrl = _config["ConnectionStrings:SpaceShooterServer"];
-
             // Check if the tunnel is reachable by sending a HEAD request with a short timeout from unrlated HttpClient
             using (var client = new HttpClient())
             {
@@ -61,8 +74,8 @@ namespace Client_Manager___API
                     request.Headers.Add("X-Tunnel-Skip-AntiPhishing-Scan", "true");
                     var response = client.Send(request);
 
-                    //are up and responsive or not found (server is running but endpoint doesn't exist yet)
-                    if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    //are up and responsive?
+                    if (response.IsSuccessStatusCode)
                     {
                         Console.WriteLine(">>> [OK] Tunnel is alive. Using it");
                         return tunnelUrl;
@@ -95,11 +108,12 @@ namespace Client_Manager___API
                 return await client.GetFromJsonAsync<T>(endpoint);
             }
             catch (Exception ex)
+
             {
+                //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
-                // Return an empty instance of the table type T
-                return new T(); //returns empty list = empty table
+                return new T();
             }
         }
 
@@ -183,13 +197,10 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
-                // Return an empty instance of the table type T
-                BaseEntity BemptyResult = new BaseEntity();
-                BemptyResult.Idx = -1;
-                T emptyResult = BemptyResult as T;
-                return emptyResult;
+                return null;
             }
         }
 
@@ -244,7 +255,7 @@ namespace Client_Manager___API
         /// Generic Update method that sends a PUT request with the Entity.
         /// returns the number of affected rows.
         ///</summary>
-        private async Task<int> Insert<T>(string endpoint, T entity)
+        private async Task<(int rows, string? error)> Insert<T>(string endpoint, T entity)
             where T : new()
         {
             int changedRecords = -1;
@@ -273,7 +284,7 @@ namespace Client_Manager___API
                 // convert it into the int
                 if (int.TryParse(responseContent, out changedRecords))
                 {
-                    return changedRecords;
+                    return (changedRecords, null);
                 }
                 else
                 {
@@ -286,61 +297,62 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
-                return changedRecords;
+                return (changedRecords, $"Error inserting from {endpoint}: {ex.Message}");
             }
         }
 
-        public Task<int> InsertAdmin(Admin admin)
+        public Task<(int rows, string? error)> InsertAdmin(Admin admin)
         {
             //returns number of rows affected
             return Insert<Admin>($"/api/Insert/AdminsInsertor", admin);
         }
 
-        public Task<int> InsertEnemyInLastLevel(EnemyInLastLevel enemyInLastLevel)
+        public Task<(int rows, string? error)> InsertEnemyInLastLevel(EnemyInLastLevel enemyInLastLevel)
         {
             //returns number of rows affected
             return Insert<EnemyInLastLevel>($"/api/Insert/EnemiesInLastLevelInsertor", enemyInLastLevel);
         }
 
-        public Task<int> InsertGroup(Model.Entitys.Group group)
+        public Task<(int rows, string? error)> InsertGroup(Model.Entitys.Group group)
         {
             //returns number of rows affected
             return Insert<Model.Entitys.Group>($"/api/Insert/GroupsInsertor", group);
         }
 
-        public Task<int> InsertPlayerAndGroup(PlayerAndGroup playerAndGroup)
+        public Task<(int rows, string? error)> InsertPlayerAndGroup(PlayerAndGroup playerAndGroup)
         {
             //returns number of rows affected
             return Insert<PlayerAndGroup>($"/api/Insert/PlayersAndGroupsInsertor", playerAndGroup);
         }
 
-        public Task<int> InsertPlayer(Player player)
+        public Task<(int rows, string? error)> InsertPlayer(Player player)
         {
             //returns number of rows affected
             return Insert<Player>($"/api/Insert/PlayersInsertor", player);
         }
 
-        public Task<int> InsertProfileEditRequest(ProfileEditRequest profileEditRequest)
+        public Task<(int rows, string? error)> InsertProfileEditRequest(ProfileEditRequest profileEditRequest)
         {
             //returns number of rows affected
             return Insert<ProfileEditRequest>($"/api/Insert/ProfileEditRequestsInsertor", profileEditRequest);
         }
 
-        public Task<int> InsertRequestData(RequestData RequestData)
+        public Task<(int rows, string? error)> InsertRequestData(RequestData RequestData)
         {
             //returns number of rows affected
             return Insert<RequestData>($"/api/Insert/RequestsDataInsertor", RequestData);
         }
 
-        public Task<int> InsertRunInfo(RunInfo runInfo)
+        public Task<(int rows, string? error)> InsertRunInfo(RunInfo runInfo)
         {
             //returns number of rows affected
             return Insert<RunInfo>($"/api/Insert/RunsInfoInsertor", runInfo);
         }
 
-        public Task<int> InsertUser(User user)
+        public Task<(int rows, string? error)> InsertUser(User user)
         {
             //returns number of rows affected
             return Insert<User>($"/api/Insert/UsersInsertor", user);
@@ -352,7 +364,7 @@ namespace Client_Manager___API
         /// Generic Update method that sends a PUT request with the Entity.
         /// returns the number of affected rows.
         ///</summary>
-        private async Task<int> Update<T>(string endpoint, T entity)
+        private async Task<(int rows, string? error)> Update<T>(string endpoint, T entity)
             where T : new()
         {
             int changedRecords = -1;
@@ -398,58 +410,59 @@ namespace Client_Manager___API
                     );
                 }
                 // Successfully parsed the number of records affected
-                return changedRecords;
+                return (changedRecords, null);
 
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 //error logging
-                Console.WriteLine($"Error updating data at {endpoint}: {ex.Message}");
-                return changedRecords;
+                Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
+                return (changedRecords, $"Error inserting from {endpoint}: {ex.Message}");
             }
         }
 
-        public Task<int> UpdateAdmin(AdminDTO admin)
+        public Task<(int rows, string? error)> UpdateAdmin(AdminDTO admin)
         {
             return Update<AdminDTO>($"/api/Update/AdminUpdator", admin);
         }
 
-        public Task<int> UpdateEnemyInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
+        public Task<(int rows, string? error)> UpdateEnemyInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
         {
             return Update<EnemyInLastLevelDTO>($"/api/Update/EnemyInLastLevelUpdator", enemyInLastLevel);
         }
 
-        public Task<int> UpdateGroup(GroupDTO group)
+        public Task<(int rows, string? error)> UpdateGroup(GroupDTO group)
         {
             return Update<GroupDTO>($"/api/Update/GroupUpdator", group);
         }
 
-        public Task<int> UpdatePlayerAndGroup(PlayerAndGroupDTO playerAndGroup)
+        public Task<(int rows, string? error)> UpdatePlayerAndGroup(PlayerAndGroupDTO playerAndGroup)
         {
             return Update<PlayerAndGroupDTO>($"/api/Update/PlayerAndGroupUpdator", playerAndGroup);
         }
 
-        public Task<int> UpdatePlayer(PlayerDTO player)
+        public Task<(int rows, string? error)> UpdatePlayer(PlayerDTO player)
         {
             return Update<PlayerDTO>($"/api/Update/PlayerUpdator", player);
         }
 
-        public Task<int> UpdateProfileEditRequest(ProfileEditRequestDTO profileEditRequest)
+        public Task<(int rows, string? error)> UpdateProfileEditRequest(ProfileEditRequestDTO profileEditRequest)
         {
             return Update<ProfileEditRequestDTO>($"/api/Update/ProfileEditRequestUpdator", profileEditRequest);
         }
 
-        public Task<int> UpdateRequestData(RequestDataDTO requestData)
+        public Task<(int rows, string? error)> UpdateRequestData(RequestDataDTO requestData)
         {
             return Update<RequestDataDTO>($"/api/Update/RequestDataUpdator", requestData);
         }
 
-        public Task<int> UpdateRunInfo(RunInfoDTO runInfo)
+        public Task<(int rows, string? error)> UpdateRunInfo(RunInfoDTO runInfo)
         {
             return Update<RunInfoDTO>($"/api/Update/RunInfoUpdator", runInfo);
         }
 
-        public Task<int> UpdateUser(UserDTO user)
+        public Task<(int rows, string? error)> UpdateUser(UserDTO user)
         {
             return Update<UserDTO>($"/api/Update/UserUpdator", user);
         }
@@ -460,7 +473,7 @@ namespace Client_Manager___API
         /// Generic delete method that sends a DELETE request with the idx in the body.
         /// returns the number of affected rows
         ///</summary>
-        private async Task<int> Delete(string endpoint, int idx)
+        private async Task<(int rows, string? error)> Delete(string endpoint, int idx)
         {
             int changedRecords = -1;
             try
@@ -501,7 +514,7 @@ namespace Client_Manager___API
                     // Try to parse the number
                     if (int.TryParse(numberPart, out changedRecords))
                     {
-                        return changedRecords;
+                        return (changedRecords, null);
                     }
                     else
                     {
@@ -518,66 +531,73 @@ namespace Client_Manager___API
             }
             catch (Exception ex)
             {
+                //can't throw from here
                 // Centralized error logging
-                Console.WriteLine($"Error deleting data via {endpoint}: {ex.Message}");
-                return changedRecords;
-
+                Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
+                return (changedRecords, $"Error inserting from {endpoint}: {ex.Message}");
             }
         }
 
-        public Task<int> DeleteAdmin(int idx)
+        public Task<(int rows, string? error)> DeleteAdmin(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/AdminDeletor", idx);
         }
 
-        public Task<int> DeleteEnemyInLastLevel(int idx)
+        public Task<(int rows, string? error)> DeleteEnemyInLastLevel(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/EnemyInLastLevelDeletor", idx);
         }
 
-        public Task<int> DeleteGroup(int idx)
+        public Task<(int rows, string? error)> DeleteGroup(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/GroupDeletor", idx);
         }
 
-        public Task<int> DeletePlayerAndGroup(int idx)
+        public Task<(int rows, string? error)> DeletePlayerAndGroup(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/PlayerAndGroupDeletor", idx);
         }
 
-        public Task<int> DeletePlayer(int idx)
+        public Task<(int rows, string? error)> DeletePlayer(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/PlayerDeletor", idx);
         }
 
-        public Task<int> DeleteProfileEditRequest(int idx)
+        public Task<(int rows, string? error)> DeleteProfileEditRequest(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/ProfileEditRequestDeletor", idx);
         }
 
-        public Task<int> DeleteRequestData(int idx)
+        public Task<(int rows, string? error)> DeleteRequestData(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/RequestDataDeletor", idx);
         }
 
-        public Task<int> DeleteRunInfo(int idx)
+        public Task<(int rows, string? error)> DeleteRunInfo(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/RunInfoDeletor", idx);
         }
 
-        public Task<int> DeleteUser(int idx)
+        public Task<(int rows, string? error)> DeleteUser(int idx)
         {
             // returns number of rows affected
             return Delete($"/api/Delete/UserDeletor", idx);
         }
         #endregion
+
+        public async Task<ConfigSettings> GetAdminKey()
+        {
+            return new ConfigSettings() {
+                AdminKey = TextHasher.Hash(_config["AdminSettings:AdminKey"] ?? "")
+            };
+        }
     }
 }

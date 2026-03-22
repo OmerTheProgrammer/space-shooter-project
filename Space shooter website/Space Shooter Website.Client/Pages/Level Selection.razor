@@ -1,0 +1,300 @@
+﻿@page "/Level Selection"    
+@using Space_Shooter_Website.Client.Support_Classes
+@using Model.Entitys
+@using Model.Tables
+@using Model.Data_Transfer_Objects
+@using Client_Manager___API
+@inject Session session
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject IApiService api
+@rendermode InteractiveServer
+
+
+<PageTitle>Mission Control - Space Shooter</PageTitle>
+
+<div class="selection-screen">
+    @* --- Header עם כפתורי בקרה --- *@
+    <div class="row align-items-center mb-4">
+        <div class="col-md-3"/>
+        <div class="col-md-6">
+            <h1 class="title">LEVEL SELECTION</h1>
+        </div>
+        <div class="col-md-3 text-end">
+            <button class="top-btn" @onclick="() => showScores = true">
+                <img src="Assets/UI Icons/achievement.png" class="btn-icon button icon" />
+            </button>
+            <button class="top-btn" @onclick="() => showSettings = true">
+                <img src="Assets/UI Icons/cogwheel.png" class="btn-icon button icon" />
+            </button>
+            <button class="top-btn" @onclick="() => showInfo = true">
+                <img src="Assets/UI Icons/info.png" class="btn-icon button icon" />
+            </button>
+            @* 
+            <button class="top-btn" @onclick="() => session.SendRunToServer(api as ApiService, JS)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="2vw" height="2vh" viewBox="-1 -1 26 26" class="btn-icon button icon " style="background-color:rgb(0, 255, 65); opacity: 0.75">
+                    <path d="M13 3h2.996v5h-2.996v-5zm11 1v20h-24v-24h20l4 4zm-17 5h10v-7h-10v7zm15-4.171l-2.828-2.829h-.172v9h-14v-9h-3v20h20v-17.171zm-3
+                        10.171h-14v1h14v-1zm0 2h-14v1h14v-1zm0 2h-14v1h14v-1z" />
+                </svg>
+            </button
+            *@
+        </div>
+    </div>
+
+    @* --- אזור בחירת השלבים (Scrollable) --- *@
+    <div class="level-container shadow-lg">
+        @for (int i = 1; i <= 30; i++)
+        {
+            int levelNum = i;
+            bool isLocked = levelNum > maxUnlockedLevel;
+
+            <button class="level-btn @(isLocked ? "locked" : "") button icon"
+                    disabled="@isLocked"
+                    @onclick="() => StartLevel(levelNum)">
+                @if (isLocked)
+                {
+                    <img src="Assets/UI Icons/lock.png" class="lock-img button icon" />
+                }
+                else
+                {
+                    @levelNum
+                }
+            </button>
+        }
+    </div>
+</div>
+
+@* --- פופאפים (Modals) --- *@
+
+@if (showInfo)
+{
+    <div class="custom-modal-overlay">
+        <div class="custom-modal info-modal p-4 text-start">
+            <p class="subtitle"> Controls:</p>
+            <p class="text">
+                Use the Arrow Keys or WASD Keys to move:<br />
+                Up Arrow \ W: Move Up<br />
+                Down Arrow \ S: Move Down<br />
+                Left Arrow \ A: Move Left<br />
+                Right Arrow \ D: Move Right<br />
+                Press the Space Bar to shoot projectiles.<br />
+                P: Pause/Resume the game<br />
+            </p>
+            <p class="text danger">If the <b>buttons get stuck</b>, release and click again.</p>
+            <p class="subtitle"> Ending screen:</p>
+            <p class="text">
+                Enter: Proceed to the next level<br />
+                Backspace: Return to the Level selection screen
+            </p>
+            <button class="btn-side mt-4 w-100 button" @onclick="() => showInfo = false">UNDERSTOOD</button>
+        </div>
+    </div>
+}
+
+@if (showSettings)
+{
+    <div class="custom-modal-overlay">
+        <div class="custom-modal p-4">
+            <img src="Assets/Settings/Texts/Title.png" class="img-fluid mb-4" style="max-height: 50px;" />
+
+            <div class="d-flex align-items-center mb-3">
+                <button class="btn-icon button" @onclick="ToggleMusic">
+                    <img src="@(currentPlayer.IsMusicOn ? "Assets/Settings/Buttons/On/Music_BTN.png" : "Assets/Settings/Buttons/Off/Music_BTN.png")"
+                         class="icon" alt="Music Toggle" />
+                </button>
+                <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
+            </div>
+
+            <div class="d-flex align-items-center mb-4">
+                <button class="btn-icon button" @onclick="ToggleSound">
+                    <img src="@(currentPlayer.IsSoundOn ? "Assets/Settings/Buttons/On/Sound_BTN.png" : "Assets/Settings/Buttons/Off/Sound_BTN.png")"
+                         class="icon" alt="Sound Toggle" />
+                </button>
+                <img src="Assets/Settings/Texts/Sound.png" class="setting-text-img" />
+            </div>
+
+            <button class="btn-side button" @onclick="SaveAndCloseSettings">SAVE & CLOSE</button>
+        </div>
+    </div>
+}
+
+@if (showScores)
+{
+    <div class="custom-modal-overlay">
+        <div class="custom-modal p-4" style="min-width: 90vw;">
+            <h2 class="subtitle mb-3 text-center">🏆 GLOBAL TOP 10 🏆</h2>
+
+            <div class="score-list" style="max-height: 300px; overflow-y: auto;">
+                @if (isLoadingScores)
+                {
+                    <p class="text-info text-center">Scanning deep space for transmissions...</p>
+                }
+                else if (topScores == null || !topScores.Any())
+                {
+                    <p class="text-warning text-center">No pilot data found in the archives.</p>
+                }
+                else
+                {
+                    <table class="table table-dark table-borderless text-start">
+                        <thead>
+                            <tr class="text-info border-bottom">
+                                <th>#</th>
+                                <th>Pilot Username</th>
+                                <th>Score</th>
+                                <th>Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < topScores.Count; i++)
+                            {
+                                var run = topScores[i];
+                                <tr class="@(run.Player.Idx == currentPlayer?.Idx ? "table-active text-warning" : "")">
+                                    <td>@(i + 1)</td>
+                                    <td>@run.Player.Username</td>
+                                    <td class="fw-bold">@run.CurrentScore.ToString("N0")</td>
+                                    <td>Sector @run.CurrentLevel</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            <button class="btn-side mt-3 w-100 button" @onclick="() => showScores = false">BACK TO MISSION</button>
+        </div>
+    </div>
+}
+
+@code {
+    private int maxUnlockedLevel = 1; // Default to 1 to avoid null issues
+    private bool showScores, showSettings, showInfo;
+    private Player currentPlayer = null;
+    private RunsInfoTable topScores = new(); // List to hold global top 10
+    private bool isLoadingScores = false;
+
+    protected override async void OnInitialized()
+    {
+        // 1. Get the player
+        currentPlayer = session.CurrentUser as Player;
+
+        // 2. Only update if the player actually exists
+        if (currentPlayer != null)
+        {
+            await SyncPlayerStats();
+            maxUnlockedLevel = currentPlayer.MaxLevel;
+        }
+        session.UpdateScreenFunc += StateHasChanged;
+        _ = LoadTopScores(10);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
+    private async Task SyncPlayerStats()
+    {
+        if (currentPlayer == null) return;
+
+        try 
+        {
+            // 1. Fetch all runs for THIS player
+            var allRuns = await api.GetAllRunsInfo();
+            var playerRuns = allRuns.Where(r => r.Player.Idx == currentPlayer.Idx).ToList();
+
+            if (playerRuns.Any())
+            {
+                // 2. Find the highest level they ever reached
+                int highestLevelReached = playerRuns.Max(r => r.CurrentLevel);
+
+                //update using local runs
+                if (session.CurrentRun.CurrentLevel > highestLevelReached)
+                {
+                    highestLevelReached = session.CurrentRun.CurrentLevel;
+                }
+
+                // 3. Update MaxLevel if they broke their record
+                if (highestLevelReached > currentPlayer.MaxLevel)
+                {
+                    currentPlayer.MaxLevel = highestLevelReached;
+                    maxUnlockedLevel = highestLevelReached; // Update UI immediately
+
+                    // 4. Persist to DB
+                    await api.UpdatePlayer(
+                        PlayerDTO.FromEntity(currentPlayer, dto =>
+                        {
+                            dto.IsMusicOn = currentPlayer.IsMusicOn;
+                        })
+                    );
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Stats sync failed: {ex.Message}");
+        }
+    }
+
+    private async Task LoadTopScores(int Count)
+    {
+        isLoadingScores = true;
+        try
+        {
+            // Assuming your API has a method to get all runs
+            var allRuns = await api.GetAllRunsInfo();
+            // Filter top 10 by score descending
+            topScores = new RunsInfoTable(allRuns.OrderByDescending(r => r.CurrentScore).Take(Count).ToList());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading scores: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingScores = false;
+            StateHasChanged();
+        }
+    }
+
+    private async void StartLevel(int level)
+    {
+        if (session.IsContuiningRun) //if from save will lose previous save
+        {
+            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete Current Run Progress?");
+            if (!confirmed) return; //if not we don't go
+        }
+        session.SelectedLevel = level;
+        session.IsContuiningRun = false;
+        NavManager.NavigateTo("Game");
+    }
+
+    private void ToggleMusic()
+    {
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
+    }
+
+    private void ToggleSound()
+    {
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
+    }
+
+    private void SaveAndCloseSettings()
+    {
+        if (api is ApiService apiService)
+        {
+            session.SaveSettings(JS, apiService);
+        }
+        showSettings = false;
+    }
+
+    public async void Dispose()
+    {
+        session.UpdateScreenFunc -= StateHasChanged;
+    }
+}

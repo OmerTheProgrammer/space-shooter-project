@@ -13,15 +13,15 @@ namespace Model.Entitys
     public class ProfileEditRequest : BaseEntity
     {
         private Player requestingPlayer;
-        private DateTime? requestingDate = new DateTime(1753, 1, 1, 12, 0, 0);
+        private DateTime requestingDate = new DateTime(1753, 1, 1, 12, 0, 0);
         private Status status = 0;
         private DateTime? reviewingDate = new DateTime(1753, 1, 1, 12, 0, 0);
-        private Admin adressingAdmin;
+        private Admin? adressingAdmin;
 
         public Player RequestingPlayer { get => requestingPlayer; set => requestingPlayer = value; }
-        public DateTime? RequestingDate { get => requestingDate; set => requestingDate = value; }
+        public DateTime RequestingDate { get => requestingDate; set => requestingDate = value; }
         public DateTime? ReviewingDate { get => reviewingDate; set => reviewingDate = value; }
-        public Admin AdressingAdmin { get => adressingAdmin; set => adressingAdmin = value; }
+        public Admin? AdressingAdmin { get => adressingAdmin; set => adressingAdmin = value; }
         public Status Status { get => status; set => status = value; }
 
         public override string ToString()

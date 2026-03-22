@@ -1,0 +1,40 @@
+﻿/* --- Home Page Specific Styles --- */
+.home.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 2vh;
+    min-height: 85vh;
+}
+
+.home.title {
+    /* text size */
+    font-size: 7vw;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 900;
+    color: #00FFAB; /* Matches your neon green theme */
+    text-transform: uppercase;
+    letter-spacing: 1.5vw;
+    margin-bottom: 8vh;
+    /* Triple-layered glow for maximum 'Arcade' impact */
+    text-shadow:
+        0 0 10px rgba(0, 255, 171, 0.8), 
+        0 0 30px rgba(0, 255, 171, 0.6),
+        0 0 60px rgba(0, 255, 171, 0.4);
+    /* Animation to make it feel alive */
+    animation: titlePulse 3s infinite ease-in-out;
+}
+
+.pic.button {
+    width: 28vw;
+    max-width: 500px;
+    height: auto;
+    margin-bottom: 3vh;
+    transition: 0.2s ease;
+}
+
+.pic.button:hover {
+    filter: brightness(1.2) drop-shadow(0 0 15px #00FFAB);
+    transform: scale(1.05);
+}

@@ -1,0 +1,402 @@
+﻿@page "/Register"
+@* adding global libs*@
+@using Model.Entitys
+@using Model.Tables
+@using Client_Manager___API
+@using Space_Shooter_Website.Client.Support_Classes
+@using Regex = System.Text.RegularExpressions.Regex;
+@* adding global vars*@
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject IApiService api
+@inject Session session
+@rendermode InteractiveServer
+
+<PageTitle>Register - Space Shooter</PageTitle>
+
+<section class="register-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="@registerCardClass">
+                <div class="text-center mb-4">
+                    <img src="Assets/User Avatars/user.png" class="user-avatar" style="height:24vh" alt="User Icon" />
+                    <h1 class="title mt-3">Pilot Registration</h1>
+                </div>
+
+                <div class="row">
+                    @* Name *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Pilot's System Name:</label>
+                        <input type="text" @bind="username" class="register-input" placeholder="Enter username..." />
+                    </div>
+                    @* Government ID *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Government ID:</label>
+                        <input type="text" @bind="id" class="register-input" placeholder="ID Number..." />
+                    </div>
+                </div>
+
+                <div class="row">
+                    @* Email *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Pilot's Email:</label>
+                        <input type="email" @bind="email" class="register-input" placeholder="example@space.com" />
+                    </div>
+                    @* Birthday *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Date of Birth:</label>
+                        <input type="date" @bind="birthday" class="register-input" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    @* Password *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Password:</label>
+                        <div class="password-wrapper" style="position: relative;">
+                            <input type="@passwordInputType" @bind="password" class="register-input" placeholder="Enter password..." />
+                            <button type="button" @onclick="TogglePasswordVisibility" class="btn-eye">
+                                @(passwordInputType == "password" ? "👁️" : "🙈")
+                            </button>
+                        </div>
+                    </div>
+                    @* Confirm Password *@
+                    <div class="col-md-6 mb-3">
+                        <label class="register-label">Repeat Password:</label>
+                        <div class="password-wrapper" style="position: relative;">
+                            <input type="@ConfirmpasswordInputType" @bind="confirmPassword" class="register-input" placeholder="Enter password..." />
+                            <button type="button" @onclick="ToggleConfirmPasswordVisibility" class="btn-eye">
+                                @(ConfirmpasswordInputType == "password" ? "👁️" : "🙈")
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    @* Terms Checkbox *@
+                    <div class="col-md-12 mb-3 d-flex align-items-center justify-content-center">
+                        <input type="checkbox" @bind="agreesToTerms" id="agrees" style="width:20px; height:20px; margin-right:10px;" />
+                        <label class="register-label mb-0">
+                            I agree to the
+                            <button type="button" class="btn link p-0 fw-bold" @onclick="() => showTerms = true">Terms of Service</button>
+                        </label>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-text mb-3 text-center" style="color: #ff4d4d;">@errorMessage</div>
+                }
+
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn-submit" @onclick="HandleRegister">
+                            @(isProcessing? scanningText : "SUBMIT")
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn-side w-100" @onclick='() => NavManager.NavigateTo("Log In")'>LOG IN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* Simple Modal for Terms *@
+@if (showTerms)
+{
+    <div class="custom-modal-overlay">
+        <div class="modal-content-card p-4 text-center" style="max-width: 600px;">
+            <h3 class="register-label" style="font-size: 2rem;">Terms of Service</h3>
+
+            <div class="terms-scroll-box">
+                <p class="register-label text-start" style="line-height: 1.8;">
+                    By playing Space Shooter, you agree to our terms:<br /><br />
+
+                    1. Secure your account (you're responsible).<br />
+                    2. Game content is copyrighted (don't distribute).<br />
+
+                    <span class="text warning">3. Game is provided "as is" (no warranties).</span><br />
+                    <span class="text warning">4. USE AT YOUR OWN RISK.</span><br />
+
+                    5. Terms may be updated (check website).<br />
+
+                    <span class="text danger">6. We reserve the right to terminate access.</span><br />
+                    <span class="text danger">7. Governed by Israeli law.</span><br />
+
+                    8. Disputes: omer17508@gmail.com.<br />
+                    9. These terms are the full agreement.<br /><br />
+
+                    <span style="color: #00FFAB;">Enjoy Space Shooter!</span>
+                </p>
+            </div>
+
+            <button class="btn-submit mt-3 button" @onclick="() => showTerms = false">CLOSE</button>
+        </div>
+    </div>
+}
+
+@code {
+    //information fields
+    private bool agreesToTerms = false;
+    private string email = "";
+    private DateTime birthday = new DateTime();
+    private string id = "";
+    private string username = "";
+    private string password = "";
+    private string confirmPassword = "";
+
+    //UI fields
+    private string passwordInputType = "password"; // Default to hidden
+    private string ConfirmpasswordInputType = "password";
+    private string registerCardClass = "col-md-6 register card";
+    private string errorMessage = "";
+    private bool showTerms = false;
+    private string scanningText = "SCANNING...";
+    private bool isProcessing = false; // Prevents double-clicks
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        passwordInputType = (passwordInputType == "password") ? "text" : "password";
+    }
+
+    private void ToggleConfirmPasswordVisibility()
+    {
+        ConfirmpasswordInputType = (ConfirmpasswordInputType == "password") ? "text" : "password";
+    }
+
+    private async Task TriggerError(string message)
+    {
+        errorMessage = message;
+        registerCardClass = "col-md-6 register card";
+        isProcessing = false;
+        StateHasChanged(); // Force Blazor to render without the shake
+
+        await Task.Delay(10);
+
+        registerCardClass = "col-md-6 register card shake"; // Triggers the CSS shake
+    }
+
+    private async Task HandleRegister()
+    {
+        if (isProcessing)
+            return; // Prevent multiple submissions
+        errorMessage = "";
+        isProcessing = true;
+
+        // Reset the text immediately before starting the loop
+        scanningText = "SCANNING...";
+        _ = StartScanningAnimation();
+
+        //empty fields check
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) ||
+            string.IsNullOrWhiteSpace(confirmPassword) || string.IsNullOrWhiteSpace(email) ||
+            string.IsNullOrWhiteSpace(id) || birthday == new DateTime())
+        {
+            await Task.Delay(100); // wait a moment to show scanning
+            await TriggerError("Please fill in all fields!");
+            return;
+        }
+
+        //terms and conditions check
+        if (!agreesToTerms)
+        {
+            await Task.Delay(100); // wait a moment to show scanning
+            await TriggerError("Read and Agree to Terms and Conditions!");
+            return;
+        }
+
+        if (id.Length < 5)
+        {
+            await TriggerError("Invalid Government ID. Must be at least 5 characters.");
+            return;
+        }
+
+        // email validations
+        var emailFormat = new Regex(@"^[\w-.]+@([\w-.]+\.)+[a-zA-Z]{2,}$");
+        int attIndex = email.IndexOf('@');
+        int eLength = email.Length;
+
+        if (eLength < 8)
+        {
+            await TriggerError("Email too short, shorter than 8 characters");
+            return;
+        }
+        else if (eLength > 25)
+        {
+            await TriggerError("Email too long, longer than 25 characters");
+            return;
+        }
+        else if (attIndex < 2)
+        {
+            await TriggerError("The @ sign must be 2 digits away from start.");
+            return;
+        }
+        else if (attIndex >= eLength - 2)
+        {
+            await TriggerError("The @ sign must be 2 digits away from end.");
+            return;
+        }
+        else if (email.LastIndexOf('.') == -1)
+        {
+            await TriggerError("A .(Dot) sign must be in the email address.");
+            return;
+        }
+        else if (email.IndexOf('.', attIndex + 2) == (attIndex + 2))
+        {
+            await TriggerError("A .(Dot) sign must be at least 2 digits away from the @ sign.");
+            return;
+        }
+        else if (email.IndexOf('.', attIndex + 2) == -1)
+        {
+            await TriggerError("A .(Dot) sign must be after the @ sign.");
+            return;
+        }
+        else if (email.LastIndexOf('.') >= eLength - 2)
+        {
+            await TriggerError("A .(Dot) sign must be at least 2 digits away from the end.");
+            return;
+        }
+        else if (email.IndexOf('.') < 2)
+        {
+            await TriggerError("A .(Dot) sign must be at least 2 digits away from the start.");
+            return;
+        }
+        else if (!emailFormat.IsMatch(email))
+        {
+            await TriggerError("Email format invalid: example@space.com");
+            return;
+        }
+
+        // password check
+        const int minPasswordLength = 8, maxPasswordLength = 20;
+        if (password != confirmPassword)
+        {
+            await TriggerError("Passwords do not match!");
+            return;
+        }
+        else if (password.Length < minPasswordLength)
+        {
+            await TriggerError($"Password must be at least {minPasswordLength} characters long. But it's {password.Length} characters long.");
+            return;
+        }
+        else if (password.Length > maxPasswordLength)
+        {
+            await TriggerError($"Password must be less than 20 characters long. But it's {password.Length} characters long.");
+            return;
+        }
+        // בדיקת סימנים מיוחדים (Symbols)
+        else if (!Regex.IsMatch(password, @"[^\w\s]"))
+        {
+            await TriggerError("Password must contain at least one symbol.");
+            return;
+        }
+        // בדיקת מספרים (Numbers)
+        else if (!Regex.IsMatch(password, @"[\d]"))
+        {
+            await TriggerError("Password must contain at least one number.");
+            return;
+        }
+        // בדיקת אותיות גדולות (Uppercase)
+        else if (!Regex.IsMatch(password, @"[A-Z]"))
+        {
+            await TriggerError("Password must contain at least one uppercase letter.");
+            return;
+        }
+        // בדיקת אותיות קטנות (Lowercase)
+        else if (!Regex.IsMatch(password, @"[a-z]"))
+        {
+            await TriggerError("Password must contain at least one lowercase letter.");
+            return;
+        }
+
+        //age check
+        DateTime now = DateTime.Now;
+        // חישוב מילי-שניות ב-120 שנה (כמו בקוד המקורי שלך)
+        // 1000ms * 60s * 60m * 24h * 365.25d * 120y
+        double msIn120Years = 1000.0 * 60 * 60 * 24 * 365.25 * 120;
+        // יצירת תאריך של לפני 120 שנה
+        DateTime date120YearsAgo = now.AddMilliseconds(-msIn120Years);
+
+        if (birthday < date120YearsAgo)
+        {
+            await TriggerError("Too old, you are dead.");
+            return;
+        }
+        else if (birthday > now)
+        {
+            await TriggerError("Too young, you were never born.");
+            return;
+        }
+
+        Player newPlayer = new Player()
+        {
+            Username = username,
+            Password = TextHasher.Hash(password),
+            Email = email,
+            Id = id,
+            Birthday = birthday
+        };
+        try
+        {
+            var (rowsChanged, serverError) = await api.InsertPlayer(newPlayer);
+            if (rowsChanged == 2)
+            {
+                session.CurrentUser = newPlayer;
+                session.IsPlayer = true;
+                session.IsAdmin = false;
+
+                await JS.InvokeVoidAsync("alert", $"Welcome aboard, Pilot {username}!");
+                NavManager.NavigateTo("Level Selection", forceLoad: true);
+            }
+            else //if(rowsChanged == -1)
+            {
+                if (serverError != null)
+                {
+                    //turn server error json into readable string
+                    var match = Regex.Match(serverError, @"The\s+(\w+)\s+already exists",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    string field = "Personal Detail"; //just in case the regex fails
+                    if (match.Success)
+                    {
+                        field = match.Groups[1].Value; // יחלץ את המילה ID או Username
+                    }
+                    await TriggerError($"Pilot already registered or system error. Try a different {field}.");
+                }
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            await TriggerError("SYSTEM ERROR: " + ex.Message);
+        }
+        finally
+        {
+            isProcessing = false;
+            scanningText = "SCANNING...";
+        }
+    }
+
+    private async Task StartScanningAnimation()
+    {
+        string[] frames = { "SCANNING...", "SCANNING..", "SCANNING.", "SCANNING" };
+        int i = 0;
+        while (isProcessing)
+        {
+            scanningText = frames[i % frames.Length];
+            i++;
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(300); // Speed of the dots disappearing
+        }
+    }
+}

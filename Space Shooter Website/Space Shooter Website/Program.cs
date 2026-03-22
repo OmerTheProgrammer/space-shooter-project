@@ -1,11 +1,9 @@
 using Space_Shooter_Website.Client.Pages;
 using Space_Shooter_Website.Components;
 using Client_Manager___API;
+using Space_Shooter_Website.Client.Support_Classes;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// 1. Get the URL from appsettings
-string serverUrl = builder.Configuration.GetConnectionString("SpaceShooterServer") ?? "";
 
 // 2. Add services to the container.
 builder.Services.AddRazorComponents()
@@ -13,7 +11,12 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 // 3. Register your API Service for the Server (Prerendering)
-builder.Services.AddScoped<IApiService>(sp => new ApiService(serverUrl));
+//builder.Services.AddScoped<IApiService, ApiService>(); - For scoped: lifetime is per loading of the component
+builder.Services.AddSingleton<IApiService, ApiService>();// - For singleton: lifetime is per application
+builder.Services.AddSingleton<Session>(); // Session service to manage user between components
+//better js errors?
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
+
 
 var app = builder.Build();
 

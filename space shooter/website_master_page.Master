@@ -297,7 +297,7 @@
         <form id="big_main_form" runat="server">
             <nav class="navbar m_container navbar-expand-lg" id="navbar">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="Home.aspx">
+                    <a class="navbar-brand" href="/pages/Home.aspx">
                         <img src="\Assets\icon.png" id="icon" class="logo"/>
                         <img src="\Assets\Main_Menu\Header.png" id="header"/>
                     </a>
@@ -309,46 +309,46 @@
                     <div class="collapse navbar-collapse" id="navbarNav" style="width:75vw">
                         <ul class="navbar-nav" style="width:70vw">
                             <li class="nav-item">
-                                <a class="nav-link nav_text" aria-current="page" href="Home.aspx">Home</a>
+                                <a class="nav-link nav_text" aria-current="page" href="/pages/Home.aspx">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link nav_text" href="Credits.aspx">Credits</a>
+                                <a class="nav-link nav_text" href="/pages/Credits.aspx">Credits</a>
                             </li>
                             <%
                                 //if(user.IsLoggedIn){
                                 Response.Write(
                                     "<li class=\"nav-item\">\r\n" +
-                                    "<a class=\"nav-link nav_text\" href=\"Level selection.aspx\">Levels </a>\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"/pages/Level selection.aspx\">Levels </a>\r\n" +
                                     "</li>"
                                 );
                                 //if(user.IsAdmin){
                                 Response.Write(
                                     "<li class=\"nav-item\">\r\n" +
-                                    "<a class=\"nav-link nav_text\" href=\"Admin View.aspx\">Data</a>\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"/pages/Admin View.aspx\">Data</a>\r\n" +
                                     "</li>"
                                 );
                                 //}else{
                                 Response.Write(
                                     "<li class=\"nav-item\">\r\n" +
-                                    "<a class=\"nav-link nav_text\" href=\"Admin Connection.aspx\"><i class=\"fa-solid fa-user-tie fa-xs\"></i> Admin Connection</a>\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"/pages/Admin Connection.aspx\"><i class=\"fa-solid fa-user-tie fa-xs\"></i> Admin Connection</a>\r\n" +
                                     "</li>"
                                 );
                                 //}
                                 Response.Write(
                                     "<li class=\"nav-item\">\r\n" +
-                                    "<a class=\"nav-link nav_text\" href=\"User Profile.aspx\">Hello </a>\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"/pages/User Profile.aspx\">Hello </a>\r\n" +
                                     "</li>"
                                 );
                                 //}
                                 //else{
                                 Response.Write(
                                     "<li class=\"nav-item\">\r\n" +
-                                    "<a class=\"nav-link nav_text\" href=\"Register.aspx\"><i class=\"fa-solid fa-user fa-xs\"></i> Register</a>\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"/pages/Register.aspx\"><i class=\"fa-solid fa-user fa-xs\"></i> Register</a>\r\n" +
                                     "</li>"
                                 );
                                 Response.Write(
                                     "<li class=\"nav-item\">\r\n" +
-                                    "<a class=\"nav-link nav_text\" href=\"Log In.aspx\"><i class=\"fa-regular fa-user fa-xs\"></i></i> Log In</a>\r\n" +
+                                    "<a class=\"nav-link nav_text\" href=\"/pages/Log In.aspx\"><i class=\"fa-regular fa-user fa-xs\"></i></i> Log In</a>\r\n" +
                                     "</li>"
                                 );
                                 //}

@@ -1,0 +1,133 @@
+﻿@page "/game"
+@using Space_Shooter_Website.Client.Added_Layouts
+@using Space_Shooter_Website.Client.Support_Classes
+@using Model.Entitys
+@using Client_Manager___API;
+@layout GameLayout
+@inject IJSRuntime JS
+@inject Session session
+@inject IApiService api
+@inject NavigationManager NavManager
+@implements IDisposable
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>Space Shooter - Game</PageTitle>
+
+<div class="game-container">
+    <section id="game_section">
+    </section>
+</div>
+
+@code {
+    private Player? currentPlayer;
+    private bool IsGameStarted = false;
+
+    private DotNetObjectReference<Game>? objRef;
+    public async void Dispose()
+    {
+        IsGameStarted = false; // Reset the flag so it can restart next time
+        //close game
+        try
+        {
+            JS.InvokeVoidAsync("eval", "window.dotNetHelper = null;");
+            //c# js talk using a "circuit" might be off when get here (becouse of saving the games)
+            await JS.InvokeVoidAsync("DestroyGame");
+        }
+        catch (Exception)
+        {
+            // If the circuit is already disconnected, we don't care.
+            // The browser is clearing the memory anyway.
+        }
+        // Clean up the reference when the user navigates away
+        objRef?.Dispose();
+        //updated screen
+        session.UpdateScreenFunc -= StateHasChanged;
+    }
+
+    [JSInvokable]
+    public async void NavigateToLevelSelection()
+    {
+        //runs from JS
+        NavManager.NavigateTo("Level Selection");
+    }
+
+    [JSInvokable]
+    public async Task SaveGameResult(bool gameover)
+    {
+        if (api is ApiService apiService && currentPlayer != null)
+        {
+            session.UpdateRunLocal(gameover);
+            IsGameStarted = false; // TURN OFF the guard after a successful save
+        }
+    }
+
+    [JSInvokable]
+    public async Task SaveGameResultToServer()
+    {
+        if (api is ApiService apiService)
+        {
+            session.SendRunToServer(apiService, JS);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // If it's the first time OR we are returning to the page and game isn't running
+        if (firstRender)
+        {
+            // Every time a new page loads, we ensure the exit handler is armed
+            await JS.InvokeVoidAsync("resetInternalNav");
+            session.UpdateScreenFunc += RefreshUI;//HUD
+            if (!IsGameStarted)
+            {
+                IsGameStarted = true;
+                //await Task.Delay(300);//time for DOM to load
+                currentPlayer = session.CurrentUser as Player;
+
+                if (currentPlayer != null)
+                {
+                    // Dispose old reference if it exists to be safe
+                    objRef?.Dispose();
+                    // Create the reference to THIS C# instance
+                    objRef = DotNetObjectReference.Create(this);
+
+                    await JS.InvokeVoidAsync("setupExitHandler", objRef); //runs the func that waits to save in DB the run
+                    // Start the game and pass the helper to JS
+                    await JS.InvokeVoidAsync("RunGame",
+                        objRef,
+                        currentPlayer.IsMusicOn,
+                        currentPlayer.IsSoundOn,
+                        session.SelectedLevel,
+                        session.CurrentRun.CurrentHp,
+                        session.CurrentRun.CurrentScore,
+                        session.CurrentRun.CurrentShieldLevel,
+                        session.CurrentRun.CurrentBlasterCount
+                    );
+                }
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        session.UpdateScreenFunc += RefreshUI;//HUD
+    }
+
+    private async void RefreshUI()
+    {
+        // This ensures the update always happens on the correct thread
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public void ToggleSettingsMenu()
+    {
+        session.ToggleSettings(JS);
+    }
+
+    [JSInvokable]
+    public void UpdateHUD(int hp, int score, int level, int shield, int blasters, int killed, int maxEnemies, bool isEndless)
+    {
+        session.UpdateGameStats(hp, score, level, shield, blasters, killed, maxEnemies, isEndless);
+    }
+}

@@ -1,7 +1,74 @@
 ﻿@page "/"
+@using Space_Shooter_Website.Client.Support_Classes
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject Session session
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - Space Shooter</PageTitle>
 
-<h1>Hello, world!</h1>
+<section class="home menu">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <h1 class="home title">SPACE SHOOTER</h1>
+            </div>
+        </div>
 
-Welcome to your new app.
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <button type="button" class="pic button btn-wrapper" @onclick="Enter">
+                    <img src="/Assets/MainMenu/Start_BTN.png" alt="START" class="pic-button" />
+                </button>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <button type="button" class="pic button btn-wrapper" @onclick="ConfirmExit">
+                    <img src="/Assets/MainMenu/Exit_BTN.png" alt="EXIT" class="pic-button" />
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
+    private async Task ConfirmExit()
+    {
+        // Using native JS confirm to avoid the debugger crash loop we saw earlier
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", "Are you sure you want to leave, already?");
+
+        if (confirmed)
+        {
+            // Try to close tab; if blocked by browser, redirect to Google
+            await JS.InvokeVoidAsync("window.close");
+            NavManager.NavigateTo("https://www.google.com", forceLoad: true);
+        }
+    }
+
+    private async Task Enter()
+    {
+        if (session.IsPlayer)
+        {
+            NavManager.NavigateTo("Level Selection");
+        }
+        else if (session.IsAdmin)
+        {
+            NavManager.NavigateTo("Admin Dashboard");
+        }
+        else
+        {
+            NavManager.NavigateTo("Log In");
+        }
+    }
+}

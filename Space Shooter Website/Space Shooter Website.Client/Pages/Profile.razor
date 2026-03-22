@@ -1,0 +1,469 @@
+﻿@page "/Profile"
+@using Model.Entitys
+@using Model.Tables
+@using Model.Data_Transfer_Objects
+@using Client_Manager___API
+@using Space_Shooter_Website.Client.Support_Classes
+@using Regex = System.Text.RegularExpressions.Regex;
+@inject IApiService api
+@inject Session session
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>User Profile - Space Shooter</PageTitle>
+
+<section class="container mt-5">
+    <div class="row">
+        @* --- צד שמאל: עריכת פרטי פרופיל --- *@
+        <div class=@(session.IsPlayer ? "col-lg-6 mb-4" : "col-lg-12 mb-4")>
+            <div class="profile-card p-4">
+                <div class="text-center mb-4">
+                    <img src="Assets/User Avatars/user.png" class="user-avatar" alt="Pilot Icon" />
+                    <h2 class="title mt-2">User Profile</h2>
+                    <span class="badge rounded-pill bg-info text-dark">
+                        @(session.IsAdmin ? "System Administrator" : "Active Pilot")
+                    </span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">Gov ID:</label>
+                        <input type="text" class="profile-input" value="@session.CurrentUser?.Id" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">Pilot Name:</label>
+                        <input type="text" @bind="username" class="profile-input" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="profile-label">Email Address:</label>
+                    <input type="email" @bind="email" class="profile-input" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">New Password:</label>
+                        <input type="password" @bind="newPassword" class="profile-input" placeholder="Leave empty to keep current" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="profile-label">Birth Date:</label>
+                        <input type="date" @bind="birthday" class="profile-input" />
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(statusMessage))
+                {
+                    <div class="alert @statusClass text-center">@statusMessage</div>
+                }
+
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-link button w-100" @onclick="HandleUpdate">UPDATE</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-link button w-100" @onclick="Logout">LOG OUT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* --- צד ימין: הישגים --- *@
+        @if (session.IsPlayer)
+        {
+            <div class="col-lg-6 mb-4">
+                <div class="profile-card p-4 h-100 border-info shadow-lg">
+                    <div class="text-center mb-3">
+                        <h3 class="title text-info"><i class="bi bi-shield-shaded me-2"></i>Tactical Dossier</h3>
+                        <p class="text-muted small">Combat History & Performance Metrics</p>
+                        <hr class="border-info opacity-50" />
+                    </div>
+
+                    @if (isDataLoading)
+                    {
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-info" role="status"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row g-3">
+                            @* Primary Stats Row *@
+                            <div class="col-6">
+                                <div class="stat-box p-3 text-center rounded bg-dark border border-warning border-opacity-50">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <small class="text-muted d-block">All-Time High</small>
+                                    <span class="h4 text-warning fw-bold">@personalBestScore?.CurrentScore</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-box p-3 text-center rounded bg-dark border border-info border-opacity-50">
+                                    <i class="bi bi-rocket-takeoff text-info"></i>
+                                    <small class="text-muted d-block">Deepest Sector</small>
+                                    <span class="h4 text-info fw-bold">Lvl @personalBestLevel?.CurrentLevel</span>
+                                </div>
+                            </div>
+
+                            @* Secondary Technical Stats *@
+                            <div class="col-4">
+                                <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
+                                    <small class="text-muted d-block small-label">Avg. Depth</small>
+                                    <span class="text-white fw-bold">@avgLevel</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
+                                    <small class="text-muted d-block small-label">Max Shield Health</small>
+                                    <span class="text-success fw-bold">@totalShieldHealth</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
+                                    <small class="text-muted d-block small-label">Max Firepower</small>
+                                    <span class="text-danger fw-bold">@maxBlastersReached</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @* Achievement Badges *@
+                        <div class="mt-4 p-3 rounded bg-black bg-opacity-50 border border-info border-opacity-10">
+                            <h6 class="text-info mb-3 small"><i class="bi bi-award me-1"></i>Earned Ribbons</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="badge-container mt-3">
+                                    @RenderBadge(totalRuns >= 10, "Veteran Pilot", "Complete 10 runs.", "info", $"({totalRuns}/10)")
+
+                                    @RenderBadge(maxBlastersReached >= 5, "Heavy Gunner", "Equip 5+ blasters.", "danger")
+
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 5, "Sector Specialist", "Advance past Sector 5.", "warning")
+
+                                    @RenderBadge(totalShieldHealth >= 20, "Iron Hull", "Earn 20 Shield PowerUps.", "success", $"({totalShieldHealth}/20)")
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        @* Mission Logs Table *@
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-white small mb-0 uppercase">Flight Data Logs</h6>
+                                <span class="badge bg-secondary">Total: @totalRuns</span>
+                            </div>
+                            <div class="custom-scrollbar" style="max-height: 150px; overflow-y: auto;">
+                                <table class="table table-dark table-sm table-hover mb-0">
+                                    <thead class="sticky-top bg-dark">
+                                        <tr class="text-muted small border-bottom border-secondary">
+                                            <th>Date</th>
+                                            <th>Level</th>
+                                            <th>Score</th>
+                                            <th>Health Points</th>
+                                            <th>Shield Health Points</th>
+                                            <th>Blaster Count</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var run in playerRuns.OrderByDescending(r => r.RunStopDate))
+                                        {
+                                            <tr>
+                                                <td class="small opacity-75 align-middle">
+                                                    @run.RunStopDate.ToString("yyyy/MM/dd")
+                                                </td>
+                                                <td class="text-info align-middle">Lvl @run.CurrentLevel</td>
+                                                <td class="text-success align-middle">@run.CurrentScore</td>
+                                                <td class="text-danger align-middle">@run.CurrentHp</td>
+                                                <td class="text align-middle">@run.CurrentShieldLevel</td>
+                                                <td class="text-warning align-middle">@run.CurrentBlasterCount</td>
+                                                <td class="text-center">
+                                                    @if (!run.IsRunOver)
+                                                    {
+                                                        @* Action button for active missions *@
+                                                        <button class="btn btn-outline-success btn-xs fw-bold px-3"
+                                                                @onclick="() => ContinueMission(run)"
+                                                                style="font-size: 0.65rem;">
+                                                            RESUME
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        @* Status badge for finished missions *@
+                                                        <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-2"
+                                                              style="font-size: 0.6rem;">
+                                                            KILLED
+                                                        </span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private string username = "";
+    private string email = "";
+    private DateTime? birthday;
+    private string newPassword = "";
+
+    private ProfileEditRequestsTable myPendingRequests = new();
+    private bool isSubmitting = false;
+
+    private string statusMessage = "";
+    private string statusClass = "";
+    private bool isDataLoading = true;
+
+    private RunsInfoTable playerRuns = new();
+
+    private RunInfo? personalBestScore;
+    private RunInfo? personalBestLevel;
+    private int totalRuns = 0;
+    private int totalShieldHealth = 0;
+    private double avgLevel = 0;
+    private int maxBlastersReached = 0;
+    private RunsInfoTable activeRuns = new();
+
+    private async Task Logout()
+    {
+        if (api is ApiService apiService)
+        {
+            await session.Logout(apiService, JS, NavManager);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (session.CurrentUser != null)
+        {
+            username = session.CurrentUser.Username;
+            email = session.CurrentUser.Email;
+            birthday = session.CurrentUser.Birthday;
+
+            await LoadAchievements();
+            await LoadMyRequests();
+        }
+        else
+        {
+            NavManager.NavigateTo("login"); // Ensure they are logged in
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+        }
+    }
+
+    private async Task LoadAchievements()
+    {
+        isDataLoading = true;
+        try
+        {
+            // 1. Get all runs from DB
+            var allRuns = await api.GetAllRunsInfo();
+
+            // 2. Filter for this specific player
+            playerRuns = new RunsInfoTable(allRuns.Where(r => r.Player.Idx == session.CurrentUser.Idx).ToList());
+
+            if (playerRuns.Any())
+            {
+                // 3. Extract the "Best Achieving" ones
+                personalBestScore = playerRuns.OrderByDescending(r => r.CurrentScore).FirstOrDefault();
+                personalBestLevel = playerRuns.OrderByDescending(r => r.CurrentLevel).FirstOrDefault();
+                totalRuns = playerRuns.Count;
+                avgLevel = Math.Round(playerRuns.Average(r => r.CurrentLevel), 1);
+                totalShieldHealth = playerRuns.Sum(r => r.CurrentShieldLevel);
+                maxBlastersReached = playerRuns.Max(r => r.CurrentBlasterCount);
+
+                activeRuns = new RunsInfoTable(playerRuns
+                    .Where(r => !r.IsRunOver)
+                    .OrderByDescending(r => r.RunStopDate)
+                    .ToList());
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading achievements: {ex.Message}");
+        }
+        finally
+        {
+            isDataLoading = false;
+        }
+    }
+
+    private async void ContinueMission(RunInfo run)
+    {
+        if (run != null)
+        {
+            session.SelectedLevel = run.CurrentLevel;
+            session.CurrentRun = run;
+            session.IsContuiningRun = true;
+
+            //delete the run, becouse will save next time
+            (int rows, string? error) result = (0, "Table not mapped");
+            try
+            {
+                result = await api.DeleteRunInfo(run.Idx);
+            }
+            catch(Exception ex)
+            {
+                statusMessage = "Delete Run To Replace Error: " + ex.Message + " API Error:" + result.error;
+                statusClass = "alert-danger";
+            }
+            // Navigate to the game page
+            NavManager.NavigateTo($"game");
+        }
+    }
+
+    private async Task LoadMyRequests()
+    {
+        try
+        {
+            var allReqs = await api.GetAllProfileEditRequests(); // Assuming this API exists
+            myPendingRequests = new ProfileEditRequestsTable(
+                allReqs.Where(r => r.RequestingPlayer?.Idx == session.CurrentUser.Idx && r.Status == Status.Pending).ToList());
+        }
+        catch { /* Handle silent fail */ }
+    }
+
+    private async Task HandleUpdate()
+    {
+        if (isSubmitting) return;
+        isSubmitting = true;
+
+        statusMessage = "Analyzing tactical changes...";
+        statusClass = "alert-info";
+
+        try
+        {
+            // 1. Password Format Validation (Only if a new password is entered)
+            if (!string.IsNullOrWhiteSpace(newPassword))
+            {
+                // Length Check
+                if (newPassword.Length < 8 || newPassword.Length > 20)
+                {
+                    throw new Exception("Password must be between 8 and 20 characters.");
+                }
+
+                // Format Checks
+                bool hasSymbol = Regex.IsMatch(newPassword, @"[^\w\s]");
+                bool hasNumber = Regex.IsMatch(newPassword, @"[\d]");
+                bool hasUpper = Regex.IsMatch(newPassword, @"[A-Z]");
+                bool hasLower = Regex.IsMatch(newPassword, @"[a-z]");
+
+                if (!hasSymbol || !hasNumber || !hasUpper || !hasLower)
+                {
+                    throw new Exception("Format Error: Password requires a symbol, number, and mixed case letters.");
+                }
+
+                // Hashing and API Update
+                string hashedNew = TextHasher.Hash(newPassword);
+                UserDTO userDTO = UserDTO.FromEntity(session.CurrentUser, dto => {
+                    dto.Password = hashedNew;
+                });
+                var result = await api.UpdateUser(userDTO);
+
+                if (result.rows > 0)
+                {
+                    session.CurrentUser.Password = hashedNew; // Update local session
+                }
+                else
+                {
+                    throw new Exception("System rejected password update." + result.error?.ToString());
+                }
+            }
+
+            // 2. Identify Profile Field Changes that need admin aproval
+            var changes = new List<(string Field, string Old, string New)>();
+            if (username != session.CurrentUser.Username)
+                changes.Add(("Username", session.CurrentUser.Username, username));
+            if (email != session.CurrentUser.Email)
+                changes.Add(("Email", session.CurrentUser.Email, email));
+            if (birthday != session.CurrentUser.Birthday)
+                changes.Add(("Birthday", session.CurrentUser.Birthday?.ToString("yyyy-MM-dd") ?? "N/A", birthday?.ToString("yyyy-MM-dd") ?? "N/A"));
+
+            // 3. Submit Profile Edit Request if fields changed
+            if (changes.Any())
+            {
+                var newRequest = new ProfileEditRequest
+                {
+                    RequestingPlayer = session.CurrentUser as Player,
+                    RequestingDate = DateTime.Now,
+                    Status = Status.Pending
+                };
+
+                var requestResponse = await api.InsertProfileEditRequest(newRequest);
+                if (requestResponse.rows > 0)
+                {
+                    foreach (var change in changes)
+                    {
+                        await api.InsertRequestData(new RequestData
+                        {
+                            Request = newRequest,
+                            Field = change.Field,
+                            OldValue = change.Old,
+                            NewValue = change.New
+                        });
+                    }
+                    statusMessage = "Profile request sent! Password updated.";
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(newPassword))
+            {
+                statusMessage = "Password updated successfully, Pilot.";
+            }
+            else
+            {
+                statusMessage = "No changes detected.";
+                statusClass = "alert-warning";
+                isSubmitting = false;
+                return;
+            }
+
+            statusClass = "alert-success";
+            newPassword = ""; // Clear the field after success
+        }
+        catch (Exception ex)
+        {
+            statusMessage = "Transmission Error: " + ex.Message;
+            statusClass = "alert-danger";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    ///
+    /// </summary>
+    /// <param name="condition"></param>
+    /// <param name="title"></param>
+    /// <param name="description"></param>
+    /// <param name="colorClass"></param>
+    /// <param name="progress"></param>
+    ///  brings you the html that creates the baduges with all you data
+    ///   ////<summary>
+    /// 
+    RenderFragment RenderBadge(bool condition, string title, string description, string colorClass, string progress = "") =>
+    __builder => {
+            if (condition)
+            {
+                <span class="badge border border-@colorClass text-@colorClass game-badge"
+                  data-tooltip="@description">@title</span>
+            }
+            else
+            {
+                <span class="badge border badge-locked game-badge"
+                  data-tooltip="Locked: @description @progress">@title</span>
+            }
+    };
+}

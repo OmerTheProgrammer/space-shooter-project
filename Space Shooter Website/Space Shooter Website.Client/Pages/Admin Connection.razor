@@ -1,0 +1,135 @@
+﻿@page "/Admin Connection"
+@using Space_Shooter_Website.Client.Support_Classes
+@using Client_Manager___API;
+@using Model.Entitys
+@inject NavigationManager NavManager
+@inject Session session
+@inject IJSRuntime JS
+@inject IApiService api
+@rendermode InteractiveServer
+
+<PageTitle>Admin Connection</PageTitle>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col text-center">
+                                <img src="Assets/User Avatars\admin.png" class="user-avatar" alt="Admin Icon" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <h1 class="admin-connection title">Admin Connection</h1>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-7">
+                                <label class="input text">Key: </label>
+                                <div class="form-group">
+                                    @* bind-value updates the 'adminKey' variable automatically *@
+                                    <input type="password" class="input_box" @bind-value="adminKey" placeholder="Key: " />
+                                    <div class="text-center">
+                                        <p id="error_text" class="error-msg">@errorMessage</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button @onclick="HandleSubmit" class="btn btn-success btn-block btn-lg entering_button">Submit</button>
+                                    <button @onclick="ReLogAsAdmin" class="btn btn-info btn-block btn-lg entering_button">ReLog as Admin</button>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private string adminKey = "";
+    private string errorMessage = "";
+    private string? secretKeyFromApi;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Pull the key from your API service when the page loads
+        ConfigSettings configSettings = await api.GetAdminKey();
+        secretKeyFromApi = configSettings.AdminKey;
+        if (secretKeyFromApi == "")
+        {
+            errorMessage = "Key Not Found, try a diffrent time.";
+            return;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("resetInternalNav");
+            session.UpdateScreenFunc += StateHasChanged;
+        }
+    }
+
+    // The logic formerly in the JavaScript Submit() function
+    private async void HandleSubmit()
+    {
+        errorMessage = "";
+
+        if (string.IsNullOrWhiteSpace(adminKey))
+        {
+            errorMessage = "Please fill in the field.";
+            return;
+        }
+
+        if (secretKeyFromApi == "")
+        {
+            errorMessage = "Key Not Found, try a diffrent time.";
+            return;
+        }
+
+        if (TextHasher.Hash(adminKey) == secretKeyFromApi)
+        {
+            // Update the Session state
+            session.IsAdmin = true;
+            try
+            {
+                Admin Newadmin = session.CurrentUser as Admin;
+                Newadmin.StartDate = DateTime.Now;
+                await api.InsertAdmin(Newadmin);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = "Admin Insertion Failed: " + ex.Message;
+            }
+
+            await JS.InvokeVoidAsync("ShowAlert", "Admin inserted in DB!");
+            Console.WriteLine("Admin inserted in DB");
+            // Redirect to Admin View
+            NavManager.NavigateTo("/Admin Dashboard");
+        }
+        else
+        {
+            errorMessage = "Wrong Key!!!";
+        }
+    }
+
+    private async Task ReLogAsAdmin()
+    {
+        if (api is ApiService apiService)
+        {
+            await session.Logout(apiService, JS, NavManager);
+        }
+    }
+
+    public async void Dispose()
+    {
+        session.UpdateScreenFunc -= StateHasChanged;
+    }
+}
