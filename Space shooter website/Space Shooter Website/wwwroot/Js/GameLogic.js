@@ -5,9 +5,9 @@ let killed = 0, maxEnemies = 0, counter_running = false, shield_life_decrese_cou
 let music_isnt_active = true, sound_isnt_active = true, level_drop_rate = 60;
 let win = false, tico = false, is_endless = false, shield_next_level_was_hidden = false;
 let gameover = false, invulnerable = false, og_x = size[0] / 2, og_y = size[1] - 100;
-let power_up_types, shield_life, player_lasers_count, shield_max_life, health, score;
+let power_up_types, shield_life, player_lasers_count, shield_max_life, health, score, IsSplitShot = false;
 let score_coldown = 0, ending_coldown = 0, whoosh_coldown = 0, hide_setting_coldown = 0;
-let cursors, player, Lasers, enemies, enemyLasers, power_ups, shield, explosionSprite;
+let cursors, player, Lasers, enemies, enemyLasers, splittingMainLasers, splitFragments, power_ups, shield, explosionSprite;
 let gameover_text, tico_text, win_text, bg_music;
 let is_music_on, is_sound_on, level, paused = false;
 
@@ -134,15 +134,19 @@ class Game_scene extends Phaser.Scene {
         this.load.audio('whoosh', '/Assets/Game Elements/Sounds/Whoosh.mp3');
         //main sprites  
         this.load.image('player', '/Assets/Game Elements/Images/player.png');
-        this.load.image('player laser', '/Assets/Game Elements/Images/laserRed.png');
         this.load.image('enemy', '/Assets/Game Elements/Images/enemyShip.png');
+        //lasers
+        this.load.image('player laser', '/Assets/Game Elements/Images/laserRed.png');
+        this.load.image('laser split main', 'Assets/Game Elements/Images/Lasers/Blue/laserBlueThick.png');
+        this.load.image('player split laser frag', 'Assets/Game Elements/Images/Lasers/Blue/laserBlue.png');
         this.load.image('enemy laser', '/Assets/Game Elements/Images/laserGreen.png');
         //power_ups
-        power_up_types = ["gold bolt", "gold star", "red pill", "silver shield"];
+        power_up_types = ["gold bolt", "gold star", "red pill", "silver shield", "Blue Splitter"];
         this.load.image('powerUp ' + power_up_types[0], '/Assets/Game Elements/Images/PowerUps/bolt_gold.png');
         this.load.image('powerUp ' + power_up_types[1], '/Assets/Game Elements/Images/PowerUps/star_gold.png');
         this.load.image('powerUp ' + power_up_types[2], '/Assets/Game Elements/Images/PowerUps/pill_red.png');
         this.load.image('powerUp ' + power_up_types[3], '/Assets/Game Elements/Images/PowerUps/shield_silver.png');
+        this.load.image('powerUp ' + power_up_types[4], '/Assets/Game Elements/Images/PowerUps/powerupBlue_bolt.png');
 
         //shield
         this.load.image('full shield', '/Assets/Game Elements/Images/PowerUps/Shield/shield3.png');
@@ -210,6 +214,18 @@ class Game_scene extends Phaser.Scene {
             maxSize: 10
         });
 
+        //spliting laser
+        splittingMainLasers = this.physics.add.group({
+            defaultKey: 'laser split main',
+            maxSize: 5
+        });
+
+        //spliting laser Fragment
+        splitFragments = this.physics.add.group({
+            defaultKey: 'player split laser frag',
+            maxSize: 50
+        });
+
         shield = this.physics.add.sprite(player.x, player.y, 'full shield');
         shield.setVisible(false);
         shield.setActive(false);
@@ -223,6 +239,7 @@ class Game_scene extends Phaser.Scene {
 
         // Collisions
         this.physics.add.overlap(Lasers, enemies, hitEnemy, null, this);
+        this.physics.add.overlap(splitFragments, enemies, hitEnemy, null, this);
         this.physics.add.overlap(enemyLasers, player, hitPlayer, null, this);
         this.physics.add.overlap(enemies, player, kamikaza, null, this);
         this.physics.add.overlap(player, power_ups, collectPowerUp, null, this);
@@ -241,14 +258,14 @@ class Game_scene extends Phaser.Scene {
         });
 
         cursors = this.input.keyboard.createCursorKeys();//arrow keys, space, shift
-        const keysToAdd = ['A', 'S', 'D', 'W', 'P', 'BACKSPACE', 'ENTER'];
+        const keysToAdd = ['A', 'S', 'D', 'W', 'P', 'BACKSPACE', 'ENTER', 'SHIFT'];
         for (const wasdKey of keysToAdd) {
             cursors[`${wasdKey}_key`] = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[wasdKey]);
         }
         cursors.P_key.wasClicked = false;
         /*
         cursors = A_key, BACKSPACE_key, D_key, ENTER_key, P_key, S_key, W_key, down arrow,
-             left arrow, right, shift, space, up arrow,
+             left arrow, right, shift, space, up arrow, SHIFT_key
         */
 
         const rates = [30, 40, 50, 60, 80, 90, 95];//jumps of 5, last = endless
@@ -800,6 +817,9 @@ function collectPowerUp(sprite, powerUp) {
                     shield_max_life += 3;
                     score += 30;
                 }
+            } else if (powerUp.texture.key === 'powerUp ' + power_up_types[4]) {
+                score += 720;
+                IsSplitShot = true;
             }
             powerUp.coldown = scenes[0].time.now + 1500;
         }
@@ -1122,10 +1142,19 @@ function player_actions(time, delta) {
 }
 
 function laser_update(time, delta) {
+    // 1. Check for standard shot (Space)
     if (cursors.space.isDown && time > player.lastFired) {
-        shot_laser();
-        player.lastFired = time + 150;
+        if (IsSplitShot) {
+            fireSplittingShot();
+            //special shot a longer cooldown
+            player.lastFired = time + 400;
+        } else {
+            shot_laser();
+            player.lastFired = time + 150;
+        }
     }
+
+    // 3. Update and cleanup standard lasers
     Lasers.getChildren().forEach(function (laser) {
         if (laser.active) {
             laser.update(time, delta);
@@ -1135,6 +1164,28 @@ function laser_update(time, delta) {
             }
         }
     });
+
+    // 4. Cleanup split fragments that fly off-screen
+    if (splitFragments) {
+        splitFragments.getChildren().forEach(fragment => {
+            if (fragment.active && (fragment.y < 0 || fragment.x < 0 || fragment.x > size[0])) {
+                fragment.setActive(false);
+                fragment.setVisible(false);
+                if (fragment.body) fragment.body.enable = false;
+            }
+        });
+    }
+
+    // 5. Cleanup splitting main lasers if they leave screen before splitting
+    if (splittingMainLasers) {
+        splittingMainLasers.getChildren().forEach(main => {
+            if (main.active && main.y < 0) {
+                main.disableBody(true, true);
+                main.setActive(false);
+                main.setVisible(false);
+            }
+        });
+    }
 }
 
 function shot_laser() {
@@ -1166,6 +1217,50 @@ function shot_laser() {
             make_sound('player laser sound', 0.4);
         }
     }
+}
+
+function fireSplittingShot() {
+    let x = player.x;
+    let y = player.y - 50;
+
+    let mainShot = splittingMainLasers.get(x, y);
+
+    if (mainShot) {
+        mainShot.setActive(true);
+        mainShot.setVisible(true);
+        if (mainShot.body) {
+            mainShot.body.reset(x, y);
+            mainShot.body.enable = true;
+        }
+        mainShot.setVelocityY(-400);
+
+        // Split after 0.5 seconds
+        currentScene.time.delayedCall(500, () => {
+            if (mainShot.active) {
+                spawnFragments(mainShot.x, mainShot.y);
+                // Safe disable to avoid the collideObjects crash
+                mainShot.disableBody(true, true);
+            }
+        });
+    }
+}
+
+function spawnFragments(x, y) {
+    const angles = [-30, -15, 0, 15, 30]; // Degrees relative to "up"
+
+    angles.forEach(angle => {
+        let fragment = splitFragments.get(x, y);
+        if (fragment) {
+            fragment.setActive(true);
+            fragment.setVisible(true);
+            if (fragment.body) fragment.body.enable = true;
+
+            // Convert angle to velocity (Phaser's 0 degrees is Right, so we subtract 90 for Up)
+            const speed = 500;
+            const velocity = currentScene.physics.velocityFromAngle(angle - 90, speed);
+            fragment.setVelocity(velocity.x, velocity.y);
+        }
+    });
 }
 
 function make_sound(sound_name, volume) {

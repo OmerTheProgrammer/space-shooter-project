@@ -200,6 +200,12 @@
                 // 2. Find the highest level they ever reached
                 int highestLevelReached = playerRuns.Max(r => r.CurrentLevel);
 
+                //update using local runs
+                if (session.CurrentRun.CurrentLevel > highestLevelReached)
+                {
+                    highestLevelReached = session.CurrentRun.CurrentLevel;
+                }
+
                 // 3. Update MaxLevel if they broke their record
                 if (highestLevelReached > currentPlayer.MaxLevel)
                 {
