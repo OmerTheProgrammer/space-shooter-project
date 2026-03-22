@@ -37,57 +37,27 @@ namespace Space_Shooter_Website.Client.Support_Classes
             }
         }
 
-        public async Task ToggleMusic(IJSRuntime JSRuntime, ApiService apiService)
+        public async void SaveSettings(IJSRuntime JSRuntime, ApiService apiService)
         {
             Player CurrentPlayer = CurrentUser as Player;
-            if (CurrentPlayer != null)
+            try
             {
-                CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
-                try
-                {
-                    JSRuntime.InvokeVoidAsync("UpdateUserMusicPrefrence", CurrentPlayer.IsMusicOn);
-                    await apiService.UpdatePlayer(
-                        PlayerDTO.FromEntity(CurrentPlayer, dto =>
-                        {
-                            dto.IsMusicOn = CurrentPlayer.IsMusicOn;
-                        })
-                    );
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Updateing Music Currently Failed: " + ex.Message);
-                    JSRuntime.InvokeVoidAsync("ShowAlert", "Updateing Music Currently Failed: " + ex.Message);
-                }
+                await JSRuntime.InvokeVoidAsync("UpdateUserSoundPrefrence", CurrentPlayer.IsSoundOn);
+                await JSRuntime.InvokeVoidAsync("UpdateUserMusicPrefrence", CurrentPlayer.IsMusicOn);
+                await apiService.UpdatePlayer(
+                    PlayerDTO.FromEntity(CurrentPlayer, dto =>
+                    {
+                        dto.IsMusicOn = CurrentPlayer.IsMusicOn;
+                        dto.IsSoundOn = CurrentPlayer.IsSoundOn;
+                    })
+                );
             }
-
-            // This triggers StateHasChanged in the Layout because it's subscribed
+            catch (Exception ex)
+            {
+                Console.WriteLine("Updateing Sound Currently Failed: " + ex.Message);
+                JSRuntime.InvokeVoidAsync("ShowAlert", "Updateing Sound Currently Failed: " + ex.Message);
+            }
             UpdateScreenFunc?.Invoke();
-        }
-
-        public async void ToggleSound(IJSRuntime JSRuntime, ApiService apiService)
-        {
-            Player CurrentPlayer = CurrentUser as Player;
-            if (CurrentPlayer != null)
-            {
-                CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
-                try
-                {
-                    JSRuntime.InvokeVoidAsync("UpdateUserSoundPrefrence", CurrentPlayer.IsSoundOn);
-                    await apiService.UpdatePlayer(
-                        PlayerDTO.FromEntity(CurrentPlayer, dto =>
-                        {
-                            dto.IsSoundOn = CurrentPlayer.IsSoundOn;
-                        })
-                    );
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Updateing Sound Currently Failed: " + ex.Message);
-                    JSRuntime.InvokeVoidAsync("ShowAlert", "Updateing Sound Currently Failed: " + ex.Message);
-                }
-                // This triggers StateHasChanged in the Layout because it's subscribed
-                UpdateScreenFunc?.Invoke();
-            }
         }
 
         public RunInfo CurrentRun { get; set; } = new RunInfo();

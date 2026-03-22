@@ -86,23 +86,24 @@
     <div class="custom-modal-overlay">
         <div class="custom-modal p-4">
             <img src="Assets/Settings/Texts/Title.png" class="img-fluid mb-4" style="max-height: 50px;" />
+
             <div class="d-flex align-items-center mb-3">
                 <button class="btn-icon button" @onclick="ToggleMusic">
-                    <img src="@(currentPlayer.IsMusicOn ? "Assets/Settings/Buttons/On/Music_BTN.png" :
-                        "Assets/Settings/Buttons/Off/Music_BTN.png")" class="icon" />
+                    <img src="@(currentPlayer.IsMusicOn ? "Assets/Settings/Buttons/On/Music_BTN.png" : "Assets/Settings/Buttons/Off/Music_BTN.png")"
+                         class="icon" alt="Music Toggle" />
                 </button>
-            <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
+                <img src="Assets/Settings/Texts/Music.png" class="setting-text-img" />
             </div>
 
             <div class="d-flex align-items-center mb-4">
                 <button class="btn-icon button" @onclick="ToggleSound">
-                    <img src="@(currentPlayer.IsSoundOn ? "Assets/Settings/Buttons/On/Sound_BTN.png" :
-                        "Assets/Settings/Buttons/Off/Sound_BTN.png")" class="icon" />
+                    <img src="@(currentPlayer.IsSoundOn ? "Assets/Settings/Buttons/On/Sound_BTN.png" : "Assets/Settings/Buttons/Off/Sound_BTN.png")"
+                         class="icon" alt="Sound Toggle" />
                 </button>
-            <img src="Assets/Settings/Texts/Sound.png" class="setting-text-img" />
+                <img src="Assets/Settings/Texts/Sound.png" class="setting-text-img" />
             </div>
 
-            <button class="btn-side button" @onclick="() => showSettings = false">SAVE & CLOSE</button>
+            <button class="btn-side button" @onclick="SaveAndCloseSettings">SAVE & CLOSE</button>
         </div>
     </div>
 }
@@ -211,7 +212,7 @@
                 {
                     currentPlayer.MaxLevel = highestLevelReached;
                     maxUnlockedLevel = highestLevelReached; // Update UI immediately
-                    
+
                     // 4. Persist to DB
                     await api.UpdatePlayer(
                         PlayerDTO.FromEntity(currentPlayer, dto =>
@@ -263,18 +264,23 @@
 
     private void ToggleMusic()
     {
-        if (api is ApiService apiService)
-        {
-            session.ToggleMusic(JS, apiService);
-        }
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
     }
 
     private void ToggleSound()
     {
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
+    }
+
+    private void SaveAndCloseSettings()
+    {
         if (api is ApiService apiService)
         {
-            session.ToggleMusic(JS, apiService);
+            session.SaveSettings(JS, apiService);
         }
+        showSettings = false;
     }
 
     public async void Dispose()

@@ -67,7 +67,7 @@
             <img src="Assets/Settings/Texts/Sound.png" class="setting-text-img" />
         </div>
 
-            <button class="btn-side button" @onclick="CloseSettings">SAVE & CLOSE</button>
+            <button class="btn-side button" @onclick="SaveAndCloseSettings">SAVE & CLOSE</button>
         </div>
     </div>
 }
@@ -99,7 +99,19 @@
         }
     }
 
-    private void CloseSettings()
+    private void ToggleMusic()
+    {
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsMusicOn = !CurrentPlayer.IsMusicOn;
+    }
+
+    private void ToggleSound()
+    {
+        Player CurrentPlayer = session.CurrentUser as Player;
+        CurrentPlayer.IsSoundOn = !CurrentPlayer.IsSoundOn;
+    }
+
+    private void SaveAndCloseSettings()
     {
         // Only toggle if it's actually open
         if (session.IsSettingsVisible)
@@ -107,22 +119,11 @@
             //closes settings through the session
             session.ToggleSettings(Js);
         }
-    }
-
-    private void ToggleMusic()
-    {
-        if(api is ApiService apiService)
-        {
-            session.ToggleMusic(Js, apiService);
-        }
-    }
-
-    private void ToggleSound()
-    {
         if (api is ApiService apiService)
         {
-            session.ToggleSound(Js, apiService);
+            session.SaveSettings(Js, apiService);
         }
+        IsSettingsVisible = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
