@@ -831,7 +831,7 @@ function collectPowerUp(sprite, powerUp) {
                     score += 140
                 }
             } else if (powerUp.texture.key === 'powerUp ' + power_up_types[1]) {//gold star
-                score += 5000;
+                score += 15000;
             }
             if (powerUp.texture.key === 'powerUp ' + power_up_types[2]) {//red pill
                 score += 5;
@@ -856,6 +856,7 @@ function collectPowerUp(sprite, powerUp) {
 
 function dropPowerUp(x, y) {
     let powerUpType_i = Phaser.Math.Between(0, power_up_types.length - 1);
+    //every powerup chance is 20% (1/5)
     let powerUp = power_ups.get(x, y, 'powerUp ' + power_up_types[powerUpType_i]);
     activatePowerup(powerUp);
 }

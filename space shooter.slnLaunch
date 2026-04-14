@@ -29,7 +29,7 @@
     "Projects": [
       {
         "Path": "Server Manager - API\\Server Manager - API.csproj",
-        "Action": "StartWithoutDebugging",
+        "Action": "Start",
         "DebugTarget": "https"
       },
       {

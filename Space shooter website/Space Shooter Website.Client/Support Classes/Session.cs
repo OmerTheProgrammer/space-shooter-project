@@ -78,6 +78,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 {
                     await SendRunToServer(api, JS);
                     CurrentRun = new RunInfo();
+                    IsContuiningRun = false;
                 }
                 CurrentUser = null;
                 IsAdmin = false;
