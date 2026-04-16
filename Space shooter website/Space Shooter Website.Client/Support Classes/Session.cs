@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 using Model.Data_Transfer_Objects;
 using Model.Entitys;
 using System.Threading.Tasks;
-using ViewModel;
 
 namespace Space_Shooter_Website.Client.Support_Classes
 {
