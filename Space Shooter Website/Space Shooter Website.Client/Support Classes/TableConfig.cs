@@ -10,6 +10,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
     public class TableConfig
     {
         public Type EntityType { get; set; } = typeof(BaseEntity);
+        public Type DtoType { get; set; } = null!;
         public Func<Task<IEnumerable<object>>> GetAll { get; set; } = null!;
         public Func<int, Task<BaseEntity?>> GetById { get; set; } = null!;
         public Func<int, Task<(int rows, string? error)>> Delete { get; set; } = null!;

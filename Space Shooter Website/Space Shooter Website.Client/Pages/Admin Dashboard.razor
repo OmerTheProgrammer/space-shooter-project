@@ -159,63 +159,20 @@
 @* Edit Mode Modal *@
         {
             <div class="lookup-backdrop">
-                @* Yellow/Orange Theme Modal *@
                 <div class="lookup-modal shadow-lg border-warning" style="border-top: 5px solid #ffc107;">
                     <div class="lookup-header bg-dark text-warning border-bottom border-warning">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3 class="title mb-0">Update @activeTab.ToUpper()</h3>
                             <span class="badge bg-warning text-dark">ID: @targetId</span>
                         </div>
-                        <p class="small mb-0 opacity-75">Modify the fields below to update the record.</p>
+                        <p class="small mb-0 opacity-75">Modify fields to update the record. Supports Nested Lookups.</p>
                     </div>
 
                     <div class="lookup-body custom-scrollbar p-4 bg-dark">
-                        @foreach (var key in editData.Keys.ToList())
+                        @foreach (var prop in GetPropertiesCached(SingleEntity.GetType()))
                         {
-                            var prop = SingleEntity.GetType().GetProperty(key);
-                            if (prop == null || key == "Idx") continue;
-
-                            <div class="mb-3 border border-secondary p-2 rounded bg-opacity-10 bg-warning center-text">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="fw-bold text-warning mb-0 ">@key</label>
-                                </div>
-
-                                <div class="input-group input-group-sm">
-                                    @if (key.Contains("Password", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        <input type="@(showPassword ? "text" : "password")"
-                                               class="form-control border-warning bg-dark text-white"
-                                               value="@editData[key]"
-                                               @oninput="@(e => editData[key] = e.Value?.ToString() ?? "")" />
-                                        <button class="btn btn-outline-warning" type="button" @onclick="() => showPassword = !showPassword">
-                                            @("fa" + (showPassword ? "fa-eye-slash" : "fa-eye"))
-                                        </button>
-                                    }
-                                    else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
-                                    {
-                                        <select class="form-select border-warning bg-dark text-white"
-                                                @onchange="@(e => editData[key] = bool.Parse(e.Value?.ToString() ?? "false"))">
-                                            <option value="false" selected="@(editData[key]?.ToString() == "False")">False</option>
-                                            <option value="true" selected="@(editData[key]?.ToString() == "True")">True</option>
-                                        </select>
-                                    }
-                                    else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
-                                    {
-                                        <input type="date" class="form-control border-warning bg-dark text-white"
-                                               value="@(editData[key] is DateTime dt ? dt.ToString("yyyy-MM-dd") : "")"
-                                               @onchange="@(e => { if (DateTime.TryParse(e.Value?.ToString(), out var d)) editData[key] = d; })" />
-                                    }
-                                    else
-                                    {
-                                        <input type="@(prop.PropertyType == typeof(int) || prop.PropertyType == typeof(double) ? "number" : "text")"
-                                               class="form-control border-warning bg-dark text-white"
-                                               value="@editData[key]"
-                                               @oninput="@(e => editData[key] = e.Value?.ToString() ?? "")" />
-                                    }
-                                </div>
-                            </div>
+                            @RenderPropertyInput(prop, editData)
                         }
-
                     </div>
 
                     <div class="lookup-footer d-flex gap-2 bg-dark border-top border-warning">
@@ -635,6 +592,10 @@
                 // Still in a sub-form, assign to the previous level's dictionary
                 nestingStack.Peek()[fieldName] = completedEntity;
             }
+            else if (isEditMode)
+            {
+                editData[fieldName] = completedEntity;
+            }
             else
             {
                 // We are back at the primary Add/Edit form
@@ -717,7 +678,6 @@
         finally
         {
             isLoading = false;
-            isLookupMode = false;
         }
 
         return entity;
@@ -731,25 +691,6 @@
             nestingStack.Pop();
             typeStack.Pop();
             keyStack.Pop();
-        }
-    }
-
-    /// <summary>
-    /// Maps the dictionary of nested form data into a physical entity object.
-    /// </summary>
-    private BaseEntity? BuildObjectFromNestedData()
-    {
-        if (CurrentNestedType == null || CurrentNestedData == null) return null;
-
-        try
-        {
-            // Reuse your existing mapping logic to convert the dictionary to the entity type
-            return MapDataToEntity(CurrentNestedData, CurrentNestedType);
-        }
-        catch (Exception ex)
-        {
-            pageErrorMessage = $"Failed to map nested entity: {ex.Message}";
-            return null;
         }
     }
     #endregion
@@ -782,151 +723,102 @@
         isEditMode = true;
     }
 
-    private Action<TDTO> GetConfig<TEntity, TDTO>() where TDTO : class
+    private async Task UpdateEntity()
     {
-        return dto =>
-        {
-            var dtoProps = typeof(TDTO).GetProperties();
-            var entityProps = typeof(TEntity).GetProperties();
-            bool IsSameHush = false;
-            foreach (var prop in dtoProps)
-            {
-                // Skip Idx (Primary Key) - FromEntity handles it
-                if (prop.Name.Equals("Idx", System.StringComparison.OrdinalIgnoreCase)) continue;
-
-                if (editData.TryGetValue(prop.Name, out var uiValue))
-                {
-                    var originalProp = entityProps.FirstOrDefault(p => p.Name == prop.Name);
-                    var oldValue = originalProp?.GetValue(SingleEntity);
-                    if (prop.Name.Contains("Password"))
-                    {
-                        IsSameHush = uiValue == oldValue;
-                        uiValue = TextHasher.Hash((string)uiValue);
-                    }
-                    // Only shove if the value actually changed
-                    if (uiValue?.ToString() != oldValue?.ToString() && !IsSameHush)
-                    {
-                        try
-                        {
-                            var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                            var convertedValue = Convert.ChangeType(uiValue, targetType);
-                            prop.SetValue(dto, convertedValue);
-                        }
-                        catch { /* Skip conversion errors for complex/nested objects */ }
-                    }
-                    // Else: remains null (default in DTO)
-                }
-            }
-        };
-    }
-
-    private async void UpdateEntity()
-    {
-        // Confirmation logic (Simple browser confirm for now)
-        bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to update ID {targetId} from {activeTab}?");
-        if (!confirmed) return;
+        if (!_tableRegistry.TryGetValue(activeTab, out var config)) return;
 
         isLoading = true;
-        //builds and fills the DTOs
-        object Dto = SingleEntity?.GetType().Name switch
-        {
-            nameof(User) => UserDTO.FromEntity((User)SingleEntity, GetConfig<User, UserDTO>()),
-            nameof(Admin) => AdminDTO.FromEntity((Admin)SingleEntity, GetConfig<Admin, AdminDTO>()),
-            nameof(Player) => PlayerDTO.FromEntity((Player)SingleEntity, GetConfig<Player, PlayerDTO>()),
-            nameof(Group) => GroupDTO.FromEntity((Group)SingleEntity, GetConfig<Group, GroupDTO>()),
-            nameof(RunInfo) => RunInfoDTO.FromEntity((RunInfo)SingleEntity, GetConfig<RunInfo, RunInfoDTO>()),
-            nameof(PlayerAndGroup) => PlayerAndGroupDTO.FromEntity((PlayerAndGroup)SingleEntity, GetConfig<PlayerAndGroup, PlayerAndGroupDTO>()),
-            nameof(EnemyInLastLevel) => EnemyInLastLevelDTO.FromEntity((EnemyInLastLevel)SingleEntity, GetConfig<EnemyInLastLevel, EnemyInLastLevelDTO>()),
-            nameof(ProfileEditRequest) => ProfileEditRequestDTO.FromEntity((ProfileEditRequest)SingleEntity, GetConfig<ProfileEditRequest, ProfileEditRequestDTO>()),
-            nameof(RequestData) => RequestDataDTO.FromEntity((RequestData)SingleEntity, GetConfig<RequestData, RequestDataDTO>()),
-            _ => null
-        };
-
         try
         {
-            (int rows, string? error) result = (0, "Table not mapped");
+            // Use the same mapper used for Inserts
+            IBaseDTO updateDto = MapDataToDTO(editData, config.DtoType);
 
-            switch (activeTab)
-            {
-                case "users":
-                    result = await api.UpdateUser((UserDTO)Dto);
-                    break;
-
-                case "admins":
-                    result = await api.UpdateAdmin((AdminDTO)Dto);
-                    break;
-
-                case "players":
-                    result = await api.UpdatePlayer((PlayerDTO)Dto);
-                    break;
-
-                case "groups":
-                    result = await api.UpdateGroup((GroupDTO)Dto);
-                    break;
-
-                case "playersAndgroups":
-                    result = await api.UpdatePlayerAndGroup((PlayerAndGroupDTO)Dto);
-                    break;
-
-                case "profileEditRequests":
-                    result = await api.UpdateProfileEditRequest((ProfileEditRequestDTO)Dto);
-                    break;
-
-                case "enemiesInLastLevel":
-                    result = await api.UpdateEnemyInLastLevel((EnemyInLastLevelDTO)Dto);
-                    break;
-
-                case "requestsData":
-                    result = await api.UpdateRequestData((RequestDataDTO)Dto);
-                    break;
-
-                case "runsInfo":
-                    result = await api.UpdateRunInfo((RunInfoDTO)Dto);
-                    break;
-            }
+            // Execute the registry-defined update
+            var result = await config.Update(updateDto);
 
             if (result.rows > 0)
             {
-                isEditMode = false;
-                editData.Clear();
                 await RefreshData();
-
-                pageSuccessMessage = $"Successfully edited record to {activeTab}!";
-                InvokeAsync(StateHasChanged);
-                //removes pageSuccessMessage after 2.5 sec
-                _ = Task.Delay(2000).ContinueWith(_ =>
-                {
-                    ResetPage();
-                    pageSuccessMessage = null;
-                    InvokeAsync(StateHasChanged);
-                });
-            }
-            else if (result.rows == 0)
-            {
                 isEditMode = false;
-                pageSuccessMessage = $"No changes Made!";
-                //removes pageSuccessMessage after 2.5 sec
-                _ = Task.Delay(2000).ContinueWith(_ =>
-                {
-                    ResetPage();
-                    pageSuccessMessage = null;
-                    InvokeAsync(StateHasChanged);
-                });
+                pageSuccessMessage = "Record updated successfully!";
             }
             else
             {
-                pageErrorMessage = result.error ?? "Update failed.";
+                pageErrorMessage = "Update failed: " + result.error;
             }
         }
         catch (Exception ex)
         {
             pageErrorMessage = "Update Error: " + ex.Message;
         }
-        finally
+        finally { isLoading = false; }
+    }
+
+    private IBaseDTO MapDataToDTO(Dictionary<string, object> data, Type dtoType)
+    {
+        var dto = (IBaseDTO)Activator.CreateInstance(dtoType)!;
+        var props = dtoType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        object? originalEntity = isEditMode ? SingleEntity : null;
+
+        foreach (var prop in props)
         {
-            isLoading = false;
-            InvokeAsync(StateHasChanged);
+            // 1. Mandatory Idx for the primary DTO
+            if (prop.Name == "Idx" && data.TryGetValue("Idx", out var idxVal))
+            {
+                prop.SetValue(dto, Convert.ToInt32(idxVal));
+                continue;
+            }
+
+            if (data.TryGetValue(prop.Name, out var newValue) && newValue != null)
+            {
+                try
+                {
+                    // 2. Handle Nested Entities (The Fix)
+                    if (newValue is BaseEntity nestedEntity)
+                    {
+                        var registryEntry = _tableRegistry.Values.FirstOrDefault(v => v.EntityType == nestedEntity.GetType());
+                        if (registryEntry != null)
+                        {
+                            // Create a "Link-Only" DTO instance
+                            var nestedDto = (IBaseDTO)Activator.CreateInstance(registryEntry.DtoType)!;
+
+                            // ONLY set the Idx. This tells the API "Link to this ID"
+                            // without sending prohibited nested values like 'Email' or 'Username'.
+                            nestedDto.Idx = nestedEntity.Idx;
+
+                            prop.SetValue(dto, nestedDto);
+                        }
+                    }
+                    // 3. Handle Primitive Fields (Unchanged Logic)
+                    else
+                    {
+                        var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                        var convertedNewValue = Convert.ChangeType(newValue, targetType);
+
+                        // Only set if value changed compared to SingleEntity
+                        object? originalValue = originalEntity?.GetType().GetProperty(prop.Name)?.GetValue(originalEntity);
+
+                        if (originalValue == null || !convertedNewValue.Equals(originalValue))
+                        {
+                            if (prop.Name.Contains("Password", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (!string.IsNullOrWhiteSpace(newValue.ToString()))
+                                    prop.SetValue(dto, TextHasher.Hash(newValue.ToString()));
+                            }
+                            else
+                            {
+                                prop.SetValue(dto, convertedNewValue);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    pageErrorMessage = $"Mapping Error on '{prop.Name}': {ex.Message}";
+                }
+            }
         }
+        return dto;
     }
     #endregion
 
@@ -977,6 +869,7 @@
             ["users"] = new()
             {
                 EntityType = typeof(User),
+                DtoType = typeof(UserDTO),
                 GetAll = async () => (await api.GetAllUsers()).Cast<object>(),
                 GetById = async id => await api.GetUserByIdx(id),
                 Delete = id => api.DeleteUser(id),
@@ -986,6 +879,7 @@
             ["admins"] = new()
             {
                 EntityType = typeof(Admin),
+                DtoType = typeof(AdminDTO),
                 GetAll = async () => (await api.GetAllAdmins()).Cast<object>(),
                 GetById = async id => await api.GetAdminByIdx(id),
                 Delete = id => api.DeleteAdmin(id),
@@ -995,6 +889,7 @@
             ["players"] = new()
             {
                 EntityType = typeof(Player),
+                DtoType = typeof(PlayerDTO),
                 GetAll = async () => (await api.GetAllPlayers()).Cast<object>(),
                 GetById = async id => await api.GetPlayerByIdx(id),
                 Delete = id => api.DeletePlayer(id),
@@ -1004,6 +899,7 @@
             ["groups"] = new()
             {
                 EntityType = typeof(Group),
+                DtoType = typeof(GroupDTO),
                 GetAll = async () => (await api.GetAllGroups()).Cast<object>(),
                 GetById = async id => await api.GetGroupByIdx(id),
                 Delete = id => api.DeleteGroup(id),
@@ -1013,6 +909,7 @@
             ["playersAndgroups"] = new()
             {
                 EntityType = typeof(PlayerAndGroup),
+                DtoType = typeof(PlayerAndGroupDTO),
                 GetAll = async () => (await api.GetAllPlayersAndGroups()).Cast<object>(),
                 GetById = async id => await api.GetPlayerAndGroupByIdx(id),
                 Delete = id => api.DeletePlayerAndGroup(id),
@@ -1022,6 +919,7 @@
             ["enemiesInLastLevel"] = new()
             {
                 EntityType = typeof(EnemyInLastLevel),
+                DtoType = typeof(EnemyInLastLevelDTO),
                 GetAll = async () => (await api.GetAllEnemiesInLastLevel()).Cast<object>(),
                 GetById = async id => await api.GetEnemyInLastLevelByIdx(id),
                 Delete = id => api.DeleteEnemyInLastLevel(id),
@@ -1031,6 +929,7 @@
             ["profileEditRequests"] = new()
             {
                 EntityType = typeof(ProfileEditRequest),
+                DtoType = typeof(ProfileEditRequestDTO),
                 GetAll = async () => (await api.GetAllProfileEditRequests()).Cast<object>(),
                 GetById = async id => await api.GetProfileEditRequestByIdx(id),
                 Delete = id => api.DeleteProfileEditRequest(id),
@@ -1040,6 +939,7 @@
             ["requestsData"] = new()
             {
                 EntityType = typeof(RequestData),
+                DtoType = typeof(RequestDataDTO),
                 GetAll = async () => (await api.GetAllRequestsData()).Cast<object>(),
                 GetById = async id => await api.GetRequestDataByIdx(id),
                 Delete = id => api.DeleteRequestData(id),
@@ -1049,6 +949,7 @@
             ["runsInfo"] = new()
             {
                 EntityType = typeof(RunInfo),
+                DtoType = typeof(RunInfoDTO),
                 GetAll = async () => (await api.GetAllRunsInfo()).Cast<object>(),
                 GetById = async id => await api.GetRunInfoByIdx(id),
                 Delete = id => api.DeleteRunInfo(id),
@@ -1209,6 +1110,8 @@
         var propName = prop.Name;
         var propType = prop.PropertyType;
 
+        string inputBorderClass = (isEditMode && !isNestedInsertMode) ? "border-warning" : "border-secondary";
+
         // Skip Idx - it's handled by the DB
         if (propName.Equals("Idx", StringComparison.OrdinalIgnoreCase)) return;
 
@@ -1218,7 +1121,7 @@
             @if (propName.Contains("Password", StringComparison.OrdinalIgnoreCase))
             {
                 <div class="input-group">
-                    <input type="@(showPassword ? "text" : "password")" class="form-control bg-dark text-white border-secondary"
+                    <input type="@(showPassword ? "text" : "password")" class="form-control bg-dark text-white @inputBorderClass"
                            value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "")"
                            @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "")" />
                     <button class="button icon" type="button" @onclick="() => showPassword = !showPassword">
@@ -1228,7 +1131,7 @@
             }
             else if (propType == typeof(bool) || propType == typeof(bool?))
             {
-                <select class="form-select bg-dark text-white border-secondary"
+                <select class="form-select bg-dark text-white @inputBorderClass"
                         @onchange="@(e => dataSource[propName] = bool.Parse(e.Value?.ToString() ?? "false"))">
                     <option value="false">False</option>
                     <option value="true">True</option>
@@ -1236,7 +1139,7 @@
             }
             else if (IsTypeEnum(propType))
             {
-                <select class="form-select bg-dark text-white border-secondary"
+                <select class="form-select bg-dark text-white @inputBorderClass"
                         @onchange="@(e => dataSource[propName] = Enum.Parse(Nullable.GetUnderlyingType(propType) ?? propType, e.Value?.ToString() ?? "0"))">
                     @foreach (var val in Enum.GetValues(Nullable.GetUnderlyingType(propType) ?? propType))
                     {
@@ -1246,7 +1149,7 @@
             }
             else if (propType == typeof(DateTime) || propType == typeof(DateTime?))
             {
-                <input type="date" class="form-control bg-dark text-white border-secondary"
+                <input type="date" class="form-control bg-dark text-white @inputBorderClass"
                        value="@(dataSource.TryGetValue(propName, out var dateVal) &&
                                 dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : "")"
                        @onchange="@(e => {
@@ -1285,7 +1188,7 @@
             else
             {
                 <input type="@(propType == typeof(DateTime) ? "date" : "text")"
-                       class="form-control bg-dark text-white border-secondary"
+                        class="form-control bg-dark text-white @inputBorderClass"
                        value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "")"
                        @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "")" />
             }
@@ -1321,7 +1224,6 @@
         if (val is BaseEntity entity)
         {
             var props = GetPropertiesCached(entity.GetType())
-                .Where(p => !p.Name.Equals("Idx", StringComparison.OrdinalIgnoreCase))
                 .Select(p => $"{p.Name}: {p.GetValue(entity)}");
             return string.Join(" | ", props);
         }
