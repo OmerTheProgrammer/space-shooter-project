@@ -435,9 +435,10 @@ class Game_scene extends Phaser.Scene {
         update_hud_in_blazor();
         if (window.dotNetHelper) {
             window.dotNetHelper.invokeMethodAsync('SaveGameResult',
-                win,
+                (win && !gameover),
             );
         }
+        //(win && !gameover) - won not fail or draw
 
         The_counter = new Counter();
         The_counter.CreateCountDownCounter(3, () => {
@@ -1293,22 +1294,26 @@ function spawnFragments(x, y) {
 }
 
 function make_sound(sound_name, volume) {
-    if (is_sound_on) {
-        if (sound_isnt_active) {
-            currentScene.sound.add(sound_name, { volume: volume, loop: false }).play();
-            sound_isnt_active = false;
+    if (currentScene && currentScene.sound) {
+        if (is_sound_on) {
+            if (sound_isnt_active) {
+                currentScene.sound.add(sound_name, { volume: volume, loop: false }).play();
+                sound_isnt_active = false;
+            }
+            else {
+                sound_isnt_active = true;
+            }
         }
         else {
-            sound_isnt_active = true;
+            const sound = currentScene.sound.get(sound_name);
+            if (sound) {
+                sound.pause();
+                sound.currentTime = 0;
+                sound_isnt_active = true;
+            }
         }
-    }
-    else {
-        const sound = currentScene.sound.get(sound_name);
-        if (sound) {
-            sound.pause();
-            sound.currentTime = 0;
-            sound_isnt_active = true;
-        }
+    } else {
+        console.warn("Sound could not play: Scene not ready or sound disabled.");
     }
 }
 
@@ -1526,8 +1531,11 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Current
         window.gameInstance = null;
     }
     window.gameInstance = new Phaser.Game(config);
+
+    if (shieldHealth > 0) {
+        shield_next_level_was_hidden = true;
+    }
     shield_max_life = 3 + 3 * Math.floor((shieldHealth / 3));
-    killed = 0;
     //restart_level(): rest of this crushes often
     killed = 0;
     gameover = false;
