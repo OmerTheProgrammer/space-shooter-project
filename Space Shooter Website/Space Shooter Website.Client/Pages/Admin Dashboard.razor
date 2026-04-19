@@ -1685,6 +1685,16 @@
                     }
                 </select>
             }
+            else if (propType == typeof(DateTime) || propType == typeof(DateTime?))
+            {
+                <input type="date" class="form-control bg-dark text-white border-secondary"
+                       value="@(dataSource.TryGetValue(propName, out var dateVal) &&
+                                dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : "")"
+                       @onchange="@(e => {
+                       if (DateTime.TryParse(e.Value?.ToString(), out var result))
+                           dataSource[propName] = result;
+                   })" />
+            }
             else if (propType.IsClass && propType != typeof(string))
             {
                 @* This is for nested entities (e.g., Player inside a RunInfo) *@
