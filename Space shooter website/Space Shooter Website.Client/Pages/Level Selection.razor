@@ -264,8 +264,17 @@
     {
         if (session.IsContuiningRun) //if from save will lose previous save
         {
-            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete Current Run Progress?");
+            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to Replace Current Run?.\nWill Save In Server!");
             if (!confirmed) return; //if not we don't go
+        }
+        try
+        {
+            session.SendRunToServer(api as ApiService, JS);
+        }
+        catch (Exception e)
+        {
+            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Failed Saving the Run\n Are u sure you want to continue?\nError: {e.Message}");
+            if (!confirmed) return;
         }
         session.SelectedLevel = level;
         session.IsContuiningRun = false;
