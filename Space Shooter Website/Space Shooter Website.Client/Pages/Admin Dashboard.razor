@@ -761,46 +761,6 @@
     #endregion
 
     #region Add
-    // Opens an insert form for the sub-entity
-    // private void OpenNestedInsert(Type type, string key)
-    // {
-    //     var newLevel = new Dictionary<string, object>();
-
-    //     // Initialize properties for this specific level (of nesting)
-    //     foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-    //     {
-    //         if (prop.Name.Equals("idx", StringComparison.OrdinalIgnoreCase)) continue;
-
-    //         if (prop.PropertyType == typeof(int)) newLevel[prop.Name] = 0;
-    //         else if (prop.PropertyType == typeof(string)) newLevel[prop.Name] = "";
-    //         else newLevel[prop.Name] = null;
-    //     }
-
-    //     //put them in the stack
-    //     nestingStack.Push(newLevel);
-    //     typeStack.Push(type);
-    //     keyStack.Push(key);
-    // }
-
-    // private async void SendNestedToField() //in nested insert
-    // {
-    //     // 1. Map the current level to a full Entity object
-    //     var completedEntity = await SaveNestedToField();
-    //     string fieldName = keyStack.Pop();
-
-    //     // 2. Assign it to the parent
-    //     if (nestingStack.Count > 0)
-    //     {
-    //         // Still in a nested form (Level 2+), assign to the previous nested level
-    //         nestingStack.Peek()[fieldName] = completedEntity;
-    //     }
-    //     else
-    //     {
-    //         // Back at the root (Main form), assign to newEntryData
-    //         newEntryData[fieldName] = completedEntity;
-    //     }
-    // }
-
     /// <summary>
     /// saves the new Entity and sends to field of father.
     /// </summary>
@@ -850,126 +810,6 @@
         }
     }
 
-    // private async Task<BaseEntity> SaveNestedToField()
-    // {
-    //     BaseEntity entity = null;
-    //     isLoading = true;
-    //     Type NestedEntityType = typeStack.Pop();
-    //     IEnumerable<object> NestedEntityIE = null;
-    //     string? targetTab = NestedEntityType.Name switch
-    //     {
-    //         nameof(User) => "users",
-    //         nameof(Admin) => "admins",
-    //         nameof(Player) => "players",
-    //         nameof(Group) => "groups",
-    //         nameof(RunInfo) => "runsInfo",
-    //         nameof(PlayerAndGroup) => "playersAndgroups",
-    //         nameof(EnemyInLastLevel) => "enemiesInLastLevel",
-    //         nameof(ProfileEditRequest) => "profileEditRequests",
-    //         nameof(RequestData) => "requestsData",
-    //         _ => null
-    //     };
-    //     try
-    //     {
-    //         (int rows, string? error) result = (0, "Table not mapped");
-
-    //         switch (targetTab)
-    //         {
-    //             case "users":
-    //                 var newUser = (User)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertUser(newUser);
-
-    //                 break;
-
-    //             case "admins":
-    //                 var newAdmin = (Admin)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertAdmin(newAdmin);
-    //                 break;
-
-    //             case "groups":
-    //                 var newGroup = (Group)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertGroup(newGroup);
-    //                 break;
-
-    //             case "playersAndgroups":
-    //                 var newPlayerAndGroup = (PlayerAndGroup)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertPlayerAndGroup(newPlayerAndGroup);
-    //                 break;
-
-    //             case "profileEditRequests":
-    //                 var newProfileEditRequest = (ProfileEditRequest)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertProfileEditRequest(newProfileEditRequest);
-    //                 break;
-
-    //             case "enemiesInLastLevel":
-    //                 var newEnemyInLastLevel = (EnemyInLastLevel)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertEnemyInLastLevel(newEnemyInLastLevel);
-    //                 break;
-
-    //             case "requestsData":
-    //                 var newRequestData = (RequestData)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertRequestData(newRequestData);
-    //                 break;
-
-    //             case "runsInfo":
-    //                 var newRunInfo = (RunInfo)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-    //                 result = await api.InsertRunInfo(newRunInfo);
-    //                 break;
-    //         }
-
-    //         if (result.rows > 0)
-    //         {
-    //             await RefreshData();
-    //             //pull entity from DB
-    //             string originalTab = activeTab;
-
-    //             if (targetTab != null)
-    //             {
-    //                 // Temporarily switch tabs to use your existing data-fetching logic
-    //                 activeTab = targetTab;
-    //                 // refresh data, otherwise lookupData will be empty or old
-    //                 NestedEntityIE = GetCurrentData();
-    //                 pageSuccessMessage = $"Successfully added new record to {activeTab}!";
-
-    //                 // Switch back immediately
-    //                 activeTab = originalTab;
-    //                 isLookupMode = true;
-    //             }
-    //             else
-    //             {
-    //                 pageErrorMessage = $"Lookup not supported for type: {NestedEntityType.Name}";
-    //             }
-
-    //             //take the last entity - *hopes* it is the last inserted, better way -> DB returns the new idx no rows changed in insert.
-    //             if (NestedEntityIE != null)
-    //             {
-    //                 entity = NestedEntityIE.Cast<BaseEntity>().OrderBy(e => e.Idx).LastOrDefault();
-    //             }
-
-    //             //removes pageSuccessMessage after 4 sec
-    //             _ = Task.Delay(2500).ContinueWith(_ =>
-    //             {
-    //                 pageSuccessMessage = null;
-    //                 InvokeAsync(StateHasChanged);
-    //             });
-    //         }
-    //         else
-    //         {
-    //             pageErrorMessage = result.error ?? "Insert failed.";
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         pageErrorMessage = "Insert Error: " + ex.Message;
-    //     }
-    //     finally
-    //     {
-    //         isLoading = false;
-    //         isLookupMode = false;
-    //     }
-
-    //     return entity;
-    // }
     private async Task<BaseEntity?> SaveNestedToField()
     {
         BaseEntity? entity = null;
@@ -995,7 +835,8 @@
         try
         {
             // 2. Map data and perform the insert using the registry delegate
-            var mappedEntity = MapDataToEntity(nestingStack.Pop(), nestedEntityType);
+            //nestingStack.Peek() - pops in SendNestedToField
+            var mappedEntity = MapDataToEntity(nestingStack.Peek(), nestedEntityType);
             var result = await config.Insert(mappedEntity);
 
             if (result.rows > 0)
