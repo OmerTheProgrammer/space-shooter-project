@@ -138,6 +138,29 @@
 
                                     @RenderBadge(totalShieldHealth >= 20, "Iron Hull", "Earn 20 Shield PowerUps.", "success", $"({totalShieldHealth}/20)")
 
+                                    @RenderBadge(personalBestLevel?.CurrentScore >= 50000, "High Roller", "Score 50,000 points in a single run.", "primary")
+
+                                    @RenderBadge(totalBlasterCount >= 50, "Armory Master", "Collect 50 total Blaster PowerUps.", "info", $"({totalBlasterCount}/50)")
+
+                                    @RenderBadge(totalRuns >= 50, "Galaxy Legend", "Complete 50 runs.", "primary", $"({totalRuns}/50)")
+
+                                    @RenderBadge(maxShieldReached >= 10, "Untouchable", "Reach 10 Shield HP in one run.", "success")
+
+                                    @RenderBadge(totalRuns >= 100, "Stellar Admiral", "Command 100 successful sorties.", "dark", $"({totalRuns}/100)")
+
+                                    @RenderBadge(totalShieldHealth >= 100, "Titanium Aegis", "Absorb 100 Shield PowerUps.", "success", $"({totalShieldHealth}/100)")
+
+                                    @RenderBadge(totalBlasterCount >= 250, "Lead Rain", "Amass 250 total Blaster PowerUps.", "primary", $"({totalBlasterCount}/250)")
+
+                                    @RenderBadge(personalBestLevel?.CurrentScore >= 1000000, "Millionaire Club", "Reach a score of 1,000,000.", "dark")
+
+                                    @RenderBadge(maxBlastersReached >= 10, "Full Battery", "Achieve maximum blaster saturation (10).", "danger")
+
+                                    @RenderBadge(maxShieldReached >= 25, "Kinetic Ghost", "Stack 25 Shield layers in a single mission.", "info")
+
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 15, "Deep Space Drifter", "Survive until Sector 25.", "warning")
+
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 30, "Void Walker", "Reach the legendary Sector 50.", "dark")
 
                                 </div>
                             </div>
@@ -227,7 +250,10 @@
     private int totalShieldHealth = 0;
     private double avgLevel = 0;
     private int maxBlastersReached = 0;
+    private int maxShieldReached = 0;
+    private int totalBlasterCount = 0;
     private RunsInfoTable activeRuns = new();
+
 
     private async Task Logout()
     {
@@ -283,6 +309,10 @@
                 avgLevel = Math.Round(playerRuns.Average(r => r.CurrentLevel), 1);
                 totalShieldHealth = playerRuns.Sum(r => r.CurrentShieldLevel);
                 maxBlastersReached = playerRuns.Max(r => r.CurrentBlasterCount);
+                totalRuns = allRuns.Count;
+                maxShieldReached = allRuns.Max(r => r.CurrentShieldLevel);
+                totalBlasterCount = allRuns.Sum(r => r.CurrentBlasterCount);
+
 
                 activeRuns = new RunsInfoTable(playerRuns
                     .Where(r => !r.IsRunOver)
