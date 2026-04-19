@@ -382,26 +382,6 @@
 
     #region Insert
     #region base
-    // private void OpenInsertModal()
-    // {
-    //     isLoading = true;
-    //     newEntryData.Clear();
-    //     var props = GetCurrentProperties();
-
-    //     foreach (var prop in props)
-    //     {
-    //         // Skip 'idx' or 'Idx' because the Database generates it automatically (IDENTITY)
-    //         if (prop.Name.Equals("idx", StringComparison.OrdinalIgnoreCase)) continue;
-
-    //         // Initialize with default values based on type
-    //         if (prop.PropertyType == typeof(int)) newEntryData[prop.Name] = 0;
-    //         else if (prop.PropertyType == typeof(string)) newEntryData[prop.Name] = "";
-    //         else newEntryData[prop.Name] = null;
-    //     }
-    //     isInsertMode = true;
-    //     isLoading = false;
-    // }
-
     private void OpenInsertModal()
     {
         isLoading = true;
@@ -426,88 +406,6 @@
         isInsertMode = true;
         isLoading = false;
     }
-
-    // private async Task HandleInsert()
-    // {
-    //     isLoading = true;
-
-    //     try
-    //     {
-    //         (int rows, string? error) result = (0, "Table not mapped");
-
-    //         switch (activeTab)
-    //         {
-    //             case "users":
-    //                 var newUser = (User)MapDataToEntity(newEntryData, typeof(User));
-    //                 result = await api.InsertUser(newUser);
-    //                 break;
-
-    //             case "admins":
-    //                 var newAdmin = (Admin)MapDataToEntity(newEntryData, typeof(Admin));
-    //                 result = await api.InsertAdmin(newAdmin);
-    //                 break;
-
-    //             case "players":
-    //                 var newPlayer = (Player)MapDataToEntity(newEntryData, typeof(Player));
-    //                 result = await api.InsertPlayer(newPlayer);
-    //                 break;
-
-    //             case "groups":
-    //                 var newGroup = (Group)MapDataToEntity(newEntryData, typeof(Group));
-    //                 result = await api.InsertGroup(newGroup);
-    //                 break;
-
-    //             case "playersAndgroups":
-    //                 var newPlayerAndGroup = (PlayerAndGroup)MapDataToEntity(newEntryData, typeof(PlayerAndGroup));
-    //                 result = await api.InsertPlayerAndGroup(newPlayerAndGroup);
-    //                 break;
-
-    //             case "profileEditRequests":
-    //                 var newProfileEditRequest = (ProfileEditRequest)MapDataToEntity(newEntryData, typeof(ProfileEditRequest));
-    //                 result = await api.InsertProfileEditRequest(newProfileEditRequest);
-    //                 break;
-
-    //             case "enemiesInLastLevel":
-    //                 var newEnemyInLastLevel = (EnemyInLastLevel)MapDataToEntity(newEntryData, typeof(EnemyInLastLevel));
-    //                 result = await api.InsertEnemyInLastLevel(newEnemyInLastLevel);
-    //                 break;
-
-    //             case "requestsData":
-    //                 var newRequestData = (RequestData)MapDataToEntity(newEntryData, typeof(RequestData));
-    //                 result = await api.InsertRequestData(newRequestData);
-    //                 break;
-
-    //             case "runsInfo":
-    //                 var newRunInfo = (RunInfo)MapDataToEntity(newEntryData, typeof(RunInfo));
-    //                 result = await api.InsertRunInfo(newRunInfo);
-    //                 break;
-    //         }
-
-    //         if (result.rows > 0)
-    //         {
-    //             isInsertMode = false;
-    //             newEntryData.Clear();
-    //             await RefreshData();
-
-    //             pageSuccessMessage = $"Successfully added new record to {activeTab}!";
-    //             //removes pageSuccessMessage after 2.5 sec
-    //             _ = Task.Delay(2500).ContinueWith(_ =>
-    //             {
-    //                 pageSuccessMessage = null;
-    //                 InvokeAsync(StateHasChanged);
-    //             });
-    //         }
-    //         else
-    //         {
-    //             pageErrorMessage = result.error ?? "Insert failed.";
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         pageErrorMessage = "Insert Error: " + ex.Message;
-    //     }
-    //     finally { isLoading = false; }
-    // }
 
     private async Task HandleInsert()
     {
@@ -560,32 +458,6 @@
             isLoading = false;
         }
     }
-
-    // private BaseEntity MapDataToEntity(Dictionary<string, object> Data, Type entityType)
-    // {
-    //     var entity = (BaseEntity)Activator.CreateInstance(entityType);
-    //     var props = entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-    //     foreach (var prop in props)
-    //     {
-    //         if (Data.TryGetValue(prop.Name, out var value) && value != null)
-    //         {
-    //             // Handle Password Hashing
-    //             if (prop.Name.Contains("Password", StringComparison.OrdinalIgnoreCase))
-    //             {
-    //                 prop.SetValue(entity, TextHasher.Hash(value.ToString()));
-    //             }
-    //             else
-    //             {
-    //                 // Convert type safely (e.g., string to int)
-    //                 var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-    //                 var convertedValue = Convert.ChangeType(value, targetType);
-    //                 prop.SetValue(entity, convertedValue);
-    //             }
-    //         }
-    //     }
-    //     return entity;
-    // }
 
     private BaseEntity MapDataToEntity(Dictionary<string, object> Data, Type entityType)
     {
@@ -679,34 +551,6 @@
             pageErrorMessage = $"Lookup Error: Type '{type.Name}' is not registered in the Table Registry.";
         }
     }
-
-    // private void SelectLookupItem(object item)
-    // {
-    //     // 1. Map the current level to a full Entity object
-    //     string fieldName = keyStack.Pop();
-    //     typeStack.Pop();
-
-    //     // 2. Assign it to the parent
-    //     if (isNestedInsertMode)
-    //     {
-    //         // Still in a nested form (Level 2+), assign to the previous nested level
-    //         nestingStack.Peek()[fieldName] = item;
-    //     }
-    //     else
-    //     {
-    //         // Back at the root (Main form), assign to newEntryData
-    //         newEntryData[fieldName] = item;
-    //     }
-    //     isLookupMode = false;
-    // }
-
-    // private void ReturnFromNestedLookup()
-    // {
-    //     isLookupMode = false;
-    //     //reset stacks
-    //     typeStack.Pop();
-    //     keyStack.Pop();
-    // }
 
     private void SelectLookupItem(object item)
     {
@@ -1456,6 +1300,11 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// returns string virsion of entity to diplaiy in nesting
+    /// </summary>
+    /// <param name="val"></param>
+    /// <returns></returns>
     private string GetFullPreview(object? val)
     {
         if (val == null) return "None";
@@ -1480,6 +1329,7 @@
         return val.ToString() ?? "Linked";
     }
     #endregion
+
 
     #endregion
 }
