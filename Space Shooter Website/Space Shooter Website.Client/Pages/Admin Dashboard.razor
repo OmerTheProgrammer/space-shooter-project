@@ -1590,6 +1590,7 @@
         }
         else if (!_tableRegistry.ContainsKey(activeTab))
         {
+            pageErrorMessage = "Table Unloaded! ";
             return;
         }
 
@@ -1606,9 +1607,14 @@
 
     private async Task HandleDelete()
     {
-        if (targetId <= 0 || !_tableRegistry.ContainsKey(activeTab))
+        if (targetId <= 0)
         {
-            pageErrorMessage = "Please select a valid ID to delete.";
+            pageErrorMessage = "Id less then 0, try diffrent one!";
+            return;
+        }
+        else if (!_tableRegistry.ContainsKey(activeTab))
+        {
+            pageErrorMessage = "Table Unloaded! ";
             return;
         }
 
