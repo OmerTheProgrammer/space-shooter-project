@@ -903,10 +903,7 @@ function spawnBoss(bossTexture, stats) {
     // Spawn at the top center of the screen
     boss = enemies.create(size[0] / 2, -100, bossTexture || 'BoardWatcherShip');
 
-    boss.setScale(stats.scale, stats.scale);
-    boss.body.setSize(boss.width, boss.height);
-    boss.body.setOffset(0, 0);
-    boss.refreshBody();
+    boss.setDisplaySize(stats.scale);
 
     boss.isBoss = true; // Flag to identify it in collisions
     boss.hp = stats.hp;
