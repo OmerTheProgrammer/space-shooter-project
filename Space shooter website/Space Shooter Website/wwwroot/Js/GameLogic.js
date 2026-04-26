@@ -435,9 +435,10 @@ class Game_scene extends Phaser.Scene {
         update_hud_in_blazor();
         if (window.dotNetHelper) {
             window.dotNetHelper.invokeMethodAsync('SaveGameResult',
-                win,
+                (win && !gameover),
             );
         }
+        //(win && !gameover) - won not fail or draw
 
         The_counter = new Counter();
         The_counter.CreateCountDownCounter(3, () => {
@@ -831,7 +832,7 @@ function collectPowerUp(sprite, powerUp) {
                     score += 140
                 }
             } else if (powerUp.texture.key === 'powerUp ' + power_up_types[1]) {//gold star
-                score += 5000;
+                score += 15000;
             }
             if (powerUp.texture.key === 'powerUp ' + power_up_types[2]) {//red pill
                 score += 5;
@@ -856,6 +857,7 @@ function collectPowerUp(sprite, powerUp) {
 
 function dropPowerUp(x, y) {
     let powerUpType_i = Phaser.Math.Between(0, power_up_types.length - 1);
+    //every powerup chance is 20% (1/5)
     let powerUp = power_ups.get(x, y, 'powerUp ' + power_up_types[powerUpType_i]);
     activatePowerup(powerUp);
 }
@@ -999,7 +1001,9 @@ function handlePlayerHit(player) {
         delay: 2000,
         callback: () => {
             if (!paused) {
-                player.setPosition(og_x, og_y);
+                if ((!shield.was_deactivated)) {//shield means not go back to og
+                    player.setPosition(og_x, og_y);
+                }
                 player.setActive(true);
                 player.setVisible(true);
                 if (shield.was_deactivated) {
@@ -1292,22 +1296,26 @@ function spawnFragments(x, y) {
 }
 
 function make_sound(sound_name, volume) {
-    if (is_sound_on) {
-        if (sound_isnt_active) {
-            currentScene.sound.add(sound_name, { volume: volume, loop: false }).play();
-            sound_isnt_active = false;
+    if (currentScene && currentScene.sound) {
+        if (is_sound_on) {
+            if (sound_isnt_active) {
+                currentScene.sound.add(sound_name, { volume: volume, loop: false }).play();
+                sound_isnt_active = false;
+            }
+            else {
+                sound_isnt_active = true;
+            }
         }
         else {
-            sound_isnt_active = true;
+            const sound = currentScene.sound.get(sound_name);
+            if (sound) {
+                sound.pause();
+                sound.currentTime = 0;
+                sound_isnt_active = true;
+            }
         }
-    }
-    else {
-        const sound = currentScene.sound.get(sound_name);
-        if (sound) {
-            sound.pause();
-            sound.currentTime = 0;
-            sound_isnt_active = true;
-        }
+    } else {
+        console.warn("Sound could not play: Scene not ready or sound disabled.");
     }
 }
 
@@ -1525,8 +1533,11 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Current
         window.gameInstance = null;
     }
     window.gameInstance = new Phaser.Game(config);
+
+    if (shieldHealth > 0) {
+        shield_next_level_was_hidden = true;
+    }
     shield_max_life = 3 + 3 * Math.floor((shieldHealth / 3));
-    killed = 0;
     //restart_level(): rest of this crushes often
     killed = 0;
     gameover = false;

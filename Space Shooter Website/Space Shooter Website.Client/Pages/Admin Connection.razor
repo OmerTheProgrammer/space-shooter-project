@@ -98,25 +98,51 @@
         {
             // Update the Session state
             session.IsAdmin = true;
+            Admin Newadmin = new Admin();
             try
             {
-                Admin Newadmin = session.CurrentUser as Admin;
-                Newadmin.StartDate = DateTime.Now;
-                await api.InsertAdmin(Newadmin);
+                User user = session.CurrentUser;
+                if (user != null)
+                {
+                    Newadmin.Idx = user.Idx;
+                    Newadmin.Username = user.Username;
+                    Newadmin.Password = user.Password;
+                    Newadmin.Email = user.Email;
+                    Newadmin.Birthday = user.Birthday;
+                    Newadmin.Id = user.Id;
+                    Newadmin.StartDate = DateTime.Now;
+                    (int rows, string? error) result = await api.InsertAdmin(Newadmin);
+                    if (result.error != null)
+                    {
+                        errorMessage = "Admin Insertion Failed: " + result.error;
+                        await JS.InvokeVoidAsync("ShowAlert", errorMessage);
+                    }
+                    else
+                    {
+                        await JS.InvokeVoidAsync("ShowAlert", "Admin inserted in DB!");
+                        Console.WriteLine("Admin inserted in DB");
+                    }
+                }
             }
             catch (Exception ex)
             {
                 errorMessage = "Admin Insertion Failed: " + ex.Message;
+                await JS.InvokeVoidAsync("ShowAlert", errorMessage);
             }
-
-            await JS.InvokeVoidAsync("ShowAlert", "Admin inserted in DB!");
-            Console.WriteLine("Admin inserted in DB");
-            // Redirect to Admin View
-            NavManager.NavigateTo("/Admin Dashboard");
+            finally
+            {
+                //even if not inserted to DB for the session now he is an admin.
+                session.CurrentUser = Newadmin;
+                // Redirect to Admin View
+                NavManager.NavigateTo("/Admin Dashboard");
+                
+                //refresh screen
+            }
         }
         else
         {
             errorMessage = "Wrong Key!!!";
+            await JS.InvokeVoidAsync("ShowAlert", errorMessage);
         }
     }
 

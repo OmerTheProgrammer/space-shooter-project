@@ -12,7 +12,6 @@
 @rendermode InteractiveServer
 
 <PageTitle>Admin Dashboard</PageTitle>
-
 <section class="admin-dashboard">
     <div class="container-fluid">
         <div class="row mb-4">
@@ -22,7 +21,8 @@
             </div>
         </div>
 
-        @if (isLoading) @*מסך טעינה*@
+        @if (isLoading)
+@*מסך טעינה*@
         {
             <div class="text-center">
                 <div class="spinner-border text-primary" role="status">
@@ -30,7 +30,8 @@
                 </div>
             </div>
         }
-        else if (!string.IsNullOrEmpty(pageErrorMessage))@*מסך שגיאה*@
+        else if (!string.IsNullOrEmpty(pageErrorMessage))
+@*מסך שגיאה*@
         {
             <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -46,7 +47,8 @@
                 <button type="button" class="btn-close" @onclick="() => pageSuccessMessage = null"></button>
             </div>
         }
-        else if (IsSelectByIdWindow)@*מסך Select By Id*@
+        else if (isSelectByIdWindow)
+@*מסך Select By Id*@
         {
             <div class="card mt-4 border-primary shadow">
                 <div class="card-header bg-primary text-white">
@@ -64,11 +66,12 @@
                             </div>
                         }
                     </div>
-                    <button class="btn btn-secondary btn-sm" @onclick="() => IsSelectByIdWindow = false">Clear View</button>
+                    <button class="btn btn-secondary btn-sm" @onclick="() => isSelectByIdWindow = false">Clear View</button>
                 </div>
             </div>
         }
-        else if (isInsertMode && !isLookupMode && !isNestedInsertMode)@*מסך Insert*@
+        else if (isInsertMode && !isLookupMode && !isNestedInsertMode)
+@*מסך Insert*@
         {
             @* the fields have no input protaction!!! *@
             <div class="card mb-4 border-success shadow">
@@ -77,309 +80,99 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        @foreach (var key in newEntryData.Keys.ToList())
+                        @foreach (var prop in GetCurrentProperties())
                         {
-                            var prop = GetCurrentProperties().First(p => p.Name == key);
-
-                            <div class="mb-3 border p-2 rounded shadow-sm bg-dark">
-                                @* Top Row: Label and Buttons aligned horizontally *@
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="fw-bold text mb-0">@key</label> @*prop name*@
-
-                                    @if (!prop.PropertyType.IsPrimitive && prop.PropertyType != typeof(string) &&
-                                                                prop.PropertyType != typeof(DateTime) && prop.PropertyType != typeof(DateTime?) && !IsTypeEnum(prop.PropertyType))
-                                    {@*buttons for nasted entity name*@
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="() => OpenLookup(prop.PropertyType, key)">
-                                                <i class="bi bi-list-ul"></i> Select
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-success" @onclick="() => OpenNestedInsert(prop.PropertyType, key)">
-                                                <i class="bi bi-plus-circle"></i> New
-                                            </button>
-                                        </div>
-                                    }
-                                </div>
-
-                                @* Bottom Row: Input or Entity Display *@
-                                @if (!prop.PropertyType.IsPrimitive && prop.PropertyType != typeof(string) && prop.PropertyType != typeof(DateTime) &&
-                                                        prop.PropertyType != typeof(DateTime?) && !IsTypeEnum(prop.PropertyType))
-                                {
-                                    <div class="alert alert-secondary py-1 px-2 mb-0" style="font-size: 0.85rem; border-left: 3px solid #00FF41;">
-                                        <small class="text-muted">Linked:</small>
-                                        <span class="ms-1 fw-bold">@(newEntryData[key]?.ToString() ?? "None Selected")</span>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="input-group">
-                                        @if (key.Contains("Password", StringComparison.OrdinalIgnoreCase)) @*Password field*@
-                                        {
-                                            @* Password Input with Toggle Eye Icon *@
-                                            <input type="@(showPassword ? "text" : "password")" class="form-control"
-                                                   value="@newEntryData[key]"
-                                                   @onchange="@(e => newEntryData[key] = e.Value.ToString())" />
-                                            <button class="btn btn-outline-secondary" type="button" @onclick="() => showPassword = !showPassword">
-                                                @(showPassword ? "🙈" : "👁️")
-                                            </button>
-                                        }
-                                        else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
-                                        {
-                                            @*bool field*@
-                                            <select class="form-select" @onchange="@(e => newEntryData[key] = bool.Parse(e.Value.ToString()))">
-                                                <option value="false">False</option>
-                                                <option value="true">True</option>
-                                            </select>
-                                        }
-                                        else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
-                                        {
-                                            @*Date field*@
-                                            <input type="date" class="form-control"
-                                                   @onchange="@(e => newEntryData[key] = DateTime.Parse(e.Value.ToString()))" />
-                                        }
-                                        else if (IsTypeEnum(prop.PropertyType))
-                                        {
-                                            @*enum field*@
-                                            var actualEnumType = prop.PropertyType.IsEnum ? prop.PropertyType : Nullable.GetUnderlyingType(prop.PropertyType);
-                                            var names = Enum.GetNames(actualEnumType!);
-
-                                            <select class="form-select" @onchange="@(e => newEntryData[key] = Enum.Parse(actualEnumType!, e.Value.ToString()))">
-                                                @if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                                                {
-                                                    <option value="">-- None --</option>
-                                                }
-                                                @foreach (var name in names)
-                                                {
-                                                    <option value="@name">@name</option>
-                                                }
-                                            </select>
-                                        }
-                                        else
-                                        {
-                                            @* Default Text/Number Input *@
-                                            <input type="@(prop.PropertyType == typeof(int) || prop.PropertyType == typeof(double) ? "number" : "text")"
-                                                   class="form-control"
-                                                   value="@newEntryData[key]"
-                                                   @onchange="@(e => newEntryData[key] = e.Value.ToString())" />
-                                        }
-                                    </div>
-                                }
-                            </div>
+                            @RenderPropertyInput(prop, newEntryData)
                         }
-                    </div>
-                    <div class="mt-2">
-                        <button class="btn btn-primary" @onclick="HandleInsert">Save Entry</button>
-                        <button class="btn btn-secondary" @onclick="ResetPage">Cancel</button>
+                    </div> 
+                        <div class="mt-2">
+                            <button class="btn btn-primary" @onclick="HandleInsert">Save Entry</button>
+                            <button class="btn btn-secondary" @onclick="ResetPage">Cancel</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-        else if (isLookupMode)
- @*מסך Lookup של Insert*@
-        {
-            <div class="lookup-backdrop">
-                <div class="lookup-modal shadow-lg">
-                    <div class="lookup-header text-center" style="max-width:94%">
-                        <h3 class="title">Select @CurrentNestedType?.Name</h3>
-                        <p class="text-muted small">Pick a record to link to the current entry</p>
-                    </div>
+                }
+                else if (isLookupMode)
+@*מסך Lookup של Insert*@
+                {
+                <div class="lookup-backdrop">
+                    <div class="lookup-modal shadow-lg">
+                        <div class="lookup-header text-center" style="max-width:94%">
+                            <h3 class="title">Select @CurrentNestedType?.Name</h3>
+                            <p class="text-muted small">Pick a record to link to the current entry</p>
+                        </div>
 
-                    <div class="lookup-body custom-scrollbar" style="max-width:94%">
-                        @if (!lookupData.Any())
-                        {
-                            <div class="text-center p-5">
-                                <div class="spinner-border text-primary mb-2"></div>
-                                <p class="text">Loading records...</p>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="list-group list-group-flush">
-                                @foreach (var item in lookupData)
-                                {
-                                    <button class="lookup-item" style="background-color:#00d4ff" @onclick="() => SelectLookupItem(item)">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text">@item.ToString()</span>
-                                            <i class="bi bi-chevron-right text-primary"></i>
-                                        </div>
-                                    </button>
-                                }
-                            </div>
-                        }
-                    </div>
-
-                    <div class="lookup-footer">
-                        <button class="btn btn-outline-danger w-100" @onclick="ReturnFromNestedLookup">
-                            <i class="bi bi-x-circle me-2"></i>Cancel Lookup
-                        </button>
-                    </div>
-                </div>
-            </div>
-        }
-
-        else if (isNestedInsertMode)@*מסך הוספת ישות של Insert*@
-        {
-            @* the fields have no input protaction!!! *@
-            <div class="NestedInsert-modal shadow-lg text-center">
-                <div class="NestedInsert-header">
-                <h3 class= "title" > New @CurrentNestedType.Name </h3 >
-            </div>
-                <div class="NestedInsert-body custom-scrollbar p-3 text-center" style="max-width:94%">
-                    @foreach (var key in CurrentNestedData.Keys.ToList())
-                    {
-                        var prop = CurrentNestedType.GetProperties().First(p => p.Name == key);
-                        <div class= "mb-3 border p-2 rounded shadow-sm bg-dark" >
-                            <div class= "d-flex justify-content-between align-items-center mb-3" >
-                            <label class= "fw-bold text mb-0" style="margin-right:1vw"> @key </label >
-
-                            <div class= "input-group">
-                            @* RECURSIVE CHECK: If this property is another entity, show buttons again *@
-                            @* Top Row: Label and Buttons aligned horizontally *@
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                @if (!prop.PropertyType.IsPrimitive && prop.PropertyType != typeof(string) &&
-                                        prop.PropertyType != typeof(DateTime) && prop.PropertyType != typeof(DateTime?) && !IsTypeEnum(prop.PropertyType))
-                                    {@*buttons for nasted entity name*@
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="() => OpenLookup(prop.PropertyType, key)">
-                                                <i class="bi bi-list-ul"></i> Select
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-success" @onclick="() => OpenNestedInsert(prop.PropertyType, key)">
-                                                <i class="bi bi-plus-circle"></i> New
-                                            </button>
-                                        </div>
-                                    }
-                            </div>
-
-                            @* Bottom Row: Input or Entity Display *@
-                            @if (!prop.PropertyType.IsPrimitive && prop.PropertyType != typeof(string) && prop.PropertyType != typeof(DateTime) &&
-                                prop.PropertyType != typeof(DateTime?) && !IsTypeEnum(prop.PropertyType))
+                        <div class="lookup-body custom-scrollbar" style="max-width:94%">
+                            @if (!lookupData.Any())
                             {
-                                <div class="alert alert-secondary py-1 px-2 mb-0" style="font-size: 0.85rem; border-left: 3px solid #00FF41;">
-                                    <small class="text-muted">Linked:</small>
-                                    <span class="ms-1 fw-bold">@(CurrentNestedData[key]?.ToString() ?? "None Selected")</span>
+                                <div class="text-center p-5">
+                                    <div class="spinner-border text-primary mb-2"></div>
+                                    <p class="text">Loading records...</p>
                                 </div>
-                            }
-                            else if (key.Contains("Password", StringComparison.OrdinalIgnoreCase))
-                            @*Password field*@
-                            {
-                                @* Password Input with Toggle Eye Icon *@
-                                <input type = "@(showPassword ? "text" : "password")" class= "form-control"
-                                value = "@CurrentNestedData[key] "
-                                @onchange = "@(e => CurrentNestedData[key] = e.Value.ToString())" />
-                                <button class= "btn btn-outline-secondary" type = "button" @onclick = "() => showPassword = !showPassword" >
-                                @(showPassword ? "🙈" : "👁️")
-                                </button >
-                            }
-                            else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
-                            {
-                                @*bool field*@
-                                <select class= "form-select" @onchange = "@(e => CurrentNestedData[key] = bool.Parse(e.Value.ToString()))" >
-                                <option value = "false" > False </option >
-                                <option value = "true" > True </option >
-                                </select >
-                            }
-                            else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
-                            {
-                                @*Date field*@
-                                <input type = "date" class= "form-control"
-                                @onchange="@(e => CurrentNestedData[key] = DateTime.Parse(e.Value.ToString()))" />
-                            }
-                            else if (IsTypeEnum(prop.PropertyType))
-                            {
-                                @*enum field*@
-                                var actualEnumType = prop.PropertyType.IsEnum ? prop.PropertyType : Nullable.GetUnderlyingType(prop.PropertyType);
-                                var names = Enum.GetNames(actualEnumType!);
-
-                                <select class= "form-select" @onchange = "@(e => CurrentNestedData[key] = Enum.Parse(actualEnumType!, e.Value.ToString()))" >
-                                @if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                                {
-                                    <option value = "" > --None-- </option >
-                                }
-                                @foreach (var name in names)
-                                {
-                                    <option value = "@name" > @name </option >
-                                }
-                                </select >
                             }
                             else
                             {
-                                @* Default Text/Number Input *@
-                                <input type = "@(prop.PropertyType == typeof(int) || prop.PropertyType == typeof(double) ? "number" : "text")"
-                                class= "form-control"
-                                value = "@CurrentNestedData[key]"
-                                @onchange = "@(e => CurrentNestedData[key] = e.Value.ToString())" />
+                                <div class="list-group list-group-flush">
+                                    @foreach (var item in lookupData)
+                                    {
+                                        <button class="lookup-item" style="background-color:#00d4ff" @onclick="() => SelectLookupItem(item)">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text">@item.ToString()</span>
+                                                <i class="bi bi-chevron-right text-primary"></i>
+                                            </div>
+                                        </button>
+                                    }
+                                </div>
                             }
-                        </div >
-                    </div >
-                </div >
-            }
-            </div >
-                <div class= "lookup-footer d-flex gap-2" >
-                    <button class= "btn btn-success flex-grow-1" @onclick = "SendNestedToField" > Apply </button >
-                    <button class= "btn btn-outline-secondary" @onclick = "ReturnFromNestedInsert" > Cancel </button >
-                </div >
-            </div >
+                        </div>
+
+                        <div class="lookup-footer">
+                            <button class="btn btn-outline-danger w-100" @onclick="ReturnFromNestedLookup">
+                                <i class="bi bi-x-circle me-2"></i>Cancel Lookup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                }
+
+                else if (isNestedInsertMode)
+@*מסך הוספת ישות של Insert*@
+                {
+                @* the fields have no input protaction!!! *@
+                <div class="NestedInsert-modal shadow-lg text-center">
+                    <div class="NestedInsert-header">
+                    <h3 class="modal-title">New @(CurrentNestedType?.Name ?? "Entry")</h3>
+                </div>
+                    <div class="card mb-4 border-success shadow" style="max-width:94%">
+                        @foreach (var prop in GetPropertiesCached(CurrentNestedType))
+                        {
+                            @RenderPropertyInput(prop, CurrentNestedData)
+                        }
+                </div>
+                <div class="lookup-footer d-flex gap-2">
+                    <button class="btn btn-success flex-grow-1" @onclick="SendNestedToField"> Apply </button>
+                    <button class="btn btn-outline-secondary" @onclick="ReturnFromNestedInsert"> Cancel </button>
+                </div>
+            </div>
         }
         else if (isEditMode && SingleEntity != null)
-            @* Edit Mode Modal *@
+@* Edit Mode Modal *@
         {
             <div class="lookup-backdrop">
-                @* Yellow/Orange Theme Modal *@
                 <div class="lookup-modal shadow-lg border-warning" style="border-top: 5px solid #ffc107;">
                     <div class="lookup-header bg-dark text-warning border-bottom border-warning">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3 class="title mb-0">Update @activeTab.ToUpper()</h3>
                             <span class="badge bg-warning text-dark">ID: @targetId</span>
                         </div>
-                        <p class="small mb-0 opacity-75">Modify the fields below to update the record.</p>
+                        <p class="small mb-0 opacity-75">Modify fields to update the record. Supports Nested Lookups.</p>
                     </div>
 
                     <div class="lookup-body custom-scrollbar p-4 bg-dark">
-                        @foreach (var key in editData.Keys.ToList())
+                        @foreach (var prop in GetPropertiesCached(SingleEntity.GetType()))
                         {
-                            var prop = SingleEntity.GetType().GetProperty(key);
-                            if (prop == null || key == "Idx") continue;
-
-                            <div class="mb-3 border border-secondary p-2 rounded bg-opacity-10 bg-warning center-text">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="fw-bold text-warning mb-0 ">@key</label>
-                                </div>
-
-                                <div class="input-group input-group-sm">
-                                    @if (key.Contains("Password", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        <input type="@(showPassword ? "text" : "password")"
-                                               class="form-control border-warning bg-dark text-white"
-                                               value="@editData[key]"
-                                               @oninput="@(e => editData[key] = e.Value?.ToString() ?? "")" />
-                                        <button class="btn btn-outline-warning" type="button" @onclick="() => showPassword = !showPassword">
-                                            @(showPassword ? "🙈" : "👁️")
-                                        </button>
-                                    }
-                                    else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
-                                    {
-                                        <select class="form-select border-warning bg-dark text-white"
-                                                @onchange="@(e => editData[key] = bool.Parse(e.Value?.ToString() ?? "false"))">
-                                            <option value="false" selected="@(editData[key]?.ToString() == "False")">False</option>
-                                            <option value="true" selected="@(editData[key]?.ToString() == "True")">True</option>
-                                        </select>
-                                    }
-                                    else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
-                                    {
-                                        <input type="date" class="form-control border-warning bg-dark text-white"
-                                               value="@(editData[key] is DateTime dt ? dt.ToString("yyyy-MM-dd") : "")"
-                                               @onchange="@(e => { if (DateTime.TryParse(e.Value?.ToString(), out var d)) editData[key] = d; })" />
-                                    }
-                                    else
-                                    {
-                                        <input type="@(prop.PropertyType == typeof(int) || prop.PropertyType == typeof(double) ? "number" : "text")"
-                                               class="form-control border-warning bg-dark text-white"
-                                               value="@editData[key]"
-                                               @oninput="@(e => editData[key] = e.Value?.ToString() ?? "")" />
-                                    }
-                                </div>
-                            </div>
+                            @RenderPropertyInput(prop, editData)
                         }
-
                     </div>
 
                     <div class="lookup-footer d-flex gap-2 bg-dark border-top border-warning">
@@ -393,7 +186,8 @@
                 </div>
             </div>
         }
-        else@*מסך Select ALL*@
+        else
+@*מסך Select ALL*@
         {
             <div class="card shadow">
                 <div class="card-header bg-dark">
@@ -461,6 +255,7 @@
                             <div class="form-group mb-3">
                                 <label class="subtitle">Target ID:</label>
                                 <EditForm Model="this" OnValidSubmit="FetchItemById">
+                                    <!--allow enter to submit-->
                                     <div class="input-group">
                                         <input type="number" class="form-control" @bind="targetId" />
                                         <button type="submit" class="btn btn-primary">Go</button>
@@ -482,7 +277,7 @@
                                     }
                                     else
                                     {
-                                        <p class="text">Search for an entity, if you wish to delete it.</p>
+                                        <p class="text">Search for an entity, if you wish to delete or update it.</p>
                                     }
 
                                     <button class="btn btn-success" @onclick="OpenInsertModal">Add New Entry</button>
@@ -524,836 +319,919 @@
 
 @code {
     #region page_vars:
-        private bool isLoading = true;
-        private string activeTab = "users";
 
-        private string pageErrorMessage = null;
-        private string pageSuccessMessage = null;
-
-        private BaseEntity SingleEntity = null;
-
-        private int targetId;
-        private Dictionary<string, object> newEntryData = new();
-        private string StringInsertFieldClass = "text";
-        private bool showPassword = false;
-
-        private bool isInsertMode = false;
-        private bool isLookupMode = false;
-        private bool IsSelectByIdWindow = false;
-        private IEnumerable<object> lookupData = new List<BaseEntity>();
-
-        private Stack<Dictionary<string, object>> nestingStack = new();
-        private Stack<Type> typeStack = new();
-        private Stack<string> keyStack = new();
-        private bool showNestedPassword = false;
-
-        private bool isNestedInsertMode => nestingStack.Count > 0;
-        private Dictionary<string, object>? CurrentNestedData => nestingStack.Count > 0 ? nestingStack.Peek() : null;
-        private Type? CurrentNestedType => typeStack.Count > 0 ? typeStack.Peek() : null;
-        private string? CurrentNestedKey => keyStack.Count > 0 ? keyStack.Peek() : null;
-
-        private bool isEditMode = false;
-        private Dictionary<string, object> editData = new();
-    #endregion
-
-    #region tables_vars:
-        private UsersTable usersTable = new();
-        private AdminsTable adminsTable = new();
-        private PlayersTable playersTable = new();
-        private GroupsTable groupsTable = new();
-        private PlayersAndGroupsTable playersAndgroupsTable = new();
-        private EnemiesInLastLevelTable enemiesInLastLevelTable = new();
-        private ProfileEditRequestsTable profileEditRequestsTable = new();
-        private RequestsDataTable requestsDataTable = new();
-        private RunsInfoTable runsInfoTable = new();
+    private bool isSelectByIdWindow = false;
+    private bool isEditMode = false;
+    private Dictionary<string, object> editData = new();
     #endregion
 
     #region general funcs
-        private void ResetPage()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Every time a new page loads, we ensure the exit handler is armed
+        if (firstRender)
         {
-            // Clear the error message to return to the default view
-            pageErrorMessage = null;
-
-            // Ensure we aren't stuck in Insert mode or Single Entity view
-            isInsertMode = false;
-            isEditMode = false;
-            isLookupMode = false;
-            isEditMode = false;
-            SingleEntity = null;
-
-            // Optional: Reset targetId if the error was caused by a bad search
-            targetId = 0;
+            await JS.InvokeVoidAsync("resetInternalNav");
         }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            // Every time a new page loads, we ensure the exit handler is armed
-            if (firstRender)
-            {
-                await JS.InvokeVoidAsync("resetInternalNav");
-            }
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            if (!session.IsAdmin)
-            {
-                NavManager.NavigateTo("/Admin Connection");
-                return;
-            }
-            await RefreshData();
-        }
-
-        private async Task RefreshData()
-        {
-            isLoading = true;
-            try
-            {
-                usersTable = await api.GetAllUsers();
-                adminsTable = await api.GetAllAdmins();
-                playersTable = await api.GetAllPlayers();
-                groupsTable = await api.GetAllGroups();
-                playersAndgroupsTable = await api.GetAllPlayersAndGroups();
-                enemiesInLastLevelTable = await api.GetAllEnemiesInLastLevel();
-                profileEditRequestsTable = await api.GetAllProfileEditRequests();
-                requestsDataTable = await api.GetAllRequestsData();
-                runsInfoTable = await api.GetAllRunsInfo();
-            }
-            finally { isLoading = false; }
-        }
-
-        private void SetTab(string tabName)
-        {
-            activeTab = tabName;
-            ResetPage();
-        }
-
-        private PropertyInfo[] GetCurrentProperties()
-        {
-            var data = GetCurrentData();
-            var firstItem = data.Cast<object>().FirstOrDefault();//gets the first item
-            if (firstItem == null) return Array.Empty<PropertyInfo>(); // or empty prop set if first item is null.
-
-            // Gets all public properties of the specific object (User, Admin, Player or others), first idx then in name order
-            var orderedProperties = firstItem.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .OrderBy(p => p.Name)
-                .OrderByDescending(p => p.Name == "Idx")
-                .ToArray();
-            return orderedProperties;
-        }
-
-        private bool IsTypeEnum(Type t)
-        {
-            if (t.IsEnum) return true;
-            // Check if it's a Nullable<Enum>
-            Type? underlyingType = Nullable.GetUnderlyingType(t);
-            return underlyingType != null && underlyingType.IsEnum;
-        }
+    }
     #endregion
 
-    // --- Reflection Funcs ---
-    #region Select
-        ///<summary>
-        ///returns the full table based on activeTab's name
-        ///</summary>
-        private IEnumerable<object> GetCurrentData()
-        {
-            return activeTab switch
-            {
-                "admins" => adminsTable,
-                "users" => usersTable, //these implement IEnumerable
-                "players" => playersTable,
-                "groups" => groupsTable,
-                "playersAndgroups" => playersAndgroupsTable,
-                "enemiesInLastLevel" => enemiesInLastLevelTable,
-                "profileEditRequests" => profileEditRequestsTable,
-                "requestsData" => requestsDataTable,
-                "runsInfo" => runsInfoTable,
-                _ => new List<object>()
-            };
-        }
-
-        private async Task RefreshTable()
-        {
-            ResetPage();
-            await RefreshData();
-        }
-    #endregion
-
-    #region SelectById
-        private PropertyInfo[] GetSingleProperties()
-        {
-            if (SingleEntity == null) return Array.Empty<PropertyInfo>();
-            return SingleEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        }
-
-        private async Task FetchItemById()
-        {
-            if (targetId <= 0) return;
-
-            isLoading = true;
-            try
-            {
-                // just ensure the result is assigned to SingleEntity
-                SingleEntity = activeTab switch
-                {
-                    "users" => await api.GetUserByIdx(targetId),
-                    "admins" => await api.GetAdminByIdx(targetId),
-                    "players" => await api.GetPlayerByIdx(targetId),
-                    "groups" => await api.GetGroupByIdx(targetId),
-                    "playersAndgroups" => await api.GetPlayerAndGroupByIdx(targetId),
-                    "enemiesInLastLevel" => await api.GetEnemyInLastLevelByIdx(targetId),
-                    "profileEditRequests" => await api.GetProfileEditRequestByIdx(targetId),
-                    "requestsData" => await api.GetRequestDataByIdx(targetId),
-                    "runsInfo" => await api.GetRunInfoByIdx(targetId),
-                    _ => null
-                };
-
-                if (SingleEntity == null)
-                {
-                    pageErrorMessage = "No record found with that ID.";
-                    IsSelectByIdWindow = false;
-                }
-                else{
-                    IsSelectByIdWindow = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                pageErrorMessage = $"Fetch failed: {ex.Message}";
-                IsSelectByIdWindow = false;
-            }
-            finally
-            {
-                isLoading = false;
-            }
-        }
-    #endregion
 
     #region Insert
-        #region base
-            private void OpenInsertModal()
+    #region base
+    private void OpenInsertModal()
+    {
+        isLoading = true;
+        pageErrorMessage = null;
+        newEntryData.Clear();
+
+        // 1. Get properties using your existing cache logic
+        var entityType = _tableRegistry[activeTab].EntityType;
+        var props = GetPropertiesCached(entityType);
+
+        foreach (var prop in props)
+        {
+            // 2. Skip Identity columns
+            if (prop.Name.Equals("Idx", StringComparison.OrdinalIgnoreCase)) continue;
+
+            // Use Activator to get the default value for ANY type (int -> 0, bool -> false, object -> null)
+            newEntryData[prop.Name] = prop.PropertyType.IsValueType
+                ? Activator.CreateInstance(prop.PropertyType)
+                : (prop.PropertyType == typeof(string) ? string.Empty : null);
+        }
+
+        isInsertMode = true;
+        isLoading = false;
+    }
+
+    private async Task HandleInsert()
+    {
+        // 1. Safety check: ensure the current tab is actually in our registry
+        if (!_tableRegistry.TryGetValue(activeTab, out var config))
+        {
+            pageErrorMessage = "Insert Error: Table mapping not found for " + activeTab;
+            return;
+        }
+
+        isLoading = true;
+        pageErrorMessage = null;
+
+        try
+        {
+            // 2. Map the data from the UI dictionary to the specific Entity type
+            // Use the EntityType stored in the registry config
+            var newEntity = MapDataToEntity(newEntryData, config.EntityType);
+
+            // 3. Execute the Insert using the delegate from the registry
+            // This replaces the entire switch statement
+            var result = await config.Insert(newEntity);
+
+            if (result.rows > 0)
             {
-                isLoading = true;
+                isInsertMode = false;
                 newEntryData.Clear();
-                var props = GetCurrentProperties();
+                await RefreshData();
 
-                foreach (var prop in props)
+                pageSuccessMessage = $"Successfully added new record to {activeTab}!";
+
+                // Auto-clear success message
+                _ = Task.Delay(2500).ContinueWith(_ =>
                 {
-                    // Skip 'idx' or 'Idx' because the Database generates it automatically (IDENTITY)
-                    if (prop.Name.Equals("idx", StringComparison.OrdinalIgnoreCase)) continue;
-
-                    // Initialize with default values based on type
-                    if (prop.PropertyType == typeof(int)) newEntryData[prop.Name] = 0;
-                    else if (prop.PropertyType == typeof(string)) newEntryData[prop.Name] = "";
-                    else newEntryData[prop.Name] = null;
-                }
-                isInsertMode = true;
-                isLoading = false;
+                    pageSuccessMessage = null;
+                    InvokeAsync(StateHasChanged);
+                });
             }
-
-            private async Task HandleInsert()
+            else
             {
-                isLoading = true;
-
-                try
-                {
-                    (int rows, string? error) result = (0, "Table not mapped");
-
-                    switch (activeTab)
-                    {
-                        case "users":
-                            var newUser = (User)MapDataToEntity(newEntryData, typeof(User));
-                            result = await api.InsertUser(newUser);
-                            break;
-
-                        case "admins":
-                            var newAdmin = (Admin)MapDataToEntity(newEntryData, typeof(Admin));
-                            result = await api.InsertAdmin(newAdmin);
-                            break;
-
-                        case "players":
-                            var newPlayer = (Player)MapDataToEntity(newEntryData, typeof(Player));
-                            result = await api.InsertPlayer(newPlayer);
-                            break;
-
-                        case "groups":
-                            var newGroup = (Group)MapDataToEntity(newEntryData, typeof(Group));
-                            result = await api.InsertGroup(newGroup);
-                            break;
-
-                        case "playersAndgroups":
-                            var newPlayerAndGroup = (PlayerAndGroup)MapDataToEntity(newEntryData, typeof(PlayerAndGroup));
-                            result = await api.InsertPlayerAndGroup(newPlayerAndGroup);
-                            break;
-
-                        case "profileEditRequests":
-                            var newProfileEditRequest = (ProfileEditRequest)MapDataToEntity(newEntryData, typeof(ProfileEditRequest));
-                            result = await api.InsertProfileEditRequest(newProfileEditRequest);
-                            break;
-
-                        case "enemiesInLastLevel":
-                            var newEnemyInLastLevel = (EnemyInLastLevel)MapDataToEntity(newEntryData, typeof(EnemyInLastLevel));
-                            result = await api.InsertEnemyInLastLevel(newEnemyInLastLevel);
-                            break;
-
-                        case "requestsData":
-                            var newRequestData = (RequestData)MapDataToEntity(newEntryData, typeof(RequestData));
-                            result = await api.InsertRequestData(newRequestData);
-                            break;
-
-                        case "runsInfo":
-                            var newRunInfo = (RunInfo)MapDataToEntity(newEntryData, typeof(RunInfo));
-                            result = await api.InsertRunInfo(newRunInfo);
-                            break;
-                    }
-
-                    if (result.rows > 0)
-                    {
-                        isInsertMode = false;
-                        newEntryData.Clear();
-                        await RefreshData();
-
-                        pageSuccessMessage = $"Successfully added new record to {activeTab}!";
-                        //removes pageSuccessMessage after 2.5 sec
-                        _ = Task.Delay(2500).ContinueWith(_ =>
-                        {
-                            pageSuccessMessage = null;
-                            InvokeAsync(StateHasChanged);
-                        });
-                    }
-                    else
-                    {
-                        pageErrorMessage = result.error ?? "Insert failed.";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    pageErrorMessage = "Insert Error: " + ex.Message;
-                }
-                finally { isLoading = false; }
+                pageErrorMessage = result.error ?? "Insert failed.";
             }
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = "Insert Error: " + ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
 
-            private BaseEntity MapDataToEntity(Dictionary<string, object> Data, Type entityType)
+    private BaseEntity MapDataToEntity(Dictionary<string, object> Data, Type entityType)
+    {
+        var entity = (BaseEntity)Activator.CreateInstance(entityType)!;
+        // Use your cached properties for better performance
+        var props = GetPropertiesCached(entityType);
+
+        foreach (var prop in props)
+        {
+            if (Data.TryGetValue(prop.Name, out var value) && value != null)
             {
-                var entity = (BaseEntity)Activator.CreateInstance(entityType);
-                var props = entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-                foreach (var prop in props)
+                // 1. Handle Passwords
+                if (prop.Name.Contains("Password", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (Data.TryGetValue(prop.Name, out var value) && value != null)
-                    {
-                        // Handle Password Hashing
-                        if (prop.Name.Contains("Password", StringComparison.OrdinalIgnoreCase))
-                        {
-                            prop.SetValue(entity, TextHasher.Hash(value.ToString()));
-                        }
-                        else
-                        {
-                            // Convert type safely (e.g., string to int)
-                            var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                            var convertedValue = Convert.ChangeType(value, targetType);
-                            prop.SetValue(entity, convertedValue);
-                        }
-                    }
+                    prop.SetValue(entity, TextHasher.Hash(value.ToString()));
+                    continue;
                 }
-                return entity;
-            }
-        #endregion
 
-        #region Lookup
-            // Opens a list of existing entities to choose from
-            private async Task OpenLookup(Type type, string key)
-            {
-                typeStack.Push(type);
-                keyStack.Push(key);
+                var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 
-                string originalTab = activeTab;
-                string? targetTab = type.Name switch
+                // 2. Handle Nested Entities (Recursion)
+                if (value is Dictionary<string, object> nestedDict && targetType.IsSubclassOf(typeof(BaseEntity)))
                 {
-                    nameof(User) => "users",
-                    nameof(Admin) => "admins",
-                    nameof(Player) => "players",
-                    nameof(Group) => "groups",
-                    nameof(RunInfo) => "runsInfo",
-                    nameof(PlayerAndGroup) => "playersAndgroups",
-                    nameof(EnemyInLastLevel) => "enemiesInLastLevel",
-                    nameof(ProfileEditRequest) => "profileEditRequests",
-                    nameof(RequestData) => "requestsData",
-                    _ => null
-                };
-
-                if (targetTab != null)
-                {
-                    // Temporarily switch tabs to use your existing data-fetching logic
-                    activeTab = targetTab;
-                    // refresh data, otherwise lookupData will be empty or old
-                    await RefreshData();
-                    lookupData = GetCurrentData();
-
-                    // Switch back immediately
-                    activeTab = originalTab;
-                    isLookupMode = true;
+                    var nestedEntity = MapDataToEntity(nestedDict, targetType);
+                    prop.SetValue(entity, nestedEntity);
                 }
+                // 3. Handle Primitive Types (int, string, etc.)
                 else
                 {
-                    pageErrorMessage = $"Lookup not supported for type: {type.Name}";
-                }
-            }
-
-            private void SelectLookupItem(object item)
-            {
-                // 1. Map the current level to a full Entity object
-                string fieldName = keyStack.Pop();
-                typeStack.Pop();
-
-                // 2. Assign it to the parent
-                if (isNestedInsertMode)
-                {
-                    // Still in a nested form (Level 2+), assign to the previous nested level
-                    nestingStack.Peek()[fieldName] = item;
-                }
-                else
-                {
-                    // Back at the root (Main form), assign to newEntryData
-                    newEntryData[fieldName] = item;
-                }
-                isLookupMode = false;
-            }
-
-            private void ReturnFromNestedLookup()
-            {
-                isLookupMode = false;
-                //reset stacks
-                typeStack.Pop();
-                keyStack.Pop();
-            }
-        #endregion
-
-        #region Add
-            // Opens an insert form for the sub-entity
-            private void OpenNestedInsert(Type type, string key)
-            {
-                var newLevel = new Dictionary<string, object>();
-
-                // Initialize properties for this specific level (of nesting)
-                foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-                {
-                    if (prop.Name.Equals("idx", StringComparison.OrdinalIgnoreCase)) continue;
-
-                    if (prop.PropertyType == typeof(int)) newLevel[prop.Name] = 0;
-                    else if (prop.PropertyType == typeof(string)) newLevel[prop.Name] = "";
-                    else newLevel[prop.Name] = null;
-                }
-
-                //put them in the stack
-                nestingStack.Push(newLevel);
-                typeStack.Push(type);
-                keyStack.Push(key);
-            }
-
-            private async void SendNestedToField() //in look up
-            {
-                // 1. Map the current level to a full Entity object
-                var completedEntity = await SaveNestedToField();
-                string fieldName = keyStack.Pop();
-
-                // 2. Assign it to the parent
-                if (nestingStack.Count > 0)
-                {
-                    // Still in a nested form (Level 2+), assign to the previous nested level
-                    nestingStack.Peek()[fieldName] = completedEntity;
-                }
-                else
-                {
-                    // Back at the root (Main form), assign to newEntryData
-                    newEntryData[fieldName] = completedEntity;
-                }
-            }
-
-            private async Task<BaseEntity> SaveNestedToField()
-            {
-                BaseEntity entity = null;
-                isLoading = true;
-                Type NestedEntityType = typeStack.Pop();
-                IEnumerable<object> NestedEntityIE = null;
-                string? targetTab = NestedEntityType.Name switch
-                {
-                    nameof(User) => "users",
-                    nameof(Admin) => "admins",
-                    nameof(Player) => "players",
-                    nameof(Group) => "groups",
-                    nameof(RunInfo) => "runsInfo",
-                    nameof(PlayerAndGroup) => "playersAndgroups",
-                    nameof(EnemyInLastLevel) => "enemiesInLastLevel",
-                    nameof(ProfileEditRequest) => "profileEditRequests",
-                    nameof(RequestData) => "requestsData",
-                    _ => null
-                };
-                try
-                {
-                    (int rows, string? error) result = (0, "Table not mapped");
-
-                    switch (targetTab)
+                    try
                     {
-                        case "users":
-                            var newUser = (User)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertUser(newUser);
-
-                            break;
-
-                        case "admins":
-                            var newAdmin = (Admin)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertAdmin(newAdmin);
-                            break;
-
-                        case "groups":
-                            var newGroup = (Group)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertGroup(newGroup);
-                            break;
-
-                        case "playersAndgroups":
-                            var newPlayerAndGroup = (PlayerAndGroup)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertPlayerAndGroup(newPlayerAndGroup);
-                            break;
-
-                        case "profileEditRequests":
-                            var newProfileEditRequest = (ProfileEditRequest)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertProfileEditRequest(newProfileEditRequest);
-                            break;
-
-                        case "enemiesInLastLevel":
-                            var newEnemyInLastLevel = (EnemyInLastLevel)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertEnemyInLastLevel(newEnemyInLastLevel);
-                            break;
-
-                        case "requestsData":
-                            var newRequestData = (RequestData)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertRequestData(newRequestData);
-                            break;
-
-                        case "runsInfo":
-                            var newRunInfo = (RunInfo)MapDataToEntity(nestingStack.Pop(), NestedEntityType);
-                            result = await api.InsertRunInfo(newRunInfo);
-                            break;
+                        var convertedValue = Convert.ChangeType(value, targetType);
+                        prop.SetValue(entity, convertedValue);
                     }
-
-                    if (result.rows > 0)
+                    catch (Exception ex)
                     {
-                        await RefreshData();
-                        //pull entity from DB
-                        string originalTab = activeTab;
-
-                        if (targetTab != null)
-                        {
-                            // Temporarily switch tabs to use your existing data-fetching logic
-                            activeTab = targetTab;
-                            // refresh data, otherwise lookupData will be empty or old
-                            NestedEntityIE = GetCurrentData();
-                            pageSuccessMessage = $"Successfully added new record to {activeTab}!";
-
-                            // Switch back immediately
-                            activeTab = originalTab;
-                            isLookupMode = true;
-                        }
-                        else
-                        {
-                            pageErrorMessage = $"Lookup not supported for type: {NestedEntityType.Name}";
-                        }
-
-                        //take the last entity - *hopes* it is the last inserted, better way -> DB returns the new idx no rows changed in insert.
-                        if (NestedEntityIE != null)
-                        {
-                            entity = NestedEntityIE.Cast<BaseEntity>().OrderBy(e => e.Idx).LastOrDefault();
-                        }
-
-                        //removes pageSuccessMessage after 4 sec
-                        _ = Task.Delay(2500).ContinueWith(_ =>
-                        {
-                            pageSuccessMessage = null;
-                            InvokeAsync(StateHasChanged);
-                        });
-                    }
-                    else
-                    {
-                        pageErrorMessage = result.error ?? "Insert failed.";
+                        pageErrorMessage = $"Mapping Error on '{prop.Name}': {ex.Message}";
                     }
                 }
-                catch (Exception ex)
-                {
-                    pageErrorMessage = "Insert Error: " + ex.Message;
-                }
-                finally {
-                    isLoading = false;
-                    isLookupMode = false;
-                }
-
-                return entity;
             }
-
-
-            private void ReturnFromNestedInsert()
-            {
-                if (nestingStack.Count > 0)
-                {
-                    nestingStack.Pop();
-                    typeStack.Pop();
-                    keyStack.Pop();
-                }
-            }
-
-            /// <summary>
-            /// Maps the dictionary of nested form data into a physical entity object.
-            /// </summary>
-            private BaseEntity? BuildObjectFromNestedData()
-            {
-                if (CurrentNestedType == null || CurrentNestedData == null) return null;
-
-                try
-                {
-                    // Reuse your existing mapping logic to convert the dictionary to the entity type
-                    return MapDataToEntity(CurrentNestedData, CurrentNestedType);
-                }
-                catch (Exception ex)
-                {
-                    pageErrorMessage = $"Failed to map nested entity: {ex.Message}";
-                    return null;
-                }
-            }
-        #endregion
+        }
+        return entity;
+    }
     #endregion
 
-    #region Delete
-        private async Task HandleDelete()
-        {
-            if (targetId <= 0)
-            {
-                pageErrorMessage = "Please select a valid ID to delete.";
-                return;
-            }
+    #region Lookup
+    /// <summary>
+    /// Opens a list of existing entities to choose from
+    /// </summary>
+    /// <param name="type">Table Type</param>
+    /// <param name="key">Perant Key</param>
+    /// <returns></returns>
+    private async Task OpenLookup(Type type, string key)
+    {
+        // 1. Find the tab name by searching the registry for the matching EntityType
+        var targetTabEntry = _tableRegistry.FirstOrDefault(x => x.Value.EntityType == type);
 
-            // Confirmation logic (Simple browser confirm for now)
-            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete ID {targetId} from {activeTab}?");
-            if (!confirmed) return;
+        if (targetTabEntry.Key != null)
+        {
+            typeStack.Push(type);
+            keyStack.Push(key);
+
+            string originalTab = activeTab;
+            string targetTab = targetTabEntry.Key;
 
             isLoading = true;
-            pageErrorMessage = null;
-
             try
             {
-                (int rows, string? error) result = activeTab switch
-                {
-                    "users" => await api.DeleteUser(targetId),
-                    "admins" => await api.DeleteAdmin(targetId),
-                    "players" => await api.DeletePlayer(targetId),
-                    "groups" => await api.DeleteGroup(targetId),
-                    "playersAndgroups" => await api.DeletePlayerAndGroup(targetId),
-                    "enemiesInLastLevel" => await api.DeleteEnemyInLastLevel(targetId),
-                    "runsInfo" => await api.DeleteRunInfo(targetId),
-                    "requestsData" => await api.DeleteRequestData(targetId),
-                    "profileEditRequests" => await api.DeleteProfileEditRequest(targetId),
-                    _ => (0, "Delete logic not implemented for this table.")
-                };
+                // 2. Temporarily switch tabs to utilize existing fetching logic
+                activeTab = targetTab;
 
-                if (result.rows > 0)
-                {
-                    // Success! Clear the view and refresh
-                    SingleEntity = null;
-                    targetId = 0;
-                    await RefreshData();
-                    //Success message
-                    pageSuccessMessage = "Deleted successfully.";
-                    //removes pageSuccessMessage after 2.5 sec
-                    _ = Task.Delay(2500).ContinueWith(_ =>
-                    {
-                        pageSuccessMessage = null;
-                        InvokeAsync(StateHasChanged);
-                    });
-                }
-                else
-                {
-                    pageErrorMessage = result.error ?? "Delete failed. Record might not exist or is protected by a foreign key.";
-                }
+                // Ensure we have the latest data for this specific entity type
+                await RefreshData();
+                lookupData = GetCurrentData();
+
+                // 3. Revert state and open UI
+                activeTab = originalTab;
+                isLookupMode = true;
             }
             catch (Exception ex)
             {
-                pageErrorMessage = $"Delete Error: {ex.Message}";
+                pageErrorMessage = $"Lookup Error for {type.Name}: {ex.Message}";
             }
             finally
             {
                 isLoading = false;
             }
         }
+        else
+        {
+            pageErrorMessage = $"Lookup Error: Type '{type.Name}' is not registered in the Table Registry.";
+        }
+    }
+
+    private void SelectLookupItem(object item)
+    {
+        // 1. Safety check: ensure we have context for where this item belongs
+        if (!keyStack.Any())
+        {
+            pageErrorMessage = "Lookup Error: Navigation context lost.";
+            isLookupMode = false;
+            return;
+        }
+
+        string fieldName = keyStack.Pop();
+        typeStack.Pop();
+
+        try
+        {
+            // 2. Assign the item to the appropriate place
+            // If we have a nestingStack, we are inside a sub-form (Level 2+)
+            if (nestingStack.Any())
+            {
+                nestingStack.Peek()[fieldName] = item;
+            }
+            else if (isEditMode) // update mode
+            {
+                editData[fieldName] = item;
+            }
+            else // insert mode
+            {
+                newEntryData[fieldName] = item;
+            }
+
+            isLookupMode = false;
+            pageSuccessMessage = $"Linked {item.GetType().Name} to {fieldName}";
+
+            // Quick auto-clear of the "Linked" notification
+            _ = Task.Delay(1500).ContinueWith(_ => { pageSuccessMessage = null; InvokeAsync(StateHasChanged); });
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = $"Assignment Error: {ex.Message}";
+        }
+    }
+
+    private void ReturnFromNestedLookup()
+    {
+        isLookupMode = false;
+
+        // Ensure stacks are cleared only if they contain data to prevent InvalidOperationException
+        if (typeStack.Any()) typeStack.Pop();
+        if (keyStack.Any()) keyStack.Pop();
+    }
+    #endregion
+
+    #region Add
+    /// <summary>
+    /// saves the new Entity and sends to field of father.
+    /// </summary>
+    /// <returns></returns>
+    private async Task SendNestedToField()
+    {
+        // 1. Safety check: ensure we have context to return to
+        if (!keyStack.Any() || !nestingStack.Any())
+        {
+            pageErrorMessage = "Nesting Error: Navigation context lost.";
+            return;
+        }
+
+        isLoading = true;
+        try
+        {
+            // 2. Map and "Save" the current nested level into an object
+            var completedEntity = await SaveNestedToField();
+
+            // 3. Pop the context for the level we just finished
+            string fieldName = keyStack.Pop();
+            typeStack.Pop();
+            nestingStack.Pop(); // Remove the finished buffer
+
+            // 4. Assign the completed object to the next level up
+            if (nestingStack.Any())
+            {
+                // Still in a sub-form, assign to the previous level's dictionary
+                nestingStack.Peek()[fieldName] = completedEntity;
+            }
+            else if (isEditMode)
+            {
+                editData[fieldName] = completedEntity;
+            }
+            else
+            {
+                // We are back at the primary Add/Edit form
+                newEntryData[fieldName] = completedEntity;
+            }
+
+            pageSuccessMessage = $"Successfully linked {completedEntity.GetType().Name}.";
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = "Link Error: " + ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task<BaseEntity?> SaveNestedToField()
+    {
+        BaseEntity? entity = null;
+        isLoading = true;
+        pageErrorMessage = null;
+
+        // 1. bring table configuration from registry (funcs)
+        Type nestedEntityType = typeStack.Peek(); // We peek here; popping is handled by the caller or at the end
+
+        //get the table configuration entry
+        var registryEntry = _tableRegistry.FirstOrDefault(x => x.Value.EntityType == nestedEntityType);
+        string? registryKey = registryEntry.Key; //get the key
+        var config = registryEntry.Value; //get the registry
+
+
+        if (config == null)
+        {
+            pageErrorMessage = $"Insert Error: No registry mapping found for {nestedEntityType.Name}";
+            isLoading = false;
+            return null;
+        }
+
+        try
+        {
+            // 2. Map data and perform the insert using the registry delegate
+            //nestingStack.Peek() - pops in SendNestedToField
+            var mappedEntity = MapDataToEntity(nestingStack.Peek(), nestedEntityType);
+            var result = await config.Insert(mappedEntity);
+
+            if (result.rows > 0)
+            {
+                // 3. Refresh and retrieve the newest record
+                await RefreshData();
+
+                // Access the updated data via the registry's key
+                if (_tableData.TryGetValue(registryKey, out var dataList))
+                {
+                    // We order by Idx to find the record just inserted
+                    entity = dataList.Cast<BaseEntity>().OrderBy(e => e.Idx).LastOrDefault();
+                }
+
+                pageSuccessMessage = $"Successfully created and linked {nestedEntityType.Name}!";
+
+                // Auto-clear success message
+                _ = Task.Delay(2500).ContinueWith(_ =>
+                {
+                    pageSuccessMessage = null;
+                    InvokeAsync(StateHasChanged);
+                });
+            }
+            else
+            {
+                pageErrorMessage = "Insert failed: " + (result.error ?? "Unknown database error.");
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = "Insert Error: " + ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+        return entity;
+    }
+
+
+    private void ReturnFromNestedInsert()
+    {
+        if (nestingStack.Count > 0)
+        {
+            nestingStack.Pop();
+            typeStack.Pop();
+            keyStack.Pop();
+        }
+    }
+    #endregion
     #endregion
 
     #region Update
-        private async Task HandleUpdate()
+    private async Task HandleUpdate()
+    {
+        if (targetId <= 0)
         {
-            if (targetId <= 0)
-            {
-                pageErrorMessage = "Please select a valid ID to delete.";
-                return;
-            }
-            if(SingleEntity == null){
-                pageErrorMessage = "Pick an Entity (Try Clicking Go)";
-                return;
-            }
-
-            editData.Clear();
-
-            // Use Reflection to pull current values from SingleEntity into the dictionary
-            var props = SingleEntity.GetType().GetProperties();
-            foreach (var prop in props)
-            {
-                // Shove existing values into the edit dictionary
-                editData[prop.Name] = prop.GetValue(SingleEntity) ?? "";
-            }
-
-            isEditMode = true;
+            pageErrorMessage = "Please select a valid ID to delete.";
+            return;
+        }
+        if (SingleEntity == null)
+        {
+            pageErrorMessage = "Pick an Entity (Try Clicking Go)";
+            return;
         }
 
-        private Action<TDTO> GetConfig<TEntity, TDTO>() where TDTO : class
-        {
-            return dto =>
-            {
-                var dtoProps = typeof(TDTO).GetProperties();
-                var entityProps = typeof(TEntity).GetProperties();
-                bool IsSameHush = false;
-                foreach (var prop in dtoProps)
-                {
-                    // Skip Idx (Primary Key) - FromEntity handles it
-                    if (prop.Name.Equals("Idx", System.StringComparison.OrdinalIgnoreCase)) continue;
+        editData.Clear();
 
-                    if (editData.TryGetValue(prop.Name, out var uiValue))
-                    {
-                        var originalProp = entityProps.FirstOrDefault(p => p.Name == prop.Name);
-                        var oldValue = originalProp?.GetValue(SingleEntity);
-                        if (prop.Name.Contains("Password")){
-                            IsSameHush = uiValue == oldValue;
-                            uiValue = TextHasher.Hash((string)uiValue);
-                        }
-                        // Only shove if the value actually changed
-                        if (uiValue?.ToString() != oldValue?.ToString() && !IsSameHush)
-                        {
-                            try
-                            {
-                                var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                                var convertedValue = Convert.ChangeType(uiValue, targetType);
-                                prop.SetValue(dto, convertedValue);
-                            }
-                            catch { /* Skip conversion errors for complex/nested objects */ }
-                        }
-                        // Else: remains null (default in DTO)
-                    }
-                }
-            };
+        // Use Reflection to pull current values from SingleEntity into the dictionary
+        var props = SingleEntity.GetType().GetProperties();
+        foreach (var prop in props)
+        {
+            // Shove existing values into the edit dictionary
+            editData[prop.Name] = prop.GetValue(SingleEntity) ?? "";
         }
 
-        private async void UpdateEntity(){
-            // Confirmation logic (Simple browser confirm for now)
-            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to update ID {targetId} from {activeTab}?");
-            if (!confirmed) return;
+        isEditMode = true;
+    }
 
-            isLoading = true;
-            //builds and fills the DTOs
-            object Dto = SingleEntity?.GetType().Name switch
+    private async Task UpdateEntity()
+    {
+        if (!_tableRegistry.TryGetValue(activeTab, out var config)) return;
+
+        isLoading = true;
+        try
+        {
+            // Use the same mapper used for Inserts
+            IBaseDTO updateDto = MapDataToDTO(editData, config.DtoType);
+
+            // Execute the registry-defined update
+            var result = await config.Update(updateDto);
+
+            if (result.rows > 0)
             {
-                nameof(User) => UserDTO.FromEntity((User)SingleEntity, GetConfig<User, UserDTO>()),
-                nameof(Admin) => AdminDTO.FromEntity((Admin)SingleEntity, GetConfig<Admin, AdminDTO>()),
-                nameof(Player) => PlayerDTO.FromEntity((Player)SingleEntity, GetConfig<Player, PlayerDTO>()),
-                nameof(Group) => GroupDTO.FromEntity((Group)SingleEntity, GetConfig<Group, GroupDTO>()),
-                nameof(RunInfo) => RunInfoDTO.FromEntity((RunInfo)SingleEntity, GetConfig<RunInfo, RunInfoDTO>()),
-                nameof(PlayerAndGroup) => PlayerAndGroupDTO.FromEntity((PlayerAndGroup)SingleEntity, GetConfig<PlayerAndGroup, PlayerAndGroupDTO>()),
-                nameof(EnemyInLastLevel) => EnemyInLastLevelDTO.FromEntity((EnemyInLastLevel)SingleEntity, GetConfig<EnemyInLastLevel, EnemyInLastLevelDTO>()),
-                nameof(ProfileEditRequest) => ProfileEditRequestDTO.FromEntity((ProfileEditRequest)SingleEntity, GetConfig<ProfileEditRequest, ProfileEditRequestDTO>()),
-                nameof(RequestData) => RequestDataDTO.FromEntity((RequestData)SingleEntity, GetConfig<RequestData, RequestDataDTO>()),
-                _ => null
-            };
+                await RefreshData();
+                isEditMode = false;
+                pageSuccessMessage = "Record updated successfully!";
+            }
+            else
+            {
+                pageErrorMessage = "Update failed: " + result.error;
+            }
+        }
+        catch (Exception ex)
+        {
+            pageErrorMessage = "Update Error: " + ex.Message;
+        }
+        finally { isLoading = false; }
+    }
 
-            try
+    private IBaseDTO MapDataToDTO(Dictionary<string, object> data, Type dtoType)
+    {
+        var dto = (IBaseDTO)Activator.CreateInstance(dtoType)!;
+        var props = dtoType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        object? originalEntity = isEditMode ? SingleEntity : null;
+
+        foreach (var prop in props)
+        {
+            // 1. Mandatory Idx for the primary DTO
+            if (prop.Name == "Idx" && data.TryGetValue("Idx", out var idxVal))
+            {
+                prop.SetValue(dto, Convert.ToInt32(idxVal));
+                continue;
+            }
+
+            if (data.TryGetValue(prop.Name, out var newValue) && newValue != null)
+            {
+                try
                 {
-                    (int rows, string? error) result = (0, "Table not mapped");
-
-                    switch (activeTab)
+                    // 2. Handle Nested Entities (The Fix)
+                    if (newValue is BaseEntity nestedEntity)
                     {
-                        case "users":
-                            result = await api.UpdateUser((UserDTO)Dto);
-                            break;
-
-                        case "admins":
-                            result = await api.UpdateAdmin((AdminDTO)Dto);
-                            break;
-
-                        case "players":
-                            result = await api.UpdatePlayer((PlayerDTO)Dto);
-                            break;
-
-                        case "groups":
-                            result = await api.UpdateGroup((GroupDTO)Dto);
-                            break;
-
-                        case "playersAndgroups":
-                        result = await api.UpdatePlayerAndGroup((PlayerAndGroupDTO)Dto);
-                            break;
-
-                        case "profileEditRequests":
-                            result = await api.UpdateProfileEditRequest((ProfileEditRequestDTO)Dto);
-                            break;
-
-                        case "enemiesInLastLevel":
-                            result = await api.UpdateEnemyInLastLevel((EnemyInLastLevelDTO)Dto);
-                            break;
-
-                        case "requestsData":
-                            result = await api.UpdateRequestData((RequestDataDTO)Dto);
-                            break;
-
-                        case "runsInfo":
-                            result = await api.UpdateRunInfo((RunInfoDTO)Dto);
-                            break;
-                    }
-
-                    if (result.rows > 0)
-                    {
-                        isEditMode = false;
-                        editData.Clear();
-                        await RefreshData();
-
-                        pageSuccessMessage = $"Successfully edited record to {activeTab}!";
-                        InvokeAsync(StateHasChanged);
-                        //removes pageSuccessMessage after 2.5 sec
-                        _ = Task.Delay(2000).ContinueWith(_ =>
+                        var registryEntry = _tableRegistry.Values.FirstOrDefault(v => v.EntityType == nestedEntity.GetType());
+                        if (registryEntry != null)
                         {
-                            ResetPage();
-                            pageSuccessMessage = null;
-                            InvokeAsync(StateHasChanged);
-                        });
+                            // Create a "Link-Only" DTO instance
+                            var nestedDto = (IBaseDTO)Activator.CreateInstance(registryEntry.DtoType)!;
+
+                            // ONLY set the Idx. This tells the API "Link to this ID"
+                            // without sending prohibited nested values like 'Email' or 'Username'.
+                            nestedDto.Idx = nestedEntity.Idx;
+
+                            prop.SetValue(dto, nestedDto);
+                        }
                     }
-                    else if (result.rows == 0){
-                        isEditMode = false;
-                        pageSuccessMessage = $"No changes Made!";
-                        //removes pageSuccessMessage after 2.5 sec
-                        _ = Task.Delay(2000).ContinueWith(_ =>
-                        {
-                            ResetPage();
-                            pageSuccessMessage = null;
-                            InvokeAsync(StateHasChanged);
-                        });
-                    }
+                    // 3. Handle Primitive Fields (Unchanged Logic)
                     else
                     {
-                        pageErrorMessage = result.error ?? "Update failed.";
+                        var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                        var convertedNewValue = Convert.ChangeType(newValue, targetType);
+
+                        // Only set if value changed compared to SingleEntity
+                        object? originalValue = originalEntity?.GetType().GetProperty(prop.Name)?.GetValue(originalEntity);
+
+                        if (originalValue == null || !convertedNewValue.Equals(originalValue))
+                        {
+                            if (prop.Name.Contains("Password", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (!string.IsNullOrWhiteSpace(newValue.ToString()))
+                                    prop.SetValue(dto, TextHasher.Hash(newValue.ToString()));
+                            }
+                            else
+                            {
+                                prop.SetValue(dto, convertedNewValue);
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    pageErrorMessage = "Update Error: " + ex.Message;
+                    pageErrorMessage = $"Mapping Error on '{prop.Name}': {ex.Message}";
                 }
-                finally {
-                    isLoading = false;
-                    InvokeAsync(StateHasChanged);
-                }
+            }
         }
+        return dto;
+    }
+    #endregion
+
+    #region reset
+    #region State & Registry
+    private bool isLoading = true;
+    private string activeTab = "users";
+
+    private string? pageErrorMessage = null;
+    private string? pageSuccessMessage = null;
+    private int targetId;
+
+    // data of current table
+    private Dictionary<string, IEnumerable<object>> _tableData = new();
+    //table dict : name, object
+    private Dictionary<string, TableConfig> _tableRegistry = new();
+
+    // Reflection Cache for performance
+    private static readonly Dictionary<Type, PropertyInfo[]> _propCache = new();
+
+    // UI state vars (We will clean these up in Phase 2 & 3)
+    private Dictionary<string, object> newEntryData = new();
+    private bool showPassword = false;
+    private bool isInsertMode = false;
+    private bool isLookupMode = false;
+    private IEnumerable<object> lookupData = new List<object>(); // changed to object to be generic
+    private Stack<Dictionary<string, object>> nestingStack = new();
+    private Stack<Type> typeStack = new();
+    private Stack<string> keyStack = new();
+    private bool isNestedInsertMode => nestingStack.Count > 0;
+    private Dictionary<string, object>? CurrentNestedData => nestingStack.Count > 0 ? nestingStack.Peek() : null;
+    private Type? CurrentNestedType => typeStack.Count > 0 ? typeStack.Peek() : null;
+    private BaseEntity? SingleEntity;
+    #endregion
+
+    #region Initialization & Core API
+    protected override async Task OnInitializedAsync()
+    {
+        if (!session.IsAdmin)
+        {
+            NavManager.NavigateTo("/Admin Connection");
+            return;
+        }
+
+        // Initialize the Master Registry - This is the ONLY place you map tables
+        _tableRegistry = new Dictionary<string, TableConfig>
+        {
+            ["users"] = new()
+            {
+                EntityType = typeof(User),
+                DtoType = typeof(UserDTO),
+                GetAll = async () => (await api.GetAllUsers()).Cast<object>(),
+                GetById = async id => await api.GetUserByIdx(id),
+                Delete = id => api.DeleteUser(id),
+                Insert = e => api.InsertUser((User)e),
+                Update = dto => api.UpdateUser((UserDTO)dto)
+            },
+            ["admins"] = new()
+            {
+                EntityType = typeof(Admin),
+                DtoType = typeof(AdminDTO),
+                GetAll = async () => (await api.GetAllAdmins()).Cast<object>(),
+                GetById = async id => await api.GetAdminByIdx(id),
+                Delete = id => api.DeleteAdmin(id),
+                Insert = e => api.InsertAdmin((Admin)e),
+                Update = dto => api.UpdateAdmin((AdminDTO)dto)
+            },
+            ["players"] = new()
+            {
+                EntityType = typeof(Player),
+                DtoType = typeof(PlayerDTO),
+                GetAll = async () => (await api.GetAllPlayers()).Cast<object>(),
+                GetById = async id => await api.GetPlayerByIdx(id),
+                Delete = id => api.DeletePlayer(id),
+                Insert = e => api.InsertPlayer((Player)e),
+                Update = dto => api.UpdatePlayer((PlayerDTO)dto)
+            },
+            ["groups"] = new()
+            {
+                EntityType = typeof(Group),
+                DtoType = typeof(GroupDTO),
+                GetAll = async () => (await api.GetAllGroups()).Cast<object>(),
+                GetById = async id => await api.GetGroupByIdx(id),
+                Delete = id => api.DeleteGroup(id),
+                Insert = e => api.InsertGroup((Group)e),
+                Update = dto => api.UpdateGroup((GroupDTO)dto)
+            },
+            ["playersAndgroups"] = new()
+            {
+                EntityType = typeof(PlayerAndGroup),
+                DtoType = typeof(PlayerAndGroupDTO),
+                GetAll = async () => (await api.GetAllPlayersAndGroups()).Cast<object>(),
+                GetById = async id => await api.GetPlayerAndGroupByIdx(id),
+                Delete = id => api.DeletePlayerAndGroup(id),
+                Insert = e => api.InsertPlayerAndGroup((PlayerAndGroup)e),
+                Update = dto => api.UpdatePlayerAndGroup((PlayerAndGroupDTO)dto)
+            },
+            ["enemiesInLastLevel"] = new()
+            {
+                EntityType = typeof(EnemyInLastLevel),
+                DtoType = typeof(EnemyInLastLevelDTO),
+                GetAll = async () => (await api.GetAllEnemiesInLastLevel()).Cast<object>(),
+                GetById = async id => await api.GetEnemyInLastLevelByIdx(id),
+                Delete = id => api.DeleteEnemyInLastLevel(id),
+                Insert = e => api.InsertEnemyInLastLevel((EnemyInLastLevel)e),
+                Update = dto => api.UpdateEnemyInLastLevel((EnemyInLastLevelDTO)dto)
+            },
+            ["profileEditRequests"] = new()
+            {
+                EntityType = typeof(ProfileEditRequest),
+                DtoType = typeof(ProfileEditRequestDTO),
+                GetAll = async () => (await api.GetAllProfileEditRequests()).Cast<object>(),
+                GetById = async id => await api.GetProfileEditRequestByIdx(id),
+                Delete = id => api.DeleteProfileEditRequest(id),
+                Insert = e => api.InsertProfileEditRequest((ProfileEditRequest)e),
+                Update = dto => api.UpdateProfileEditRequest((ProfileEditRequestDTO)dto)
+            },
+            ["requestsData"] = new()
+            {
+                EntityType = typeof(RequestData),
+                DtoType = typeof(RequestDataDTO),
+                GetAll = async () => (await api.GetAllRequestsData()).Cast<object>(),
+                GetById = async id => await api.GetRequestDataByIdx(id),
+                Delete = id => api.DeleteRequestData(id),
+                Insert = e => api.InsertRequestData((RequestData)e),
+                Update = dto => api.UpdateRequestData((RequestDataDTO)dto)
+            },
+            ["runsInfo"] = new()
+            {
+                EntityType = typeof(RunInfo),
+                DtoType = typeof(RunInfoDTO),
+                GetAll = async () => (await api.GetAllRunsInfo()).Cast<object>(),
+                GetById = async id => await api.GetRunInfoByIdx(id),
+                Delete = id => api.DeleteRunInfo(id),
+                Insert = e => api.InsertRunInfo((RunInfo)e),
+                Update = dto => api.UpdateRunInfo((RunInfoDTO)dto)
+            }
+        };
+
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        isLoading = true;
+        try
+        {
+            // Fetch all tables dynamically
+            foreach (var key in _tableRegistry.Keys)
+            {
+                _tableData[key] = await _tableRegistry[key].GetAll();
+            }
+        }
+        finally { isLoading = false; }
+    }
+
+    private void SetTab(string tabName)
+    {
+        activeTab = tabName;
+        ResetPage();
+    }
+
+    private void ResetPage()
+    {
+        pageErrorMessage = null;
+        isInsertMode = false;
+        isLookupMode = false;
+        isSelectByIdWindow = false;
+        SingleEntity = null;
+        targetId = 0;
+    }
+    #endregion
+
+    #region Reflection & Data Getters
+    ///<summary>
+    ///returns the full table based on activeTab's name
+    ///</summary>
+    private IEnumerable<object> GetCurrentData()
+    {
+        return _tableData.TryGetValue(activeTab, out var data) ? data : Array.Empty<object>();
+    }
+
+    private PropertyInfo[] GetCurrentProperties()
+    {
+        if (!_tableRegistry.TryGetValue(activeTab, out var config)) return Array.Empty<PropertyInfo>();
+        return GetPropertiesCached(config.EntityType);
+    }
+
+    private PropertyInfo[] GetSingleProperties()
+    {
+        if (SingleEntity == null) return Array.Empty<PropertyInfo>();
+        return GetPropertiesCached(SingleEntity.GetType());
+    }
+
+    private PropertyInfo[] GetPropertiesCached(Type type)
+    {
+        if (type == null) { return null; }
+        if (_propCache.TryGetValue(type, out var props)) return props;
+
+        props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .OrderBy(p => p.Name)
+                    .OrderByDescending(p => p.Name.Equals("Idx", StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
+
+        _propCache[type] = props;
+        return props;
+    }
+
+    private bool IsTypeEnum(Type t)
+    {
+        if (t.IsEnum) return true;
+        Type? underlyingType = Nullable.GetUnderlyingType(t);
+        return underlyingType != null && underlyingType.IsEnum;
+    }
+    #endregion
+
+    #region SelectById & Delete
+    private async Task FetchItemById()
+    {
+        if (targetId <= 0)
+        {
+            pageErrorMessage = "Id less then 0 or equals, try diffrent one!";
+            return;
+        }
+        else if (!_tableRegistry.ContainsKey(activeTab))
+        {
+            pageErrorMessage = "Table Unloaded! ";
+            return;
+        }
+
+        isLoading = true;
+        try
+        {
+            SingleEntity = await _tableRegistry[activeTab].GetById(targetId);
+            if (SingleEntity == null) pageErrorMessage = "No record found with that ID.";
+            else { isSelectByIdWindow = true; }
+        }
+        catch (Exception ex) { pageErrorMessage = $"Fetch failed: {ex.Message}"; }
+        finally { isLoading = false; }
+    }
+
+    private async Task HandleDelete()
+    {
+        if (targetId <= 0)
+        {
+            pageErrorMessage = "Id less then 0, try diffrent one!";
+            return;
+        }
+        else if (!_tableRegistry.ContainsKey(activeTab))
+        {
+            return;
+        }
+
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete ID {targetId} from {activeTab}?");
+        if (!confirmed) return;
+
+        isLoading = true;
+        pageErrorMessage = null;
+
+        try
+        {
+            var result = await _tableRegistry[activeTab].Delete(targetId);
+
+            if (result.rows > 0)
+            {
+                SingleEntity = null;
+                targetId = 0;
+                await RefreshData();
+            }
+            else
+            {
+                pageErrorMessage = result.error ?? "Delete failed. Record might not exist or is protected by a foreign key.";
+            }
+        }
+        catch (Exception ex) { pageErrorMessage = $"Delete Error: {ex.Message}"; }
+        finally { isLoading = false; }
+    }
+
+    private async Task RefreshTable()
+    {
+        ResetPage();
+        await RefreshData();
+    }
+    #endregion
+
+    #region Insert:
+    private RenderFragment RenderPropertyInput(PropertyInfo prop, Dictionary<string, object> dataSource) => __builder =>
+    {
+        var propName = prop.Name;
+        var propType = prop.PropertyType;
+
+        string inputBorderClass = (isEditMode && !isNestedInsertMode) ? "border-warning" : "border-secondary";
+
+        // Skip Idx - it's handled by the DB
+        if (propName.Equals("Idx", StringComparison.OrdinalIgnoreCase)) return;
+
+        <div class="mb-3">
+            <label class="form-label text-light">@propName</label>
+
+            @if (propName.Contains("Password", StringComparison.OrdinalIgnoreCase))
+            {
+                <div class="input-group">
+                    <input type="@(showPassword ? "text" : "password")" class="form-control bg-dark text-white @inputBorderClass"
+                           value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "")"
+                           @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "")" />
+                    <button class="button icon" type="button" @onclick="() => showPassword = !showPassword">
+                        <i class="fa @(showPassword ? "fa-eye-slash" : "fa-eye")"></i>
+                    </button>
+                </div>
+            }
+            else if (propType == typeof(bool) || propType == typeof(bool?))
+            {
+                <select class="form-select bg-dark text-white @inputBorderClass"
+                        @onchange="@(e => dataSource[propName] = bool.Parse(e.Value?.ToString() ?? "false"))">
+                    <option value="false">False</option>
+                    <option value="true">True</option>
+                </select>
+            }
+            else if (IsTypeEnum(propType))
+            {
+                <select class="form-select bg-dark text-white @inputBorderClass"
+                        @onchange="@(e => dataSource[propName] = Enum.Parse(Nullable.GetUnderlyingType(propType) ?? propType, e.Value?.ToString() ?? "0"))">
+                    @foreach (var val in Enum.GetValues(Nullable.GetUnderlyingType(propType) ?? propType))
+                    {
+                        <option value="@val">@val</option>
+                    }
+                </select>
+            }
+            else if (propType == typeof(DateTime) || propType == typeof(DateTime?))
+            {
+                <input type="date" class="form-control bg-dark text-white @inputBorderClass"
+                       value="@(dataSource.TryGetValue(propName, out var dateVal) &&
+                                dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : "")"
+                       @onchange="@(e => {
+                       if (DateTime.TryParse(e.Value?.ToString(), out var result))
+                           dataSource[propName] = result;
+                   })" />
+            }
+            else if (propType.IsClass && propType != typeof(string))
+            {
+                @* This is for nested entities (e.g., Player inside a RunInfo) *@
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-info btn-sm" @onclick='() => OpenLookup(propType, propName)'>
+                        <i class="bi bi-search"></i> Select Existing
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" @onclick='() => OpenNestedInsert(propType, propName)'>
+                        <i class="bi bi-plus-lg"></i> Create New
+                    </button>
+                    @if (dataSource.TryGetValue(propName, out var val))
+                    {
+                        <div class="mt-2 p-2 rounded bg-dark border border-success shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge bg-success">
+                                    <i class="bi bi-link-45deg"></i> Linked!
+                                </span>
+                                <button class="btn btn-sm btn-outline-danger border-0" @onclick="() => dataSource.Remove(propName)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            <div class="text-info small fw-mono" style="word-break: break-all; font-family: 'Courier New', monospace; line-height: 1.2;">
+                                @GetFullPreview(val)
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <input type="@(propType == typeof(DateTime) ? "date" : "text")"
+                        class="form-control bg-dark text-white @inputBorderClass"
+                       value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "")"
+                       @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "")" />
+            }
+        </div>
+    };
+
+    private void OpenNestedInsert(Type type, string parentKey)
+    {
+        nestingStack.Push(new Dictionary<string, object>());
+        typeStack.Push(type);
+        keyStack.Push(parentKey);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// returns string virsion of entity to diplaiy in nesting
+    /// </summary>
+    /// <param name="val"></param>
+    /// <returns></returns>
+    private string GetFullPreview(object? val)
+    {
+        if (val == null) return "None";
+
+        // Scenario A: Data is in a Dictionary (New Entry being built)
+        if (val is Dictionary<string, object> dict)
+        {
+            if (dict.Count == 0) return "New Entity (Empty)";
+            // Joins all key-value pairs into a single readable string
+            return string.Join(" | ", dict.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+        }
+
+        // Scenario B: Data is a real Entity (Existing record from DB)
+        if (val is BaseEntity entity)
+        {
+            var props = GetPropertiesCached(entity.GetType())
+                .Select(p => $"{p.Name}: {p.GetValue(entity)}");
+            return string.Join(" | ", props);
+        }
+
+        return val.ToString() ?? "Linked";
+    }
+    #endregion
+
+
     #endregion
 }

@@ -32,7 +32,7 @@
                     <div class="password-wrapper" style="position: relative;">
                         <input type="@passwordInputType" @bind="password" class="login-input" placeholder="Enter password..." />
                         <button type="button" @onclick="TogglePasswordVisibility" class="btn-eye">
-                            @(passwordInputType == "password" ? "👁️" : "🙈")
+                            <i class=@("fa " + (passwordInputType == "password" ? "fa-eye" : "fa-eye-slash"))</i>
                         </button>
                     </div>
                 </div>

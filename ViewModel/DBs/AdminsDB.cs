@@ -51,9 +51,10 @@ namespace ViewModel.DBs
         public override void Delete(BaseEntity entity)
         {
             BaseEntity reqEntity = NewEntity();
-            if (PlayersDB.SelectByIdx(entity.Idx) != null)
+            if (PlayersDB.SelectByIdx(entity.Idx) != null)//if both player and admin on the same user
             {
-                deleted.Add(new ChangeEntity(CreateDeletedSQL, reqEntity));//לא מוחקים את הuser שהplayer תלוי בו
+                //delete only admin
+                deleted.Add(new ChangeEntity(CreateDeletedSQL, reqEntity));
             }
             else if (entity != null & entity.GetType() == reqEntity.GetType())
             {
@@ -92,7 +93,13 @@ namespace ViewModel.DBs
         public override void Insert(BaseEntity entity)
         {
             BaseEntity reqEntity = NewEntity();
-            if (entity != null & entity.GetType() == reqEntity.GetType())
+            if (PlayersDB.SelectByIdx(entity.Idx) != null)//if both player and admin on the same user
+            {
+                reqEntity.Idx = entity.Idx;
+                //insert only admin
+                inserted.Add(new ChangeEntity(CreateInsertdSQL, reqEntity));
+            }
+            else if (entity != null & entity.GetType() == reqEntity.GetType())
             {
                 inserted.Add(new ChangeEntity(base.CreateInsertdSQL, entity));
                 inserted.Add(new ChangeEntity(CreateInsertdSQL, entity));
@@ -115,8 +122,9 @@ namespace ViewModel.DBs
         public override void Update(BaseEntity entity)
         {
             BaseEntity reqEntity = NewEntity();
-            if (entity != null && entity.GetType() == reqEntity.GetType())
+            if (entity != null && entity.GetType() == reqEntity.GetType())//update both user and admin any case
             {
+                //even if player depened on it change user
                 updated.Add(new ChangeEntity(base.CreateUpdatedSQL, entity));
                 updated.Add(new ChangeEntity(CreateUpdatedSQL, entity));
             }

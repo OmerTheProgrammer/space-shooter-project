@@ -4,13 +4,13 @@ using Microsoft.JSInterop;
 using Model.Data_Transfer_Objects;
 using Model.Entitys;
 using System.Threading.Tasks;
-using ViewModel;
 
 namespace Space_Shooter_Website.Client.Support_Classes
 {
     public class Session
     {
         public User? CurrentUser { get; set; }
+        public RunInfo CurrentRun { get; set; } = new RunInfo();
         public int SelectedLevel { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsPlayer { get; set; }
@@ -60,25 +60,29 @@ namespace Space_Shooter_Website.Client.Support_Classes
             UpdateScreenFunc?.Invoke();
         }
 
-        public RunInfo CurrentRun { get; set; } = new RunInfo();
-
         public async Task Logout(ApiService api, IJSRuntime JS, NavigationManager NavManager)
         {
             string message = "Are you sure you want to Logout?";
-
-            if (IsPlayer && CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0))
-            {
-                message += $"\nthis will save the current Run, you're In Lvl {CurrentRun.CurrentLevel}?";
-            }
             // Confirmation logic (Simple browser confirm for now)
             bool confirmed = await JS.InvokeAsync<bool>("confirm", message);
             if (confirmed)
             {
-                if (IsPlayer)
+
+                if (IsPlayer && CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0))
                 {
-                    await SendRunToServer(api, JS);
-                    CurrentRun = new RunInfo();
+                    TimeSpan runDuration = DateTime.Now - CurrentRun.RunStopDate;
+                    int MinLen = (int)runDuration.TotalMinutes;
+                    bool wantToSaveShortRun = await JS.InvokeAsync<bool>("confirm",
+                        $"This run was saved in website last, {MinLen} minutes long, you're In Lvl {CurrentRun.CurrentLevel}.");
+                    if (wantToSaveShortRun)
+                    {
+                        await SendRunToServer(api, JS);
+                    }
                 }
+                //no matter if saved and left, replace the run
+                CurrentRun = new RunInfo();
+                IsContuiningRun = false;
+
                 CurrentUser = null;
                 IsAdmin = false;
                 IsPlayer = false;
@@ -174,6 +178,45 @@ namespace Space_Shooter_Website.Client.Support_Classes
 
                 // This is strictly local. No API calls here.
                 Console.WriteLine($"Local stats updated. Mission status: {(gameover ? "FAILED" : "SUCCESS")}");
+                //saved once so the run exists.
+                IsContuiningRun = true;
+            }
+        }
+
+        public async Task HandlePotentialOverwrite(ApiService api, IJSRuntime JS)
+        {
+            if (IsContuiningRun && CurrentRun != null)
+            {
+                // Calculate time since the last recorded stop
+                TimeSpan runDuration = DateTime.Now - CurrentRun.RunStopDate;
+
+                if (runDuration.TotalMinutes < 1)
+                {
+                    bool wantToSave = await JS.InvokeAsync<bool>("confirm",
+                        "This run was updated very recently. Save current progress to database before continuing?");
+
+                    if (wantToSave)
+                    {
+                        await TrySaveRun(api,JS);
+                    }
+                }
+                else
+                {
+                    // Auto-save if it's been a while
+                    await TrySaveRun(api, JS);
+                }
+            }
+        }
+
+        private async Task TrySaveRun(ApiService api, IJSRuntime JS)
+        {
+            try
+            {
+                await SendRunToServer(api, JS);
+            }
+            catch (Exception e)
+            {
+                await JS.InvokeVoidAsync("ShowAlert", $"Failed Saving: {e.Message}");
             }
         }
     }
