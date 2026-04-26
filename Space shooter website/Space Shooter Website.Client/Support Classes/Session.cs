@@ -182,5 +182,42 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 IsContuiningRun = true;
             }
         }
+
+        public async Task HandlePotentialOverwrite(ApiService api, IJSRuntime JS)
+        {
+            if (IsContuiningRun && CurrentRun != null)
+            {
+                // Calculate time since the last recorded stop
+                TimeSpan runDuration = DateTime.Now - CurrentRun.RunStopDate;
+
+                if (runDuration.TotalMinutes < 1)
+                {
+                    bool wantToSave = await JS.InvokeAsync<bool>("confirm",
+                        "This run was updated very recently. Save current progress to database before continuing?");
+
+                    if (wantToSave)
+                    {
+                        await TrySaveRun(api,JS);
+                    }
+                }
+                else
+                {
+                    // Auto-save if it's been a while
+                    await TrySaveRun(api, JS);
+                }
+            }
+        }
+
+        private async Task TrySaveRun(ApiService api, IJSRuntime JS)
+        {
+            try
+            {
+                await SendRunToServer(api, JS);
+            }
+            catch (Exception e)
+            {
+                await JS.InvokeVoidAsync("ShowAlert", $"Failed Saving: {e.Message}");
+            }
+        }
     }
 }

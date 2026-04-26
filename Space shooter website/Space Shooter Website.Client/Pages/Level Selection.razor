@@ -260,35 +260,15 @@
         }
     }
 
-    private async Task StartLevel(int level) 
+    public async Task StartLevel(int level)
     {
-        if (session.IsContuiningRun && session.CurrentRun != null)
-        {
-            // 1. Calculate duration time from last save
-            TimeSpan runDuration = DateTime.Now - session.CurrentRun.RunStopDate;
+        // checking for Overwrite
+        await session.HandlePotentialOverwrite(api as ApiService, JS);
 
-            // 2. If short run, ask the user if they actually want to save it
-            if (runDuration.TotalMinutes < 1)
-            {
-                bool wantToSaveShortRun = await JS.InvokeAsync<bool>("confirm",
-                    "This run was saved in website last, less than a minute ago. Do you still want to save it before starting a new one?");
-
-                if (wantToSaveShortRun)
-                {
-                    await TrySaveRun();
-                }
-                // If they click 'Cancel', we simply don't save, but we still continue to the new level
-            }
-            else
-            {
-                // 3. If long run, just save automatically
-                await TrySaveRun();
-            }
-        }
-
-        // 4. Navigate to the new level
+        // Start a new run
         session.SelectedLevel = level;
         session.IsContuiningRun = false;
+
         NavManager.NavigateTo("Game");
     }
 

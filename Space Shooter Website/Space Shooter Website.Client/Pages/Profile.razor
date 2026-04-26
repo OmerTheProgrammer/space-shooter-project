@@ -327,27 +327,31 @@
         }
     }
 
-    private async void ContinueMission(RunInfo run)
+    private async Task ContinueMission(RunInfo run)
     {
         if (run != null)
         {
+            // 1. Prepare the session with the saved run data
             session.SelectedLevel = run.CurrentLevel;
             session.CurrentRun = run;
             session.IsContuiningRun = true;
 
-            //delete the run, becouse will save next time
-            (int rows, string? error) result = (0, "Table not mapped");
+            // 2. checking for Overwrite
+            await session.HandlePotentialOverwrite(api as ApiService,JS);
+
+            // 3. Delete the old DB entry because we are moving it into active memory
+            // It will be re-saved when they finish or exit.
             try
             {
-                result = await api.DeleteRunInfo(run.Idx);
+                var result = await api.DeleteRunInfo(run.Idx);
+                if (result.error != null) Console.WriteLine("Cleanup note: " + result.error);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                statusMessage = "Delete Run To Replace Error: " + ex.Message + " API Error:" + result.error;
-                statusClass = "alert-danger";
+                Console.WriteLine("Delete Run Error: " + ex.Message);
             }
-            // Navigate to the game page
-            NavManager.NavigateTo($"game");
+
+            NavManager.NavigateTo("Game");
         }
     }
 
