@@ -260,32 +260,56 @@
         }
     }
 
-    private async void StartLevel(int level)
+    private async Task StartLevel(int level) 
     {
-        if (session.IsContuiningRun) //if from save will lose previous save
+        if (session.IsContuiningRun && session.CurrentRun != null)
         {
-            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to Replace Current Run?.\nWill Save In Server!");
-            if (!confirmed) return; //if not we don't go
-        }
-        try
-        {
-            //is the run too short? if so, we don't save it and just start a new one
-            if (session.CurrentRun.RunStopDate < DateTime.Now.AddMinutes(-1))
+            // 1. Calculate duration time from last save
+            TimeSpan runDuration = DateTime.Now - session.CurrentRun.RunStopDate;
+
+            // 2. If short run, ask the user if they actually want to save it
+            if (runDuration.TotalMinutes < 1)
             {
-                Console.WriteLine($"Attempting to sync run. Mission status: {(session.CurrentRun.IsRunOver ? "FAILED" : "SUCCESS")}, Level: {session.CurrentRun.CurrentLevel}, Score: {session.CurrentRun.CurrentScore}");
-                await JS.InvokeVoidAsync("ShowAlert", "Run Too short, not saved!");
-                return;
+                bool wantToSaveShortRun = await JS.InvokeAsync<bool>("confirm",
+                    "This run was saved in website last, less than a minute ago. Do you still want to save it before starting a new one?");
+
+                if (wantToSaveShortRun)
+                {
+                    await TrySaveRun();
+                }
+                // If they click 'Cancel', we simply don't save, but we still continue to the new level
             }
-            session.SendRunToServer(api as ApiService, JS);
+            else
+            {
+                // 3. If long run, just save automatically
+                await TrySaveRun();
+            }
         }
-        catch (Exception e)
-        {
-            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Failed Saving the Run\n Are u sure you want to continue?\nError: {e.Message}");
-            if (!confirmed) return;
-        }
+
+        // 4. Navigate to the new level
         session.SelectedLevel = level;
         session.IsContuiningRun = false;
         NavManager.NavigateTo("Game");
+    }
+
+    /// <summary>
+    /// tries to save current run
+    /// </summary>
+    /// <returns></returns>
+    private async Task TrySaveRun()
+    {
+        try
+        {
+            await session.SendRunToServer(api as ApiService, JS);
+        }
+        catch (Exception e)
+        {
+            await JS.InvokeVoidAsync("ShowAlert", $"Failed Saving the Run: {e.Message}");
+        }
+        finally
+        {
+            session.CurrentRun = new RunInfo();
+        }
     }
 
     private void ToggleMusic()
