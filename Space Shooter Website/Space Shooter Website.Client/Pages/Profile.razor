@@ -134,11 +134,11 @@
 
                                     @RenderBadge(maxBlastersReached >= 5, "Heavy Gunner", "Equip 5+ blasters.", "danger")
 
-                                    @RenderBadge(personalBestLevel?.CurrentLevel > 5, "Sector Specialist", "Advance past Sector 5.", "warning")
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 5, "Sector Specialist", "Advance past Sector 5.", "primary", $"({personalBestLevel?.CurrentLevel}/15)")
 
                                     @RenderBadge(totalShieldHealth >= 20, "Iron Hull", "Earn 20 Shield PowerUps.", "success", $"({totalShieldHealth}/20)")
 
-                                    @RenderBadge(personalBestLevel?.CurrentScore >= 50000, "High Roller", "Score 50,000 points in a single run.", "primary")
+                                    @RenderBadge(personalBestLevel?.CurrentScore >= 50_000, "High Roller", "Score 50,000 points in a single run.", "primary")
 
                                     @RenderBadge(totalBlasterCount >= 50, "Armory Master", "Collect 50 total Blaster PowerUps.", "info", $"({totalBlasterCount}/50)")
 
@@ -146,21 +146,21 @@
 
                                     @RenderBadge(maxShieldReached >= 10, "Untouchable", "Reach 10 Shield HP in one run.", "success")
 
-                                    @RenderBadge(totalRuns >= 100, "Stellar Admiral", "Command 100 successful sorties.", "dark", $"({totalRuns}/100)")
+                                    @RenderBadge(totalRuns >= 100, "Stellar Admiral", "Command 100 successful runs.", "dark", $"({totalRuns}/100)")
 
                                     @RenderBadge(totalShieldHealth >= 100, "Titanium Aegis", "Absorb 100 Shield PowerUps.", "success", $"({totalShieldHealth}/100)")
 
                                     @RenderBadge(totalBlasterCount >= 250, "Lead Rain", "Amass 250 total Blaster PowerUps.", "primary", $"({totalBlasterCount}/250)")
 
-                                    @RenderBadge(personalBestLevel?.CurrentScore >= 1000000, "Millionaire Club", "Reach a score of 1,000,000.", "dark")
+                                    @RenderBadge(personalBestLevel?.CurrentScore >= 1_000_000, "Millionaire Club", "Reach a score of 1,000,000.", "dark")
 
-                                    @RenderBadge(maxBlastersReached >= 10, "Full Battery", "Achieve maximum blaster saturation (10).", "danger")
+                                    @RenderBadge(maxBlastersReached >= 9, "Full Battery", "Achieve maximum blaster saturation (9).", "danger" ,$"({maxBlastersReached}/9)")
 
                                     @RenderBadge(maxShieldReached >= 25, "Kinetic Ghost", "Stack 25 Shield layers in a single mission.", "info")
 
-                                    @RenderBadge(personalBestLevel?.CurrentLevel > 15, "Deep Space Drifter", "Survive until Sector 25.", "warning")
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 15, "Deep Space Drifter", "Survive until Sector 15.", "warning", $"({personalBestLevel?.CurrentLevel}/15)")
 
-                                    @RenderBadge(personalBestLevel?.CurrentLevel > 30, "Void Walker", "Reach the legendary Sector 50.", "dark")
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 30, "Void Walker", "Reach the legendary Sector 30.", "dark", $"({personalBestLevel?.CurrentLevel}/30)")
 
                                 </div>
                             </div>

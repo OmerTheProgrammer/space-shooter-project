@@ -269,6 +269,13 @@
         }
         try
         {
+            //is the run too short? if so, we don't save it and just start a new one
+            if (session.CurrentRun.RunStopDate < DateTime.Now.AddMinutes(-1))
+            {
+                Console.WriteLine($"Attempting to sync run. Mission status: {(session.CurrentRun.IsRunOver ? "FAILED" : "SUCCESS")}, Level: {session.CurrentRun.CurrentLevel}, Score: {session.CurrentRun.CurrentScore}");
+                await JS.InvokeVoidAsync("ShowAlert", "Run Too short, not saved!");
+                return;
+            }
             session.SendRunToServer(api as ApiService, JS);
         }
         catch (Exception e)
