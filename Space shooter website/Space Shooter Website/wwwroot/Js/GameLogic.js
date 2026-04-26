@@ -21,6 +21,7 @@ const levelRewards = {
     30: { img: 'Assets/Game Elements/Images/EasterEggs/LongBoy.jpg', sequence: ['A', 'R'] }
 };
 let currentRewardImage = '', currentKeyStep = 0;
+let hiddenLettersMap = {};
 
 let isInternalNavigation = false;
 window.markAsInternalNav = () => {
@@ -309,16 +310,16 @@ class Game_scene extends Phaser.Scene {
 
         const rates = [30, 40, 50, 60, 80, 90, 95];//jumps of 5, last = endless
         const bossStats = {
-            5: { hp: 50, speed: 200, scale: 3 },
-            10: { hp: 150, speed: 250, scale: 3.5 },
-            15: { hp: 300, speed: 300, scale: 4 },
-            20: { hp: 500, speed: 350, scale: 4.5 },
-            25: { hp: 800, speed: 400, scale: 5 },
-            30: { hp: 1200, speed: 500, scale: 6 }
+            5: { hp: 50, speed: 200, scale: 4 },
+            10: { hp: 150, speed: 250, scale: 4.5 },
+            15: { hp: 300, speed: 300, scale: 5 },
+            20: { hp: 500, speed: 350, scale: 5.5 },
+            25: { hp: 800, speed: 400, scale: 6 },
+            30: { hp: 1200, speed: 500, scale: 7 }
         };
 
         switch (level) {
-            case 1: level_drop_rate = rates[0]; maxEnemies = 3; break;
+            case 1:level_drop_rate = rates[0]; maxEnemies = 3; distributeLetters(levelRewards[5].sequence, 5); break;
             case 2: level_drop_rate = rates[0]; maxEnemies = 5; break;
             case 3: level_drop_rate = rates[0]; maxEnemies = 8; break;
             case 4: level_drop_rate = rates[0]; maxEnemies = 10; break;
@@ -339,7 +340,7 @@ class Game_scene extends Phaser.Scene {
                 });
                 break;
 
-            case 6: level_drop_rate = rates[1]; maxEnemies = 4; break;
+            case 6: level_drop_rate = rates[1]; maxEnemies = 4; distributeLetters(levelRewards[10].sequence, 10); break;
             case 7: level_drop_rate = rates[1]; maxEnemies = 6; break;
             case 8: level_drop_rate = rates[1]; maxEnemies = 9; break;
             case 9: level_drop_rate = rates[1]; maxEnemies = 12; break;
@@ -361,7 +362,7 @@ class Game_scene extends Phaser.Scene {
                 });
                 break;
 
-            case 11: level_drop_rate = rates[2]; maxEnemies = 5; break;
+            case 11: level_drop_rate = rates[2]; maxEnemies = 5; distributeLetters(levelRewards[15].sequence, 15); break;
             case 12: level_drop_rate = rates[2]; maxEnemies = 7; break;
             case 13: level_drop_rate = rates[2]; maxEnemies = 10; break;
             case 14: level_drop_rate = rates[2]; maxEnemies = 14; break;
@@ -382,7 +383,7 @@ class Game_scene extends Phaser.Scene {
                 });
                 break;
 
-            case 16: level_drop_rate = rates[3]; maxEnemies = 6; break;
+            case 16: level_drop_rate = rates[3]; maxEnemies = 6; distributeLetters(levelRewards[20].sequence, 20); break;
             case 17: level_drop_rate = rates[3]; maxEnemies = 8; break;
             case 18: level_drop_rate = rates[3]; maxEnemies = 10; break;
             case 19: level_drop_rate = rates[3]; maxEnemies = 15; break;
@@ -403,7 +404,7 @@ class Game_scene extends Phaser.Scene {
                 });
                 break;
 
-            case 21: level_drop_rate = rates[4]; maxEnemies = 7; break;
+            case 21: level_drop_rate = rates[4]; maxEnemies = 7; distributeLetters(levelRewards[25].sequence, 25); break;
             case 22: level_drop_rate = rates[4]; maxEnemies = 9; break;
             case 23: level_drop_rate = rates[4]; maxEnemies = 11; break;
             case 24: level_drop_rate = rates[4]; maxEnemies = 16; break;
@@ -424,7 +425,7 @@ class Game_scene extends Phaser.Scene {
                 });
                 break;
 
-            case 26: level_drop_rate = rates[5]; maxEnemies = 8; break;
+            case 26: level_drop_rate = rates[5]; maxEnemies = 8; distributeLetters(levelRewards[30].sequence, 30); break;
             case 27: level_drop_rate = rates[5]; maxEnemies = 10; break;
             case 28: level_drop_rate = rates[5]; maxEnemies = 12; break;
             case 29: level_drop_rate = rates[5]; maxEnemies = 17; break;
@@ -902,13 +903,17 @@ function spawnBoss(bossTexture, stats) {
     // Spawn at the top center of the screen
     boss = enemies.create(size[0] / 2, -100, bossTexture || 'BoardWatcherShip');
 
+    boss.setScale(stats.scale, stats.scale);
+    boss.body.setSize(boss.width, boss.height);
+    boss.body.setOffset(0, 0);
+    boss.refreshBody();
+
     boss.isBoss = true; // Flag to identify it in collisions
     boss.hp = stats.hp;
     boss.maxHp = stats.hp; // Useful for health bars later - not done yet
-    boss.speed = stats.scale;
+    boss.speed = stats.speed;
     boss.setVelocityX(stats.speed);
     boss.setVelocityY(0);
-    boss.setScale(boss.speed);
 
     // Custom movement (e.g., move to y=100 and stay there)
     boss.y = -100;
@@ -917,6 +922,27 @@ function spawnBoss(bossTexture, stats) {
         y: 150,
         duration: 2000,
         ease: 'Back.easeOut'
+    });
+}
+
+function distributeLetters(sequence, maxLevel) {
+    hiddenLettersMap = {}; // Clear previous
+    let availableLevels = [];
+
+    // Create a list of possible levels (1, 2, 3, 4) / (11,12,13,14) or others
+    for (let i = maxLevel-4; i < maxLevel; i++) {
+        availableLevels.push(i);
+    }
+
+    // Shuffle the levels array
+    Phaser.Utils.Array.Shuffle(availableLevels);
+
+    // Assign each letter in the sequence to one of the shuffled levels
+    sequence.forEach((letter, index) => {
+        if (availableLevels[index]) {
+            let assignedLevel = availableLevels[index];
+            hiddenLettersMap[assignedLevel] = letter;
+        }
     });
 }
 
@@ -1291,6 +1317,18 @@ function manu_actions() {
     //hides counter
     if (counter_ended) {
         The_counter.timeText.setVisible(false);
+    }
+
+    //loads hints
+    if (hiddenLettersMap[level] && !bossSpawned) {
+        let letter = hiddenLettersMap[level];// Show the letter at a random position once per level
+
+        sequenceHintText.setText(letter)
+            .setPosition(Phaser.Math.Between(100, size[0] - 100), Phaser.Math.Between(100, size[1] - 100))
+            .setAlpha(0.2) // Make it faint/hidden
+            .setVisible(true);
+
+        delete hiddenLettersMap[level];
     }
 
     //pause button
