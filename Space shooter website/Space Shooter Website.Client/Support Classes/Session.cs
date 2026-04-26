@@ -73,7 +73,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                     TimeSpan runDuration = DateTime.Now - CurrentRun.RunStopDate;
                     int MinLen = (int)runDuration.TotalMinutes;
                     bool wantToSaveShortRun = await JS.InvokeAsync<bool>("confirm",
-                        $"Do you want to save current run? it's {MinLen} minutes long, you're In Lvl {CurrentRun.CurrentLevel}.");
+                        $"This run was saved in website last, {MinLen} minutes long, you're In Lvl {CurrentRun.CurrentLevel}.");
                     if (wantToSaveShortRun)
                     {
                         await SendRunToServer(api, JS);

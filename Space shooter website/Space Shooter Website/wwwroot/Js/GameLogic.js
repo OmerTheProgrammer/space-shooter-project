@@ -1001,7 +1001,9 @@ function handlePlayerHit(player) {
         delay: 2000,
         callback: () => {
             if (!paused) {
-                player.setPosition(og_x, og_y);
+                if ((!shield.was_deactivated)) {//shield means not go back to og
+                    player.setPosition(og_x, og_y);
+                }
                 player.setActive(true);
                 player.setVisible(true);
                 if (shield.was_deactivated) {
