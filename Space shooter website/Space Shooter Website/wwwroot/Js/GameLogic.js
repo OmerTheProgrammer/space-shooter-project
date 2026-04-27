@@ -16,7 +16,7 @@ const levelRewards = {
     5: { img: 'Assets/Game Elements/Images/EasterEggs/BoardWatcher.jpg', sequence: ['B', 'E'] },
     10: { img: 'Assets/Game Elements/Images/EasterEggs/PhoneBoy.jpg', sequence: ['N', 'O'] },
     15: { img: 'Assets/Game Elements/Images/EasterEggs/Staircase.jpg', sequence: ['W', 'H'] },
-    20: { img: 'Assets/Game Elements/Images/EasterEggs/RockWatchers.jpg', sequence: ['D', 'I'] },
+    20: { img: 'Assets/Game Elements/Images/EasterEggs/TheGang.jpg', sequence: ['D', 'I'] },
     25: { img: 'Assets/Game Elements/Images/EasterEggs/WorldWatcher.jpg', sequence: ['Y', 'A'] },
     30: { img: 'Assets/Game Elements/Images/EasterEggs/LongBoy.jpg', sequence: ['A', 'R'] }
 };
@@ -151,7 +151,7 @@ class Game_scene extends Phaser.Scene {
         this.load.image('BoardWatcherShip', '/Assets/Game Elements/Images/SpaceShips/BoardWatcherShip.png');
         this.load.image('PhoneBoyShip', '/Assets/Game Elements/Images/SpaceShips/PhoneBoyShip.png');
         this.load.image('StaircaseShip', '/Assets/Game Elements/Images/SpaceShips/StaircaseShip.png');
-        this.load.image('RockWatchersShip', '/Assets/Game Elements/Images/SpaceShips/RockWatchersShip.png');
+        this.load.image('TheGangShip', '/Assets/Game Elements/Images/SpaceShips/TheGangShip.png');
         this.load.image('WorldWatcherShip', '/Assets/Game Elements/Images/SpaceShips/WorldWatcherShip.png');
         this.load.image('LongBoyShip', '/Assets/Game Elements/Images/SpaceShips/LongBoyShip.png');
         //lasers
@@ -395,7 +395,7 @@ class Game_scene extends Phaser.Scene {
                     delay: 100,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
-                            spawnBoss('RockWatchersShip', bossStats[20]);
+                            spawnBoss('TheGangShip', bossStats[20]);
                             bossSpawned = true;
                         }
                     },
