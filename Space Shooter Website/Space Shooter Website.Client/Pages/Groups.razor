@@ -1,7 +1,7 @@
-﻿
-@page "/Groups"
+﻿@page "/Groups"
 @using Model.Entitys
 @using Model.Tables
+@using Model.Data_Transfer_Objects
 @using Space_Shooter_Website.Client.Support_Classes
 @using Client_Manager___API
 @inject Session session
@@ -191,12 +191,24 @@
     {
         // 1. Get all groups globally
         allGroups = await api.GetAllGroups();
+        // 2. Fetch all membership links
+        allLinks = await api.GetAllPlayersAndGroups();
+
+        //update groups total score, DB and
+        foreach (var group in allGroups)
+        {
+            //sum score of all players of 1 group
+            group.Score = allLinks.Where(l => l.Group.Idx == group.Idx).Sum(l => l.Player.TotalScore);
+            await api.UpdateGroup(GroupDTO.FromEntity(group, dto => { dto.Score = group.Score; }));
+        }
+
+        // 1. Get all groups globally
+        allGroups = await api.GetAllGroups();
+        // 2. Fetch all membership links
+        allLinks = await api.GetAllPlayersAndGroups();
 
         if (session.IsLoggedIn)
         {
-            // 2. Fetch all membership links
-            allLinks = await api.GetAllPlayersAndGroups();
-
             // 3. Filter for exactly what THIS player belongs to
             myGroupsAndPlayers = new PlayersAndGroupsTable(
                 allLinks.Where(l => l.Player.Idx == session.CurrentUser.Idx).ToList()
