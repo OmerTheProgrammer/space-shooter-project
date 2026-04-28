@@ -222,7 +222,7 @@ class Game_scene extends Phaser.Scene {
         //Laser sprite
         Lasers = this.physics.add.group({
             defaultKey: 'player laser',
-            maxSize: 80
+            maxSize: 100
         });
 
         // Enemy group
@@ -235,7 +235,7 @@ class Game_scene extends Phaser.Scene {
         // Enemy laser group
         enemyLasers = this.physics.add.group({
             defaultKey: 'enemy laser',
-            maxSize: 80
+            maxSize: 100
         });
 
         //power_ups
@@ -328,7 +328,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[0];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('BoardWatcherShip', bossStats[5]);
@@ -350,7 +350,7 @@ class Game_scene extends Phaser.Scene {
                 maxEnemies = 1; // Only the boss spawns
 
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('PhoneBoyShip', bossStats[10]);
@@ -371,7 +371,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[2];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('StaircaseShip', bossStats[15]);
@@ -392,7 +392,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[3];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('TheGangShip', bossStats[20]);
@@ -413,7 +413,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[4];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('WorldWatcherShip', bossStats[25]);
@@ -451,7 +451,11 @@ class Game_scene extends Phaser.Scene {
                 is_endless = true;
                 this.time.addEvent({
                     delay: 1000,
-                    callback: spawn_enemy,
+                    callback: function () {
+                        if (counter_ended) {
+                            spawn_enemy();
+                        }
+                    },
                     callbackScope: this,
                     loop: true
                 });
@@ -1575,19 +1579,21 @@ function shield_update() {
 }
 
 function update_shield_pos() {
-    const left_limit = size[0] - 80;
-    const low_limit = size[1] - 90;
+    const left_limit = size[0] * 0.9;//900
+    const low_limit = size[1] * 0.9;
     if (player.x >= left_limit) {
         player.x = left_limit;
     }
-    else if (player.x <= 80) {//right limit
-        player.x = 80;
+    //right limit
+    else if (player.x <= size[0] * 0.1) {//200
+        player.x = size[0] * 0.1;
     }
     if (player.y >= low_limit) {
         player.y = low_limit;
     }
-    else if (player.y <= 58) {//high limit
-        player.y = 58;
+    //high limit
+    else if (player.y <= size[1] * 0.1) {//100
+        player.y = size[1] * 0.1;
     }
     shield.x = player.x;
     shield.y = player.y;
