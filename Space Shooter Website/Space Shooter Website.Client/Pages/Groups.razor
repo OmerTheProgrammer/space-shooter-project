@@ -1,90 +1,358 @@
-﻿@page "/Groups"
+﻿
+@page "/Groups"
 @using Model.Entitys
+@using Model.Tables
 @using Space_Shooter_Website.Client.Support_Classes
 @using Client_Manager___API
 @inject Session session
 @inject IApiService api
-@inject NavigationManager NavManager
 @inject IJSRuntime JS
+@rendermode InteractiveServer
 
 <div class="container mt-4">
-    <h1 class="text-white text-center">SQUADRON COMMAND</h1>
+    <h1 class="text-white text-center shadow-sm p-3 mb-5 bg-black rounded">SQUADRON COMMAND</h1>
 
-    @if (myGroupLink == null)
+    @if (session.IsLoggedIn)
     {
-        <div class="row mt-5">
-            <h2 class="text-info">Available Squadrons</h2>
-            @foreach (var g in allGroups)
+        <div class="row mb-5">
+            <h2 class="text-warning mb-4"><i class="bi bi-shield-shaded"></i> Your Active Squadrons</h2>
+            @if (myGroupsAndPlayers.Count == 0)
+            {
+                <div class="col-12 text-center p-5 border border-secondary rounded bg-dark">
+                    <p class="text-white-50">You are currently a mercenary. Join a squadron to earn glory!</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var link in myGroupsAndPlayers)
+                {
+                    bool canDisband = IsOnlyMember(link.Group);
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-dark text-white border-warning h-100 shadow">
+                            <div class="card-header border-warning bg-black d-flex justify-content-between">
+                                <h3 class="text-warning m-0">@link.Group.Name</h3>
+                                @if (canDisband)
+                                {
+                                    <span class="badge bg-danger">LAST STAND</span>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <p class="lead">Squadron Score: <span class="text-info">@link.Group.Score</span></p>
+                                <button class="btn btn-outline-info w-100 mb-2" @onclick="() => ShowPersonnel(link.Group)">
+                                    View Personnel
+                                </button>
+
+                                @if (canDisband)
+                                {
+                                    <button class="btn btn-danger w-100" @onclick="() => DisbandGroup(link)">
+                                        Disband Squadron
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-danger w-100" @onclick="() => LeaveGroup(link)">
+                                        Leave Squadron
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="row">
+            <h2 class="text-info mb-4"><i class="bi bi-search"></i> Discover New Squadrons</h2>
+            @foreach (var g in allGroups.Where(g => !myGroupsAndPlayers.Any(m => m.Group.Idx == g.Idx)))
             {
                 <div class="col-md-4 mb-3">
-                    <div class="card bg-dark border-info text-white">
-                        <div class="card-body">
+                    <div class="card bg-dark border-info text-white h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
                             <h4>@g.Name</h4>
-                            <p>Total Score: @g.Score</p>
-                            <button class="btn btn-outline-info" @onclick="() => JoinGroup(g)">Join Squad</button>
+                            <p class="text-white-50">Global Power: @g.Score</p>
+                            <button class="btn btn-primary mt-auto" @onclick="() => JoinGroup(g)">
+                                Join Squadron
+                            </button>
+                            
+                            <button class="btn btn-outline-info w-100 mt-2" @onclick="() => ShowPersonnel(g)">
+                                View Personnel
+                            </button>
                         </div>
                     </div>
                 </div>
             }
+            <div class="row mb-5">
+                <h2 class="text-success mb-4"><i class="bi bi-plus-circle-dotted"></i> Found New Squadron</h2>
+                <div class="col-12">
+                    <div class="card bg-dark border-success text-white shadow">
+                        <div class="card-body d-flex gap-3 align-items-center">
+                            <div class="flex-grow-1">
+                                <input type="text" class="form-control bg-black text-success border-success"
+                                       placeholder="Enter Squadron Callsign..." @bind="newGroupName" />
+                            </div>
+                            <button class="btn btn-success px-5" @onclick="CreateGroup" disabled="@string.IsNullOrWhiteSpace(newGroupName)">
+                                Establish Squadron
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     }
     else
     {
-        <div class="jumbotron bg-dark text-white border border-warning p-5">
-            <h2 class="text-warning">Active Duty: @myGroupLink.Group.Name</h2>
-            <p class="lead">Your Squadron has amassed @myGroupLink.Group.Score points!</p>
-            <hr class="my-4" style="background-color: gray;">
-            <button class="btn btn-danger" @onclick="LeaveGroup">Leave Squadron</button>
+        <div class="alert alert-info text-center">
+            <h4>Authentication Required</h4>
+            <p>Please log in to manage your squadron memberships.</p>
         </div>
     }
 </div>
 
+@if (showPersonnelMode && selectedGroup != null)
+{
+    <div class="modal fade show d-block squadron-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content scanline-effect">
+                <div class="modal-header border-info bg-black text-info shadow-sm">
+                    <h5 class="modal-title tracking-widest uppercase">
+                        <i class="bi bi-cpu-fill me-2"></i>@selectedGroup.Name - PERSONNEL MANIFEST
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseMode"></button>
+                </div>
+                <div class="modal-body bg-dark text-white p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead class="text-info text-uppercase small">
+                                <tr>
+                                    <th class="ps-4">Pilot</th>
+                                    <th class="text-center">Total Score</th>
+                                    <th class="text-center pe-4">Highest Sector</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (groupPersonnel.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5 text-muted italic">
+                                            Scanning for biological signatures...
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var member in groupPersonnel)
+                                    {
+                                        <tr class="align-middle">
+                                            <td class="ps-4">
+                                                <i class="bi bi-person-badge text-info me-2"></i>
+                                                <span class="fw-bold">@member.Player.Username</span>
+                                            </td>
+                                            <td class="text-center text-warning font-monospace">
+                                                @member.Player.TotalScore.ToString("N0")
+                                            </td>
+                                            <td class="text-center pe-4">
+                                                <span class="badge bg-outline-info border border-info">
+                                                    Sector @member.Player.MaxLevel
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-info bg-black">
+                    <button type="button" class="btn btn-outline-info px-4 uppercase tracking-tighter" @onclick="CloseMode">
+                        Close Manifest
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
-    private List<Group> allGroups = new();
-    private PlayerAndGroup? myGroupLink;
+    private string newGroupName = ""; // State for the input field
+    private GroupsTable allGroups = new();
+    private PlayersAndGroupsTable allLinks = new();//all P&Gs
+    private PlayersAndGroupsTable myGroupsAndPlayers = new();
+    private PlayersAndGroupsTable groupPersonnel = new();
+    private Group? selectedGroup;
+    private bool showPersonnelMode = false;
 
     protected override async Task OnInitializedAsync()
     {
-        // 1. Get all available groups for the browser
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        // 1. Get all groups globally
         allGroups = await api.GetAllGroups();
 
         if (session.IsLoggedIn)
         {
-            // 2. Fetch the link between the current player and their group
-            // We look for a PlayerAndGroup entry where the Player.Idx matches the current user
-            var links = await api.GetAllPlayersAndGroups();
-            myGroupLink = links.FirstOrDefault(l => l.Player.Idx == session.CurrentUser.Idx);
+            // 2. Fetch all membership links
+            allLinks = await api.GetAllPlayersAndGroups();
+
+            // 3. Filter for exactly what THIS player belongs to
+            myGroupsAndPlayers = new PlayersAndGroupsTable(
+                allLinks.Where(l => l.Player.Idx == session.CurrentUser.Idx).ToList()
+            );
         }
     }
 
-    private async Task JoinGroup(Group selectedGroup)
+    private async Task JoinGroup(Group g)
     {
         if (session.CurrentUser is Player currentPlayer)
         {
+            // DEFENSIVE: Prevent joining the same group twice (Avoids DB Unique Constraint error)
+            if (myGroupsAndPlayers.Any(m => m.Group.Idx == g.Idx)) return;
+
             PlayerAndGroup newLink = new PlayerAndGroup
             {
                 Player = currentPlayer,
-                Group = selectedGroup
+                Group = g
+            
             };
 
-            // This uses your existing Insert logic in the API/DB
             var result = await api.InsertPlayerAndGroup(newLink);
 
             if (result.error == null)
             {
-                myGroupLink = newLink;
-                await JS.InvokeVoidAsync("ShowAlert", $"Joined {selectedGroup.Name}!");
+                // IMPORTANT: Re-fetch to get the actual DB Idx for the new link
+                await RefreshData();
+                await JS.InvokeVoidAsync("ShowAlert", $"Joined {g.Name}!");
             }
             else
             {
-                await JS.InvokeVoidAsync("ShowAlert", "Failed to join: " + result.error);
+                await JS.InvokeVoidAsync("ShowAlert", "Error: " + result.error);
             }
         }
     }
 
-    private async Task LeaveGroup()
+    private async Task LeaveGroup(PlayerAndGroup linkToLeave)
     {
-        await JS.InvokeVoidAsync("ShowAlert", "Not Built!");
+        bool confirmed = await JS.InvokeAsync<bool>("confirm",
+            $"Abandon your post in {linkToLeave.Group.Name}?");
+
+        if (!confirmed) return;
+
+        try
+        {
+            // We use the specific Idx of the link, which was fetched in RefreshData
+            var result = await api.DeletePlayerAndGroup(linkToLeave.Idx);
+
+            if (result.error == null)
+            {
+                await RefreshData();
+                await JS.InvokeVoidAsync("ShowAlert", "Membership terminated.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("ShowAlert", "Failed to leave: " + result.error);
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("ShowAlert", "Critical Error: " + ex.Message);
+        }
     }
 
+    private async Task ShowPersonnel(Group g)
+    {
+        selectedGroup = g;
+        showPersonnelMode = true;
+        groupPersonnel.Clear();
+
+        // Fetch all links to find other players in this specific group
+        allLinks = await api.GetAllPlayersAndGroups(); 
+        
+        // Filter for everyone belonging to the selected group
+        groupPersonnel = new PlayersAndGroupsTable(allLinks.Where(l => l.Group.Idx == g.Idx).ToList());
+
+        StateHasChanged();
+    }
+
+    private void CloseMode()
+    {
+        showPersonnelMode = false;
+        selectedGroup = null;
+    }
+
+    private async Task CreateGroup()
+    {
+        if (string.IsNullOrWhiteSpace(newGroupName)) return;
+
+        // 1. Initialize the new Group entity
+        Group newGroup = new Group
+        {
+            Name = newGroupName,
+            Score = 0
+        };
+
+        // 2. Insert into the database
+        var result = await api.InsertGroup(newGroup);
+
+        if (result.error == null)
+        {
+            // 3. Clear the input field
+            newGroupName = "";
+
+            // 4. Refresh data to find the new group's DB Idx
+            await RefreshData();
+
+            // 5. Automatically join the newly created group
+            var createdGroup = allGroups.FirstOrDefault(g => g.Name == newGroup.Name);
+            if (createdGroup != null)
+            {
+                await JoinGroup(createdGroup);
+            }
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("ShowAlert", "Fabrication Error: " + result.error);
+        }
+    }
+
+    private bool IsOnlyMember(Group g)
+    {
+        return allLinks.Count(l => l.Group.Idx == g.Idx) == 1;
+    }
+
+    private async Task DisbandGroup(PlayerAndGroup link)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm",
+            $"You are the last member of {link.Group.Name}. Disbanding will delete the squadron permanently. Proceed?");
+
+        if (!confirmed) return;
+
+        try
+        {
+            // 1. Delete the membership link first
+            var linkResult = await api.DeletePlayerAndGroup(link.Idx);
+
+            if (linkResult.error == null)
+            {
+                // 2. Delete the actual Group entity
+                var groupResult = await api.DeleteGroup(link.Group.Idx);
+
+                if (groupResult.error == null)
+                {
+                    await JS.InvokeVoidAsync("ShowAlert", $"{link.Group.Name} has been decommissioned.");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("ShowAlert", "Group record remains: " + groupResult.error);
+                }
+            }
+            await RefreshData();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("ShowAlert", "System Failure: " + ex.Message);
+        }
+    }
 }
