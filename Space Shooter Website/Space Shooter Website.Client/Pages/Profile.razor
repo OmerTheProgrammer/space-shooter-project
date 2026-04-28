@@ -100,7 +100,7 @@
                                 <div class="stat-box p-3 text-center rounded bg-dark border border-info border-opacity-50">
                                     <i class="bi bi-rocket-takeoff text-info"></i>
                                     <small class="text-muted d-block">Deepest Sector</small>
-                                    <span class="h4 text-info fw-bold">Lvl @personalBestLevel?.CurrentLevel</span>
+                                    <span class="h4 text-info fw-bold">Lvl @personalBestLevel?.CurrentLevel/30</span>
                                 </div>
                             </div>
 
@@ -108,7 +108,7 @@
                             <div class="col-4">
                                 <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
                                     <small class="text-muted d-block small-label">Avg. Depth</small>
-                                    <span class="text-white fw-bold">@avgLevel</span>
+                                    <span class="text-white fw-bold">@avgLevel/30</span>
                                 </div>
                             </div>
                             <div class="col-4">
@@ -120,7 +120,7 @@
                             <div class="col-4">
                                 <div class="stat-box p-2 text-center rounded bg-dark border border-secondary">
                                     <small class="text-muted d-block small-label">Max Firepower</small>
-                                    <span class="text-danger fw-bold">@maxBlastersReached</span>
+                                    <span class="text-danger fw-bold">@maxBlastersReached/9</span>
                                 </div>
                             </div>
                         </div>
@@ -152,13 +152,14 @@
                                     @RenderBadge(totalShieldHealth >= 100, "Titanium Aegis", "Absorb 100 Shield PowerUps.", "success", $"({totalShieldHealth}/100)")
 
                                     @* --- SECTOR PROGRESSION --- *@
-                                    @RenderBadge(personalBestLevel?.CurrentLevel > 5, "Sector Specialist", "Advance past Sector 5.", "warning", $"({personalBestLevel?.CurrentLevel}/5)")
-                                    @RenderBadge(personalBestLevel?.CurrentLevel > 15, "Deep Space Drifter", "Survive until Sector 15.", "warning", $"({personalBestLevel?.CurrentLevel}/15)")
-                                    @RenderBadge(personalBestLevel?.CurrentLevel > 30, "Void Walker", "Reach the legendary Sector 30.", "dark", $"({personalBestLevel?.CurrentLevel}/30)")
+                                    @RenderBadge(personalBestLevel?.CurrentLevel > 5, "Sector Specialist", "Advance past Sector 5.", "success", $"({personalBestLevel?.CurrentLevel}/5)")
+                                    @RenderBadge(personalBestLevel?.CurrentLevel >= 15, "Deep Space Drifter", "Survive until Sector 15.", "warning", $"({personalBestLevel?.CurrentLevel}/15)")
+                                    @RenderBadge(personalBestLevel?.CurrentLevel >= 30, "Void Walker", "Reach the legendary Sector 30.", ""@* white *@, $"({personalBestLevel?.CurrentLevel}/30)")
+                                    
 
                                     @* --- SCORE MILESTONES --- *@
                                     @RenderBadge(personalBestLevel?.CurrentScore >= 50_000, "High Roller", "Score 50,000 points in a single run.", "warning")
-                                    @RenderBadge(personalBestLevel?.CurrentScore >= 1_000_000, "Millionaire Club", "Reach a score of 1,000,000.", "dark")
+                                    @RenderBadge(personalBestLevel?.CurrentScore >= 1_000_000, "Millionaire Club", "Reach a score of 1,000,000.", ""@* white *@)
                                 </div>
                             </div>
                         </div>
