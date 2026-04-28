@@ -141,12 +141,13 @@ namespace Space_Shooter_Website.Client.Support_Classes
             {
                 try
                 {
-                    await JS.InvokeVoidAsync("ShowAlert", "Saved Run to Command Center!");
                     // This is where we actually hit the DB
                     var runResult = await api.InsertRunInfo(CurrentRun);
 
                     if (runResult.error == null)
                     {
+                        await JS.InvokeVoidAsync("ShowAlert", "Saved Run to Command Center!");
+
                         // Update Player Lifetime score
                         currentP.TotalScore += CurrentRun.CurrentScore;
 
@@ -211,7 +212,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 // Calculate time since the last recorded stop
                 TimeSpan runDuration = DateTime.Now - CurrentRun.RunStopDate;
 
-                if (runDuration.TotalMinutes < 1)
+                if (runDuration.TotalSeconds < 135)
                 {
                     bool wantToSave = await JS.InvokeAsync<bool>("confirm",
                         "This run was updated very recently. Save current progress to database before continuing?");
