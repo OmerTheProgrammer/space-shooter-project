@@ -1,0 +1,90 @@
+﻿@page "/Groups"
+@using Model.Entitys
+@using Space_Shooter_Website.Client.Support_Classes
+@using Client_Manager___API
+@inject Session session
+@inject IApiService api
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+
+<div class="container mt-4">
+    <h1 class="text-white text-center">SQUADRON COMMAND</h1>
+
+    @if (myGroupLink == null)
+    {
+        <div class="row mt-5">
+            <h2 class="text-info">Available Squadrons</h2>
+            @foreach (var g in allGroups)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-dark border-info text-white">
+                        <div class="card-body">
+                            <h4>@g.Name</h4>
+                            <p>Total Score: @g.Score</p>
+                            <button class="btn btn-outline-info" @onclick="() => JoinGroup(g)">Join Squad</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="jumbotron bg-dark text-white border border-warning p-5">
+            <h2 class="text-warning">Active Duty: @myGroupLink.Group.Name</h2>
+            <p class="lead">Your Squadron has amassed @myGroupLink.Group.Score points!</p>
+            <hr class="my-4" style="background-color: gray;">
+            <button class="btn btn-danger" @onclick="LeaveGroup">Leave Squadron</button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Group> allGroups = new();
+    private PlayerAndGroup? myGroupLink;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // 1. Get all available groups for the browser
+        allGroups = await api.GetAllGroups();
+
+        if (session.IsLoggedIn)
+        {
+            // 2. Fetch the link between the current player and their group
+            // We look for a PlayerAndGroup entry where the Player.Idx matches the current user
+            var links = await api.GetAllPlayersAndGroups();
+            myGroupLink = links.FirstOrDefault(l => l.Player.Idx == session.CurrentUser.Idx);
+        }
+    }
+
+    private async Task JoinGroup(Group selectedGroup)
+    {
+        if (session.CurrentUser is Player currentPlayer)
+        {
+            PlayerAndGroup newLink = new PlayerAndGroup
+            {
+                Player = currentPlayer,
+                Group = selectedGroup
+            };
+
+            // This uses your existing Insert logic in the API/DB
+            var result = await api.InsertPlayerAndGroup(newLink);
+
+            if (result.error == null)
+            {
+                myGroupLink = newLink;
+                await JS.InvokeVoidAsync("ShowAlert", $"Joined {selectedGroup.Name}!");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("ShowAlert", "Failed to join: " + result.error);
+            }
+        }
+    }
+
+    private async Task LeaveGroup()
+    {
+        await JS.InvokeVoidAsync("ShowAlert", "Not Built!");
+    }
+
+}
