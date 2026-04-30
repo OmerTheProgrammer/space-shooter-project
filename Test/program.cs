@@ -735,7 +735,6 @@ namespace Test
             //users = await api.GetAllUsers();
             //Console.WriteLine($"Last User: {users.Last()}\n");
             #endregion
-
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
     }
