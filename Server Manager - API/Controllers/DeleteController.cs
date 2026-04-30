@@ -32,27 +32,6 @@ namespace Server_Manager___API.Controllers
                 $" Records changed: {changedRecords}");
         }
 
-        // --- EnemiesInLastLevel: ---
-        [HttpDelete]
-        [ActionName("EnemyInLastLevelDeletor")]
-        public IActionResult EnemyInLastLevelDeletor([FromBody] int idx)
-        {
-            EnemiesInLastLevelDB enemiesInLastLevelDB = new EnemiesInLastLevelDB();
-            enemiesInLastLevelDB.Delete(new EnemyInLastLevel { Idx = idx });
-            int changedRecords = enemiesInLastLevelDB.SaveChanges();
-
-            if (changedRecords == 0) // Resource not found or already deleted
-            {
-                // Throw ExpandedException without SQL context. The middleware will catch this
-                // and return a 404 Not Found (based on Case A logic in the handler).
-                throw new ExpandedException($"Not Found: EnemyInLastLevel with idx = {idx} was not found or has already been deleted.");
-            }
-
-            return StatusCode(200, $"OK: Record for EnemyInLastLevel Idx=" +
-                $"{idx} was removed.\n" +
-                $" Records changed: {changedRecords}");
-        }
-
         // --- GROUPS: ---
         [HttpDelete]
         [ActionName("GroupDeletor")]
