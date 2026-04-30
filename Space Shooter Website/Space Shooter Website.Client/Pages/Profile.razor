@@ -304,12 +304,11 @@
                 personalBestScore = playerRuns.OrderByDescending(r => r.CurrentScore).FirstOrDefault();
                 personalBestLevel = playerRuns.OrderByDescending(r => r.CurrentLevel).FirstOrDefault();
                 totalRuns = playerRuns.Count;
-                avgLevel = Math.Round(playerRuns.Average(r => r.CurrentLevel), 1);
+                avgLevel = Math.Round(playerRuns.Average(r => r.CurrentLevel), 2);
                 totalShieldHealth = playerRuns.Sum(r => r.CurrentShieldLevel);
                 maxBlastersReached = playerRuns.Max(r => r.CurrentBlasterCount);
-                totalRuns = allRuns.Count;
-                maxShieldReached = allRuns.Max(r => r.CurrentShieldLevel);
-                totalBlasterCount = allRuns.Sum(r => r.CurrentBlasterCount);
+                maxShieldReached = playerRuns.Max(r => r.CurrentShieldLevel);
+                totalBlasterCount = playerRuns.Sum(r => r.CurrentBlasterCount);
 
 
                 activeRuns = new RunsInfoTable(playerRuns
@@ -333,12 +332,14 @@
         if (run != null)
         {
             // 1. Prepare the session with the saved run data
-            session.SelectedLevel = run.CurrentLevel;
-            session.CurrentRun = run;
             session.IsContuiningRun = true;
 
             // 2. checking for Overwrite
             await session.HandlePotentialOverwrite(api as ApiService,JS);
+
+            //updates solving overwrite by DB save.
+            session.SelectedLevel = run.CurrentLevel;
+            session.CurrentRun = run;
 
             // 3. Delete the old DB entry because we are moving it into active memory
             // It will be re-saved when they finish or exit.

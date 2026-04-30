@@ -222,7 +222,7 @@ class Game_scene extends Phaser.Scene {
         //Laser sprite
         Lasers = this.physics.add.group({
             defaultKey: 'player laser',
-            maxSize: 80
+            maxSize: 100
         });
 
         // Enemy group
@@ -235,7 +235,7 @@ class Game_scene extends Phaser.Scene {
         // Enemy laser group
         enemyLasers = this.physics.add.group({
             defaultKey: 'enemy laser',
-            maxSize: 80
+            maxSize: 100
         });
 
         //power_ups
@@ -328,7 +328,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[0];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('BoardWatcherShip', bossStats[5]);
@@ -350,7 +350,7 @@ class Game_scene extends Phaser.Scene {
                 maxEnemies = 1; // Only the boss spawns
 
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('PhoneBoyShip', bossStats[10]);
@@ -371,7 +371,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[2];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('StaircaseShip', bossStats[15]);
@@ -392,7 +392,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[3];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('TheGangShip', bossStats[20]);
@@ -413,7 +413,7 @@ class Game_scene extends Phaser.Scene {
                 level_drop_rate = rates[4];
                 maxEnemies = 1; // Only the boss spawns
                 this.time.addEvent({
-                    delay: 100,
+                    delay: 1000,
                     callback: function () {
                         if (counter_ended && !bossSpawned) {
                             spawnBoss('WorldWatcherShip', bossStats[25]);
@@ -451,7 +451,11 @@ class Game_scene extends Phaser.Scene {
                 is_endless = true;
                 this.time.addEvent({
                     delay: 1000,
-                    callback: spawn_enemy,
+                    callback: function () {
+                        if (counter_ended) {
+                            spawn_enemy();
+                        }
+                    },
                     callbackScope: this,
                     loop: true
                 });
@@ -923,23 +927,24 @@ function spawnBoss(bossTexture, stats) {
 }
 
 function distributeLetters(sequence, maxLevel) {
-    hiddenLettersMap = {}; // Clear previous
+    hiddenLettersMap = {};
     let availableLevels = [];
 
-    // Create a list of possible levels (1, 2, 3, 4) / (11,12,13,14) or others
-    for (let i = maxLevel-4; i < maxLevel; i++) {
+    // 1. Create the list of possible levels
+    for (let i = maxLevel - 4; i < maxLevel; i++) {
         availableLevels.push(i);
     }
 
-    // Shuffle the levels array
+    // Shuffle RANDOMLY the list
     Phaser.Utils.Array.Shuffle(availableLevels);
 
-    // Assign each letter in the sequence to one of the shuffled levels
+    //sort the list asc (11,13, 14 ,...)
+    let selectedLevels = availableLevels.slice(0, sequence.length).sort((a, b) => a - b);
+
+    // 4. Assign letters in order to the sorted levels
     sequence.forEach((letter, index) => {
-        if (availableLevels[index]) {
-            let assignedLevel = availableLevels[index];
-            hiddenLettersMap[assignedLevel] = letter;
-        }
+        let assignedLevel = selectedLevels[index];
+        hiddenLettersMap[assignedLevel] = letter;
     });
 }
 
@@ -1495,7 +1500,12 @@ function fireSplittingShot() {
 }
 
 function spawnFragments(x, y) {
-    const angles = [-30, -15, 0, 15, 30]; // Degrees relative to "up"
+    const startAngle = -((player_lasers_count - 1) * 5) / 2; // max -angle to start from
+
+    const angles = Array.from(
+        { length: player_lasers_count },
+        (_, i) => startAngle + (i * 5)
+    );//Degrees relative to "up" ([-5, 0, 5])
 
     angles.forEach(angle => {
         let fragment = splitFragments.get(x, y);
@@ -1575,19 +1585,21 @@ function shield_update() {
 }
 
 function update_shield_pos() {
-    const left_limit = size[0] - 80;
-    const low_limit = size[1] - 90;
+    const left_limit = size[0] * 0.95;
+    const low_limit = size[1] * 0.90;
     if (player.x >= left_limit) {
         player.x = left_limit;
     }
-    else if (player.x <= 80) {//right limit
-        player.x = 80;
+    //right limit
+    else if (player.x <= size[0] * 0.05) {
+        player.x = size[0] * 0.05;
     }
     if (player.y >= low_limit) {
         player.y = low_limit;
     }
-    else if (player.y <= 58) {//high limit
-        player.y = 58;
+    //high limit
+    else if (player.y <= size[1] * 0.1) {
+        player.y = size[1] * 0.1;
     }
     shield.x = player.x;
     shield.y = player.y;

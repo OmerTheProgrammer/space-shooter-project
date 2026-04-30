@@ -137,14 +137,36 @@ namespace Space_Shooter_Website.Client.Support_Classes
         public async Task SendRunToServer(ApiService api, IJSRuntime JS)
         {
             // We only sync if there is a run and a logged-in user
-            if (CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0) && CurrentUser != null)//the run was saved once at least
+            if (CurrentRun.RunStopDate != new DateTime(1753, 1, 1, 12, 0, 0) && CurrentUser is Player currentP)//the run was saved once at least
             {
                 try
                 {
                     // This is where we actually hit the DB
-                    var result = await api.InsertRunInfo(CurrentRun);
-                    await JS.InvokeVoidAsync("ShowAlert", "Saved Run to Command Center!");
-                    Console.WriteLine("Synced Run to Command Center. Run ID: " + CurrentRun.Idx);
+                    var runResult = await api.InsertRunInfo(CurrentRun);
+
+                    if (runResult.error == null)
+                    {
+                        await JS.InvokeVoidAsync("ShowAlert", "Saved Run to Command Center!");
+
+                        // Update Player Lifetime score
+                        currentP.TotalScore += CurrentRun.CurrentScore;
+
+                        // Only update MaxLevel if the current run reached a higher sector
+                        currentP.MaxLevel = Math.Max(currentP.MaxLevel, CurrentRun.CurrentLevel);
+
+                        // 3. Push the updated Player profile to the DB
+                        var playerResult = await api.UpdatePlayer(
+                            PlayerDTO.FromEntity(currentP, dto => {
+                                dto.TotalScore = currentP.TotalScore;
+                                dto.MaxLevel = currentP.MaxLevel;
+                            })
+                        );
+
+                        if (playerResult.error == null)
+                        {
+                            Console.WriteLine("ShowAlert", "Mission Debrief Complete: Pilot Stats Updated!");
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -163,8 +185,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
             }
             else
             {
-                await JS.InvokeVoidAsync("ShowAlert", "No current run to save!");
-                Console.WriteLine("Sync Failed: no current run or player isn't logged in.");
+                Console.WriteLine("No current run or player isn't logged in.");
             }
         }
 
@@ -175,6 +196,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 CurrentRun.RunStopDate = DateTime.Now;
                 CurrentRun.IsRunOver = gameover; // 'gameover' comes from JS (t = died, f = in level or end of level)
                 CurrentRun.Player = CurrentUser as Player;
+
 
                 // This is strictly local. No API calls here.
                 Console.WriteLine($"Local stats updated. Mission status: {(gameover ? "FAILED" : "SUCCESS")}");
@@ -190,7 +212,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 // Calculate time since the last recorded stop
                 TimeSpan runDuration = DateTime.Now - CurrentRun.RunStopDate;
 
-                if (runDuration.TotalMinutes < 1)
+                if (runDuration.TotalSeconds < 135)
                 {
                     bool wantToSave = await JS.InvokeAsync<bool>("confirm",
                         "This run was updated very recently. Save current progress to database before continuing?");
