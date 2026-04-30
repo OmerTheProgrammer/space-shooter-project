@@ -24,17 +24,6 @@ namespace Server_Manager___API.Controllers
         }
 
         [HttpPost]
-        [ActionName("EnemiesInLastLevelInsertor")]
-        public IActionResult InsertEnemyInLastLevel([FromBody] EnemyInLastLevel enemy)
-        {
-            EnemiesInLastLevelDB enemyDB = new EnemiesInLastLevelDB();
-            enemyDB.Insert(enemy);
-            int changedRecords = enemyDB.SaveChanges();
-            // 200 - OK: 
-            return StatusCode(200, changedRecords);
-        }
-
-        [HttpPost]
         [ActionName("GroupsInsertor")]
         public IActionResult InsertUser([FromBody] Model.Entitys.Group group)
         {
