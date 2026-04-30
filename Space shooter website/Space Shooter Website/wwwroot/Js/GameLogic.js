@@ -14,11 +14,11 @@ let is_music_on, is_sound_on, level, paused = false;
 
 const levelRewards = {
     5: { img: 'Assets/Game Elements/Images/EasterEggs/BoardWatcher.jpg', sequence: ['B', 'E'] },
-    10: { img: 'Assets/Game Elements/Images/EasterEggs/PhoneBoy.jpg', sequence: ['N', 'O'] },
+    10: { img: 'Assets/Game Elements/Images/EasterEggs/PhoneBoy.jpg', sequence: ['N', 'L'] },
     15: { img: 'Assets/Game Elements/Images/EasterEggs/Staircase.jpg', sequence: ['W', 'H'] },
-    20: { img: 'Assets/Game Elements/Images/EasterEggs/TheGang.jpg', sequence: ['D', 'I'] },
-    25: { img: 'Assets/Game Elements/Images/EasterEggs/WorldWatcher.jpg', sequence: ['Y', 'A'] },
-    30: { img: 'Assets/Game Elements/Images/EasterEggs/LongBoy.jpg', sequence: ['A', 'R'] }
+    20: { img: 'Assets/Game Elements/Images/EasterEggs/TheGang.jpg', sequence: ['D', 'N'] },
+    25: { img: 'Assets/Game Elements/Images/EasterEggs/WorldWatcher.jpg', sequence: ['Y', 'S'] },
+    30: { img: 'Assets/Game Elements/Images/EasterEggs/LongBoy.jpg', sequence: ['A', 'H'] }
 };
 let currentRewardImage = '', currentKeyStep = 0;
 let hiddenLettersMap = {};
@@ -253,7 +253,7 @@ class Game_scene extends Phaser.Scene {
         //spliting laser Fragment
         splitFragments = this.physics.add.group({
             defaultKey: 'player split laser frag',
-            maxSize: 50
+            maxSize: 120
         });
 
         shield = this.physics.add.sprite(player.x, player.y, 'full shield');
@@ -879,7 +879,11 @@ function collectPowerUp(sprite, powerUp) {
                 }
             } else if (powerUp.texture.key === 'powerUp ' + power_up_types[4]) {
                 score += 720;
-                IsSplitShot = true;
+                if (IsSplitShot) {
+                    player_lasers_count += 1;
+                } else {
+                    IsSplitShot = true;
+                }
             }
             powerUp.coldown = scenes[0].time.now + 1500;
         }
@@ -1500,11 +1504,13 @@ function fireSplittingShot() {
 }
 
 function spawnFragments(x, y) {
-    const startAngle = -((player_lasers_count - 1) * 5) / 2; // max -angle to start from
+    let projectileCount = (player_lasers_count * 2);
+    const step = 5;
+    const startAngle = -((projectileCount - 1) * step) / 2;// max -angle to start from
 
     const angles = Array.from(
-        { length: player_lasers_count },
-        (_, i) => startAngle + (i * 5)
+        { length: projectileCount },
+        (_, i) => startAngle + (i * step)
     );//Degrees relative to "up" ([-5, 0, 5])
 
     angles.forEach(angle => {
