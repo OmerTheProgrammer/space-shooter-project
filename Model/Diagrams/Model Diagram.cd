@@ -15,22 +15,15 @@
     </TypeIdentifier>
     <Lollipop Orientation="Left" Position="0.205" />
   </Class>
-  <Class Name="Model.Data_Transfer_Objects.EnemyInLastLevelDTO" Collapsed="true">
-    <Position X="3" Y="3.75" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAAEAAAAAASAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data Transfer Objects\EnemyInLastLevelDTO.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Model.Data_Transfer_Objects.GroupDTO" Collapsed="true">
-    <Position X="1.25" Y="4.75" Width="1.5" />
+    <Position X="1" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgEAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data Transfer Objects\GroupDTO.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Data_Transfer_Objects.PlayerAndGroupDTO" Collapsed="true">
-    <Position X="0.5" Y="5.75" Width="1.75" />
+    <Position X="3" Y="3.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Data Transfer Objects\PlayerAndGroupDto.cs</FileName>
@@ -51,7 +44,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Data_Transfer_Objects.RequestDataDTO" Collapsed="true">
-    <Position X="3" Y="4.75" Width="1.5" />
+    <Position X="3" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAEAAAAEAAAAAAAgAAAAAAAAAAAgAA=</HashCode>
       <FileName>Data Transfer Objects\RequestingDataDto.cs</FileName>
@@ -79,7 +72,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Entitys.Admin" Collapsed="true">
-    <Position X="7.25" Y="2.5" Width="1.25" />
+    <Position X="5.75" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
       <FileName>Entitys\Admin.cs</FileName>
@@ -92,22 +85,15 @@
       <FileName>Entitys\BaseEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Model.Entitys.EnemyInLastLevel" Collapsed="true">
-    <Position X="4.25" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAAEAAAAAASAAAAEgAAAgAAAAAAAAAA=</HashCode>
-      <FileName>Entitys\EnemyInLastLevel.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Model.Entitys.Group" Collapsed="true">
-    <Position X="9.75" Y="1.5" Width="1.5" />
+    <Position X="8.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgEAAAIAAQAAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entitys\Group.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Entitys.Player" Collapsed="true">
-    <Position X="9" Y="2.5" Width="1.25" />
+    <Position X="7.5" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>ABAAIAAAAAAAAAAEAAAAAAAAAAAIAAAACAAAQAAQAGA=</HashCode>
       <FileName>Entitys\Player.cs</FileName>
@@ -128,93 +114,86 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Entitys.RequestData" Collapsed="true">
-    <Position X="6" Y="1.5" Width="1.5" />
+    <Position X="4.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AASAEAAEAAAAAAAEAAAAEACAAAAAgAAAAAAAAAAAgAA=</HashCode>
       <FileName>Entitys\RequestData.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Entitys.RunInfo" Collapsed="true">
-    <Position X="11.5" Y="1.5" Width="1.25" />
+    <Position X="10.25" Y="1.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>ACAAAIAgAAAAAAwEAIAMAICAAAAEAAABBQAAAQEAAAA=</HashCode>
       <FileName>Entitys\RunInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Entitys.User" Collapsed="true">
-    <Position X="8" Y="1.5" Width="1.5" />
+    <Position X="6.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAACAAAAAkAQAAAAkAAAAIAAACAAAAAgAAAgA=</HashCode>
       <FileName>Entitys\User.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Tables.AdminsTable" Collapsed="true">
-    <Position X="13.25" Y="5.5" Width="1.5" />
+    <Position X="12.75" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\AdminsTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Tables.PlayersAndGroupsTable" Collapsed="true">
-    <Position X="13.5" Y="4.5" Width="2" />
+    <Position X="13.5" Y="4" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\PlayersAndGroupsTable.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Model.Tables.EnemiesInLastLevelTable" Collapsed="true">
-    <Position X="13.25" Y="3.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Tables\EnemiesInLastLevelTable.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Model.Tables.GroupsTable" Collapsed="true">
-    <Position X="11.5" Y="3.5" Width="1.25" />
+    <Position X="10.75" Y="2.75" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\GroupsTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Tables.PlayersTable" Collapsed="true">
-    <Position X="11.5" Y="5.5" Width="1.25" />
+    <Position X="10.5" Y="5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\PlayersTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Tables.ProfileEditRequestsTable" Collapsed="true">
-    <Position X="13.25" Y="6.25" Width="2" />
+    <Position X="12.5" Y="6.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\ProfileEditRequestsTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Tables.RequestsDataTable" Collapsed="true">
-    <Position X="9.5" Y="3.5" Width="1.75" />
+    <Position X="12.5" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\RequestsDataTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Tables.RunsInfoTable" Collapsed="true">
-    <Position X="11.25" Y="6.25" Width="1.5" />
+    <Position X="10.5" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\RunsInfoTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Model.Tables.UsersTable" Collapsed="true">
-    <Position X="11.5" Y="4.5" Width="1.25" />
+    <Position X="10.75" Y="4" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tables\UsersTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="System.Collections.Generic.List&lt;T&gt;" Collapsed="true">
-    <Position X="12.25" Y="2.25" Width="1.5" />
+    <Position X="11.5" Y="0.5" Width="1.5" />
     <TypeIdentifier />
-    <Lollipop Position="0.76" />
+    <Lollipop Orientation="Right" Position="0.121" />
   </Class>
   <Interface Name="Model.Data_Transfer_Objects.IBaseDTO" Collapsed="true">
     <Position X="0.5" Y="2.75" Width="1.5" />
@@ -223,15 +202,8 @@
       <FileName>Data Transfer Objects\IBaseDTO.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="Model.Entitys.Enemy" Collapsed="true">
-    <Position X="2.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAQAAAAAAEAAAAAAAAAAAAAEAAAAAAA=</HashCode>
-      <FileName>Entitys\EnemyInLastLevel.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Enum Name="Model.Entitys.Status" Collapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Position X="2.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAACAAQAAAAAgAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
       <FileName>Entitys\ProfileEditRequest.cs</FileName>

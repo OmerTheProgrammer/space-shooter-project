@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Server_Manager___API.ExceptionHandler" Collapsed="true">
-    <Position X="10.75" Y="2.75" Width="1.5" />
+    <Position X="10.75" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAIAAAAAAwAAAAAAAAAAA=</HashCode>
       <FileName>ExceptionHandler.cs</FileName>
@@ -10,35 +10,35 @@
   <Class Name="Server_Manager___API.Controllers.DeleteController" Collapsed="true">
     <Position X="2.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IAAAAAAAAABAAAAAQAABAAQBAAAAIAAAAAAAAAgAAAE=</HashCode>
+      <HashCode>AAAAAAAAAABAAAAAQAABAAQBAAAAIAAAAAAAAAgAAAE=</HashCode>
       <FileName>Controllers\DeleteController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Server_Manager___API.Controllers.InsertController" Collapsed="true">
     <Position X="0.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAABACAAAAAAAAAEAAIAAAAAAAQAAAIAAAQE=</HashCode>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAEAAIAAAAAAAQAAAIAAAQE=</HashCode>
       <FileName>Controllers\InsertController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Server_Manager___API.Controllers.SelectAllController" Collapsed="true">
     <Position X="4.5" Y="2.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AgAAAAIAEEAAAAAAASAAAkAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <HashCode>AgAAAAIAAEAAAAAAASAAAkAAAAAAAAAAAABAAAAAAAA=</HashCode>
       <FileName>Controllers\SelectAllController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Server_Manager___API.Controllers.SelectByIdxController" Collapsed="true">
     <Position X="6.75" Y="2.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>QAAAAAEACAAQAACAAAAAAAAgAAAAQCAAAAAAAAAAAAE=</HashCode>
+      <HashCode>QAAAAAEACAAQAACAAAAAAAAgAAAAACAAAAAAAAAAAAE=</HashCode>
       <FileName>Controllers\SelectByIdxController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Server_Manager___API.Controllers.UpdateController" Collapsed="true">
     <Position X="8.75" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAQABAAAAAAAAAAABAgAEAQABAAQQEAAAgCUAAAA=</HashCode>
+      <HashCode>AAAAAQABAAAAAAAAAAABAgAEAQABAAQQEAAAgAUAAAA=</HashCode>
       <FileName>Controllers\UpdateController.cs</FileName>
     </TypeIdentifier>
   </Class>

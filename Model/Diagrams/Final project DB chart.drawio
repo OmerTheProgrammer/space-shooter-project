@@ -1,6 +1,6 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36">
   <diagram name="Page-1" id="efa7a0a1-bf9b-a30e-e6df-94a7791c09e9">
-    <mxGraphModel dx="1412" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1400" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -192,24 +192,6 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="nSvyFsM4M0dJGcgWFFCD-5" edge="1" parent="1" source="o9wDqlUaZJ_jCrZrv60k-22" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startFill=0;endArrow=none;" target="nSvyFsM4M0dJGcgWFFCD-3" value="1:N">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="U_qpH3dD32ImaQ0ODLjF-3" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="EnemiesInLastLevel" vertex="1">
-          <mxGeometry height="146" width="220" x="920" y="150" as="geometry" />
-        </mxCell>
-        <mxCell id="U_qpH3dD32ImaQ0ODLjF-4" parent="U_qpH3dD32ImaQ0ODLjF-3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="Idx: auto number" vertex="1">
-          <mxGeometry height="26" width="220" y="26" as="geometry" />
-        </mxCell>
-        <mxCell id="U_qpH3dD32ImaQ0ODLjF-5" parent="U_qpH3dD32ImaQ0ODLjF-3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="RunInfoIdx: int" vertex="1">
-          <mxGeometry height="26" width="220" y="52" as="geometry" />
-        </mxCell>
-        <mxCell id="U_qpH3dD32ImaQ0ODLjF-6" parent="U_qpH3dD32ImaQ0ODLjF-3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="Name : Enemy0=SpaceShip, 1=Destroyer, 2=MiniBoss, 3=Boss)" vertex="1">
-          <mxGeometry height="42" width="220" y="78" as="geometry" />
-        </mxCell>
-        <mxCell id="U_qpH3dD32ImaQ0ODLjF-9" parent="U_qpH3dD32ImaQ0ODLjF-3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="Amount: int" vertex="1">
-          <mxGeometry height="26" width="220" y="120" as="geometry" />
-        </mxCell>
-        <mxCell id="U_qpH3dD32ImaQ0ODLjF-8" edge="1" parent="1" source="o9wDqlUaZJ_jCrZrv60k-27" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startFill=0;endArrow=none;" target="U_qpH3dD32ImaQ0ODLjF-5" value="N:1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
