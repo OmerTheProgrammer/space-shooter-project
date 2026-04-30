@@ -223,12 +223,6 @@
                             </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link @(activeTab == "enemiesInLastLevel" ? "active" : "")"
-                                    @onclick='() => SetTab("enemiesInLastLevel")'>
-                                EnemiesInLastLevel
-                            </button>
-                        </li>
-                        <li class="nav-item">
                             <button class="nav-link @(activeTab == "profileEditRequests" ? "active" : "")"
                                     @onclick='() => SetTab("profileEditRequests")'>
                                 ProfileEditRequests
@@ -915,16 +909,6 @@
                 Delete = id => api.DeletePlayerAndGroup(id),
                 Insert = e => api.InsertPlayerAndGroup((PlayerAndGroup)e),
                 Update = dto => api.UpdatePlayerAndGroup((PlayerAndGroupDTO)dto)
-            },
-            ["enemiesInLastLevel"] = new()
-            {
-                EntityType = typeof(EnemyInLastLevel),
-                DtoType = typeof(EnemyInLastLevelDTO),
-                GetAll = async () => (await api.GetAllEnemiesInLastLevel()).Cast<object>(),
-                GetById = async id => await api.GetEnemyInLastLevelByIdx(id),
-                Delete = id => api.DeleteEnemyInLastLevel(id),
-                Insert = e => api.InsertEnemyInLastLevel((EnemyInLastLevel)e),
-                Update = dto => api.UpdateEnemyInLastLevel((EnemyInLastLevelDTO)dto)
             },
             ["profileEditRequests"] = new()
             {

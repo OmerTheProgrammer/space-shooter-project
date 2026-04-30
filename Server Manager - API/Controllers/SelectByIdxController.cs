@@ -25,15 +25,6 @@ namespace Server_Manager___API.Controllers
             return StatusCode(200, result);
         }
 
-        // --- ENEMIES IN LAST LEVEL ---
-        [HttpPost]
-        [ActionName("EnemiesInLastLevelSelectorByIdx")]
-        public IActionResult SelectEnemyInLastLevelByIdx([FromBody] int Idx)
-        {
-            EnemyInLastLevel result = EnemiesInLastLevelDB.SelectByIdx(Idx);
-            return StatusCode(200, result);
-        }
-
         // --- GROUPS ---
         [HttpPost]
         [ActionName("GroupsSelectorByIdx")]

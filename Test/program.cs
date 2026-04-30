@@ -289,43 +289,6 @@ namespace Test
             //Console.WriteLine();
             #endregion
 
-            #region EnemiesInLastLevel
-            //EnemiesInLastLevelDB EnemyInLastLevelDB = new EnemiesInLastLevelDB();
-            //EnemiesInLastLevelTable et = EnemyInLastLevelDB.SelectAll();
-            //Console.WriteLine("EnemiesInLastLevel: ");
-            //foreach (var item in et)
-            //{
-            //    Console.WriteLine(item);
-            //}
-            //Console.WriteLine();
-
-            //EnemyInLastLevel EnemyInLastLevel = new EnemyInLastLevel()
-            //{
-            //    Name = Enemy.space_ship,
-            //    Amount = 10,
-            //    RunInfo = new RunInfo { Idx = 1 }
-            //};
-            //EnemyInLastLevelDB.Insert(EnemyInLastLevel);
-            //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            //et = EnemyInLastLevelDB.SelectAll();
-            //Console.WriteLine(et.Last());
-            //Console.WriteLine();
-
-            //EnemyInLastLevel = et.Last();
-            //EnemyInLastLevel.Amount -= 5;
-            //EnemyInLastLevelDB.Update(EnemyInLastLevel);
-            //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            //et = EnemyInLastLevelDB.SelectAll();
-            //Console.WriteLine(et.Last());
-            //Console.WriteLine();
-
-            //EnemyInLastLevelDB.Delete(et.Last());
-            //Console.WriteLine($"{EnemyInLastLevelDB.SaveChanges()} affected rows.");
-            //et = EnemyInLastLevelDB.SelectAll();
-            //Console.WriteLine(et.Last());
-            //Console.WriteLine();
-            #endregion
-
             #region PlayersAndGroups
             //PlayersAndGroupsDB PlayerAndGroupDB = new PlayersAndGroupsDB();
             //PlayersAndGroupsTable PlayerAndGTbl = PlayerAndGroupDB.SelectAll();
@@ -426,79 +389,6 @@ namespace Test
 
             //// 10. Write last item (the updated Admin)
             //Console.WriteLine(admins.Last() + "\n");
-            #endregion
-
-            #region EnemiesInLastLevel:
-            ////1.Get All(Initial list)
-            //EnemiesInLastLevelTable enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
-
-            ////2.Write initial list
-            //foreach (var item in enemiesInLastLevel)
-            //{
-            //    Console.WriteLine(item + "\n");
-            //}
-
-            ////3.Expected found message(Idx 2 exists)
-            //Console.WriteLine(await api.GetEnemyInLastLevelByIdx(2) + "\n");
-
-            ////4.Expected not found message(Idx 12 does not exist)
-            //EnemyInLastLevel notFoundEnemyInLastLevelResult = await api.GetEnemyInLastLevelByIdx(12);
-            //Console.WriteLine($"GetEnemyInLastLevelByIdx(12) returned: " +
-            //    $"{(notFoundEnemyInLastLevelResult == null ? "NULL (Error)" :
-            //    notFoundEnemyInLastLevelResult.ToString())}\n");
-
-            //linesChanged = 0;
-            ////5.Insert new EnemyInLastLevel
-            //linesChanged = await api.InsertEnemyInLastLevel(
-            //    new EnemyInLastLevel
-            //    {
-            //        Amount = 10,
-            //        RunInfo = new RunInfo
-            //        {
-            //            Idx = 1,
-            //            Player = new Player
-            //            {
-            //                Idx = 11
-            //            }
-            //        }
-            //    }
-            //);
-            //Console.WriteLine($"InsertEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
-
-            ////6.Get All(Updated list)
-            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
-
-            ////7.Write last item(the newly inserted EnemyInLastLevel)
-            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
-
-            ////8.Update the new EnemyInLastLevel:
-            ////find the enemyInLastLevel(that we just added)
-            //linesChanged = await api.UpdateEnemyInLastLevel(
-            //        //create DTO from entity with nulls and change only what we want
-            //        EnemyInLastLevelDTO.FromEntity(
-            //            enemiesInLastLevel.Last(), dto =>
-            //            {
-            //                //Define ALL changes, the rest is null
-            //                dto.Amount = 3;
-            //                dto.RunInfo = new RunInfoDTO
-            //                {
-            //                    Idx = 2,
-            //                };
-            //            }
-            //        )
-            //    );
-            //Console.WriteLine($"UpdateEnemiesInLastLevel Result (Rows Affected): {linesChanged}\n");
-
-            ////9.Get All(Updated list)
-            //enemiesInLastLevel = await api.GetAllEnemiesInLastLevel();
-
-            ////10.Write last item(the updated EnemyInLastLevel)
-            //Console.WriteLine(enemiesInLastLevel.Last() + "\n");
-
-            ////11.Delete the new EnemyInLastLevel
-            //linesChanged = await api.DeleteEnemyInLastLevel(enemiesInLastLevel.Last().Idx);
-            //Console.WriteLine($"DeleteEnemyInLastLevel Result " +
-            //    $"(Rows Affected): {linesChanged}\n");
             #endregion
 
             #region Groups:
@@ -845,7 +735,6 @@ namespace Test
             //users = await api.GetAllUsers();
             //Console.WriteLine($"Last User: {users.Last()}\n");
             #endregion
-
             Console.WriteLine("--- API Demo Scenario Complete ---");
         }
     }
