@@ -9,5 +9,5 @@ CREATE TABLE AdminsTbl (
     StartDate DATETIME NOT NULL,
 
     -- Define Foreign Key (Enforcing 1:1 relationship)
-    FOREIGN KEY (idx) REFERENCES UsersTbl(idx)
+    FOREIGN KEY (idx) REFERENCES UsersTbl(idx) ON DELETE CASCADE
 );

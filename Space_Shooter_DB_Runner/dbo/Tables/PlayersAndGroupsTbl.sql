@@ -3,14 +3,19 @@
 ----------------------------------------------------
 
 -- Table 4: PlayersAndGroupsTbl (Many-to-Many link between Players and Groups)
-CREATE TABLE PlayersAndGroupsTbl (
-    idx INT IDENTITY(1,1) PRIMARY KEY, -- Surrogate Key
-    PlayerIdx INT NOT NULL,
-    GroupIdx INT NOT NULL,
+CREATE TABLE [dbo].[PlayersAndGroupsTbl] (
+    [idx]       INT IDENTITY (1, 1) NOT NULL,
+    [PlayerIdx] INT NOT NULL,
+    [GroupIdx]  INT NOT NULL,
 
-    -- Define Foreign Keys
-    FOREIGN KEY (PlayerIdx) REFERENCES PlayersTbl(idx),
-    FOREIGN KEY (GroupIdx) REFERENCES GroupsTbl(idx),
+    -- Primary Key: Defines the physical order of the data
+    PRIMARY KEY CLUSTERED ([idx] ASC) WITH (FILLFACTOR = 100),
 
-    -- Enforce the rule that a player can only be in a group once (Crucial for linking tables)
-CONSTRAINT UQ_PlayerGroup_PlayerIdxAndGroupIdx UNIQUE (PlayerIdx, GroupIdx));
+    -- Unique Constraint: Prevents a player from joining the same group multiple times
+    CONSTRAINT [UQ_PlayerGroup_PlayerIdxAndGroupIdx] 
+        UNIQUE NONCLUSTERED ([PlayerIdx] ASC, [GroupIdx] ASC) WITH (FILLFACTOR = 100),
+
+    -- Foreign Keys: Maintain referential integrity with source tables
+    FOREIGN KEY ([PlayerIdx]) REFERENCES [dbo].[PlayersTbl] ([idx]),
+    FOREIGN KEY ([GroupIdx]) REFERENCES [dbo].[GroupsTbl] ([idx])
+);
