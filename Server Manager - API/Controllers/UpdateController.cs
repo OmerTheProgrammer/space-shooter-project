@@ -94,7 +94,7 @@ namespace Server_Manager___API.Controllers
             private static object? MapFullEntityToDTO(object entity, Type entityType, Type dtoType)
             {
                 var dtoInstance = Activator.CreateInstance(dtoType);
-                if (dtoInstance == null) return null;
+                if (dtoInstance == null || entity == null) return null;
 
                 PropertyInfo[] dtoFields = dtoType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 PropertyInfo[] entFields = entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
