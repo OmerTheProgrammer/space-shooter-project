@@ -408,6 +408,7 @@
                 if (result.rows > 0)
                 {
                     session.CurrentUser.Password = hashedNew; // Update local session
+                    //tells user later
                 }
                 else
                 {
@@ -447,7 +448,7 @@
                             NewValue = change.New
                         });
                     }
-                    statusMessage = "Profile request sent! Password updated.";
+                    statusMessage = "Profile request sent!";
                 }
             }
             else if (!string.IsNullOrWhiteSpace(newPassword))
