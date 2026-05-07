@@ -34,7 +34,7 @@
 @*מסך שגיאה*@
         {
             <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <i class="fa fa-exclamation-triangle-fill me-2"></i>
                 <strong>Error:</strong> @pageErrorMessage
                 <button type="button" class="btn-close" @onclick="ResetPage" aria-label="Close"></button>
             </div>
@@ -42,7 +42,7 @@
         else if (!string.IsNullOrEmpty(pageSuccessMessage))
         {
             <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
+                <i class="fa fa-check-circle-fill me-2"></i>
                 <strong>Success!</strong> @pageSuccessMessage
                 <button type="button" class="btn-close" @onclick="() => pageSuccessMessage = null"></button>
             </div>
@@ -118,7 +118,7 @@
                                         <button class="lookup-item" style="background-color:#00d4ff" @onclick="() => SelectLookupItem(item)">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <span class="text">@item.ToString()</span>
-                                                <i class="bi bi-chevron-right text-primary"></i>
+                                                <i class="fa fa-chevron-right text-primary"></i>
                                             </div>
                                         </button>
                                     }
@@ -128,7 +128,7 @@
 
                         <div class="lookup-footer">
                             <button class="btn btn-outline-danger w-100" @onclick="ReturnFromNestedLookup">
-                                <i class="bi bi-x-circle me-2"></i>Cancel Lookup
+                                <i class="fa fa-x-circle me-2"></i>Cancel Lookup
                             </button>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                 @* the fields have no input protaction!!! *@
                 <div class="NestedInsert-modal shadow-lg text-center">
                     <div class="NestedInsert-header">
-                    <h3 class="modal-title">New @(CurrentNestedType?.Name ?? "Entry")</h3>
+                    <h3 class="title">New @(CurrentNestedType?.Name ?? "Entry")</h3>
                 </div>
                     <div class="card mb-4 border-success shadow" style="max-width:94%">
                         @foreach (var prop in GetPropertiesCached(CurrentNestedType))
@@ -177,7 +177,7 @@
 
                     <div class="lookup-footer d-flex gap-2 bg-dark border-top border-warning">
                         <button class="btn btn-warning flex-grow-1 fw-bold" @onclick="UpdateEntity">
-                            <i class="bi bi-cloud-arrow-up"></i> Save Changes
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Save Changes
                         </button>
                         <button class="btn btn-outline-secondary" @onclick="() => { isEditMode = false; editData.Clear(); }">
                             Cancel
@@ -252,7 +252,10 @@
                                     <!--allow enter to submit-->
                                     <div class="input-group">
                                         <input type="number" class="form-control" @bind="targetId" />
-                                        <button type="submit" class="btn btn-primary">Go</button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search"></i>
+                                            Go
+                                        </button>
                                     </div>
                                 </EditForm>
                             </div>
@@ -711,7 +714,7 @@
         foreach (var prop in props)
         {
             // Shove existing values into the edit dictionary
-            editData[prop.Name] = prop.GetValue(SingleEntity) ?? "";
+            editData[prop.Name] = prop.GetValue(SingleEntity) ?? "None";
         }
 
         isEditMode = true;
@@ -730,13 +733,13 @@
             // Execute the registry-defined update
             var result = await config.Update(updateDto);
 
-            if (result.rows > 0)
+            if (result.rows >= 0)
             {
                 await RefreshData();
                 isEditMode = false;
                 pageSuccessMessage = "Record updated successfully!";
             }
-            else
+            else //-1 is error
             {
                 pageErrorMessage = "Update failed: " + result.error;
             }
@@ -1024,7 +1027,7 @@
     {
         if (targetId <= 0)
         {
-            pageErrorMessage = "Id less then 0 or equals, try diffrent one!";
+            pageErrorMessage = "Id less or equals then 0, try diffrent one!";
             return;
         }
         else if (!_tableRegistry.ContainsKey(activeTab))
@@ -1106,8 +1109,8 @@
             {
                 <div class="input-group">
                     <input type="@(showPassword ? "text" : "password")" class="form-control bg-dark text-white @inputBorderClass"
-                           value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "")"
-                           @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "")" />
+                           value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "None")"
+                           @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "None")" />
                     <button class="button icon" type="button" @onclick="() => showPassword = !showPassword">
                         <i class="fa @(showPassword ? "fa-eye-slash" : "fa-eye")"></i>
                     </button>
@@ -1135,7 +1138,7 @@
             {
                 <input type="date" class="form-control bg-dark text-white @inputBorderClass"
                        value="@(dataSource.TryGetValue(propName, out var dateVal) &&
-                                dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : "")"
+                                dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : "None")"
                        @onchange="@(e => {
                        if (DateTime.TryParse(e.Value?.ToString(), out var result))
                            dataSource[propName] = result;
@@ -1146,22 +1149,25 @@
                 @* This is for nested entities (e.g., Player inside a RunInfo) *@
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-info btn-sm" @onclick='() => OpenLookup(propType, propName)'>
-                        <i class="bi bi-search"></i> Select Existing
+                        <i class="fa fa-search"></i> Select Existing
                     </button>
                     <button class="btn btn-outline-success btn-sm" @onclick='() => OpenNestedInsert(propType, propName)'>
-                        <i class="bi bi-plus-lg"></i> Create New
+                        <i class="fa fa-plus-lg"></i> Create New
                     </button>
                     @if (dataSource.TryGetValue(propName, out var val))
                     {
                         <div class="mt-2 p-2 rounded bg-dark border border-success shadow-sm">
+                        @if(val != "None" && val != null)
+                        {
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="badge bg-success">
-                                    <i class="bi bi-link-45deg"></i> Linked!
+                                    <i class="fa fa-link-45deg"></i> Linked!
                                 </span>
                                 <button class="btn btn-sm btn-outline-danger border-0" @onclick="() => dataSource.Remove(propName)">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>                                
                             </div>
+                        }
                             <div class="text-info small fw-mono" style="word-break: break-all; font-family: 'Courier New', monospace; line-height: 1.2;">
                                 @GetFullPreview(val)
                             </div>
@@ -1173,8 +1179,8 @@
             {
                 <input type="@(propType == typeof(DateTime) ? "date" : "text")"
                         class="form-control bg-dark text-white @inputBorderClass"
-                       value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "")"
-                       @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "")" />
+                        value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "None")"
+                        @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "None")" />
             }
         </div>
     };
