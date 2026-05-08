@@ -100,7 +100,7 @@ namespace Client_Manager___API
 
         #region select all:
         private async Task<T> GetTable<T>(string endpoint)
-            where T : List<BaseEntity>
+            where T : class
         {
             try
             {
