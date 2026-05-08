@@ -204,7 +204,6 @@ namespace ViewModel.DBs
                 {
                     command.Parameters.Clear();
                     entity.CreateSql(entity.Entity, command);
-
                     records_affected += command.ExecuteNonQuery();
                 }
 
