@@ -100,7 +100,7 @@ namespace Client_Manager___API
 
         #region select all:
         private async Task<T> GetTable<T>(string endpoint)
-            where T : new()
+            where T : BaseEntity
         {
             try
             {
@@ -113,7 +113,7 @@ namespace Client_Manager___API
                 //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
-                return new T();
+                return null;
             }
         }
 
