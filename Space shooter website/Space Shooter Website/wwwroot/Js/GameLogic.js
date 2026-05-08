@@ -5,11 +5,23 @@ let killed = 0, maxEnemies = 0, counter_running = false, shield_life_decrese_cou
 let music_isnt_active = true, sound_isnt_active = true, level_drop_rate = 60;
 let win = false, tico = false, is_endless = false, shield_next_level_was_hidden = false;
 let gameover = false, invulnerable = false, og_x = size[0] / 2, og_y = size[1] - 100;
-let power_up_types, shield_life, player_lasers_count, shield_max_life, health, score, IsSplitShot = false;
+let power_up_types, shield_life, player_lasers_count, shield_max_life, health, score;
+let IsSplitShot = false, specialEnemyKilled = false, bossSpawned = false;
 let score_coldown = 0, ending_coldown = 0, whoosh_coldown = 0, hide_setting_coldown = 0;
-let cursors, player, Lasers, enemies, enemyLasers, splittingMainLasers, splitFragments, power_ups, shield, explosionSprite;
-let gameover_text, tico_text, win_text, bg_music;
+let cursors, player, Lasers, enemies, enemyLasers, splittingMainLasers, splitFragments, power_ups, shield, explosionSprite, boss;
+let gameover_text, tico_text, win_text, sequenceHintText, bg_music;
 let is_music_on, is_sound_on, level, paused = false;
+
+const levelRewards = {
+    5: { img: 'Assets/Game Elements/Images/EasterEggs/BoardWatcher.jpg', sequence: ['B', 'E'] },
+    10: { img: 'Assets/Game Elements/Images/EasterEggs/PhoneBoy.jpg', sequence: ['N', 'L'] },
+    15: { img: 'Assets/Game Elements/Images/EasterEggs/Staircase.jpg', sequence: ['W', 'H'] },
+    20: { img: 'Assets/Game Elements/Images/EasterEggs/TheGang.jpg', sequence: ['D', 'N'] },
+    25: { img: 'Assets/Game Elements/Images/EasterEggs/WorldWatcher.jpg', sequence: ['Y', 'S'] },
+    30: { img: 'Assets/Game Elements/Images/EasterEggs/LongBoy.jpg', sequence: ['A', 'H'] }
+};
+let currentRewardImage = '', currentKeyStep = 0;
+let hiddenLettersMap = {};
 
 let isInternalNavigation = false;
 window.markAsInternalNav = () => {
@@ -97,7 +109,7 @@ class Counter {
             this.countdownEvent.paused = true;
             return;
         }
-        
+
         this.countdownEvent.paused = false;
         this.timeText.setText(this.remainingTime);
         this.remainingTime -= 1;
@@ -133,8 +145,15 @@ class Game_scene extends Phaser.Scene {
         this.load.audio('taking damage', '/Assets/Game Elements/Sounds/sfx_twoTone.ogg');
         this.load.audio('whoosh', '/Assets/Game Elements/Sounds/Whoosh.mp3');
         //main sprites  
-        this.load.image('player', '/Assets/Game Elements/Images/player.png');
-        this.load.image('enemy', '/Assets/Game Elements/Images/enemyShip.png');
+        this.load.image('player', '/Assets/Game Elements/Images/SpaceShips/player.png');
+        this.load.image('enemy', '/Assets/Game Elements/Images/SpaceShips/enemyShip.png');
+        //bosses
+        this.load.image('BoardWatcherShip', '/Assets/Game Elements/Images/SpaceShips/BoardWatcherShip.png');
+        this.load.image('PhoneBoyShip', '/Assets/Game Elements/Images/SpaceShips/PhoneBoyShip.png');
+        this.load.image('StaircaseShip', '/Assets/Game Elements/Images/SpaceShips/StaircaseShip.png');
+        this.load.image('TheGangShip', '/Assets/Game Elements/Images/SpaceShips/TheGangShip.png');
+        this.load.image('WorldWatcherShip', '/Assets/Game Elements/Images/SpaceShips/WorldWatcherShip.png');
+        this.load.image('LongBoyShip', '/Assets/Game Elements/Images/SpaceShips/LongBoyShip.png');
         //lasers
         this.load.image('player laser', '/Assets/Game Elements/Images/Lasers/laserRed.png');
         this.load.image('laser split main', 'Assets/Game Elements/Images/Lasers/Blue/laserBlueThick.png');
@@ -168,6 +187,17 @@ class Game_scene extends Phaser.Scene {
                 hideOnComplete: true
             });
         }
+
+        Object.keys(levelRewards).forEach(lvl => {
+            const reward = levelRewards[lvl];
+            const key = `reward_lvl_${lvl}`;
+
+            if (reward && reward.img && !this.textures.exists(key)) {
+                this.load.image(key, reward.img);
+            } else if (!reward || !reward.img) {
+                console.warn(`Missing image path for level ${lvl}`);
+            }
+        });
     }
 
     create() {
@@ -192,7 +222,7 @@ class Game_scene extends Phaser.Scene {
         //Laser sprite
         Lasers = this.physics.add.group({
             defaultKey: 'player laser',
-            maxSize: 80
+            maxSize: 100
         });
 
         // Enemy group
@@ -205,7 +235,7 @@ class Game_scene extends Phaser.Scene {
         // Enemy laser group
         enemyLasers = this.physics.add.group({
             defaultKey: 'enemy laser',
-            maxSize: 80
+            maxSize: 100
         });
 
         //power_ups
@@ -223,7 +253,7 @@ class Game_scene extends Phaser.Scene {
         //spliting laser Fragment
         splitFragments = this.physics.add.group({
             defaultKey: 'player split laser frag',
-            maxSize: 50
+            maxSize: 120
         });
 
         shield = this.physics.add.sprite(player.x, player.y, 'full shield');
@@ -258,166 +288,162 @@ class Game_scene extends Phaser.Scene {
         });
 
         cursors = this.input.keyboard.createCursorKeys();//arrow keys, space, shift
-        const keysToAdd = ['A', 'S', 'D', 'W', 'P', 'BACKSPACE', 'ENTER', 'SHIFT'];
+        const keysToAdd = [
+            'A', 'S', 'D', 'W', 'P', 'BACKSPACE', 'ENTER', 'SHIFT',
+            'B', 'E', 'N', 'O', 'H', 'I', 'Y', 'R'
+        ];
         for (const wasdKey of keysToAdd) {
             cursors[`${wasdKey}_key`] = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[wasdKey]);
         }
         cursors.P_key.wasClicked = false;
         /*
         cursors = A_key, BACKSPACE_key, D_key, ENTER_key, P_key, S_key, W_key, down arrow,
-             left arrow, right, shift, space, up arrow, SHIFT_key
+             left arrow, right, shift, space, up arrow, SHIFT_key, 'H_key', 'O_key', 'M_key', 'T_key'
         */
 
+        sequenceHintText = this.add.text(size[0] / 2, 150, '', {
+            font: 'bold 40px Arial',
+            fill: '#3498db',
+            stroke: '#000000',
+            strokeThickness: 6
+        }).setOrigin(0.5).setVisible(false).setDepth(100);
+
         const rates = [30, 40, 50, 60, 80, 90, 95];//jumps of 5, last = endless
+        const bossStats = {
+            5: { hp: 50, speed: 200, scale: 4 },
+            10: { hp: 150, speed: 250, scale: 4.5 },
+            15: { hp: 300, speed: 300, scale: 5 },
+            20: { hp: 500, speed: 350, scale: 5.5 },
+            25: { hp: 800, speed: 400, scale: 6 },
+            30: { hp: 1200, speed: 500, scale: 7 }
+        };
+
         switch (level) {
-            case 1:
+            case 1:level_drop_rate = rates[0]; maxEnemies = 3; distributeLetters(levelRewards[5].sequence, 5); break;
+            case 2: level_drop_rate = rates[0]; maxEnemies = 5; break;
+            case 3: level_drop_rate = rates[0]; maxEnemies = 8; break;
+            case 4: level_drop_rate = rates[0]; maxEnemies = 10; break;
+
+            case 5: // BOSS LEVEL
                 level_drop_rate = rates[0];
-                maxEnemies = 3;
+                maxEnemies = 1; // Only the boss spawns
+                this.time.addEvent({
+                    delay: 1000,
+                    callback: function () {
+                        if (counter_ended && !bossSpawned) {
+                            spawnBoss('BoardWatcherShip', bossStats[5]);
+                            bossSpawned = true;
+                        }
+                    },
+                    callbackScope: this,
+                    loop: true
+                });
                 break;
 
-            case 2:
-                level_drop_rate = rates[0];
-                maxEnemies = 5;
-                break;
-
-            case 3:
-                level_drop_rate = rates[0];
-                maxEnemies = 8;
-                break;
-
-            case 4:
-                level_drop_rate = rates[0];
-                maxEnemies = 10;
-                break;
-
-            case 5:
-                level_drop_rate = rates[0];
-                maxEnemies = 3;
-                break;
-
-            case 6:
-                level_drop_rate = rates[1];
-                maxEnemies = 5;
-                break;
-
-            case 7:
-                level_drop_rate = rates[1];
-                maxEnemies = 8;
-                break;
-
-            case 8:
-                level_drop_rate = rates[1];
-                maxEnemies = 10;
-                break;
-
-            case 9:
-                level_drop_rate = rates[1];
-                maxEnemies = 3;
-                break;
+            case 6: level_drop_rate = rates[1]; maxEnemies = 4; distributeLetters(levelRewards[10].sequence, 10); break;
+            case 7: level_drop_rate = rates[1]; maxEnemies = 6; break;
+            case 8: level_drop_rate = rates[1]; maxEnemies = 9; break;
+            case 9: level_drop_rate = rates[1]; maxEnemies = 12; break;
 
             case 10:
                 level_drop_rate = rates[1];
-                maxEnemies = 5;
+                maxEnemies = 1; // Only the boss spawns
+
+                this.time.addEvent({
+                    delay: 1000,
+                    callback: function () {
+                        if (counter_ended && !bossSpawned) {
+                            spawnBoss('PhoneBoyShip', bossStats[10]);
+                            bossSpawned = true;
+                        }
+                    },
+                    callbackScope: this,
+                    loop: true
+                });
                 break;
 
-            case 11:
-                level_drop_rate = rates[2];
-                maxEnemies = 8;
-                break;
-
-            case 12:
-                level_drop_rate = rates[2];
-                maxEnemies = 10;
-                break;
-
-            case 13:
-                level_drop_rate = rates[2];
-                maxEnemies = 3;
-                break;
-
-            case 14:
-                level_drop_rate = rates[2];
-                maxEnemies = 5;
-                break;
+            case 11: level_drop_rate = rates[2]; maxEnemies = 5; distributeLetters(levelRewards[15].sequence, 15); break;
+            case 12: level_drop_rate = rates[2]; maxEnemies = 7; break;
+            case 13: level_drop_rate = rates[2]; maxEnemies = 10; break;
+            case 14: level_drop_rate = rates[2]; maxEnemies = 14; break;
 
             case 15:
                 level_drop_rate = rates[2];
-                maxEnemies = 8;
+                maxEnemies = 1; // Only the boss spawns
+                this.time.addEvent({
+                    delay: 1000,
+                    callback: function () {
+                        if (counter_ended && !bossSpawned) {
+                            spawnBoss('StaircaseShip', bossStats[15]);
+                            bossSpawned = true;
+                        }
+                    },
+                    callbackScope: this,
+                    loop: true
+                });
                 break;
 
-            case 16:
-                level_drop_rate = rates[3];
-                maxEnemies = 10;
-                break;
-
-            case 17:
-                level_drop_rate = rates[3];
-                maxEnemies = 3;
-                break;
-
-            case 18:
-                level_drop_rate = rates[3];
-                maxEnemies = 5;
-                break;
-
-            case 19:
-                level_drop_rate = rates[3];
-                maxEnemies = 8;
-                break;
+            case 16: level_drop_rate = rates[3]; maxEnemies = 6; distributeLetters(levelRewards[20].sequence, 20); break;
+            case 17: level_drop_rate = rates[3]; maxEnemies = 8; break;
+            case 18: level_drop_rate = rates[3]; maxEnemies = 10; break;
+            case 19: level_drop_rate = rates[3]; maxEnemies = 15; break;
 
             case 20:
                 level_drop_rate = rates[3];
-                maxEnemies = 10;
+                maxEnemies = 1; // Only the boss spawns
+                this.time.addEvent({
+                    delay: 1000,
+                    callback: function () {
+                        if (counter_ended && !bossSpawned) {
+                            spawnBoss('TheGangShip', bossStats[20]);
+                            bossSpawned = true;
+                        }
+                    },
+                    callbackScope: this,
+                    loop: true
+                });
                 break;
 
-            case 21:
-                level_drop_rate = rates[4];
-                maxEnemies = 8;
-                break;
-
-            case 22:
-                level_drop_rate = rates[4];
-                maxEnemies = 10;
-                break;
-
-            case 23:
-                level_drop_rate = rates[4];
-                maxEnemies = 3;
-                break;
-
-            case 24:
-                level_drop_rate = rates[4];
-                maxEnemies = 5;
-                break;
+            case 21: level_drop_rate = rates[4]; maxEnemies = 7; distributeLetters(levelRewards[25].sequence, 25); break;
+            case 22: level_drop_rate = rates[4]; maxEnemies = 9; break;
+            case 23: level_drop_rate = rates[4]; maxEnemies = 11; break;
+            case 24: level_drop_rate = rates[4]; maxEnemies = 16; break;
 
             case 25:
                 level_drop_rate = rates[4];
-                maxEnemies = 8;
+                maxEnemies = 1; // Only the boss spawns
+                this.time.addEvent({
+                    delay: 1000,
+                    callback: function () {
+                        if (counter_ended && !bossSpawned) {
+                            spawnBoss('WorldWatcherShip', bossStats[25]);
+                            bossSpawned = true;
+                        }
+                    },
+                    callbackScope: this,
+                    loop: true
+                });
                 break;
 
-            case 26:
-                level_drop_rate = rates[5];
-                maxEnemies = 10;
-                break;
-
-            case 28:
-                level_drop_rate = rates[4];
-                maxEnemies = 3;
-                break;
-
-            case 27:
-                level_drop_rate = rates[5];
-                maxEnemies = 5;
-                break;
-
-            case 29:
-                level_drop_rate = rates[5];
-                maxEnemies = 8;
-                break;
+            case 26: level_drop_rate = rates[5]; maxEnemies = 8; distributeLetters(levelRewards[30].sequence, 30); break;
+            case 27: level_drop_rate = rates[5]; maxEnemies = 10; break;
+            case 28: level_drop_rate = rates[5]; maxEnemies = 12; break;
+            case 29: level_drop_rate = rates[5]; maxEnemies = 17; break;
 
             case 30:
                 level_drop_rate = rates[5];
-                maxEnemies = 10;
+                maxEnemies = 1; // Only the boss spawns
+                this.time.addEvent({
+                    delay: 100,
+                    callback: function () {
+                        if (counter_ended && !bossSpawned) {
+                            spawnBoss('LongBoyShip', bossStats[30]);
+                            bossSpawned = true;
+                        }
+                    },
+                    callbackScope: this,
+                    loop: true
+                });
                 break;
 
             default:// endless mode
@@ -425,7 +451,11 @@ class Game_scene extends Phaser.Scene {
                 is_endless = true;
                 this.time.addEvent({
                     delay: 1000,
-                    callback: spawn_enemy,
+                    callback: function () {
+                        if (counter_ended) {
+                            spawn_enemy();
+                        }
+                    },
                     callbackScope: this,
                     loop: true
                 });
@@ -435,9 +465,10 @@ class Game_scene extends Phaser.Scene {
         update_hud_in_blazor();
         if (window.dotNetHelper) {
             window.dotNetHelper.invokeMethodAsync('SaveGameResult',
-                win,
+                (win && !gameover),
             );
         }
+        //(win && !gameover) - won not fail or draw
 
         The_counter = new Counter();
         The_counter.CreateCountDownCounter(3, () => {
@@ -585,7 +616,7 @@ class End_scene extends Phaser.Scene {
         this.next_level_button.setVisible(false);
         this.next_level_button.on('pointerdown', () => {
             level += 1;
-            restart_level();
+            restart_level(true);
             currentScene.scene.start('Game_scene');
         });
 
@@ -605,6 +636,7 @@ class End_scene extends Phaser.Scene {
         this.background.tilePositionY -= 10; //60 is max
         update_music();
         manu_actions();
+
         if (this.startEnd) {
             this.start_end();
         }
@@ -831,7 +863,7 @@ function collectPowerUp(sprite, powerUp) {
                     score += 140
                 }
             } else if (powerUp.texture.key === 'powerUp ' + power_up_types[1]) {//gold star
-                score += 5000;
+                score += 15000;
             }
             if (powerUp.texture.key === 'powerUp ' + power_up_types[2]) {//red pill
                 score += 5;
@@ -847,7 +879,11 @@ function collectPowerUp(sprite, powerUp) {
                 }
             } else if (powerUp.texture.key === 'powerUp ' + power_up_types[4]) {
                 score += 720;
-                IsSplitShot = true;
+                if (IsSplitShot) {
+                    player_lasers_count += 1;
+                } else {
+                    IsSplitShot = true;
+                }
             }
             powerUp.coldown = scenes[0].time.now + 1500;
         }
@@ -856,16 +892,148 @@ function collectPowerUp(sprite, powerUp) {
 
 function dropPowerUp(x, y) {
     let powerUpType_i = Phaser.Math.Between(0, power_up_types.length - 1);
+    //every powerup chance is 20% (1/5)
     let powerUp = power_ups.get(x, y, 'powerUp ' + power_up_types[powerUpType_i]);
     activatePowerup(powerUp);
 }
 
 function create_enemies() {
-    if (!is_endless && !counter_running) {
+    if (!is_endless && !counter_running && !bossSpawned) {
         let activeEnemies = enemies.countActive(true);//on screen and weren't killed
         let toSpawn = maxEnemies - activeEnemies - killed;//calcs how many he sould re add to the screen
         for (let i = 0; i < toSpawn; i++) {//spawn the needed amount on screen
             spawn_enemy();
+        }
+    }
+}
+
+function spawnBoss(bossTexture, stats) {
+    // Spawn at the top center of the screen
+    boss = enemies.create(size[0] / 2, -100, bossTexture || 'BoardWatcherShip');
+
+    boss.setDisplaySize(stats.scale);
+
+    boss.isBoss = true; // Flag to identify it in collisions
+    boss.hp = stats.hp;
+    boss.maxHp = stats.hp; // Useful for health bars later - not done yet
+    boss.speed = stats.speed;
+    boss.setVelocityX(stats.speed);
+    boss.setVelocityY(0);
+
+    // Custom movement (e.g., move to y=100 and stay there)
+    boss.y = -100;
+    currentScene.tweens.add({
+        targets: boss,
+        y: 150,
+        duration: 2000,
+        ease: 'Back.easeOut'
+    });
+}
+
+function distributeLetters(sequence, maxLevel) {
+    hiddenLettersMap = {};
+    let availableLevels = [];
+
+    // 1. Create the list of possible levels
+    for (let i = maxLevel - 4; i < maxLevel; i++) {
+        availableLevels.push(i);
+    }
+
+    // Shuffle RANDOMLY the list
+    Phaser.Utils.Array.Shuffle(availableLevels);
+
+    //sort the list asc (11,13, 14 ,...)
+    let selectedLevels = availableLevels.slice(0, sequence.length).sort((a, b) => a - b);
+
+    // 4. Assign letters in order to the sorted levels
+    sequence.forEach((letter, index) => {
+        let assignedLevel = selectedLevels[index];
+        hiddenLettersMap[assignedLevel] = letter;
+    });
+}
+
+function showFriendPopup(lvl) {
+    paused = true;
+    UpdatePauseGameState();
+
+    // 1. Get the full path
+    const imagePath = levelRewards[lvl].img;
+
+    // 2. Extract the filename for the message
+    // This removes the path and the extension (.jpg)
+    const fileName = imagePath.split('/').pop().split('.').shift();
+
+    const popup = document.createElement('div');
+    popup.id = 'special-popup';
+    popup.style = `
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.95); padding: 30px; border: 8px solid #3498db; 
+        border-radius: 20px; text-align: center; z-index: 2000; box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    `;
+
+    popup.innerHTML = `
+        <h1 style="color: #2c3e50; margin-bottom: 15px;">Target Neutralized!</h1>
+        <img src="${imagePath}" style="max-width: 300px; border-radius: 10px; border: 3px solid #eee; margin-bottom: 10px;"><br>
+        <div style="color: #34495e; font-size: 20px; line-height: 1.6;">
+            <p style="margin: 5px 0;">You defeated <strong>${fileName}</strong>!</p>
+            <p style="margin: 5px 0;">Its ship is now yours!</p>
+        </div>
+        <button id="close-popup-btn" style="
+            margin-top: 20px; background: #3498db; color: white; border: none; 
+            padding: 12px 30px; font-size: 18px; border-radius: 5px; 
+            cursor: pointer; transition: 0.3s;
+        ">Continue the Level</button>
+    `;
+
+    document.getElementById('game_section').appendChild(popup);
+
+    document.getElementById('close-popup-btn').onclick = () => {
+        popup.remove();
+        paused = false;
+        UpdatePauseGameState();
+        specialEnemyKilled = false;
+    };
+}
+
+function friend_update() {
+    if (specialEnemyKilled && levelRewards[level]) {
+        const targetSequence = levelRewards[level].sequence;
+        const nextKeyName = targetSequence[currentKeyStep] + "_key";
+        const nextKey = cursors[nextKeyName];
+
+        const pressedKey = currentScene.input.keyboard.keys.find(k => k && k.enabled && Phaser.Input.Keyboard.JustDown(k));
+        if (!pressedKey) return;
+
+        if (nextKey && pressedKey.keyCode === nextKey.keyCode) {
+            currentKeyStep++;
+            // English HUD Hint
+            sequenceHintText.setText(`Secret Sequence: ${currentKeyStep}/${targetSequence.length}`).setVisible(true);
+
+            if (currentKeyStep === targetSequence.length) {
+                showFriendPopup(level);
+                currentKeyStep = 0;
+                specialEnemyKilled = false;
+                sequenceHintText.setVisible(false);
+            }
+        }
+        else {
+            const movementKeys = ['W_key', 'A_key', 'S_key', 'D_key', 'up', 'down', 'left', 'right', 'P_key'];
+            const isMovement = movementKeys.some(k => cursors[k]?.keyCode === pressedKey.keyCode);
+
+            if (!isMovement && currentKeyStep > 0) {
+                currentKeyStep = 0;
+                // English Reset Message
+                sequenceHintText.setText('Sequence Reset!').setVisible(true);
+
+                currentScene.time.delayedCall(1000, () => {
+                    if (currentKeyStep === 0) sequenceHintText.setVisible(false);
+                });
+            }
+        }
+
+        if (!nextKey && specialEnemyKilled) {
+            console.error(`Missing key definition for: ${nextKeyName}. check keysToAdd array!`);
         }
     }
 }
@@ -875,20 +1043,46 @@ function enemies_update(time, delta) {
     // Update enemies and their shooting logic
     enemies.getChildren().forEach(function (enemy) {
         if (enemy.active) {
-            enemy.y += 0.5; // Move enemies downwards
-            //left = -50, right = 1850
-            if (enemy.y > size[1] + 50 || enemy.x > size[0] + 50 || enemy.x < -50) {
-                enemy.setActive(false);
-                enemy.setVisible(false);
-            }
+            if (enemy.isBoss) {
+                // --- HORIZONTAL BOSS MOVEMENT ---
+                // Left/Right patrol logic
+                if (enemy.x > size[0] - 200) {
+                    enemy.setVelocityX(-enemy.speed);
+                } else if (enemy.x < 200) {
+                    enemy.setVelocityX(enemy.speed);
+                }
 
-            // Enemy shooting logic
-            if (!enemy.lastFired) {//אם אין לenemy lastFired תיצור ותאפס
-                enemy.lastFired = 0;
-            }
-            if (time > enemy.lastFired) { //אם הזמן יותר גדול מזמן הירייה האחרון, תירה
-                EnemyfireLaser(enemy);
-                enemy.lastFired = time + Phaser.Math.Between(500, 2000); // Random fire rate for enemies
+                // Lock Y height after the entrance tween
+                if (enemy.y >= 150) {
+                    enemy.setVelocityY(0);
+                    enemy.y = 150;
+                }
+
+                // 4. Boss Shooting Logic
+                if (!enemy.lastFired) enemy.lastFired = 0;
+                if (time > enemy.lastFired) {
+                    EnemyfireLaser(enemy);
+                    // Bosses can fire faster than minions
+                    enemy.lastFired = time + Phaser.Math.Between(400, 1500);
+                }
+
+            } else {
+                // --- REGULAR ENEMY LOGIC ---
+                enemy.y += 0.5; // Move enemies downwards
+                //left = -50, right = 1850
+                if (enemy.y > size[1] + 50 || enemy.x > size[0] + 50 || enemy.x < -50) {
+                    enemy.setActive(false);
+                    enemy.setVisible(false);
+                }
+
+                // Enemy shooting logic
+                if (!enemy.lastFired) {//אם אין לenemy lastFired תיצור ותאפס
+                    enemy.lastFired = 0;
+                }
+                if (time > enemy.lastFired) { //אם הזמן יותר גדול מזמן הירייה האחרון, תירה
+                    EnemyfireLaser(enemy);
+                    enemy.lastFired = time + Phaser.Math.Between(500, 2000); // Random fire rate for enemies
+                }
             }
         }
     });
@@ -920,10 +1114,26 @@ function hitEnemy(laser, enemy) {
     if (laser.active && enemy.active) {
         laser.setActive(false);
         laser.setVisible(false);
-        flashRed(enemy, 150);
-        enemy.Hp -= 1;
-        if (enemy.Hp <= 0) {
-            kill_enemy(enemy);
+
+        if (enemy.isBoss) {
+            enemy.hp -= 10; // Player damage
+            enemy.setTint(0xff0000); // Flash red
+            currentScene.time.delayedCall(100, () => enemy.clearTint());
+
+            if (enemy.hp <= 0) {
+                enemy.destroy();
+                specialEnemyKilled = true;
+                killed += 1;
+
+                currentKeyStep = 0;
+                sequenceHintText.setText("TARGET DESTROYED! ENTER KEYCODE").setVisible(true);
+            }
+        } else {
+            flashRed(enemy, 150);
+            enemy.Hp -= 1;
+            if (enemy.Hp <= 0) {
+                kill_enemy(enemy);
+            }
         }
     }
 }
@@ -999,7 +1209,9 @@ function handlePlayerHit(player) {
         delay: 2000,
         callback: () => {
             if (!paused) {
-                player.setPosition(og_x, og_y);
+                if ((!shield.was_deactivated)) {//shield means not go back to og
+                    player.setPosition(og_x, og_y);
+                }
                 player.setActive(true);
                 player.setVisible(true);
                 if (shield.was_deactivated) {
@@ -1022,6 +1234,10 @@ function handlePlayerHit(player) {
 }
 
 function spawn_enemy() {
+    if (levelRewards[level]) {//bosses spown alone
+        return;
+    }
+
     if (!paused) {
         let x = Phaser.Math.Between(0, size[0]);
         let enemy = enemies.get(x, -50);
@@ -1109,6 +1325,18 @@ function manu_actions() {
         The_counter.timeText.setVisible(false);
     }
 
+    //loads hints
+    if (hiddenLettersMap[level] && !bossSpawned) {
+        let letter = hiddenLettersMap[level];// Show the letter at a random position once per level
+
+        sequenceHintText.setText(letter)
+            .setPosition(Phaser.Math.Between(100, size[0] - 100), Phaser.Math.Between(100, size[1] - 100))
+            .setAlpha(0.2) // Make it faint/hidden
+            .setVisible(true);
+
+        delete hiddenLettersMap[level];
+    }
+
     //pause button
     if (cursors.P_key.isDown && !cursors.P_key.wasClicked) {
         cursors.P_key.wasClicked = true;
@@ -1167,6 +1395,8 @@ function player_actions(time, delta) {
     }
 
     laser_update(time, delta);
+
+    friend_update();
 }
 
 function laser_update(time, delta) {
@@ -1274,7 +1504,14 @@ function fireSplittingShot() {
 }
 
 function spawnFragments(x, y) {
-    const angles = [-30, -15, 0, 15, 30]; // Degrees relative to "up"
+    let projectileCount = (player_lasers_count * 2);
+    const step = 5;
+    const startAngle = -((projectileCount - 1) * step) / 2;// max -angle to start from
+
+    const angles = Array.from(
+        { length: projectileCount },
+        (_, i) => startAngle + (i * step)
+    );//Degrees relative to "up" ([-5, 0, 5])
 
     angles.forEach(angle => {
         let fragment = splitFragments.get(x, y);
@@ -1292,22 +1529,26 @@ function spawnFragments(x, y) {
 }
 
 function make_sound(sound_name, volume) {
-    if (is_sound_on) {
-        if (sound_isnt_active) {
-            currentScene.sound.add(sound_name, { volume: volume, loop: false }).play();
-            sound_isnt_active = false;
+    if (currentScene && currentScene.sound) {
+        if (is_sound_on) {
+            if (sound_isnt_active) {
+                currentScene.sound.add(sound_name, { volume: volume, loop: false }).play();
+                sound_isnt_active = false;
+            }
+            else {
+                sound_isnt_active = true;
+            }
         }
         else {
-            sound_isnt_active = true;
+            const sound = currentScene.sound.get(sound_name);
+            if (sound) {
+                sound.pause();
+                sound.currentTime = 0;
+                sound_isnt_active = true;
+            }
         }
-    }
-    else {
-        const sound = currentScene.sound.get(sound_name);
-        if (sound) {
-            sound.pause();
-            sound.currentTime = 0;
-            sound_isnt_active = true;
-        }
+    } else {
+        console.warn("Sound could not play: Scene not ready or sound disabled.");
     }
 }
 
@@ -1350,43 +1591,49 @@ function shield_update() {
 }
 
 function update_shield_pos() {
-    const left_limit = size[0] - 80;
-    const low_limit = size[1] - 90;
+    const left_limit = size[0] * 0.95;
+    const low_limit = size[1] * 0.90;
     if (player.x >= left_limit) {
         player.x = left_limit;
     }
-    else if (player.x <= 80) {//right limit
-        player.x = 80;
+    //right limit
+    else if (player.x <= size[0] * 0.05) {
+        player.x = size[0] * 0.05;
     }
     if (player.y >= low_limit) {
         player.y = low_limit;
     }
-    else if (player.y <= 58) {//high limit
-        player.y = 58;
+    //high limit
+    else if (player.y <= size[1] * 0.1) {
+        player.y = size[1] * 0.1;
     }
     shield.x = player.x;
     shield.y = player.y;
 }
 
-function restart_level() {
+function restart_level(afterCanvasLoad) {
     killed = 0;
     gameover = false;
     win = false;
     tico = false;
     invulnerable = false;
+    bossSpawned = false;
     score_coldown = 0;
 
-    if (scenes[1] && scenes[1].level_select_button && scenes[1].next_level_button) {
-        scenes[1].level_select_button.setVisible(false);
-        scenes[1].next_level_button.setVisible(false);
-    }
-    
-    if (currentScene) {
-        if (currentScene.sound) {
-            currentScene.sound.stopAll();
+    if (afterCanvasLoad) {
+
+        if (scenes[1] && scenes[1].level_select_button && scenes[1].next_level_button) {
+            scenes[1].level_select_button.setVisible(false);
+            scenes[1].next_level_button.setVisible(false);
         }
+
+        if (currentScene) {
+            if (currentScene.sound) {
+                currentScene.sound.stopAll();
+            }
+        }
+        update_music();
     }
-    update_music();
 }
 
 function swoop_by(enemy1, enemy2) {
@@ -1525,13 +1772,10 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Current
         window.gameInstance = null;
     }
     window.gameInstance = new Phaser.Game(config);
+
+    if (shieldHealth > 0) {
+        shield_next_level_was_hidden = true;
+    }
     shield_max_life = 3 + 3 * Math.floor((shieldHealth / 3));
-    killed = 0;
-    //restart_level(): rest of this crushes often
-    killed = 0;
-    gameover = false;
-    win = false;
-    tico = false;
-    invulnerable = false;
-    score_coldown = 0;
+    restart_level(false);
 };

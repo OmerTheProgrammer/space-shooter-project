@@ -14,13 +14,6 @@
       <FileName>DBs\BaseDB.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ViewModel.DBs.EnemiesInLastLevelDB" Collapsed="true">
-    <Position X="4.75" Y="3.5" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAgAAAKACAAAAAAAAgAAAAgAAIAAAAAAAAAACAAA=</HashCode>
-      <FileName>DBs\EnemiesInLastLevelDB.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="ViewModel.DBs.GroupsDB" Collapsed="true">
     <Position X="8.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>

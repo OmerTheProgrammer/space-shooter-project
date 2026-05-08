@@ -14,8 +14,6 @@ namespace Client_Manager___API
     {
         #region select all:
             public Task<AdminsTable> GetAllAdmins();
-        
-            public Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel();
 
             public Task<GroupsTable> GetAllGroups();
 
@@ -35,8 +33,6 @@ namespace Client_Manager___API
         #region select by Idx:
             public Task<Admin> GetAdminByIdx(int Idx);
 
-            public Task<EnemyInLastLevel> GetEnemyInLastLevelByIdx(int Idx);
-
             public Task<Group> GetGroupByIdx(int Idx);
 
             public Task<PlayerAndGroup> GetPlayerAndGroupByIdx(int Idx);
@@ -54,9 +50,6 @@ namespace Client_Manager___API
 
         #region Insert:
             public Task<(int rows, string? error)> InsertAdmin(Admin admin);
-
-            public Task<(int rows, string? error)> InsertEnemyInLastLevel(
-                EnemyInLastLevel admin);
 
             public Task<(int rows, string? error)> InsertGroup(Group group);
 
@@ -78,9 +71,6 @@ namespace Client_Manager___API
 
         #region Update:
             public Task<(int rows, string? error)> UpdateAdmin(AdminDTO admin);
-            
-            public Task<(int rows, string? error)> UpdateEnemyInLastLevel(
-                EnemyInLastLevelDTO enemyInLastLevel);
 
             public Task<(int rows, string? error)> UpdateGroup(GroupDTO group);
 
@@ -103,8 +93,6 @@ namespace Client_Manager___API
         #region Delete:
             public Task<(int rows, string? error)> DeleteAdmin(int idx);
             
-            public Task<(int rows, string? error)> DeleteEnemyInLastLevel(int idx);
-
             public Task<(int rows, string? error)> DeleteGroup(int idx);
 
             public Task<(int rows, string? error)> DeletePlayerAndGroup(int idx);

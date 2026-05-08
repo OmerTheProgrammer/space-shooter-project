@@ -1,22 +1,21 @@
-﻿----------------------------------------------------
--- 5. CREATE PROFILE/REQUEST TABLES
-----------------------------------------------------
-
--- Table 6: ProfileEditRequestsTbl
-CREATE TABLE ProfileEditRequestsTbl (
-    idx INT IDENTITY(1,1) PRIMARY KEY,
-    PlayerIdx INT NOT NULL, -- Changed from UserID to PlayerIdx (Foreign Key to Players table)
-    RequestingDate DATETIME NOT NULL,
+﻿-- Table 6: ProfileEditRequestsTbl
+CREATE TABLE [dbo].[ProfileEditRequestsTbl] (
+    [idx]            INT      IDENTITY (1, 1) NOT NULL,
+    [PlayerIdx]      INT      NOT NULL,
+    [RequestingDate] DATETIME NOT NULL,
     
     -- Status values: 0=Pending, 1=Approved, 2=Rejected, 3=Canceled
-    [Status] INT NOT NULL CHECK ([Status] IN (0, 1, 2, 3)) DEFAULT 0, 
-    ReviewingDate DATETIME NULL, -- NULL if still Pending
-    AdminIdx INT NULL,    -- New field based on your image (Foreign Key to Admins table)
+    [Status]         INT      CONSTRAINT [DF_ProfileEdit_Status] DEFAULT ((0)) NOT NULL,
+    [ReviewingDate]  DATETIME NULL, 
+    [AdminIdx]       INT      NULL, 
 
-    -- Define Foreign Key: PlayerIdx links to the Player's ID in the Players table
-    FOREIGN KEY (PlayerIdx) REFERENCES PlayersTbl(idx),
+    -- Primary Key: Optimized for sequential inserts
+    PRIMARY KEY CLUSTERED ([idx] ASC) WITH (FILLFACTOR = 100),
 
-    -- Define Foreign Key: AdminIdx links to the Admin's ID in the Admins table
-    -- I've made this NULLable (NULL) since a request might not be assigned immediately.
-    FOREIGN KEY (AdminIdx) REFERENCES AdminsTbl(idx)
+    -- Foreign Keys: Linking to Players and Admins
+    CONSTRAINT [FK_ProfileEdit_Player] FOREIGN KEY ([PlayerIdx]) REFERENCES [dbo].[PlayersTbl] ([idx]),
+    CONSTRAINT [FK_ProfileEdit_Admin]  FOREIGN KEY ([AdminIdx])  REFERENCES [dbo].[AdminsTbl] ([idx]),
+
+    -- Check Constraint: Ensures data integrity for the request status
+    CONSTRAINT [CK_ProfileEdit_Status] CHECK ([Status] IN (0, 1, 2, 3))
 );

@@ -260,16 +260,36 @@
         }
     }
 
-    private async void StartLevel(int level)
+    public async Task StartLevel(int level)
     {
-        if (session.IsContuiningRun) //if from save will lose previous save
-        {
-            bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete Current Run Progress?");
-            if (!confirmed) return; //if not we don't go
-        }
+        // checking for Overwrite
+        await session.HandlePotentialOverwrite(api as ApiService, JS);
+
+        // Start a new run
         session.SelectedLevel = level;
         session.IsContuiningRun = false;
+
         NavManager.NavigateTo("Game");
+    }
+
+    /// <summary>
+    /// tries to save current run
+    /// </summary>
+    /// <returns></returns>
+    private async Task TrySaveRun()
+    {
+        try
+        {
+            await session.SendRunToServer(api as ApiService, JS);
+        }
+        catch (Exception e)
+        {
+            await JS.InvokeVoidAsync("ShowAlert", $"Failed Saving the Run: {e.Message}");
+        }
+        finally
+        {
+            session.CurrentRun = new RunInfo();
+        }
     }
 
     private void ToggleMusic()

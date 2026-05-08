@@ -91,7 +91,7 @@ namespace Model.Data_Transfer_Objects
                         entityProp.SetValue(entity, innerValue);
                     }
                 }
-                // Case B: Composition (Nested DTOs) - e.g., RunInfoDTO inside EnemyDTO
+                // Case B: Composition (Nested DTOs) - e.g., AdminDTO inside RequstDTO
                 else if (value is IBaseDTO nestedDTO)
                 {
                     // Call ToEntity recursively on the nested DTO

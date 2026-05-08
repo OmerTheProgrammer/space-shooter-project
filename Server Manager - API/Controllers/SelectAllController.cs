@@ -21,15 +21,6 @@ namespace Server_Manager___API.Controllers
         }
 
         [HttpGet]
-        [ActionName("EnemiesInLastLevelSelector")]
-        public EnemiesInLastLevelTable SelectAllEnemiesInLastLevel()
-        {
-            EnemiesInLastLevelDB EnemiesInLastLevelDB = new EnemiesInLastLevelDB();
-            EnemiesInLastLevelTable EnemiesInLastLevelTable = EnemiesInLastLevelDB.SelectAll();
-            return EnemiesInLastLevelTable;
-        }
-
-        [HttpGet]
         [ActionName("GroupsSelector")]
         public GroupsTable SelectAllGroups()
         {

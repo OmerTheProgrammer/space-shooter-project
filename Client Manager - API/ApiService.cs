@@ -122,11 +122,6 @@ namespace Client_Manager___API
             return await GetTable<AdminsTable>("/api/SelectAll/AdminsSelector");
         }
 
-        public async Task<EnemiesInLastLevelTable> GetAllEnemiesInLastLevel()
-        {
-            return await GetTable<EnemiesInLastLevelTable>("/api/SelectAll/EnemiesInLastLevelSelector");
-        }
-
         public async Task<GroupsTable> GetAllGroups()
         {
             return await GetTable<GroupsTable>("/api/SelectAll/GroupsSelector");
@@ -207,11 +202,6 @@ namespace Client_Manager___API
         public Task<Admin> GetAdminByIdx(int idx)
         {
             return GetByIdx<Admin>($"/api/SelectByIdx/AdminsSelectorByIdx", idx);
-        }
-
-        public Task<EnemyInLastLevel> GetEnemyInLastLevelByIdx(int idx)
-        {
-            return GetByIdx<EnemyInLastLevel>($"/api/SelectByIdx/EnemiesInLastLevelSelectorByIdx", idx);
         }
 
         public Task<Model.Entitys.Group> GetGroupByIdx(int idx)
@@ -308,12 +298,6 @@ namespace Client_Manager___API
         {
             //returns number of rows affected
             return Insert<Admin>($"/api/Insert/AdminsInsertor", admin);
-        }
-
-        public Task<(int rows, string? error)> InsertEnemyInLastLevel(EnemyInLastLevel enemyInLastLevel)
-        {
-            //returns number of rows affected
-            return Insert<EnemyInLastLevel>($"/api/Insert/EnemiesInLastLevelInsertor", enemyInLastLevel);
         }
 
         public Task<(int rows, string? error)> InsertGroup(Model.Entitys.Group group)
@@ -427,11 +411,6 @@ namespace Client_Manager___API
             return Update<AdminDTO>($"/api/Update/AdminUpdator", admin);
         }
 
-        public Task<(int rows, string? error)> UpdateEnemyInLastLevel(EnemyInLastLevelDTO enemyInLastLevel)
-        {
-            return Update<EnemyInLastLevelDTO>($"/api/Update/EnemyInLastLevelUpdator", enemyInLastLevel);
-        }
-
         public Task<(int rows, string? error)> UpdateGroup(GroupDTO group)
         {
             return Update<GroupDTO>($"/api/Update/GroupUpdator", group);
@@ -542,12 +521,6 @@ namespace Client_Manager___API
         {
             // returns number of rows affected
             return Delete($"/api/Delete/AdminDeletor", idx);
-        }
-
-        public Task<(int rows, string? error)> DeleteEnemyInLastLevel(int idx)
-        {
-            // returns number of rows affected
-            return Delete($"/api/Delete/EnemyInLastLevelDeletor", idx);
         }
 
         public Task<(int rows, string? error)> DeleteGroup(int idx)
