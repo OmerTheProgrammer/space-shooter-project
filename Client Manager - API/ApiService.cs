@@ -172,7 +172,7 @@ namespace Client_Manager___API
                 {
                     // 2. Read the specific error content from the server
                     // This reads the body containing the server's error message (e.g., "Idx not found")
-                    string errorContent = await response.Content.ReadAsStringAsync();
+                    string errorContent = await response.Content.ReadAsStringAsync();   
 
                     if (errorContent == "")
                     {
