@@ -61,7 +61,6 @@ namespace ViewModel.DBs
                 deleted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
                 deleted.Add(new ChangeEntity(CreateDeletedSQL, reqEntity));
             }
-
         }
 
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)
