@@ -40,10 +40,6 @@
     <Position X="8.5" Y="0.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="Space_Shooter_Website.Client.Support_Classes.GameHUD" Collapsed="true">
-    <Position X="8" Y="3.75" Width="1.5" />
-    <TypeIdentifier />
-  </Class>
   <Class Name="Space_Shooter_Website.Components.Layout.NavMenu" Collapsed="true">
     <Position X="7" Y="2.25" Width="1.5" />
     <TypeIdentifier>
@@ -83,6 +79,10 @@
   </Class>
   <Class Name="Space_Shooter_Website.Client.Support_Classes.TableConfig" Collapsed="true">
     <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Space_Shooter_Website.Client.Added_Layouts.GameHUD" Collapsed="true">
+    <Position X="7.5" Y="4.75" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Font Name="Segoe UI" Size="9" />
