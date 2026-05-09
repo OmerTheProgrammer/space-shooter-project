@@ -207,7 +207,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
 
         public async Task HandlePotentialOverwrite(ApiService api, IJSRuntime JS)
         {
-            if (IsContuiningRun && CurrentRun != null)
+            if (IsContuiningRun && (CurrentRun != null && CurrentRun != new RunInfo()))
             {
                 // Calculate time since the last recorded stop
                 TimeSpan runDuration = DateTime.Now - CurrentRun.RunStopDate;
@@ -215,7 +215,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 if (runDuration.TotalSeconds < 135)
                 {
                     bool wantToSave = await JS.InvokeAsync<bool>("confirm",
-                        "This run was updated very recently. Save current progress to database before continuing?");
+                        "This run was updated locally very recently. Save current progress to database before continuing?");
 
                     if (wantToSave)
                     {
