@@ -71,13 +71,16 @@
                         <div class="card-body d-flex flex-column">
                             <h4>@g.Name</h4>
                             <p class="text-white-50">Global Power: @g.Score</p>
+
+                            <button class="btn btn-outline-info w-100 mt-2" @onclick="() => ShowPersonnel(g)">
+                                View Personnel
+                            </button>
+
                             <button class="btn btn-primary mt-auto" @onclick="() => JoinGroup(g)">
                                 Join Squadron
                             </button>
                             
-                            <button class="btn btn-outline-info w-100 mt-2" @onclick="() => ShowPersonnel(g)">
-                                View Personnel
-                            </button>
+
                         </div>
                     </div>
                 </div>
