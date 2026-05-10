@@ -8,6 +8,6 @@ namespace Client_Manager___API
 {
     public class ConfigSettings
     {
-        public string AdminKey { get; set; } = string.Empty;
+        public string AdminKey { get; set; } = "";
     }
 }
