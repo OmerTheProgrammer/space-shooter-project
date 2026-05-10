@@ -100,7 +100,7 @@ namespace Client_Manager___API
 
         #region select all:
         private async Task<T> GetTable<T>(string endpoint)
-            where T : new()
+            where T : class
         {
             try
             {
@@ -113,7 +113,7 @@ namespace Client_Manager___API
                 //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error fetching data from {endpoint}: {ex.Message}");
-                return new T();
+                return null;
             }
         }
 
@@ -172,7 +172,7 @@ namespace Client_Manager___API
                 {
                     // 2. Read the specific error content from the server
                     // This reads the body containing the server's error message (e.g., "Idx not found")
-                    string errorContent = await response.Content.ReadAsStringAsync();
+                    string errorContent = await response.Content.ReadAsStringAsync();   
 
                     if (errorContent == "")
                     {

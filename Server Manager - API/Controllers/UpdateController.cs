@@ -94,7 +94,7 @@ namespace Server_Manager___API.Controllers
             private static object? MapFullEntityToDTO(object entity, Type entityType, Type dtoType)
             {
                 var dtoInstance = Activator.CreateInstance(dtoType);
-                if (dtoInstance == null) return null;
+                if (dtoInstance == null || entity == null) return null;
 
                 PropertyInfo[] dtoFields = dtoType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 PropertyInfo[] entFields = entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -154,17 +154,17 @@ namespace Server_Manager___API.Controllers
             /// Helper method to determine if a type inherits from BaseDTO<TEntity, TDTO>
             /// </summary>
             private static bool IsBaseDtoType(Type? type)
+            {
+                while (type != null && type != typeof(object))
                 {
-                    while (type != null && type != typeof(object))
+                    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(BaseDTO<,>))
                     {
-                        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(BaseDTO<,>))
-                        {
-                            return true;
-                        }
-                        type = type.BaseType;
+                        return true;
                     }
-                    return false;
+                    type = type.BaseType;
                 }
+                return false;
+            }
 
             /// <summary>
             /// Helper method to check if any non-Idx field was provided
@@ -283,6 +283,7 @@ namespace Server_Manager___API.Controllers
                                     MethodInfo constructedMethod = 
                                                     genericMethod.MakeGenericMethod
                                                     (nestedEntity, nestedDto);
+
                                                     List<List<string>>? innerPaths = 
                                                     (List<List<string>>?)
                                                     constructedMethod.Invoke(null,
