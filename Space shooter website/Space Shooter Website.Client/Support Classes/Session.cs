@@ -16,6 +16,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
         public bool IsPlayer { get; set; }
         public bool IsLoggedIn => CurrentUser != null;
         public bool IsContuiningRun = false;
+        public bool HadOpenedBDayGift = false;
 
         public string Progress = "100%";
         public bool IsEndless { get; set; } = false;
