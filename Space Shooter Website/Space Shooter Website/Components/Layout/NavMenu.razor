@@ -47,15 +47,21 @@
                         </li>
 
                         <li class="nav-item">
-                            <NavLink class="nav-link nav_text" href="GroupsBoard">Squadrons</NavLink>
+                            <NavLink class="nav-link nav_text" href="Groups Board">Squadrons</NavLink>
                         </li>
                     }
 
                     @if (session.IsAdmin) // and is an admin
                     {
                         <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="Player Requests">Player Requests</NavLink>
+                        </li>
+
+                        <li class="nav-item">
                             <NavLink class="nav-link nav_text" href="Admin Dashboard">Admin Dashboard</NavLink>
                         </li>
+
+                        
                     }
                     else // and is not an admin
                     {

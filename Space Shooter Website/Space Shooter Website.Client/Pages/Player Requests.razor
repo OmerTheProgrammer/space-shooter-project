@@ -1,0 +1,119 @@
+﻿@page "/Player Requests"
+@inject IApiService api
+@inject NavigationManager NavManager
+@inject Session session
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<div class="admin-container">
+    <h1 class="text-white mb-4">Pending Pilot Alterations</h1>
+
+    @if (GroupedRequests == null)
+    {
+        <div class="spinner-border text-info" role="status"></div>
+    }
+    else if (!GroupedRequests.Any())
+    {
+        <div class="alert alert-dark text-info border-info">
+            <i class="bi bi-check-circle me-2"></i>All systems nominal. No pending requests.
+        </div>
+    }
+    else
+    {
+        @foreach (var group in GroupedRequests)
+        {
+            var parentRequest = group.Key;
+            var changes = group.Value;
+
+            <div class="request-group-card mb-5 border border-secondary p-3 bg-black rounded shadow">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="text-warning m-0">
+                        Request #@parentRequest.Idx - Pilot: <span class="text-white">@parentRequest.RequestingPlayer.Username</span>
+                    </h3>
+                    <div class="action-bundle">
+                        <button class="btn btn-success btn-sm me-2" @onclick="() => HandleAction(parentRequest, true)">
+                            Approve All Changes
+                        </button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => HandleAction(parentRequest, false)">
+                            Reject Request
+                        </button>
+                    </div>
+                </div>
+
+                <table class="table table-dark table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Field to Mutate</th>
+                            <th>Current Value (DB)</th>
+                            <th>Requested Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var change in changes)
+                        {
+                            <tr>
+                                <td class="text-info fw-bold">@change.Field</td>
+                                <td class="text-muted text-decoration-line-through">@change.OldValue</td>
+                                <td class="text-success fw-bold">@change.NewValue</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+</div>
+
+@code {
+@code {
+    // Key: The parent Profile Request, Value: The list of changes (RequestData) within it
+    private Dictionary<ProfileEditRequest, RequestsDataTable> GroupedRequests = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRequests();
+    }
+
+    private async Task LoadRequests()
+    {
+        // 1. Fetch all data
+        var allProfileRequests = await api.GetAllProfileEditRequests();
+        var allDataChanges = await api.GetAllRequestsData();
+
+        // 2. Filter for requests assigned to THIS admin
+        var myProfileRequests = allProfileRequests
+            .Where(p => p.AdressingAdmin?.Idx == session.CurrentUser.Idx)
+            .ToList();
+
+        // 3. Clear and Group the data
+        GroupedRequests.Clear();
+        foreach (var profileReq in myProfileRequests)
+        {
+            var changesForThisReq = allDataChanges
+                .Where(r => r.Request.Idx == profileReq.Idx)
+                .ToList();
+            
+            if (changesForThisReq.Any())
+            {
+                GroupedRequests.Add(profileReq, new RequestsDataTable(changesForThisReq));
+            }
+        }
+    }
+}
+
+    private async Task HandleAction(ProfileEditRequest request, bool isApproved)
+    {
+        if (isApproved)
+        {
+            //update requst mode to approved
+            //do the change in DB
+        }
+        else
+        {
+            //update requst mode to rejected
+        }
+
+        //update requst to DB
+
+    }
+}
