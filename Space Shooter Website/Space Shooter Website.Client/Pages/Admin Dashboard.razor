@@ -936,6 +936,38 @@
             }
         };
 
+        if (session.PendingPlayerUpdate != null)
+        {
+            try
+            {
+                isLoading = true;
+                activeTab = "players"; // Automatically snap view context into your players registry
+
+                var incomingDto = session.PendingPlayerUpdate;
+                targetId = incomingDto.Idx;
+
+                // Fetch live data state into SingleEntity for structural backup values
+                var fetchResponse = await _tableRegistry[activeTab].GetById(targetId);
+                SingleEntity = (BaseEntity)fetchResponse;
+                //Prepare local modification dictionary variables -> Initialize edit dictionary with all current database values
+                await HandleUpdate();
+
+                // Immediately run your dashboard's built-in update workflow!
+                isEditMode = true;
+                await UpdateEntity();
+            }
+            catch (Exception ex)
+            {
+                pageErrorMessage = "Automated processing sequence failed: " + ex.Message;
+            }
+            finally
+            {
+                isLoading = false;
+                // Clear memory state reference to prevent looping on page reload
+                session.PendingPlayerUpdate = null;
+            }
+        }
+
         await RefreshData();
     }
 
