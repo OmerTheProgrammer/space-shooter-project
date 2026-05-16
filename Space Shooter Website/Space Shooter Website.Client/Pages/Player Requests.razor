@@ -1,119 +1,169 @@
-﻿@page "/Player Requests"
+﻿@page "/Players Requests"
 @inject IApiService api
 @inject NavigationManager NavManager
 @inject Session session
 @inject IJSRuntime JS
 @rendermode InteractiveServer
 
-<div class="admin-container">
-    <h1 class="text-white mb-4">Pending Pilot Alterations</h1>
+<PageTitle>Player Requests</PageTitle>
+<div class="container-fluid mt-4">
+    <h1 class="display-4 text">Player Requests:</h1>
 
-    @if (GroupedRequests == null)
-    {
-        <div class="spinner-border text-info" role="status"></div>
-    }
-    else if (!GroupedRequests.Any())
-    {
-        <div class="alert alert-dark text-info border-info">
-            <i class="bi bi-check-circle me-2"></i>All systems nominal. No pending requests.
-        </div>
-    }
-    else
-    {
-        @foreach (var group in GroupedRequests)
+    <ul class="nav nav-tabs" id="requestTabs" role="tablist">
+        @foreach (Status status in Enum.GetValues(typeof(Status)))
         {
-            var parentRequest = group.Key;
-            var changes = group.Value;
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeStatus == status ? "active" : "")"
+                        @onclick="() => SetActiveTab(status)" type="button">
+                    @status.ToString()
+                </button>
+            </li>
+        }
+    </ul>
 
-            <div class="request-group-card mb-5 border border-secondary p-3 bg-black rounded shadow">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="text-warning m-0">
-                        Request #@parentRequest.Idx - Pilot: <span class="text-white">@parentRequest.RequestingPlayer.Username</span>
-                    </h3>
-                    <div class="action-bundle">
-                        <button class="btn btn-success btn-sm me-2" @onclick="() => HandleAction(parentRequest, true)">
-                            Approve All Changes
-                        </button>
-                        <button class="btn btn-danger btn-sm" @onclick="() => HandleAction(parentRequest, false)">
-                            Reject Request
-                        </button>
+    <div class="tab-content border border-top-0 p-3 bg-black" id="requestTabsContent">
+        <div class="table-responsive">
+            @if (isLoading)
+            {
+                <div class="text-center p-4">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
-
-                <table class="table table-dark table-striped mb-0">
-                    <thead>
+            }
+            else if (!FilteredRequests.Any())
+            {
+                <div class="text-light p-3 text-center">No @activeStatus.ToString().ToLower() requests found.</div>
+            }
+            else
+            {
+                <table class="table table-hover table-striped border">
+                    <thead class="table-dark">
                         <tr>
-                            <th>Field to Mutate</th>
-                            <th>Current Value (DB)</th>
-                            <th>Requested Value</th>
+                            <th scope="col" class="subtitle">Idx: </th>
+                            <th scope="col" class="subtitle">Player Name: </th>
+                            <th scope="col" class="subtitle">Details: </th>
+                            <th scope="col" class="subtitle">Created Date: </th>
+                            @if (activeStatus == Status.Pending)
+                            {
+                                <th scope="col" class="subtitle">Actions: </th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var change in changes)
+                        @foreach (var kvp in FilteredRequests)
                         {
+                            var request = kvp.Key;
+                            var dataTable = kvp.Value;
+
                             <tr>
-                                <td class="text-info fw-bold">@change.Field</td>
-                                <td class="text-muted text-decoration-line-through">@change.OldValue</td>
-                                <td class="text-success fw-bold">@change.NewValue</td>
+                                <td class="text">#@request.Idx</td>
+                                <td class="text">@request.RequestingPlayer.Username</td>
+                                <td class="text" style="max-width: 450px;">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var change in dataTable)
+                                        {
+                                            <span class="badge p-2 text-wrap text-start border border-secondary text-light"
+                                                  style="background-color: rgba(52, 58, 64, 0.65); font-size: 0.85rem; line-height: 1.4; font-weight: normal;">
+                                                <strong style="color: #dee2e6;">@change.Field:</strong> <br />
+                                                <span class="text-white-50">@change.OldValue</span>
+                                                <span class="text-muted mx-1">➔</span>
+                                                <span style="color: #a5d6a7;">@change.NewValue</span>
+                                            </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="text">@request.RequestingDate.ToShortDateString()</td>
+                                @if (activeStatus == Status.Pending)
+                                {
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" @onclick="() => ViewRequest(request.Idx)">View</button>
+                                    </td>
+                                }
                             </tr>
                         }
                     </tbody>
                 </table>
-            </div>
-        }
-    }
+            }
+        </div>
+    </div>
 </div>
 
 @code {
-@code {
-    // Key: The parent Profile Request, Value: The list of changes (RequestData) within it
-    private Dictionary<ProfileEditRequest, RequestsDataTable> GroupedRequests = new();
+    private Status activeStatus = Status.Pending;
+    private bool isLoading = true;
+
+    // Stores all grouped requests for the logged-in admin
+    private Dictionary<ProfileEditRequest, RequestsDataTable> AllGroupedRequests = new();
+
+    // Holds only the requests matching the currently active tab
+    private Dictionary<ProfileEditRequest, RequestsDataTable> FilteredRequests = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadRequests();
+        await LoadAllRequests();
+        FilterRequestsByActiveStatus();
     }
 
-    private async Task LoadRequests()
+    private void SetActiveTab(Status status)
     {
-        // 1. Fetch all data
-        var allProfileRequests = await api.GetAllProfileEditRequests();
-        var allDataChanges = await api.GetAllRequestsData();
+        activeStatus = status;
+        FilterRequestsByActiveStatus();
+    }
 
-        // 2. Filter for requests assigned to THIS admin
-        var myProfileRequests = allProfileRequests
-            .Where(p => p.AdressingAdmin?.Idx == session.CurrentUser.Idx)
-            .ToList();
-
-        // 3. Clear and Group the data
-        GroupedRequests.Clear();
-        foreach (var profileReq in myProfileRequests)
+    private async Task LoadAllRequests()
+    {
+        isLoading = true;
+        try
         {
-            var changesForThisReq = allDataChanges
-                .Where(r => r.Request.Idx == profileReq.Idx)
+            // 1. Fetch all raw data from your API
+            var allProfileRequests = await api.GetAllProfileEditRequests();
+            var allDataChanges = await api.GetAllRequestsData();
+
+            // 2. Filter for requests assigned to THIS admin
+            var myProfileRequests = allProfileRequests
+                .Where(p => p.AdressingAdmin?.Idx == session.CurrentUser.Idx)
                 .ToList();
-            
-            if (changesForThisReq.Any())
+
+            // 3. Clear and Group the data into the master dictionary
+            AllGroupedRequests.Clear();
+            foreach (var profileReq in myProfileRequests)
             {
-                GroupedRequests.Add(profileReq, new RequestsDataTable(changesForThisReq));
+                var changesForThisReq = allDataChanges
+                    .Where(r => r.Request.Idx == profileReq.Idx)
+                    .ToList();
+
+                if (changesForThisReq.Any())
+                {
+                    AllGroupedRequests.Add(profileReq, new RequestsDataTable(changesForThisReq));
+                }
             }
         }
+        catch (Exception ex)
+        {
+            // Handle or log API errors here
+            Console.WriteLine($"Error loading requests: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
-}
 
-    private async Task HandleAction(ProfileEditRequest request, bool isApproved)
+    private void FilterRequestsByActiveStatus()
     {
-        if (isApproved)
-        {
-            //update requst mode to approved
-            //do the change in DB
-        }
-        else
-        {
-            //update requst mode to rejected
-        }
-
-        //update requst to DB
-
+        // Filters your master dictionary based on the active tab's status
+        // Assumes your ProfileRequest model contains a property named 'Status'
+        FilteredRequests = AllGroupedRequests
+            .Where(kvp => kvp.Key.Status == activeStatus)
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
+
+    private void ViewRequest(int requestIdx)
+    {
+        // Example action: Navigate to a detailed page or trigger a modal
+        NavManager.NavigateTo($"/Player-Requests/Details/{requestIdx}");
+    }
+
+
 }
