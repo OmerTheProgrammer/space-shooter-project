@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="profile-label">Gov ID:</label>
-                        <input type="text" class="profile-input" value="@session.CurrentUser?.Id" />
+                        <input type="text" @bind="id" class="profile-input"/>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="profile-label">Pilot Name:</label>
@@ -53,10 +53,13 @@
                 }
 
                 <div class="row mt-4">
-                    <div class="col-6">
-                        <button class="btn btn-link button w-100" @onclick="HandleUpdate">UPDATE</button>
-                    </div>
-                    <div class="col-6">
+                    @if (session.IsPlayer)
+                    {
+                        <div class="col-6">
+                            <button class="btn btn-link button w-100" @onclick="HandleUpdate">UPDATE</button>
+                        </div>
+                    }
+                    <div class=@(session.IsPlayer ? "col-6" : "col-12")>
                         <button class="btn btn-link button w-100" @onclick="Logout">LOG OUT</button>
                     </div>
                 </div>
@@ -224,6 +227,7 @@
 @code {
     private string username = "";
     private string email = "";
+    private string id = "";
     private DateTime? birthday;
     private string newPassword = "";
 
@@ -262,6 +266,7 @@
             username = session.CurrentUser.Username;
             email = session.CurrentUser.Email;
             birthday = session.CurrentUser.Birthday;
+            id = session.CurrentUser?.Id;
 
             await LoadAchievements();
             await LoadMyRequests();
@@ -414,6 +419,8 @@
             var changes = new List<(string Field, string Old, string New)>();
             if (username != session.CurrentUser.Username)
                 changes.Add(("Username", session.CurrentUser.Username, username));
+            if (id != session.CurrentUser.Id)
+                changes.Add(("Id", session.CurrentUser.Id, id));
             if (email != session.CurrentUser.Email)
                 changes.Add(("Email", session.CurrentUser.Email, email));
             if (birthday != session.CurrentUser.Birthday)
@@ -422,27 +429,46 @@
             // 3. Submit Profile Edit Request if fields changed
             if (changes.Any())
             {
+                Player CurrentPlayer = new Player() { Idx = session.CurrentUser.Idx };//if admin still needs to run
                 var newRequest = new ProfileEditRequest
                 {
-                    RequestingPlayer = session.CurrentUser as Player,
+                    RequestingPlayer = CurrentPlayer,
                     RequestingDate = DateTime.Now,
                     Status = Status.Pending
                 };
 
                 var requestResponse = await api.InsertProfileEditRequest(newRequest);
-                if (requestResponse.rows > 0)
+
+                // Fetch all requests from the database to find the newly generated Idx
+                var freshRequests = await api.GetAllProfileEditRequests();
+
+                //find the inserted requst
+                ProfileEditRequest insertedProfReq = freshRequests
+                    .Where(r =>
+                        r.RequestingPlayer?.Idx == session.CurrentUser.Idx &&
+                        r.Status == Status.Pending
+                        ).OrderByDescending(r => r.RequestingDate)
+                        .ToList().FirstOrDefault();
+
+                if (requestResponse.rows > 0 && insertedProfReq != null)
                 {
                     foreach (var change in changes)
                     {
                         await api.InsertRequestData(new RequestData
                         {
-                            Request = newRequest,
+                            Request = insertedProfReq,
                             Field = change.Field,
                             OldValue = change.Old,
                             NewValue = change.New
                         });
                     }
                     statusMessage = "Profile request sent!";
+                }
+                else
+                {
+                    statusMessage = "Transmission Error: lost request";
+                    statusClass = "alert-warning";
+                    isSubmitting = false;
                 }
             }
             else if (!string.IsNullOrWhiteSpace(newPassword))
