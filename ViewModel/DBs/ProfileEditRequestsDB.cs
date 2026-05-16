@@ -156,8 +156,10 @@ namespace ViewModel.DBs
             ProfileEditRequest c = entity as ProfileEditRequest;
             if (c != null)
             {
-                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, AdminIdx=@AdminIdx RequestingDate=@RequestingDate, Status=@Status, " +
+                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, AdminIdx=@AdminIdx, RequestingDate=@RequestingDate, Status=@Status, " +
                     $"ReviewingDate=@ReviewingDate WHERE Idx=@Idx";
+
+
                 cmd.CommandText = sqlStr;
                 cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
                 cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
