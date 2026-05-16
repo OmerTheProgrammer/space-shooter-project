@@ -761,8 +761,12 @@
             {
                 try
                 {
+                    if (newValue == "None")
+                    {
+                        prop.SetValue(dto, null);
+                    }
                     // 2. Handle Nested Entities (The Fix)
-                    if (newValue is BaseEntity nestedEntity)
+                    else if (newValue is BaseEntity nestedEntity)
                     {
                         var registryEntry = _tableRegistry.Values.FirstOrDefault(v => v.EntityType == nestedEntity.GetType());
                         if (registryEntry != null)
@@ -1150,7 +1154,12 @@
             else if (IsTypeEnum(propType))
             {
                 <select class="form-select bg-dark text-white @inputBorderClass"
-                        @onchange="@(e => dataSource[propName] = Enum.Parse(Nullable.GetUnderlyingType(propType) ?? propType, e.Value?.ToString() ?? "0"))">
+                        value="@dataSource[propName]?.ToString()"
+                        @onchange="@(e => {
+                        var targetType = Nullable.GetUnderlyingType(propType) ?? propType;
+                        dataSource[propName] = Enum.Parse(targetType, e.Value?.ToString() ?? "0");
+                        StateHasChanged(); // Force the UI thread to sync
+                    })">
                     @foreach (var val in Enum.GetValues(Nullable.GetUnderlyingType(propType) ?? propType))
                     {
                         <option value="@val">@val</option>
@@ -1161,8 +1170,8 @@
             {
                 <input type="date" class="form-control bg-dark text-white @inputBorderClass"
                        value="@(dataSource.TryGetValue(propName, out var dateVal) &&
-                                                       dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : "None")"
-           @onchange="@(e => {
+                                                       dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : null)"
+                        @onchange="@(e => {
                                   if (DateTime.TryParse(e.Value?.ToString(), out var result))
                            dataSource[propName] = result;
                    })" />
