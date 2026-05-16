@@ -685,6 +685,10 @@
     #endregion
 
     #region Update
+    /// <summary>
+    /// copies SingleEntity data to editData
+    /// </summary>
+    /// <returns></returns>
     private async Task HandleUpdate()
     {
         if (targetId <= 0)
@@ -947,17 +951,37 @@
                 isLoading = true;
                 activeTab = "players"; // Automatically snap view context into your players registry
 
+                //get's player idx
                 var incomingDto = session.PendingPlayerUpdate;
                 targetId = incomingDto.Idx;
 
-                // Fetch live data state into SingleEntity for structural backup values
+                //get's player DB data
                 var fetchResponse = await _tableRegistry[activeTab].GetById(targetId);
-                SingleEntity = (BaseEntity)fetchResponse;
-                //Prepare local modification dictionary variables -> Initialize edit dictionary with all current database values
+                SingleEntity = (Player)fetchResponse;
+
+                //needs to switch SingleEntity values to incomingDto's not null values
+                var props = (_tableRegistry[activeTab].DtoType).GetProperties(
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
+                );
+
+                //copies single entity to edit data
                 await HandleUpdate();
 
-                // Immediately run your dashboard's built-in update workflow!
-                isEditMode = true;
+                //editData get's incomingDto - not nulls to update
+                foreach (var prop in props)
+                {
+                    // Skip the ID field so we don't disrupt key associations
+                    if (prop.Name == "Idx") continue;
+
+                    var value = prop.GetValue(incomingDto);
+                    if (value != null)
+                    {
+                        // Safely switch/overwrite the existing data values with the incoming approved updates
+                        editData[prop.Name] = value;
+                    }
+                }
+
+                //saves edit data to DB
                 await UpdateEntity();
             }
             catch (Exception ex)
