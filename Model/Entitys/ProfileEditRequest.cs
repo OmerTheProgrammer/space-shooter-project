@@ -15,7 +15,7 @@ namespace Model.Entitys
         private Player requestingPlayer;
         private DateTime requestingDate = new DateTime(1753, 1, 1, 12, 0, 0);
         private Status status = 0;
-        private DateTime? reviewingDate = new DateTime(1753, 1, 1, 12, 0, 0);
+        private DateTime? reviewingDate = null; //defult becouse is nullable
         private Admin? adressingAdmin;
 
         public Player RequestingPlayer { get => requestingPlayer; set => requestingPlayer = value; }

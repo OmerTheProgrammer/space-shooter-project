@@ -27,10 +27,14 @@ namespace ViewModel.DBs
             {
                 p.ReviewingDate = date;
             }
+            else
+            {
+                p.ReviewingDate = null;
+            }
             date = new DateTime(1753, 1, 1, 12, 0, 0);
             if (DateTime.TryParse(reader["RequestingDate"].ToString(), out date))
             {
-                p.ReviewingDate = date;
+                p.RequestingDate = date;
             }
             p.Status = (Status)(int)reader["Status"];
             p.RequestingPlayer = PlayersDB.SelectByIdx((int)reader["PlayerIdx"]);
