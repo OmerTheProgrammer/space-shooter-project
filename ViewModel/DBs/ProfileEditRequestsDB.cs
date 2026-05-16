@@ -163,7 +163,6 @@ namespace ViewModel.DBs
                 string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, AdminIdx=@AdminIdx, RequestingDate=@RequestingDate, Status=@Status, " +
                     $"ReviewingDate=@ReviewingDate WHERE Idx=@Idx";
 
-
                 cmd.CommandText = sqlStr;
                 cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
                 cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));
