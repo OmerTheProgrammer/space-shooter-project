@@ -1,5 +1,4 @@
-﻿@using Space_Shooter_Website.Client.Support_Classes
-@inject Session session
+﻿@inject Session session
 @inject IJSRuntime JS
 @inject NavigationManager NavManager
 
@@ -48,15 +47,21 @@
                         </li>
 
                         <li class="nav-item">
-                            <NavLink class="nav-link nav_text" href="Groups">Squadrons</NavLink>
+                            <NavLink class="nav-link nav_text" href="Groups Board">Squadrons</NavLink>
                         </li>
                     }
 
                     @if (session.IsAdmin) // and is an admin
                     {
                         <li class="nav-item">
+                            <NavLink class="nav-link nav_text" href="Players Requests">Player Requests</NavLink>
+                        </li>
+
+                        <li class="nav-item">
                             <NavLink class="nav-link nav_text" href="Admin Dashboard">Admin Dashboard</NavLink>
                         </li>
+
+                        
                     }
                     else // and is not an admin
                     {

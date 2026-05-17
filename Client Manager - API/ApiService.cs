@@ -401,8 +401,8 @@ namespace Client_Manager___API
             {
                 //can't throw from here
                 //error logging
-                Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
-                return (changedRecords, $"Error inserting from {endpoint}: {ex.Message}");
+                Console.WriteLine($"Error updating from {endpoint}: {ex.Message}");
+                return (changedRecords, $"Error updating from {endpoint}: {ex.Message}");
             }
         }
 
@@ -512,8 +512,8 @@ namespace Client_Manager___API
             {
                 //can't throw from here
                 // Centralized error logging
-                Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
-                return (changedRecords, $"Error inserting from {endpoint}: {ex.Message}");
+                Console.WriteLine($"Error deleting from {endpoint}: {ex.Message}");
+                return (changedRecords, $"Error deleting from {endpoint}: {ex.Message}");
             }
         }
 

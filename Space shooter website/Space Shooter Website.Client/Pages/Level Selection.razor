@@ -1,9 +1,4 @@
-﻿@page "/Level Selection"    
-@using Space_Shooter_Website.Client.Support_Classes
-@using Model.Entitys
-@using Model.Tables
-@using Model.Data_Transfer_Objects
-@using Client_Manager___API
+﻿@page "/Level Selection"
 @inject Session session
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
@@ -165,12 +160,68 @@
     </div>
 }
 
+@if (!session.HadOpenedBDayGift && showBirthdayPopup)
+{
+    <div class="custom-modal-overlay">
+        <div class="card">
+            <h1 class="text">🎂 Happy Birtday! 🚀</h1>
+            <p class="text">Here's Home Base's Gift: </p>
+            <div class="bonus-amount primary text"> +1,000,000 Pts</div>
+            <button class="button" @onclick="ClaimBirthdayBonus">הרווח 1,000,000 נקודות מזל טוב!</button>
+        </div>
+    </div>
+}
+
 @code {
     private int maxUnlockedLevel = 1; // Default to 1 to avoid null issues
     private bool showScores, showSettings, showInfo;
     private Player currentPlayer = null;
     private RunsInfoTable topScores = new(); // List to hold global top 10
     private bool isLoadingScores = false;
+    private bool isBirthdayToday = false;
+    private bool showBirthdayPopup = false;
+
+    private void CheckBirthday()
+    {
+        if (currentPlayer != null && currentPlayer.Birthday.HasValue)
+        {
+            var today = DateTime.Today;
+            var birthday = currentPlayer.Birthday.Value;
+
+            // בדיקה אם היום והחודש זהים
+            if (birthday.Day == today.Day && birthday.Month == today.Month)
+            {
+                showBirthdayPopup = true;
+            }
+        }
+    }
+
+    private async Task ClaimBirthdayBonus()
+    {
+        currentPlayer.TotalScore += 1000000;
+        //update DB
+        try
+        {
+            await api.UpdatePlayer(
+                PlayerDTO.FromEntity(
+                    currentPlayer,
+                    dto => {
+                        dto.TotalScore = currentPlayer.TotalScore;
+                    }
+                )
+            );
+        }
+        catch(Exception ex)
+        {
+            await JS.InvokeVoidAsync("ShowAlert", $"Failed updateing player's score: {ex.Message}");
+        }
+
+        showBirthdayPopup = false;
+        session.HadOpenedBDayGift = true;
+
+        // 3. הפניה לדף הקבוצות
+        NavManager.NavigateTo("/GroupsBoard");
+    }
 
     protected override async void OnInitialized()
     {
@@ -185,6 +236,7 @@
         }
         session.UpdateScreenFunc += StateHasChanged;
         _ = LoadTopScores(10);
+        CheckBirthday();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

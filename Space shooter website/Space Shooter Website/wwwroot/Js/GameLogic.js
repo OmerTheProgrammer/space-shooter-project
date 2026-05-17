@@ -1331,7 +1331,7 @@ function manu_actions() {
 
         sequenceHintText.setText(letter)
             .setPosition(Phaser.Math.Between(100, size[0] - 100), Phaser.Math.Between(100, size[1] - 100))
-            .setAlpha(0.2) // Make it faint/hidden
+            .setAlpha(0.4) // Make it faint/hidden
             .setVisible(true);
 
         delete hiddenLettersMap[level];

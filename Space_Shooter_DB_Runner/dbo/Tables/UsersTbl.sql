@@ -13,7 +13,6 @@ CREATE TABLE [dbo].[UsersTbl] (
     [Email]      VARCHAR (100) NOT NULL,
     PRIMARY KEY CLUSTERED ([idx] ASC),
 	CONSTRAINT Unique_Users_Username UNIQUE NONCLUSTERED ([Username] ASC),
-	CONSTRAINT Unique_Users_ID UNIQUE NONCLUSTERED ([ID] ASC),
 	CONSTRAINT Unique_Users_Password UNIQUE NONCLUSTERED ([Password] ASC)
 );
 

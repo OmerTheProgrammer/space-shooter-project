@@ -616,11 +616,19 @@ namespace Server_Manager___API.Controllers
                 OgRequstingPlayerDTO,
                 val => originalProfileEditRequest.RequestingPlayer = val);
 
+            //get DB value
             AdminDTO OgAdressingAdminDTO = (AdminDTO)MapFullEntityToDTO(
                 originalProfileEditRequest.AdressingAdmin,
                 typeof(Admin),
                 typeof(AdminDTO)
             )!;
+
+            //nullable entity set to null, so must update
+            if (OgAdressingAdminDTO == null)
+            {
+                OgAdressingAdminDTO = new AdminDTO();
+            }
+
             isModified |= TryUpdateProperty<Admin, AdminDTO>(
                 profileEditRequest.AdressingAdmin,
                 OgAdressingAdminDTO,

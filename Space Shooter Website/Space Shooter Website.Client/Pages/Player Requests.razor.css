@@ -1,0 +1,45 @@
+﻿.credit.title {
+    color: #00FF41 !important;
+    font-weight: 900;
+    margin-top: 2vh;
+    margin-bottom: 1vh;
+    text-transform: uppercase;
+    font-size: 6vw;
+    font-family: 'Courier New', Courier, monospace;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.8),
+        0 0 30px rgba(0, 255, 65, 0.6),
+        0 0 60px rgba(0, 255, 65, 0.4);
+    animation: titlePulse 3s infinite ease-in-out;
+}
+
+.credit.subtitle {
+    color: #007bff !important;
+    font-weight: 800;
+    margin-top: 20px;
+}
+
+.credit.text {
+    margin-left: 10%;
+    margin-right: 10%;
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+#Purple_Shit {
+    text-shadow: 0 0 8px rgba(130, 0, 250, 1);
+    color: #8900ff;
+    font-weight: bold;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .credit.text {
+        margin-left: 5%;
+        margin-right: 5%;
+        text-align: center !important;
+    }
+}
