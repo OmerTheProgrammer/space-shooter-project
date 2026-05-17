@@ -71,3 +71,17 @@
         flex-direction: row;
     }
 }
+
+/* Target the locked item using Blazor's deep selector format */
+.nav-item ::deep .nav-link.locked {
+    color: #6c757d !important; /* Forces the text to stay gray */
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Optional: Prevent the background from lighting up blue/cyan on hover */
+.nav-item ::deep .nav-link.locked:hover {
+    color: #6c757d !important;
+    background-color: transparent !important;
+    text-shadow: none !important;
+}

@@ -1,6 +1,7 @@
 ﻿@inject Session session
 @inject IJSRuntime JS
 @inject NavigationManager NavManager
+@inject IApiService apiService
 
 @rendermode InteractiveServer
 
@@ -57,11 +58,23 @@
                             <NavLink class="nav-link nav_text" href="Players Requests">Player Requests</NavLink>
                         </li>
 
-                        <li class="nav-item">
-                            <NavLink class="nav-link nav_text" href="Admin Dashboard">Admin Dashboard</NavLink>
-                        </li>
-
-                        
+                        @if (IsWorkLongerThenAdmin(365)) // Is admin for more than a year
+                        {
+                            <li class="nav-item">
+                                <NavLink class="nav-link nav_text admin unlocked" href="Admin Dashboard">
+                                    Admin Dashboard
+                                </NavLink>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <div class="nav-link nav_text admin locked"
+                                     title="must be an admin for more then a year to open">
+                                    Admin Dashboard
+                                </div>
+                            </li>
+                        }
                     }
                     else // and is not an admin
                     {
@@ -80,12 +93,36 @@
 </nav>
 
 @code {
+    private Admin CurrentAdmin;
     protected override void OnInitialized()
     {
         // Subscribe to session changes
         session.UpdateScreenFunc += RefreshNavbar;
         //updated the game we move in site not left it.
         NavManager.LocationChanged += HandleLocationChanged;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (session.CurrentUser != null)
+        {
+            CurrentAdmin = await apiService.GetAdminByIdx(session.CurrentUser.Idx);
+        }
+    }
+
+    /// <summary>
+    /// returns whether current admin worked longer then (param) days
+    /// </summary>
+    /// <param name="DaysCount">time to compare in days</param>
+    /// <returns></returns>
+    public bool IsWorkLongerThenAdmin(int DaysCount)
+    {
+        if (CurrentAdmin != null && CurrentAdmin.StartDate != null)
+        {
+            TimeSpan? timeAsAdmin = (DateTime.Now - CurrentAdmin.StartDate);
+            return timeAsAdmin.Value.TotalDays >= DaysCount;//didn't have total years for some reason
+        }
+        return false;
     }
 
     private void RefreshNavbar()
