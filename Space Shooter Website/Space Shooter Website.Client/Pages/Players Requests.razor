@@ -5,7 +5,7 @@
 @inject IJSRuntime JS
 @rendermode InteractiveServer
 
-<PageTitle>Player Requests</PageTitle>
+<PageTitle>Players Requests</PageTitle>
 <div class="container-fluid mt-4">
     <h1 class="display-4 text">Player Requests:</h1>
 
@@ -92,6 +92,67 @@
                     </tbody>
                 </table>
             }
+
+            @if (activeStatus == Status.Pending)
+            {
+                <div class="mb-5">
+                    <h3 class="text subtitle border-bottom border-secondary pb-2 mb-3">Unassigned Player Requests: </h3>
+                    <div class="table-responsive">
+                        @if (isLoading)
+                        {
+                            <div class="text-center p-3">
+                                <div class="spinner-border text-light spinner-border-sm" role="status"></div>
+                            </div>
+                        }
+                        else if (!AdminlessRequests.Any())
+                        {
+                            <div class="text-muted small p-2">No unassigned requests currently available.</div>
+                        }
+                        else
+                        {
+                            <table class="table table-dark table-striped table-hover align-middle m-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="subtitle" style="width: 100px;">ID</th>
+                                        <th scope="col" class="subtitle" style="width: 180px;">Player Name</th>
+                                        <th scope="col" class="subtitle">Proposed Changes</th>
+                                        <th scope="col" class="subtitle" style="width: 150px;">Date Created</th>
+                                        <th scope="col" class="subtitle" style="width: 120px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kvp in AdminlessRequests)
+                                    {
+                                        var request = kvp.Key;
+                                        var dataTable = kvp.Value;
+
+                                        <tr>
+                                            <td class="text fw-bold">#@request.Idx</td>
+                                            <td class="text">@request.RequestingPlayer.Username</td>
+                                            <td class="text">
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach (var change in dataTable)
+                                                    {
+                                                        <span class="badge p-2 border border-secondary text-light" style="background-color: rgba(52, 58, 64, 0.4); font-size: 0.8rem; font-weight: normal;">
+                                                            <strong>@change.Field:</strong> @change.NewValue
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td class="text small">@request.RequestingDate.ToShortDateString()</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-warning" @onclick="() => ClaimAndViewRequest(request)">
+                                                    Claim & View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -152,6 +213,7 @@
     // Master state models matching your data loading pipeline structure
     private Dictionary<ProfileEditRequest, RequestsDataTable> AllGroupedRequests = new();
     private Dictionary<ProfileEditRequest, RequestsDataTable> FilteredRequests = new();
+    private Dictionary<ProfileEditRequest, RequestsDataTable> AdminlessRequests = new();
 
     // Modal view configurations
     private bool isModalOpen = false;
@@ -162,6 +224,8 @@
     {
         await LoadAllRequests();
         FilterRequestsByActiveStatus();
+
+        StateHasChanged();
     }
 
     private async Task SetActiveTab(Status status)
@@ -199,6 +263,21 @@
                     AllGroupedRequests.Add(profileReq, new RequestsDataTable());
                 }
             }
+
+            var unassignedRequests = allRequests
+            .Where(p => p.AdressingAdmin == null && p.Status == Status.Pending)
+            .ToList();
+
+            AdminlessRequests.Clear();
+            foreach (var req in unassignedRequests)
+            {
+                var changes = allDataChanges.Where(r => r.Request.Idx == req.Idx).ToList();
+                if (changes.Any())
+                {
+                    AdminlessRequests.Add(req, new RequestsDataTable(changes));
+                }
+            }
+
         }
 
         catch (Exception ex)
@@ -380,7 +459,7 @@
 
                 session.PendingPlayerUpdate = playerDto;
                 CloseModal();
-                NavManager.NavigateTo("/Admin Dashboard");
+                NavManager.NavigateTo("/Admin Dashboard", forceLoad: true);
             }
             else
             {
@@ -392,6 +471,35 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error processing step update transaction mappings: {ex.Message}");
+        }
+    }
+
+    private async Task ClaimAndViewRequest(ProfileEditRequest request)
+    {
+        try
+        {
+            // Push the update to the database via your generic entity or request updater
+            await api.UpdateProfileEditRequest(
+                new ProfileEditRequestDTO()
+                {
+                    Idx = request.Idx,
+                    AdressingAdmin = new AdminDTO()
+                    {
+                        Idx = session.CurrentUser.Idx
+                    }
+                }
+            );
+
+            // Reload the UI groupings lists
+            await LoadAllRequests();
+            FilterRequestsByActiveStatus();
+
+            // Pop open your selective review checkbox modal immediately!
+            ViewRequest(request.Idx);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error claiming adminless request payload: {ex.Message}");
         }
     }
 }

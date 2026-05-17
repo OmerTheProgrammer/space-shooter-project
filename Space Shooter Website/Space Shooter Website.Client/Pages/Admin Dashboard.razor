@@ -993,6 +993,7 @@
                 isLoading = false;
                 // Clear memory state reference to prevent looping on page reload
                 session.PendingPlayerUpdate = null;
+                NavManager.NavigateTo("/Players Requests", forceLoad: true);
             }
         }
 
