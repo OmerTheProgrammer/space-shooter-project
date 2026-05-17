@@ -35,12 +35,10 @@ namespace ViewModel.DBs
         {
             return new RequestData();
         }
-
-        static private RequestsDataTable list = new RequestsDataTable();
         public static RequestData SelectByIdx(int idx)
         {
             RequestsDataDB db = new RequestsDataDB();
-            list = db.SelectAll();
+            RequestsDataTable list = db.SelectAll();
 
             RequestData g = list.Find(item => item.Idx == idx);
             if (g == null)

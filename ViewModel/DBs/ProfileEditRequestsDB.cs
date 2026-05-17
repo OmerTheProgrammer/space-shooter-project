@@ -53,12 +53,10 @@ namespace ViewModel.DBs
         {
             return new ProfileEditRequest();
         }
-
-        static private ProfileEditRequestsTable list = new ProfileEditRequestsTable();
         public static ProfileEditRequest SelectByIdx(int idx)
         {
             ProfileEditRequestsDB db = new ProfileEditRequestsDB();
-            list = db.SelectAll();
+            ProfileEditRequestsTable list = db.SelectAll();
 
             ProfileEditRequest g = list.Find(item => item.Idx == idx);
             if (g == null)

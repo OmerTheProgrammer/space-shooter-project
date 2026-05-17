@@ -33,12 +33,10 @@ namespace ViewModel.DBs
         {
             return new Group();
         }
-
-        static private GroupsTable list = new GroupsTable();
         public static Group SelectByIdx(int idx)
         {
             GroupsDB db = new GroupsDB();
-            list = db.SelectAll();
+            GroupsTable list = db.SelectAll();
 
             Group g = list.Find(item => item.Idx == idx);
             if (g == null)

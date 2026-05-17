@@ -35,12 +35,10 @@ namespace ViewModel.DBs
         {
             return new Player();
         }
-
-        static private PlayersTable list = new PlayersTable();
         public static Player SelectByIdx(int idx)
         {
             PlayersDB db = new PlayersDB();
-            list = db.SelectAll();
+            PlayersTable list = db.SelectAll();
 
             Player g = list.Find(item => item.Idx == idx);
             if (g == null)

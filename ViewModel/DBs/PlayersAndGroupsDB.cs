@@ -36,11 +36,10 @@ namespace ViewModel.DBs
             return new PlayerAndGroup();
         }
 
-        static private PlayersAndGroupsTable list = new PlayersAndGroupsTable();
         public static PlayerAndGroup SelectByIdx(int idx)
         {
             PlayersAndGroupsDB db = new PlayersAndGroupsDB();
-            list = db.SelectAll();
+            PlayersAndGroupsTable list = db.SelectAll();
 
             PlayerAndGroup g = list.Find(item => item.Idx == idx);
             if (g == null)
