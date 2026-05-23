@@ -27,10 +27,14 @@ namespace ViewModel.DBs
             {
                 p.ReviewingDate = date;
             }
+            else
+            {
+                p.ReviewingDate = null;
+            }
             date = new DateTime(1753, 1, 1, 12, 0, 0);
             if (DateTime.TryParse(reader["RequestingDate"].ToString(), out date))
             {
-                p.ReviewingDate = date;
+                p.RequestingDate = date;
             }
             p.Status = (Status)(int)reader["Status"];
             p.RequestingPlayer = PlayersDB.SelectByIdx((int)reader["PlayerIdx"]);
@@ -49,12 +53,10 @@ namespace ViewModel.DBs
         {
             return new ProfileEditRequest();
         }
-
-        static private ProfileEditRequestsTable list = new ProfileEditRequestsTable();
         public static ProfileEditRequest SelectByIdx(int idx)
         {
             ProfileEditRequestsDB db = new ProfileEditRequestsDB();
-            list = db.SelectAll();
+            ProfileEditRequestsTable list = db.SelectAll();
 
             ProfileEditRequest g = list.Find(item => item.Idx == idx);
             if (g == null)
@@ -156,8 +158,9 @@ namespace ViewModel.DBs
             ProfileEditRequest c = entity as ProfileEditRequest;
             if (c != null)
             {
-                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, RequestingDate=@RequestingDate, Status=@Status, " +
+                string sqlStr = $"UPDATE dbo.ProfileEditRequestsTbl SET PlayerIdx=@PlayerIdx, AdminIdx=@AdminIdx, RequestingDate=@RequestingDate, Status=@Status, " +
                     $"ReviewingDate=@ReviewingDate WHERE Idx=@Idx";
+
                 cmd.CommandText = sqlStr;
                 cmd.Parameters.Add(new SqlParameter("@PlayerIdx", c.RequestingPlayer.Idx));
                 cmd.Parameters.Add(new SqlParameter("@Status", (int)c.Status));

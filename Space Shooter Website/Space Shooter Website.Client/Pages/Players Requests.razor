@@ -1,0 +1,505 @@
+﻿@page "/Players Requests"
+@inject IApiService api
+@inject NavigationManager NavManager
+@inject Session session
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Players Requests</PageTitle>
+<div class="container-fluid mt-4">
+    <h1 class="display-4 text">Player Requests:</h1>
+
+    <ul class="nav nav-tabs" id="requestTabs" role="tablist">
+        @foreach (Status status in Enum.GetValues(typeof(Status)))
+        {
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeStatus == status ? "active" : "")"
+                        @onclick="() => SetActiveTab(status)" type="button">
+                    @status.ToString()
+                </button>
+            </li>
+        }
+    </ul>
+
+    <div class="tab-content border border-top-0 p-3 bg-black" id="requestTabsContent">
+        <div class="table-responsive">
+            @if (isLoading)
+            {
+                <div class="text-center p-4">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (!FilteredRequests.Any())
+            {
+                <div class="text-light p-3 text-center">No @activeStatus.ToString().ToLower() requests found.</div>
+            }
+            else
+            {
+                <table class="table table-hover table-striped border">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" class="subtitle">Idx: </th>
+                            <th scope="col" class="subtitle">Player Name: </th>
+                            <th scope="col" class="subtitle">Details: </th>
+                            <th scope="col" class="subtitle">Created Date: </th>
+                            @if (activeStatus == Status.Pending)
+                            {
+                                <th scope="col" class="subtitle">Actions: </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var kvp in FilteredRequests)
+                        {
+                            var request = kvp.Key;
+                            var dataTable = kvp.Value;
+
+                            <tr>
+                                <td class="text">#@request.Idx</td>
+                                <td class="text">@request.RequestingPlayer.Username</td>
+                                @if (dataTable.Any())
+                                {
+                                    <td class="text" style="max-width: 14vw;">
+                                        <div class="d-flex flex-wrap gap-2">
+                                                @foreach (var change in dataTable)
+                                                {
+                                                    <span class="badge p-2 text-wrap text-start border border-secondary text-light"
+                                                          style="background-color: rgba(52, 58, 64, 0.65); font-size: 0.85rem; line-height: 1.4; font-weight: normal;">
+                                                        <strong style="color: #dee2e6;">@change.Field:</strong> <br />
+                                                        <span class="text-white-50">@change.OldValue</span>
+                                                        <span class="text-muted mx-1">➔</span>
+                                                        <span style="color: #a5d6a7;">@change.NewValue</span>
+                                                    </span>
+                                                }
+                                        </div>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="text">No Details in this request</td>
+                                }
+                                <td class="text">@request.RequestingDate.ToShortDateString()</td>
+                                @if (activeStatus == Status.Pending)
+                                {
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" @onclick="() => ViewRequest(request.Idx)">View</button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @if (activeStatus == Status.Pending)
+            {
+                <div class="mb-5">
+                    <h3 class="text subtitle border-bottom border-secondary pb-2 mb-3">Unassigned Player Requests: </h3>
+                    <div class="table-responsive">
+                        @if (isLoading)
+                        {
+                            <div class="text-center p-3">
+                                <div class="spinner-border text-light spinner-border-sm" role="status"></div>
+                            </div>
+                        }
+                        else if (!AdminlessRequests.Any())
+                        {
+                            <div class="text-muted small p-2">No unassigned requests currently available.</div>
+                        }
+                        else
+                        {
+                            <table class="table table-dark table-striped table-hover align-middle m-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="subtitle" style="width: 100px;">ID</th>
+                                        <th scope="col" class="subtitle" style="width: 180px;">Player Name</th>
+                                        <th scope="col" class="subtitle">Proposed Changes</th>
+                                        <th scope="col" class="subtitle" style="width: 150px;">Date Created</th>
+                                        <th scope="col" class="subtitle" style="width: 120px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kvp in AdminlessRequests)
+                                    {
+                                        var request = kvp.Key;
+                                        var dataTable = kvp.Value;
+
+                                        <tr>
+                                            <td class="text fw-bold">#@request.Idx</td>
+                                            <td class="text">@request.RequestingPlayer.Username</td>
+                                            <td class="text">
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach (var change in dataTable)
+                                                    {
+                                                        <span class="badge p-2 border border-secondary text-light" style="background-color: rgba(52, 58, 64, 0.4); font-size: 0.8rem; font-weight: normal;">
+                                                            <strong>@change.Field:</strong> @change.NewValue
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td class="text small">@request.RequestingDate.ToShortDateString()</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-warning" @onclick="() => ClaimAndViewRequest(request)">
+                                                    Claim & View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (isModalOpen && selectedRequest != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.7);" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark text-light border border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Review Request #@selectedRequest.Idx — @selectedRequest.RequestingPlayer?.Username</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-white-50 small mb-3">Uncheck modifications to deny them. Checked items will pass to the Dashboard automatically.</p>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm align-middle">
+                            <thead>
+                                <tr class="text-secondary">
+                                    <th style="width: 60px;" class="text-center">Allow</th>
+                                    <th>Field Property</th>
+                                    <th>Old Value</th>
+                                    <th>Proposed Update</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var change in trackingChanges)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input" @bind="change.IsApproved" />
+                                        </td>
+                                        <td><strong>@change.Data.Field</strong></td>
+                                        <td class="text-white-50 text-decoration-line-through">@change.Data.OldValue</td>
+                                        <td class="text-success fw-bold">@change.Data.NewValue</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Cancel</button>
+                    <div>
+                        <button type="button" class="btn btn-danger me-2" @onclick="RejectEntireRequest">Reject All</button>
+                        <button type="button" class="btn btn-success" @onclick="e => ProcessSelectedChanges()">Apply Selection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private Status activeStatus = Status.Pending;
+    private bool isLoading = true;
+
+    // Master state models matching your data loading pipeline structure
+    private Dictionary<ProfileEditRequest, RequestsDataTable> AllGroupedRequests = new();
+    private Dictionary<ProfileEditRequest, RequestsDataTable> FilteredRequests = new();
+    private Dictionary<ProfileEditRequest, RequestsDataTable> AdminlessRequests = new();
+
+    // Modal view configurations
+    private bool isModalOpen = false;
+    private ProfileEditRequest? selectedRequest;
+    private List<RequestDataChangeTracker> trackingChanges = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllRequests();
+        FilterRequestsByActiveStatus();
+
+        StateHasChanged();
+    }
+
+    private async Task SetActiveTab(Status status)
+    {
+        activeStatus = status;
+        FilterRequestsByActiveStatus();
+        await Task.CompletedTask;
+    }
+
+    private async Task LoadAllRequests()
+    {
+        try
+        {
+            isLoading = true;
+            var allRequests = await api.GetAllProfileEditRequests();
+            var allDataChanges = await api.GetAllRequestsData();
+
+            var myProfileRequests = allRequests
+                .Where(p => p.AdressingAdmin?.Idx == session.CurrentUser.Idx)
+                .ToList();
+
+            AllGroupedRequests.Clear();
+            foreach (var profileReq in myProfileRequests)
+            {
+                var changesForThisReq = allDataChanges
+                    .Where(r => r.Request.Idx == profileReq.Idx)
+                    .ToList();
+
+                if (changesForThisReq.Any())
+                {
+                    AllGroupedRequests.Add(profileReq, new RequestsDataTable(changesForThisReq));
+                }
+                else
+                {
+                    AllGroupedRequests.Add(profileReq, new RequestsDataTable());
+                }
+            }
+
+            var unassignedRequests = allRequests
+            .Where(p => p.AdressingAdmin == null && p.Status == Status.Pending)
+            .ToList();
+
+            AdminlessRequests.Clear();
+            foreach (var req in unassignedRequests)
+            {
+                var changes = allDataChanges.Where(r => r.Request.Idx == req.Idx).ToList();
+                if (changes.Any())
+                {
+                    AdminlessRequests.Add(req, new RequestsDataTable(changes));
+                }
+            }
+
+        }
+
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching data records: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void FilterRequestsByActiveStatus()
+    {
+        FilteredRequests = AllGroupedRequests
+            .Where(kvp => kvp.Key.Status == activeStatus)
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    }
+
+    private void ViewRequest(int requestIdx)
+    {
+        //get the picked request
+        var match = AllGroupedRequests.Keys.FirstOrDefault(r => r.Idx == requestIdx);
+        if (match != null)
+        {
+            selectedRequest = match;//save it
+            //save the linked changeDatas as record + flag to IsApproved in new table
+            var dataTable = AllGroupedRequests[match];
+            trackingChanges = dataTable.Select(c => new RequestDataChangeTracker
+            {
+                Data = c,
+                IsApproved = true//default is do change, click to cancel change
+            }).ToList();
+
+            isModalOpen = true;//opens popup
+        }
+    }
+
+    private void CloseModal()
+    {
+        isModalOpen = false;
+        selectedRequest = null;
+        trackingChanges.Clear();
+    }
+
+    private async Task RejectEntireRequest()
+    {
+        foreach (var change in trackingChanges)
+        {
+            change.IsApproved = false;
+        }
+        await ProcessSelectedChanges(Status.Rejected);
+    }
+
+    private async Task ProcessSelectedChanges(Status FailStatus = Status.Canceled)
+    {
+        if (selectedRequest == null) return;
+
+        try
+        {
+            var approvedChanges = trackingChanges.Where(c => c.IsApproved).ToList();
+            var rejectedChanges = trackingChanges.Where(c => !c.IsApproved).ToList();
+
+            Admin CurrentAdmin = new Admin() {Idx = session.CurrentUser.Idx};//only idx matters for insert of nested
+            // 1. Log Approved item bundle splits as history logs
+            if (approvedChanges.Any())
+            {
+                var approvedParent = new ProfileEditRequest
+                {
+                    RequestingPlayer = selectedRequest.RequestingPlayer,
+                    AdressingAdmin = CurrentAdmin,
+                    Status = Status.Approved,
+                    RequestingDate = selectedRequest.RequestingDate,
+                    ReviewingDate = DateTime.UtcNow
+                };
+
+                var insertApprovedResult = await api.InsertProfileEditRequest(approvedParent);
+
+                // Fetch all requests from the database to find the newly generated Idx
+                var freshRequests = await api.GetAllProfileEditRequests();
+
+                // Locate the exact matching parent request record we just generated
+                ProfileEditRequest insertedProfReq = freshRequests
+                    .Where(r => 
+                        r.RequestingPlayer?.Idx == selectedRequest.RequestingPlayer.Idx &&
+                        r.AdressingAdmin?.Idx == session.CurrentUser.Idx &&
+                        r.Status == Status.Approved &&
+                        r.RequestingDate == selectedRequest.RequestingDate)
+                        .OrderByDescending(r => r.ReviewingDate).ToList()
+                        .FirstOrDefault()
+                    ;
+
+                if (insertedProfReq != null)
+                {
+                    foreach (var change in approvedChanges)
+                    {
+                        await api.InsertRequestData(new RequestData
+                        {
+                            Request = insertedProfReq,
+                            Field = change.Data.Field,
+                            OldValue = change.Data.OldValue,
+                            NewValue = change.Data.NewValue
+                        });
+                    }
+                }
+            }
+
+            // 2. Log Rejected item bundle splits as history logs (Status: Canceled)
+            if (rejectedChanges.Any())
+            {
+                var rejectedParent = new ProfileEditRequest
+                {
+                    RequestingPlayer = selectedRequest.RequestingPlayer,
+                    AdressingAdmin = CurrentAdmin,
+                    Status = FailStatus,
+                    RequestingDate = selectedRequest.RequestingDate,
+                    ReviewingDate = DateTime.UtcNow
+                };
+
+                var insertRejectedResult = await api.InsertProfileEditRequest(rejectedParent);
+
+                // Fetch all requests from the database to find the newly generated Idx
+                var freshRequests = await api.GetAllProfileEditRequests();
+
+                // Locate the exact matching parent request record we just generated
+                var insertedProfReqs = freshRequests
+                    .Where(r =>
+                        r.RequestingPlayer?.Idx == selectedRequest.RequestingPlayer.Idx &&
+                        r.AdressingAdmin?.Idx == session.CurrentUser.Idx &&
+                        r.Status == FailStatus &&
+                        r.RequestingDate == selectedRequest.RequestingDate)
+                        .OrderByDescending(r => r.ReviewingDate).ToList();
+
+                ProfileEditRequest insertedProfReq = insertedProfReqs.FirstOrDefault();
+                if (insertedProfReq != null)
+                {
+                    foreach (var change in rejectedChanges)
+                    {
+                        await api.InsertRequestData(new RequestData
+                        {
+                            Request = insertedProfReq,
+                            Field = change.Data.Field,
+                            OldValue = change.Data.OldValue,
+                            NewValue = change.Data.NewValue
+                        });
+                    }
+                }
+            }
+
+            // 3. Clear the original obsolete pending entry request
+            await api.DeleteProfileEditRequest(selectedRequest.Idx);
+
+            // 4. Stash approved updates inside standard PlayerDTO and forward to Dashboard
+            if (approvedChanges.Any())
+            {
+                var playerDto = new PlayerDTO
+                {
+                    Idx = selectedRequest.RequestingPlayer.Idx
+                };
+
+                var dtoType = typeof(PlayerDTO);
+                foreach (var change in approvedChanges)
+                {
+                    var prop = dtoType.GetProperty(change.Data.Field, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    if (prop != null && prop.CanWrite)
+                    {
+                        try
+                        {
+                            var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                            var convertedValue = Convert.ChangeType(change.Data.NewValue, targetType);
+                            prop.SetValue(playerDto, convertedValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error assigning conversion value to '{change.Data.Field}': {ex.Message}");
+                        }
+                    }
+                }
+
+                session.PendingPlayerUpdate = playerDto;
+                CloseModal();
+                NavManager.NavigateTo("/Admin Dashboard", forceLoad: true);
+            }
+            else
+            {
+                CloseModal();
+                await LoadAllRequests();
+                FilterRequestsByActiveStatus();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error processing step update transaction mappings: {ex.Message}");
+        }
+    }
+
+    private async Task ClaimAndViewRequest(ProfileEditRequest request)
+    {
+        try
+        {
+            // Push the update to the database via your generic entity or request updater
+            await api.UpdateProfileEditRequest(
+                new ProfileEditRequestDTO()
+                {
+                    Idx = request.Idx,
+                    AdressingAdmin = new AdminDTO()
+                    {
+                        Idx = session.CurrentUser.Idx
+                    }
+                }
+            );
+
+            // Reload the UI groupings lists
+            await LoadAllRequests();
+            FilterRequestsByActiveStatus();
+
+            // Pop open your selective review checkbox modal immediately!
+            ViewRequest(request.Idx);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error claiming adminless request payload: {ex.Message}");
+        }
+    }
+}

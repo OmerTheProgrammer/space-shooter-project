@@ -4,6 +4,7 @@ using ViewModel;
 
 namespace Server_Manager___API
 {
+
     //class to run error handling as middleware
     public class ExceptionHandler
     {

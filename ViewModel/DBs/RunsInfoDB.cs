@@ -38,12 +38,10 @@ namespace ViewModel.DBs
         {
             return new RunInfo();
         }
-
-        static private RunsInfoTable list = new RunsInfoTable();
         public static RunInfo SelectByIdx(int idx)
         {
             RunsInfoDB db = new RunsInfoDB();
-            list = db.SelectAll();
+            RunsInfoTable list = db.SelectAll();
 
             RunInfo g = list.Find(item => item.Idx == idx);
             if (g == null)

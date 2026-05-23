@@ -32,12 +32,10 @@ namespace ViewModel.DBs
         {
             return new Admin();
         }
-
-        static private AdminsTable list = new AdminsTable();
         public static Admin SelectByIdx(int idx)
         {
             AdminsDB db = new AdminsDB();
-            list = db.SelectAll();
+            AdminsTable list = db.SelectAll();
 
             Admin g = list.Find(item => item.Idx == idx);
             if (g == null)

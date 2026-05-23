@@ -11,11 +11,13 @@ namespace Space_Shooter_Website.Client.Support_Classes
     {
         public User? CurrentUser { get; set; }
         public RunInfo CurrentRun { get; set; } = new RunInfo();
+        public PlayerDTO? PendingPlayerUpdate { get; set; }
         public int SelectedLevel { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsPlayer { get; set; }
         public bool IsLoggedIn => CurrentUser != null;
         public bool IsContuiningRun = false;
+        public bool HadOpenedBDayGift = false;
 
         public string Progress = "100%";
         public bool IsEndless { get; set; } = false;

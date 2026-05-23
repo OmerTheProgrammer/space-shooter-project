@@ -35,12 +35,10 @@ namespace ViewModel.DBs
         {
             return new User();
         }
-
-        static private UsersTable list = new UsersTable();
         public static User SelectByIdx(int idx)
         {
             UsersDB db = new UsersDB();
-            list = db.SelectAll();
+            UsersTable list = db.SelectAll();
 
             User g = list.Find(item => item.Idx == idx);
             if (g == null)

@@ -71,3 +71,45 @@
         flex-direction: row;
     }
 }
+
+/* Container must be relative for positioning the tooltip */
+.nav-item ::deep .nav-link.locked {
+    color: #6c757d !important;
+    opacity: 0.65;
+    cursor: not-allowed;
+    position: relative;
+}
+
+    /* Create the Tooltip Box */
+    .nav-item ::deep .nav-link.locked::after {
+        content: attr(data-tooltip); /* takes text from data-tooltip*/
+        position: absolute;
+        bottom: -35px; /* Positions it right below the text - 
+           somehow 35px more precise in diffrent screen sizes */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: normal;
+        white-space: nowrap;
+        z-index: 1000;
+        /* Hidden by default */
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.1s ease-in-out;
+    }
+
+    /* Show instantly on hover */
+    .nav-item ::deep .nav-link.locked:hover::after {
+        opacity: 1;
+    }
+
+    /* Clean up background hover styles */
+    .nav-item ::deep .nav-link.locked:hover {
+        color: #6c757d !important;
+        background-color: transparent !important;
+        text-shadow: none !important;
+    }

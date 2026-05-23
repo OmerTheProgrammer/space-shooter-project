@@ -1,7 +1,4 @@
 ﻿@page "/Admin Connection"
-@using Space_Shooter_Website.Client.Support_Classes
-@using Client_Manager___API;
-@using Model.Entitys
 @inject NavigationManager NavManager
 @inject Session session
 @inject IJSRuntime JS
@@ -134,7 +131,7 @@
                 //even if not inserted to DB for the session now he is an admin.
                 session.CurrentUser = Newadmin;
                 // Redirect to Admin View
-                NavManager.NavigateTo("/Admin Dashboard");
+                NavManager.NavigateTo("/Players Requests");
                 
                 //refresh screen
             }
