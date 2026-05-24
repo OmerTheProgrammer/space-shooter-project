@@ -59,7 +59,7 @@ namespace Client_Manager___API
                 .Build();
 
             // The tunnel URL from configuration
-            string tunnelUrl = _config["ConnectionStrings:SpaceShooterServer"];
+            string tunnelUrl = _config["ConnectionStrings:SpaceShootersDevTunnel"];
             // Check if the tunnel is reachable by sending a HEAD request with a short timeout from unrlated HttpClient
             using (var client = new HttpClient())
             {
