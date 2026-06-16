@@ -204,7 +204,6 @@
         //terms and conditions check
         if (!agreesToTerms)
         {
-            await Task.Delay(100); // wait a moment to show scanning
             await TriggerError("Read and Agree to Terms and Conditions!");
             return;
         }
