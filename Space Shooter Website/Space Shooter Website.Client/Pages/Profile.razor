@@ -93,14 +93,14 @@
                                 <div class="stat-box p-3 text-center rounded bg-dark border border-warning border-opacity-50">
                                     <i class="fa fa-star-fill text-warning"></i>
                                     <small class="text-muted d-block">All-Time High</small>
-                                    <span class="h4 text-warning fw-bold">@personalBestScore?.CurrentScore</span>
+                                    <span class="h4 text-warning fw-bold">@(personalBestScore?.CurrentScore ?? 0)</span>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="stat-box p-3 text-center rounded bg-dark border border-info border-opacity-50">
                                     <i class="fa fa-rocket-takeoff text-info"></i>
                                     <small class="text-muted d-block">Deepest Sector</small>
-                                    <span class="h4 text-info fw-bold">Lvl @personalBestLevel?.CurrentLevel/30</span>
+                                    <span class="h4 text-info fw-bold">Lvl @(personalBestLevel?.CurrentLevel ?? 0)/30</span>
                                 </div>
                             </div>
 

@@ -6,11 +6,12 @@ namespace ViewModel.DBs
 {
     public abstract class BaseDB
     {
-        protected static string connectionString = GetConnectionString();
-
+        protected string connectionString = GetConnectionString();
         protected static SqlConnection connection;
+        protected static SqlTransaction trans = null;
         protected SqlCommand command;
         protected SqlDataReader reader;
+        protected List<ChangeEntity> changes = new List<ChangeEntity>();
 
         private static string GetConnectionString()
         {
@@ -60,6 +61,17 @@ namespace ViewModel.DBs
                     connection.Open();
                 }
 
+                //in order to run while a transaction (other commend - insert etc) is active, otherwise
+                //the connection will be locked and the select will fail.
+                if (trans != null)//אם יש טרנזקציה פעילה, נשתמש בה
+                {
+                    command.Transaction = trans;
+                }
+                else//אם אין טרנזקציה פעילה, נבטל את הטרנזקציה של הפקודה כדי לאפשר את הריצה שלה
+                {
+                    command.Transaction = null;
+                }
+
                 reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -78,10 +90,6 @@ namespace ViewModel.DBs
                 {
                     reader.Close();
                 }
-                //if (connection.State == ConnectionState.Open) //גורם לקריסה
-                //{
-                //    connection.Close();
-                //}
             }
             return list;
         }
@@ -92,7 +100,11 @@ namespace ViewModel.DBs
         }
 
         protected abstract void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd);
-        public static List<ChangeEntity> deleted = new List<ChangeEntity>();
+
+        protected virtual void CreateDeletedFatherSQL(BaseEntity entity, SqlCommand cmd)
+        {
+            //יורש ישים פה: base.CreateDeletedSQL(entity, cmd);
+        }
 
         /// <summary>
         /// Deletes a record based on a *FOUND* idx in the table!
@@ -104,18 +116,17 @@ namespace ViewModel.DBs
         /// </remarks>
         public virtual void Delete(BaseEntity entity)
         {
-            BaseEntity reqEntity = NewEntity();
             if (entity != null)
             {
-                if (entity.GetType() == reqEntity.GetType())
-                {
-                    deleted.Add(new ChangeEntity(CreateDeletedSQL, entity));
-                }
+                changes.Add(new ChangeEntity(entity, DbAction.Delete));
             }
         }
 
-        protected abstract void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd);
-        public static List<ChangeEntity> inserted = new List<ChangeEntity>();
+        protected abstract void CreateInsertedSQL(BaseEntity entity, SqlCommand cmd);
+        protected virtual void CreateInsertedFatherSQL(BaseEntity entity, SqlCommand cmd)
+        {
+            //יורש ישים פה: base.CreateInsertedSQL(entity, cmd);
+        }
 
         /// <summary>
         /// Inserts a record into the table!
@@ -127,15 +138,17 @@ namespace ViewModel.DBs
         /// </remarks>
         public virtual void Insert(BaseEntity entity)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (entity != null & entity.GetType() == reqEntity.GetType())
+            if (entity != null)
             {
-                inserted.Add(new ChangeEntity(CreateInsertdSQL, entity));
+                changes.Add(new ChangeEntity(entity, DbAction.Insert));
             }
         }
 
         protected abstract void CreateUpdatedSQL(BaseEntity entity, SqlCommand cmd);
-        public static List<ChangeEntity> updated = new List<ChangeEntity>();
+        protected virtual void CreateUpdatedFatherSQL(BaseEntity entity, SqlCommand cmd)
+        {
+            //יורש ישים פה: base.CreateUpdatedSQL(entity, cmd);
+        }
 
         /// <summary>
         /// Updates a record based on a *FOUND* idx in the table!
@@ -147,10 +160,9 @@ namespace ViewModel.DBs
         /// </remarks>
         public virtual void Update(BaseEntity entity)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (entity != null && entity.GetType() == reqEntity.GetType())
+            if (entity != null)
             {
-                updated.Add(new ChangeEntity(CreateUpdatedSQL, entity));
+                changes.Add(new ChangeEntity(entity, DbAction.Update));
             }
         }
 
@@ -163,7 +175,7 @@ namespace ViewModel.DBs
         /// </remarks>
         public int SaveChanges()
         {
-            SqlTransaction trans = null;
+            trans = null;
             int records_affected = 0;
 
             try
@@ -178,54 +190,77 @@ namespace ViewModel.DBs
                 trans = connection.BeginTransaction();
                 command.Transaction = trans;
 
-                foreach (var entity in inserted)
+                // לולאה אחת ברורה על כל השינויים שנאספו
+                foreach (var change in changes)
                 {
                     command.Parameters.Clear();
-                    entity.CreateSql(entity.Entity, command); //cmd.CommandText = CreateInsertSQL(entity.Entity);
-                    records_affected += command.ExecuteNonQuery();
 
-                    command.CommandText = "SELECT @@IDENTITY";
-
-                    object result = command.ExecuteScalar();
-                    if(result != null && result.GetType().ToString() != "System.DBNull")
+                    switch (change.Action)
                     {
-                        entity.Entity.Idx = Convert.ToInt32(result);
+                        case DbAction.Insert:
+                            CreateInsertedSQL(change.Entity, command);
+                            records_affected += command.ExecuteNonQuery();
+
+                            command.CommandText = "SELECT @@IDENTITY";
+                            object result = command.ExecuteScalar();
+                            if (result != null && result != DBNull.Value)
+                            {
+                                change.Entity.Idx = Convert.ToInt32(result);
+                            }
+
+                            break;
+
+                        case DbAction.InsertChild: // האב (Users) רץ ראשון ומייצר את ה-ID!
+                            CreateInsertedSQL(change.Entity, command);
+                            records_affected += command.ExecuteNonQuery();
+                            break;
+
+                        case DbAction.InsertFather: // האב (Users) רץ ראשון ומייצר את ה-ID!
+                            CreateInsertedFatherSQL(change.Entity, command);
+                            records_affected += command.ExecuteNonQuery();
+
+                            // שליפת ה-ID האוטומטי שנוצר באב ועדכון הישות מיד!
+                            command.CommandText = "SELECT @@IDENTITY";
+                            object resultFather = command.ExecuteScalar();
+                            if (resultFather != null && resultFather != DBNull.Value)
+                            {
+                                change.Entity.Idx = Convert.ToInt32(resultFather);
+                            }
+                            break;
+
+                        case DbAction.Update:
+                            CreateUpdatedSQL(change.Entity, command);
+                            records_affected += command.ExecuteNonQuery();
+                            break;
+
+                        case DbAction.UpdateFather: // מריץ את שאילתת העדכון של האב
+                            CreateUpdatedFatherSQL(change.Entity, command);
+                            records_affected += command.ExecuteNonQuery();
+                            break;
+
+                        case DbAction.Delete:
+                            CreateDeletedSQL(change.Entity, command);
+                            records_affected += command.ExecuteNonQuery();
+                            break;
+
+                        case DbAction.DeleteFather://runs base.CreateDeletedSQL for inherited.
+                            CreateDeletedFatherSQL(change.Entity, command);
+                            records_affected += command.ExecuteNonQuery();
+                            break;
                     }
-                }
-
-                foreach (var entity in updated)
-                {
-                    command.Parameters.Clear();
-                    entity.CreateSql(entity.Entity, command);        //cmd.CommandText = CreateUpdateSQL(entity.Entity);
-                    records_affected += command.ExecuteNonQuery();
-                }
-
-                foreach (var entity in deleted)
-                {
-                    command.Parameters.Clear();
-                    entity.CreateSql(entity.Entity, command);
-                    records_affected += command.ExecuteNonQuery();
                 }
 
                 trans.Commit();
             }
             catch (Exception ex)
             {
-                trans.Rollback();
-                throw new ExpandedException("Sql error happend: ", command.CommandText, ex);
+                trans?.Rollback();
+                throw new ExpandedException("Sql error happened: ", command.CommandText, ex);
             }
             finally
             {
-                inserted.Clear();
-
-                updated.Clear();
-
-                deleted.Clear();
-
-                //if (connection.State == System.Data.ConnectionState.Open)
-                //{
-                //    connection.Close();
-                //}
+                // מנקים את רשימת השינויים שבוצעו בהצלחה
+                changes.Clear();
             }
 
             return records_affected;

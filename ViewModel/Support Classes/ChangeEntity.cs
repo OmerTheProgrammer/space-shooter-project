@@ -5,28 +5,27 @@ using System.Text;
 
 namespace ViewModel
 {
-    public class ChangeEntity
+    public enum DbAction
     {
-        private BaseEntity entity;
-        private CreateSql createSql;
-
-        public ChangeEntity(CreateSql createSql, BaseEntity entity)
-        {
-            this.createSql = createSql;
-            this.entity = entity;
-        }
-
-        public BaseEntity Entity { get => entity; set => entity = value; }
-        public CreateSql CreateSql { get => createSql; set => createSql = value; }
-
-        public CreateSql CreateSql_Prop
-        {
-            get => default;
-            set
-            {
-            }
-        }
+        Insert,         // הכנסת רגילה 
+        InsertChild,    // הכנסת ילד בלבד - שלב ב' של הכנסה בהורשה
+        InsertFather,   // הכנסת ילד בלבד - שלב א' של הכנסה בהורשה
+        Update,         // עדכון רגילה / עדכון ילד בלבד
+        UpdateFather,   // עדכון אב בלבד
+        Delete,         // מחיקה רגילה / מחיקת ילד בלבד
+        DeleteFather,   // מחיקת אב בלבד
     }
 
-    public delegate void CreateSql(BaseEntity entity, SqlCommand command);
+    public class ChangeEntity
+    {
+        // שימוש ב-Properties קצרים ונקיים (Auto-implemented Properties)
+        public BaseEntity Entity { get; set; }
+        public DbAction Action { get; set; }
+
+        public ChangeEntity(BaseEntity entity, DbAction action)
+        {
+            Entity = entity;
+            Action = action;
+        }
+    }
 }

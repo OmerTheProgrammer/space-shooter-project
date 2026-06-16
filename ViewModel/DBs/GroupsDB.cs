@@ -59,7 +59,7 @@ namespace ViewModel.DBs
             }
         }
 
-        protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateInsertedSQL(BaseEntity entity, SqlCommand cmd)
         {
             Group c = entity as Group;
             if (c != null)
