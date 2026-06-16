@@ -9,6 +9,7 @@ namespace ViewModel.DBs
         protected static string connectionString = GetConnectionString();
 
         protected static SqlConnection connection;
+        protected static SqlTransaction trans = null;
         protected SqlCommand command;
         protected SqlDataReader reader;
 
@@ -60,7 +61,18 @@ namespace ViewModel.DBs
                     connection.Open();
                 }
 
-                reader = command.ExecuteReader();
+                //in order to run while a transaction (other commend - insert etc) is active, otherwise
+                //the connection will be locked and the select will fail.
+                if (trans != null)//אם יש טרנזקציה פעילה, נשתמש בה
+                {
+                    command.Transaction = trans;
+                }
+                else//אם אין טרנזקציה פעילה, נבטל את הטרנזקציה של הפקודה כדי לאפשר את הריצה שלה
+                {
+                    command.Transaction = null;
+                }
+
+                    reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -163,7 +175,7 @@ namespace ViewModel.DBs
         /// </remarks>
         public int SaveChanges()
         {
-            SqlTransaction trans = null;
+            trans = null;
             int records_affected = 0;
 
             try
@@ -175,7 +187,10 @@ namespace ViewModel.DBs
                     connection.Open();
                 }
 
-                trans = connection.BeginTransaction();
+                if (trans == null)
+                {
+                    trans = connection.BeginTransaction();
+                }
                 command.Transaction = trans;
 
                 foreach (var entity in inserted)
@@ -212,6 +227,7 @@ namespace ViewModel.DBs
             catch (Exception ex)
             {
                 trans.Rollback();
+                trans = null;
                 throw new ExpandedException("Sql error happend: ", command.CommandText, ex);
             }
             finally
