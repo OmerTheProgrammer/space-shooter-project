@@ -61,7 +61,7 @@ namespace ViewModel.DBs
             }
         }
 
-        protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateInsertedSQL(BaseEntity entity, SqlCommand cmd)
         {
             User c = entity as User;
             if (c != null)

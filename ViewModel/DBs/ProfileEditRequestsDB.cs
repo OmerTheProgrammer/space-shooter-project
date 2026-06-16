@@ -106,7 +106,7 @@ namespace ViewModel.DBs
             }
         }
 
-        protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateInsertedSQL(BaseEntity entity, SqlCommand cmd)
         {
             ProfileEditRequest c = entity as ProfileEditRequest;
             if (c != null)

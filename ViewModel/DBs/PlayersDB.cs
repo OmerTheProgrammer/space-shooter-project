@@ -51,12 +51,10 @@ namespace ViewModel.DBs
         //שלב ב
         public override void Delete(BaseEntity entity)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (entity != null & entity.GetType() == reqEntity.GetType())
-            {
-                deleted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
-                deleted.Add(new ChangeEntity(this.CreateDeletedSQL, entity));
-            }
+            if (entity == null) return;
+            //delete player and user
+            changes.Add(new ChangeEntity(entity, DbAction.DeleteFather));
+            changes.Add(new ChangeEntity(entity, DbAction.Delete));
         }
 
         protected override void CreateDeletedSQL(BaseEntity entity, SqlCommand cmd)
@@ -71,7 +69,20 @@ namespace ViewModel.DBs
             }
         }
 
-        protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateDeletedFatherSQL(BaseEntity entity, SqlCommand cmd)
+        {
+            base.CreateDeletedSQL(entity, cmd);
+        }
+
+        public override void Insert(BaseEntity entity)
+        {
+            if (entity == null) return;
+                changes.Add(new ChangeEntity(entity, DbAction.InsertFather));
+                changes.Add(new ChangeEntity(entity, DbAction.InsertChild));
+            
+        }
+
+        protected override void CreateInsertedSQL(BaseEntity entity, SqlCommand cmd)
         {
             Player c = entity as Player;
             if (c != null)
@@ -89,14 +100,18 @@ namespace ViewModel.DBs
             }
         }
 
-        public override void Insert(BaseEntity entity)
+        protected override void CreateInsertedFatherSQL(BaseEntity entity, SqlCommand cmd)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (entity != null & entity.GetType() == reqEntity.GetType())
-            {
-                inserted.Add(new ChangeEntity(base.CreateInsertdSQL, entity));
-                inserted.Add(new ChangeEntity(this.CreateInsertdSQL, entity));
-            }
+            base.CreateInsertedSQL(entity, cmd); // קורא ל-SQL של UsersDB
+        }
+
+        public override void Update(BaseEntity entity)
+        {
+            if (entity == null) return;
+
+            // מעדכנים את שניהם בכל מקרה
+            changes.Add(new ChangeEntity(entity, DbAction.UpdateFather));
+            changes.Add(new ChangeEntity(entity, DbAction.Update));
         }
 
         protected override void CreateUpdatedSQL(BaseEntity entity, SqlCommand cmd)
@@ -117,14 +132,9 @@ namespace ViewModel.DBs
             }
         }
 
-        public override void Update(BaseEntity entity)
+        protected override void CreateUpdatedFatherSQL(BaseEntity entity, SqlCommand cmd)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (entity != null && entity.GetType() == reqEntity.GetType())
-            {
-                updated.Add(new ChangeEntity(base.CreateUpdatedSQL, entity));
-                updated.Add(new ChangeEntity(this.CreateUpdatedSQL, entity));
-            }
+            base.CreateUpdatedSQL(entity, cmd); // קורא ל-SQL של UsersDB
         }
     }
 }

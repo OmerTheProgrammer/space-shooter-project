@@ -64,7 +64,7 @@ namespace ViewModel.DBs
             }
         }
 
-        protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateInsertedSQL(BaseEntity entity, SqlCommand cmd)
         {
             RunInfo c = entity as RunInfo;
             if (c != null)

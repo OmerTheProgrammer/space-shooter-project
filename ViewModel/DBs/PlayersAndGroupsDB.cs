@@ -63,7 +63,7 @@ namespace ViewModel.DBs
             }
         }
 
-        protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand command)
+        protected override void CreateInsertedSQL(BaseEntity entity, SqlCommand command)
         {
             PlayerAndGroup c = entity as PlayerAndGroup;
             if (c != null)

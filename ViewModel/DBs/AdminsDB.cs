@@ -48,16 +48,19 @@ namespace ViewModel.DBs
         //שלב ב
         public override void Delete(BaseEntity entity)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (PlayersDB.SelectByIdx(entity.Idx) != null)//if both player and admin on the same user
+            if (entity == null) return;
+
+            //if both player and admin on the same user
+            if (PlayersDB.SelectByIdx(entity.Idx) != null)
             {
                 //delete only admin
-                deleted.Add(new ChangeEntity(CreateDeletedSQL, reqEntity));
+                changes.Add(new ChangeEntity(entity, DbAction.Delete));
             }
-            else if (entity != null & entity.GetType() == reqEntity.GetType())
+            else
             {
-                deleted.Add(new ChangeEntity(base.CreateDeletedSQL, entity));
-                deleted.Add(new ChangeEntity(CreateDeletedSQL, reqEntity));
+                //delete admin and user
+                changes.Add(new ChangeEntity(entity, DbAction.DeleteFather));
+                changes.Add(new ChangeEntity(entity, DbAction.Delete));
             }
         }
 
@@ -73,7 +76,31 @@ namespace ViewModel.DBs
             }
         }
 
-        protected override void CreateInsertdSQL(BaseEntity entity, SqlCommand cmd)
+        protected override void CreateDeletedFatherSQL(BaseEntity entity, SqlCommand cmd)
+        {
+            base.CreateDeletedSQL(entity, cmd);
+        }
+
+
+        public override void Insert(BaseEntity entity)
+        {
+            if (entity == null) return;
+
+            // אם המשתמש כבר קיים בטבלת השחקנים - הוא כבר קיים בטבלת האב (Users)!
+            if (PlayersDB.SelectByIdx(entity.Idx) != null)
+            {
+                // לכן מכניסים רק לטבלת הילד (Admins)
+                changes.Add(new ChangeEntity(entity, DbAction.InsertChild));
+            }
+            else
+            {
+                // אם הוא לא קיים בשחקנים, צריך להכניס אותו גם לאב וגם לילד
+                changes.Add(new ChangeEntity(entity, DbAction.InsertFather));
+                changes.Add(new ChangeEntity(entity, DbAction.InsertChild));
+            }
+        }
+
+        protected override void CreateInsertedSQL(BaseEntity entity, SqlCommand cmd)
         {
             Admin c = entity as Admin;
             if (c != null)
@@ -87,20 +114,18 @@ namespace ViewModel.DBs
             }
         }
 
-        public override void Insert(BaseEntity entity)
+        protected override void CreateInsertedFatherSQL(BaseEntity entity, SqlCommand cmd)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (PlayersDB.SelectByIdx(entity.Idx) != null)//if both player and admin on the same user
-            {
-                reqEntity.Idx = entity.Idx;
-                //insert only admin
-                inserted.Add(new ChangeEntity(CreateInsertdSQL, reqEntity));
-            }
-            else if (entity != null & entity.GetType() == reqEntity.GetType())
-            {
-                inserted.Add(new ChangeEntity(base.CreateInsertdSQL, entity));
-                inserted.Add(new ChangeEntity(CreateInsertdSQL, entity));
-            }
+            base.CreateInsertedSQL(entity, cmd); // קורא ל-SQL של UsersDB
+        }
+
+        public override void Update(BaseEntity entity)
+        {
+            if (entity == null) return;
+
+            // מעדכנים את שניהם בכל מקרה
+            changes.Add(new ChangeEntity(entity, DbAction.UpdateFather));
+            changes.Add(new ChangeEntity(entity, DbAction.Update));
         }
 
         protected override void CreateUpdatedSQL(BaseEntity entity, SqlCommand cmd)
@@ -116,16 +141,9 @@ namespace ViewModel.DBs
             }
         }
 
-        public override void Update(BaseEntity entity)
+        protected override void CreateUpdatedFatherSQL(BaseEntity entity, SqlCommand cmd)
         {
-            BaseEntity reqEntity = NewEntity();
-            if (entity != null && entity.GetType() == reqEntity.GetType())//update both user and admin any case
-            {
-                //even if player depened on it change user
-                updated.Add(new ChangeEntity(base.CreateUpdatedSQL, entity));
-                updated.Add(new ChangeEntity(CreateUpdatedSQL, entity));
-            }
+            base.CreateUpdatedSQL(entity, cmd); // קורא ל-SQL של UsersDB
         }
-
     }
 }
