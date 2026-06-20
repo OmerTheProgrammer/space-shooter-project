@@ -269,7 +269,8 @@ class Game_scene extends Phaser.Scene {
 
         // Collisions
         this.physics.add.overlap(Lasers, enemies, hitEnemy, null, this);
-        this.physics.add.overlap(splitFragments, enemies, hitEnemy, null, this);
+        this.physics.add.overlap(splitFragments, enemies, hitEnemy, null, this, true);
+        this.physics.add.overlap(splittingMainLasers, enemies, hitEnemy, null, this);
         this.physics.add.overlap(enemyLasers, player, hitPlayer, null, this);
         this.physics.add.overlap(enemies, player, kamikaza, null, this);
         this.physics.add.overlap(player, power_ups, collectPowerUp, null, this);
@@ -1110,7 +1111,7 @@ function EnemyfireLaser(enemy) {
     }
 }
 
-function hitEnemy(laser, enemy) {
+function hitEnemy(laser, enemy, Isautokill = false) {
     if (laser.active && enemy.active) {
         laser.setActive(false);
         laser.setVisible(false);
@@ -1131,7 +1132,7 @@ function hitEnemy(laser, enemy) {
         } else {
             flashRed(enemy, 150);
             enemy.Hp -= 1;
-            if (enemy.Hp <= 0) {
+            if (Isautokill || enemy.Hp <= 0) {
                 kill_enemy(enemy);
             }
         }
