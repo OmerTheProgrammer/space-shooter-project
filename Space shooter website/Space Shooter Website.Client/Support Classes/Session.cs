@@ -96,7 +96,8 @@ namespace Space_Shooter_Website.Client.Support_Classes
 
         //HUD
         public event Action? UpdateScreenFunc;
-        public void UpdateGameStats(int hp, int score, int level, int shield, int blasters, int killed, int maxEnemies, bool isEndless)
+        public void UpdateGameStats(int hp, int score, int level, int shield, int blasters,
+            int killed, int maxEnemies, bool isEndless, bool isSplitShot)
         {
             if (CurrentRun != null)
             {
@@ -106,6 +107,7 @@ namespace Space_Shooter_Website.Client.Support_Classes
                 CurrentRun.CurrentShieldLevel = shield;
                 CurrentRun.CurrentBlasterCount = blasters;
                 CurrentRun.CurrentLevel = level;
+                CurrentRun.IsSplitShot = isSplitShot;
                 IsEndless = isEndless;
             }
 

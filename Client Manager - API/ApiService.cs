@@ -261,12 +261,14 @@ namespace Client_Manager___API
                     // This reads the body containing the server's error message (e.g., "Idx not found")
                     string errorContent = await response.Content.ReadAsStringAsync();
 
+                    //reduce clutter for user
                     // 3. Throw a detailed exception that includes the server's message.
                     throw new HttpRequestException(
-                        $"Request failed: {response.StatusCode} - {errorContent}",
+                        /*$"Request failed: {response.StatusCode} - " + */ $"{errorContent}",
                         null,
                         response.StatusCode
                     );
+
                 }
                 // 3. Read the JSON content as a string
                 string responseContent = await response.Content.ReadAsStringAsync();
@@ -290,7 +292,8 @@ namespace Client_Manager___API
                 //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error inserting from {endpoint}: {ex.Message}");
-                return (changedRecords, $"Error inserting from {endpoint}: {ex.Message}");
+                //clutter for user hidden
+                return (changedRecords, /*"Error inserting from {endpoint}:" + */ $"{ex.Message}");
             }
         }
 
@@ -370,9 +373,10 @@ namespace Client_Manager___API
                     // Read and include the server's specific error message
                     string errorContent = await response.Content.ReadAsStringAsync();
 
+                    //reduce clutter for user
                     // Throw a detailed exception
                     throw new HttpRequestException(
-                        $"Request failed: {response.StatusCode} - {errorContent}",
+                        /*$"Request failed: {response.StatusCode} -" +*/ $" {errorContent}",
                         null,
                         response.StatusCode
                     );
@@ -402,7 +406,8 @@ namespace Client_Manager___API
                 //can't throw from here
                 //error logging
                 Console.WriteLine($"Error updating from {endpoint}: {ex.Message}");
-                return (changedRecords, $"Error updating from {endpoint}: {ex.Message}");
+                //clutter for user hidden
+                return (changedRecords, /*$"Error updating from {endpoint}:" +*/ $"{ex.Message}");
             }
         }
 
@@ -472,8 +477,9 @@ namespace Client_Manager___API
                 {
                     string errorContent = await response.Content.ReadAsStringAsync();
 
+                    //reduce clutter for user
                     throw new HttpRequestException(
-                        $"Request failed: {response.StatusCode} - {errorContent}",
+                        /*$"Request failed: {response.StatusCode} - " + */$"{errorContent}",
                         null,
                         response.StatusCode
                     );
@@ -513,7 +519,8 @@ namespace Client_Manager___API
                 //can't throw from here
                 // Centralized error logging
                 Console.WriteLine($"Error deleting from {endpoint}: {ex.Message}");
-                return (changedRecords, $"Error deleting from {endpoint}: {ex.Message}");
+                //clutter for user hidden
+                return (changedRecords, /*$"Error deleting from {endpoint}:" + */ $"{ex.Message}");
             }
         }
 

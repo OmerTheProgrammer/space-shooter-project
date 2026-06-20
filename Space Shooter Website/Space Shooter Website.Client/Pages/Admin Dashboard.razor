@@ -87,7 +87,7 @@
             </div>
         }
         else if (isLookupMode)
-     @*מסך Lookup של Insert*@ {
+            @*מסך Lookup *@ {
             <div class="lookup-backdrop">
                 <div class="lookup-modal shadow-lg">
                     <div class="lookup-header text-center" style="max-width:94%">
@@ -333,20 +333,8 @@
         pageErrorMessage = null;
         newEntryData.Clear();
 
-        // 1. Get properties using your existing cache logic
-        var entityType = _tableRegistry[activeTab].EntityType;
-        var props = GetPropertiesCached(entityType);
-
-        foreach (var prop in props)
-        {
-            // 2. Skip Identity columns
-            if (prop.Name.Equals("Idx", StringComparison.OrdinalIgnoreCase)) continue;
-
-            // Use Activator to get the default value for ANY type (int -> 0, bool -> false, object -> null)
-            newEntryData[prop.Name] = prop.PropertyType.IsValueType
-                ? Activator.CreateInstance(prop.PropertyType)
-                : (prop.PropertyType == typeof(string) ? string.Empty : null);
-        }
+        //default values to all fields 
+        newEntryData = InitializeDefaultDictionary(_tableRegistry[activeTab].EntityType);
 
         isInsertMode = true;
         isLoading = false;
@@ -569,28 +557,31 @@
             // 2. Map and "Save" the current nested level into an object
             var completedEntity = await SaveNestedToField();
 
-            // 3. Pop the context for the level we just finished
-            string fieldName = keyStack.Pop();
-            typeStack.Pop();
-            nestingStack.Pop(); // Remove the finished buffer
+            if (completedEntity != null)//the insert failed - No DB entity
+            {
+                // 3. Pop the context for the level we just finished
+                string fieldName = keyStack.Pop();
+                typeStack.Pop();
+                nestingStack.Pop(); // Remove the finished buffer
 
-            // 4. Assign the completed object to the next level up
-            if (nestingStack.Any())
-            {
-                // Still in a sub-form, assign to the previous level's dictionary
-                nestingStack.Peek()[fieldName] = completedEntity;
-            }
-            else if (isEditMode)
-            {
-                editData[fieldName] = completedEntity;
-            }
-            else
-            {
-                // We are back at the primary Add/Edit form
-                newEntryData[fieldName] = completedEntity;
-            }
+                // 4. Assign the completed object to the next level up
+                if (nestingStack.Any())
+                {
+                    // Still in a sub-form, assign to the previous level's dictionary
+                    nestingStack.Peek()[fieldName] = completedEntity;
+                }
+                else if (isEditMode)
+                {
+                    editData[fieldName] = completedEntity;
+                }
+                else
+                {
+                    // We are back at the primary Add/Edit form
+                    newEntryData[fieldName] = completedEntity;
+                }
 
-            pageSuccessMessage = $"Successfully linked {completedEntity.GetType().Name}.";
+                pageSuccessMessage = $"Successfully linked {completedEntity.GetType().Name}.";
+            }
         }
         catch (Exception ex)
         {
@@ -655,7 +646,8 @@
             }
             else
             {
-                pageErrorMessage = "Insert failed: " + (result.error ?? "Unknown database error.");
+                pageErrorMessage = /* "Insert failed: " +  */
+                    (result.error ?? "Unknown database error.");
                 return null;
             }
         }
@@ -736,7 +728,7 @@
             }
             else //-1 is error
             {
-                pageErrorMessage = "Update failed: " + result.error;
+                pageErrorMessage = /* "Update failed: " + */ result.error;
             }
         }
         catch (Exception ex)
@@ -1179,8 +1171,8 @@
             else if (IsTypeEnum(propType))
             {
                 <select class="form-select bg-dark text-white @inputBorderClass"
-                        value="@dataSource[propName]?.ToString()"
-                        @onchange="@(e => {
+                    value="@dataSource[propName]?.ToString()"
+                    @onchange="@(e => {
                         var targetType = Nullable.GetUnderlyingType(propType) ?? propType;
                         dataSource[propName] = Enum.Parse(targetType, e.Value?.ToString() ?? "0");
                         StateHasChanged(); // Force the UI thread to sync
@@ -1194,89 +1186,119 @@
             else if (propType == typeof(DateTime) || propType == typeof(DateTime?))
             {
                 <input type="date" class="form-control bg-dark text-white @inputBorderClass"
-                       value="@(dataSource.TryGetValue(propName, out var dateVal) &&
-                                                       dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : null)"
+                    value="@(dataSource.TryGetValue(propName, out var dateVal) && 
+                        dateVal is DateTime dt ? dt.ToString("yyyy-MM-dd") : null)"
                         @onchange="@(e => {
-                                  if (DateTime.TryParse(e.Value?.ToString(), out var result))
-                           dataSource[propName] = result;
-                   })" />
-        }
-        else if (propType.IsClass && propType != typeof(string))
-        {
-    @* This is for nested entities (e.g., Player inside a RunInfo) *@
-    <div class="d-flex gap-2">
-        <button class="btn btn-outline-info btn-sm" @onclick='() => OpenLookup(propType, propName)'>
-            <i class="fa fa-search"></i> Select Existing
-        </button>
-        <button class="btn btn-outline-success btn-sm" @onclick='() => OpenNestedInsert(propType, propName)'>
-            <i class="fa fa-plus-lg"></i> Create New
-        </button>
-        @if (dataSource.TryGetValue(propName, out var val))
-                {
-        <div class="mt-2 p-2 rounded bg-dark border border-success shadow-sm">
-            @if(val != "None" && val != null)
-                        {
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="badge bg-success">
-                    <i class="fa fa-link-45deg"></i> Linked!
-                </span>
-                <button class="btn btn-sm btn-outline-danger border-0" @onclick="() => dataSource.Remove(propName)">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </div>
-                        }
-            <div class="text-info small fw-mono" style="word-break: break-all; font-family: 'Courier New', monospace; line-height: 1.2;">
-                @GetFullPreview(val)
-            </div>
+                                if (DateTime.TryParse(e.Value?.ToString(), out var result))
+                                          dataSource[propName] = result;
+                })" />
+            }
+            else if (propType.IsClass && propType != typeof(string))
+            {
+                @* This is for nested entities (e.g., Player inside a RunInfo) *@
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-info btn-sm" @onclick='() => OpenLookup(propType, propName)'>
+                        <i class="fa fa-search"></i> Select Existing
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" @onclick='() => OpenNestedInsert(propType, propName)'>
+                        <i class="fa fa-plus-lg"></i> Create New
+                    </button>
+                    @if (dataSource.TryGetValue(propName, out var val))
+                    {
+                        <div class="mt-2 p-2 rounded bg-dark border border-success shadow-sm">
+                            @if (val != "None" && val != null)
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge bg-success">
+                                        <i class="fa fa-link-45deg"></i> Linked!
+                                    </span>
+                                    <button class="btn btn-sm btn-outline-danger border-0" @onclick='() => dataSource[propName] = "None"'>
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            }
+                            <div class="text-info small fw-mono" style="word-break: break-all; font-family: 'Courier New', monospace; line-height: 1.2;">
+                                @GetFullPreview(val)
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <input type="@(propType == typeof(DateTime) ? "date" : "text")"
+                       class="form-control bg-dark text-white @inputBorderClass"
+                       value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "None")"
+                       @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "None")" />
+            }
         </div>
-                }
-    </div>
-        }
-        else
-    {
-        <input type="@(propType == typeof(DateTime) ? "date" : "text")"
-               class="form-control bg-dark text-white @inputBorderClass"
-               value="@(dataSource.ContainsKey(propName) ? dataSource[propName] : "None")"
-               @onchange="@(e => dataSource[propName] = e.Value?.ToString() ?? "None")" />
-    }
-</div>
     };
 
-private void OpenNestedInsert(Type type, string parentKey)
-{
-    nestingStack.Push(new Dictionary<string, object>());
-    typeStack.Push(type);
-    keyStack.Push(parentKey);
-    StateHasChanged();
-}
-
-/// <summary>
-/// returns string virsion of entity to diplaiy in nesting
-/// </summary>
-/// <param name="val"></param>
-/// <returns></returns>
-private string GetFullPreview(object? val)
-{
-    if (val == null) return "None";
-
-    // Scenario A: Data is in a Dictionary (New Entry being built)
-    if (val is Dictionary<string, object> dict)
+    private void OpenNestedInsert(Type type, string parentKey)
     {
-        if (dict.Count == 0) return "New Entity (Empty)";
-        // Joins all key-value pairs into a single readable string
-        return string.Join(" | ", dict.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+        nestingStack.Push(InitializeDefaultDictionary(type));
+        typeStack.Push(type);
+        keyStack.Push(parentKey);
+        StateHasChanged();
     }
 
-    // Scenario B: Data is a real Entity (Existing record from DB)
-    if (val is BaseEntity entity)
+    private Dictionary<string, object> InitializeDefaultDictionary(Type type)
     {
-        var props = GetPropertiesCached(entity.GetType())
-            .Select(p => $"{p.Name}: {p.GetValue(entity)}");
-        return string.Join(" | ", props);
+        var defaultDict = new Dictionary<string, object>();
+        var props = GetPropertiesCached(type); // Uses your existing cache logic 
+
+        foreach (var prop in props)
+        {
+            // Skip Identity columns like 'Idx' [cite: 82, 253]
+            if (prop.Name.Equals("Idx", StringComparison.OrdinalIgnoreCase)) continue;
+
+            var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
+            // 1. Handle Enum default initialization
+            if (IsTypeEnum(prop.PropertyType)) // Uses your existing IsTypeEnum check [cite: 232]
+            {
+                var enumValues = Enum.GetValues(targetType);
+                defaultDict[prop.Name] = enumValues.Length > 0 ? enumValues.GetValue(0)! : 0;
+            }
+            // 2. Handle standard value/primitive/string defaults
+            else
+            {
+                defaultDict[prop.Name] = prop.PropertyType.IsValueType
+                    ? Activator.CreateInstance(prop.PropertyType)!
+                    : (prop.PropertyType == typeof(string) ? string.Empty : null!);
+            }
+        }
+
+        return defaultDict;
     }
 
-    return val.ToString() ?? "Linked";
-}
+    /// <summary>
+    /// returns string virsion of entity to diplaiy in nesting
+    /// </summary>
+    /// <param name="val">the complex value needed to be returned as string</param>
+    /// <returns></returns>
+    private string GetFullPreview(object? val)
+    {
+        if (val == null) return "None";
+
+        // Scenario A: Data is in a Dictionary (New Entry being built)
+        if (val is Dictionary<string, object> dict)
+        {
+            if (dict.Count == 0) return "New Entity (Empty)";
+            // Joins all key-value pairs into a single readable string
+            return string.Join(" | ", dict.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+        }
+
+        // Scenario B: Data is a real Entity (Existing record from DB)
+        if (val is BaseEntity entity)
+        {
+            var props = GetPropertiesCached(entity.GetType())
+                .Select(p => $"{p.Name}: {p.GetValue(entity)}");
+            return string.Join(" | ", props);
+        }
+
+        return val.ToString() ?? "Linked";
+    }
     #endregion
 
 

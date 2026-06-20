@@ -269,7 +269,8 @@ class Game_scene extends Phaser.Scene {
 
         // Collisions
         this.physics.add.overlap(Lasers, enemies, hitEnemy, null, this);
-        this.physics.add.overlap(splitFragments, enemies, hitEnemy, null, this);
+        this.physics.add.overlap(splitFragments, enemies, hitEnemy, null, this, true);
+        this.physics.add.overlap(splittingMainLasers, enemies, hitEnemy, null, this);
         this.physics.add.overlap(enemyLasers, player, hitPlayer, null, this);
         this.physics.add.overlap(enemies, player, kamikaza, null, this);
         this.physics.add.overlap(player, power_ups, collectPowerUp, null, this);
@@ -1110,7 +1111,7 @@ function EnemyfireLaser(enemy) {
     }
 }
 
-function hitEnemy(laser, enemy) {
+function hitEnemy(laser, enemy, Isautokill = false) {
     if (laser.active && enemy.active) {
         laser.setActive(false);
         laser.setVisible(false);
@@ -1131,7 +1132,7 @@ function hitEnemy(laser, enemy) {
         } else {
             flashRed(enemy, 150);
             enemy.Hp -= 1;
-            if (enemy.Hp <= 0) {
+            if (Isautokill || enemy.Hp <= 0) {
                 kill_enemy(enemy);
             }
         }
@@ -1659,7 +1660,7 @@ function update_hud_in_blazor() {
     if (window.dotNetHelper) {
         try {
             window.dotNetHelper.invokeMethodAsync('UpdateHUD',
-                health, score, level, shield_life, player_lasers_count, killed, maxEnemies, is_endless
+                health, score, level, shield_life, player_lasers_count, killed, maxEnemies, IsSplitShot, is_endless
             );
         } catch (e) {
             console.log("HUD update skipped: Circuit disconnected.");
@@ -1727,7 +1728,7 @@ window.setupExitHandler = () => {
 };
 
 
-window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Currentscore, shieldHealth, blasterCount) => {
+window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Currentscore, shieldHealth, blasterCount, isSplitShot) => {
     //recives data from c#
     window.dotNetHelper = dotNetHelper;
     is_music_on = IsMusicOn;
@@ -1737,6 +1738,7 @@ window.RunGame = (dotNetHelper, IsMusicOn, IsSoundOn, selectedLevel, hp, Current
     score = Currentscore;
     shield_life = shieldHealth;
     player_lasers_count = blasterCount;
+    IsSplitShot = isSplitShot;
 
     if (health <= 0) {// restart if died
         health = 5;
