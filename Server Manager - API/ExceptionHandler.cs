@@ -29,7 +29,7 @@ namespace Server_Manager___API
             catch (Exception ex)
             {
                 // runs the exception handler if the request throws an exception
-                await HandleExceptionAsync(context, ex);
+                await HandleExceptionAsync(context, ex);//returns 1 error message to the client as that's what the DB sends
             }
         }
 
@@ -91,13 +91,13 @@ namespace Server_Manager___API
             if (statusCode == StatusCodes.Status404NotFound)
             {
 
-                context.Response.ContentType = "application/json";
-                //context.Response.ContentType = "text/plain";
+                //context.Response.ContentType = "application/json";
+                context.Response.ContentType = "text/plain";
                 context.Response.StatusCode = statusCode;
 
                 var result = JsonConvert.SerializeObject(new { StatusCode = statusCode, Message = responseMessage });
-                return context.Response.WriteAsync(result);
-                //return context.Response.WriteAsync(responseMessage);
+                //return context.Response.WriteAsync(result);
+                return context.Response.WriteAsync(responseMessage);
             }
 
             // 2. DATABASE ERROR ANALYSIS (Only runs for non-404-Errors)
@@ -182,8 +182,8 @@ namespace Server_Manager___API
 
             // 3. Send the final response
 
-            context.Response.ContentType = "application/json";
-            //context.Response.ContentType = "text/plain";
+            //context.Response.ContentType = "application/json";
+            context.Response.ContentType = "text/plain";
             context.Response.StatusCode = statusCode;
 
             var finalResult = JsonConvert.SerializeObject(new
@@ -191,8 +191,8 @@ namespace Server_Manager___API
                 StatusCode = statusCode,
                 Message = responseMessage
             });
-            return context.Response.WriteAsync(finalResult);
-            //return context.Response.WriteAsync(responseMessage);
+            //return context.Response.WriteAsync(finalResult);
+            return context.Response.WriteAsync(responseMessage);
         }
     }
 }

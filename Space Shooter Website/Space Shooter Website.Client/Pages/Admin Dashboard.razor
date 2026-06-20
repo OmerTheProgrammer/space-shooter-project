@@ -646,7 +646,8 @@
             }
             else
             {
-                pageErrorMessage = "Insert failed: " + (result.error ?? "Unknown database error.");
+                pageErrorMessage = /* "Insert failed: " +  */
+                    (result.error ?? "Unknown database error.");
                 return null;
             }
         }
@@ -727,7 +728,7 @@
             }
             else //-1 is error
             {
-                pageErrorMessage = "Update failed: " + result.error;
+                pageErrorMessage = /* "Update failed: " + */ result.error;
             }
         }
         catch (Exception ex)
