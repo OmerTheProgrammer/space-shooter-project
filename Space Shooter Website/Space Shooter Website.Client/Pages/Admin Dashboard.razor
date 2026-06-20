@@ -80,7 +80,7 @@
                         }
                     </div>
                     <div class="mt-2">
-                        <button class="btn btn-primary" @onclick="HandleInsert">Save Entry</button>
+                        <button class="btn btn-primary" @onclick="TryInsert">Save Entry</button>
                         <button class="btn btn-secondary" @onclick="ResetPage">Cancel</button>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
                     }
                 </div>
                 <div class="lookup-footer d-flex gap-2">
-                    <button class="btn btn-success flex-grow-1" @onclick="SendNestedToField"> Apply </button>
+                    <button class="btn btn-success flex-grow-1" @onclick="TryToSendNestedToField"> Apply </button>
                     <button class="btn btn-outline-secondary" @onclick="ReturnFromNestedInsert"> Cancel </button>
                 </div>
             </div>
@@ -167,7 +167,7 @@
                     </div>
 
                     <div class="lookup-footer d-flex gap-2 bg-dark border-top border-warning">
-                        <button class="btn btn-warning flex-grow-1 fw-bold" @onclick="UpdateEntity">
+                        <button class="btn btn-warning flex-grow-1 fw-bold" @onclick="TryUpdate">
                             <i class="fa-solid fa-cloud-arrow-up"></i> Save Changes
                         </button>
                         <button class="btn btn-outline-secondary" @onclick="() => { isEditMode = false; editData.Clear(); }">
@@ -305,8 +305,49 @@
     </div>
 </section>
 
+@if (showValidationPopup)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-warning shadow-lg">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title font-weight-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Validation Alert
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CancelPopup" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">The following data validation rules or warnings were triggered:</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        @foreach (var rule in brokenRules)
+                        {
+                            <li class="list-group-item text-danger border-0 ps-0">
+                                <i class="fas fa-times-circle me-2"></i> @rule
+                            </li>
+                        }
+                    </ul>
+                    <p class="mb-0 fw-bold text-secondary">Do you want to override these rules and proceed anyway?</p>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelPopup">
+                        <i class="fas fa-times me-1"></i> Cancel & Fix
+                    </button>
+                    <button type="button" class="btn btn-warning text-dark font-weight-bold" @onclick="ConfirmAndExecute">
+                        <i class="fas fa-check me-1"></i> Confirm & Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     #region page_vars:
+    // --- Popup UI State ---
+    private bool showValidationPopup = false;
+    private List<string> brokenRules = new();
+    private Func<Task>? pendingAction = null; // Stores the original method to run if overridden
+
 
     private bool isSelectByIdWindow = false;
     private bool isEditMode = false;
@@ -338,6 +379,23 @@
 
         isInsertMode = true;
         isLoading = false;
+    }
+
+    private async Task TryInsert()
+    {
+        brokenRules.Clear();
+
+        CheckRules(newEntryData, _tableRegistry[activeTab].EntityType);
+
+        if (brokenRules.Any())
+        {
+            pendingAction = HandleInsert;
+            showValidationPopup = true;
+        }
+        else
+        {
+            await HandleInsert();
+        }
     }
 
     private async Task HandleInsert()
@@ -594,6 +652,23 @@
         }
     }
 
+    private async Task TryToSendNestedToField()
+    {
+        brokenRules.Clear();
+
+        CheckRules(CurrentNestedData,CurrentNestedType);
+
+        if (brokenRules.Any())
+        {
+            pendingAction = SendNestedToField;
+            showValidationPopup = true;
+        }
+        else
+        {
+            await SendNestedToField();
+        }
+    }
+
     private async Task<BaseEntity?> SaveNestedToField()
     {
         BaseEntity? entity = null;
@@ -707,11 +782,30 @@
         isEditMode = true;
     }
 
+    private async Task TryUpdate()
+    {
+        brokenRules.Clear();
+
+        CheckRules(editData, _tableRegistry[activeTab].EntityType);
+
+        if (brokenRules.Any())
+        {
+            pendingAction = UpdateEntity;
+            showValidationPopup = true;
+        }
+        else
+        {
+            await UpdateEntity();
+        }
+    }
+
+
     private async Task UpdateEntity()
     {
         if (!_tableRegistry.TryGetValue(activeTab, out var config)) return;
 
         isLoading = true;
+
         try
         {
             // Use the same mapper used for Inserts
@@ -810,7 +904,6 @@
     }
     #endregion
 
-    #region reset
     #region State & Registry
     private bool isLoading = true;
     private string activeTab = "users";
@@ -957,7 +1050,7 @@
                 );
 
                 //copies single entity to edit data
-                await HandleUpdate();
+                await TryUpdate();
 
                 //editData get's incomingDto - not nulls to update
                 foreach (var prop in props)
@@ -974,7 +1067,7 @@
                 }
 
                 //saves edit data to DB
-                await UpdateEntity();
+                await TryUpdate();
             }
             catch (Exception ex)
             {
@@ -1301,6 +1394,186 @@
     }
     #endregion
 
+    #region PopUp
+    private void CancelPopup()
+    {
+        showValidationPopup = false;
+        brokenRules.Clear();
+        pendingAction = null; // Wipe out the saved method pointer
+    }
 
+    private async Task ConfirmAndExecute()
+    {
+        if (pendingAction != null)
+        {
+            var actionToRun = pendingAction;
+            CancelPopup(); // Safely close and reset state before running
+            await actionToRun(); // Fires HandleInsert/UpdateEntity behind the scenes!
+        }
+    }
+
+    private void CheckRules(Dictionary<string, object> dataSource, Type EntityType)
+    {
+        // 2. Map validation only if we are targeting relevant objects
+        if (typeof(User).IsAssignableFrom(EntityType))//if User father to EntityType
+        {
+            // Extract core fields safely from our property data source
+            string email = dataSource.TryGetValue("Email", out var eVal) ? eVal?.ToString() ?? "" : "";
+            string password = dataSource.TryGetValue("Password", out var pVal) ? pVal?.ToString() ?? "" : "";
+            string username = dataSource.TryGetValue("Username", out var uVal) ? uVal?.ToString() ?? "" : "";
+            string id = dataSource.TryGetValue("Id", out var idVal) ? idVal?.ToString() ?? "" : "";
+
+            DateTime birthday = DateTime.MinValue;
+            if (dataSource.TryGetValue("Birthday", out var bVal))
+            {
+                if (bVal is DateTime dt) birthday = dt;
+                else if (bVal != null) DateTime.TryParse(bVal.ToString(), out birthday);
+            }
+
+            // --- EMPTY FIELDS VALIDATION ---
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) ||
+                string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(id) || birthday == DateTime.MinValue)
+            {
+                brokenRules.Add("All fields are required, so other checks are stopped!");
+                return; // Stop further granular checks if essential data is missing
+            }
+
+            // --- ID LENGTH VALIDATION ---
+            if (id.Length < 5)
+            {
+                brokenRules.Add("ID must be at least 5 characters long.");
+            }
+
+            // --- EMAIL METRIC AND POSITION VALIDATIONS ---
+            var emailFormat = new System.Text.RegularExpressions.Regex(@"^[\w-.]+@([\w-.]+\.)+[a-zA-Z]{2,}$");
+            int attIndex = email.IndexOf('@');
+            int eLength = email.Length;
+
+            if (eLength < 8)
+            {
+                brokenRules.Add($"Email must be at least 8 characters long (currently {eLength}).");
+            }
+            if (eLength > 25)
+            {
+                brokenRules.Add($"Email cannot exceed 25 characters (currently {eLength}).");
+            }
+            if (attIndex < 2)
+            {
+                brokenRules.Add("The '@' symbol must have at least 2 characters before it.");
+            }
+            if (attIndex >= eLength - 2)
+            {
+                brokenRules.Add("The '@' symbol must have at least 2 characters after it.");
+            }
+            if (email.LastIndexOf('.') == -1)
+            {
+                brokenRules.Add("Email is missing a dot ('.') domain separator.");
+            }
+            if (email.IndexOf('.', attIndex + 2) == (attIndex + 2))
+            {
+                brokenRules.Add("The dot ('.') cannot immediately follow the '@' symbol.");
+            }
+            if (email.IndexOf('.', attIndex + 2) == -1)
+            {
+                brokenRules.Add("The email domain must contain a dot ('.') after the '@' symbol.");
+            }
+            if (email.LastIndexOf('.') >= eLength - 2)
+            {
+                brokenRules.Add("The email domain suffix must be at least 2 characters long.");
+            }
+            if (email.IndexOf('.') < 2)
+            {
+                brokenRules.Add("The email prefix must have at least 2 characters before the first dot.");
+            }
+            if (!emailFormat.IsMatch(email))
+            {
+                brokenRules.Add("Please enter a valid email address format (e.g., example@domain.com).");
+            }
+
+            // --- COMPLEX ENCRYPTED PASSWORD VALIDATIONS ---
+            const int minPasswordLength = 8, maxPasswordLength = 20;
+            if (password.Length < minPasswordLength)
+            {
+                brokenRules.Add($"Password must be at least {minPasswordLength} characters long.");
+            }
+            if (password.Length > maxPasswordLength)
+            {
+                brokenRules.Add($"Password cannot exceed {maxPasswordLength} characters.");
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[^\w\s]"))
+            {
+                brokenRules.Add("Password must contain at least one special character.");
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[\d]"))
+            {
+                brokenRules.Add("Password must contain at least one number.");
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[A-Z]"))
+            {
+                brokenRules.Add("Password must contain at least one uppercase letter.");
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[a-z]"))
+            {
+                brokenRules.Add("Password must contain at least one lowercase letter.");
+            }
+
+            // --- AGE VALIDATIONS ---
+            DateTime now = DateTime.Now;
+            double msIn120Years = 1000.0 * 60 * 60 * 24 * 365.25 * 120;
+            DateTime date120YearsAgo = now.AddMilliseconds(-msIn120Years);
+
+            if (birthday < date120YearsAgo)
+            {
+                brokenRules.Add("Invalid birth date: Age cannot exceed 120 years.");
+            }
+            if (birthday >= now.Date)
+            {
+                brokenRules.Add("Invalid birth date: Birth date cannot be in the future.");
+            }
+        }
+
+if (typeof(RunInfo).IsEquivalentTo(EntityType))
+        {
+            // Extract core fields safely from our property data source
+            int currentShieldLevel = 0;
+            if (dataSource.TryGetValue("CurrentShieldLevel", out var shieldVal))
+            {
+                if (shieldVal is int sInt) currentShieldLevel = sInt;
+                else int.TryParse(shieldVal?.ToString(), out currentShieldLevel);
+            }
+
+            int currentBlasterCount = 0;
+            if (dataSource.TryGetValue("CurrentBlasterCount", out var blasterVal))
+            {
+                if (blasterVal is int bInt) currentBlasterCount = bInt;
+                else int.TryParse(blasterVal?.ToString(), out currentBlasterCount);
+            }
+
+            int currentHP = 0;
+            if (dataSource.TryGetValue("CurrentHP", out var hpVal))
+            {
+                if (hpVal is int hInt) currentHP = hInt;
+                else int.TryParse(hpVal?.ToString(), out currentHP);
+            }
+
+            // --- CHECK_RunsInfoTbl_CurrentShieldLevel_Min ---
+            if (currentShieldLevel < 0)
+            {
+                brokenRules.Add($"Current Shield Level cannot be negative (supplied: {currentShieldLevel}).");
+            }
+
+            // --- CK_RunsInfoTbl_CurrentBlasterCount_Range ---
+            if (currentBlasterCount < 1 || currentBlasterCount > 9)
+            {
+                brokenRules.Add($"Current Blaster Count must be between 1 and 9 (supplied: {currentBlasterCount}).");
+            }
+
+            // --- CK_RunsInfoTbl_CurrentHP_Min ---
+            if (currentHP < 0)
+            {
+                brokenRules.Add($"Current HP cannot be negative (supplied: {currentHP}).");
+            }
+        }
+    }
     #endregion
 }

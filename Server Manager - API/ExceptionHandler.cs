@@ -23,7 +23,26 @@ namespace Server_Manager___API
         {
             try
             {
-                //runs the request
+                //// Check if the Json can be turned into Defined Object (Entity/Dto/Etc...)
+                //var modelStateFeature = context.Features.Get<Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary>();
+
+                //if (modelStateFeature != null && !modelStateFeature.IsValid)
+                //{
+                //    context.Response.ContentType = "text/plain";
+                //    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                //    // Flatten the ModelState errors into a clean string layout
+                //    var errorMessages = modelStateFeature
+                //        .Where(x => x.Value.Errors.Count > 0)
+                //        .Select(x => $"{x.Key}: {string.Join(", ", x.Value.Errors.Select(e => e.ErrorMessage))}");
+
+                //    string Error = $"Bad Request: {string.Join("; ", errorMessages)}";
+
+                //    await context.Response.WriteAsync(Error);
+                //    return; //not runs
+                //}
+
+                // runs the request 
                 await _next(context);
             }
             catch (Exception ex)
@@ -95,7 +114,7 @@ namespace Server_Manager___API
                 context.Response.ContentType = "text/plain";
                 context.Response.StatusCode = statusCode;
 
-                var result = JsonConvert.SerializeObject(new { StatusCode = statusCode, Message = responseMessage });
+                //var result = JsonConvert.SerializeObject(new { StatusCode = statusCode, Message = responseMessage });
                 //return context.Response.WriteAsync(result);
                 return context.Response.WriteAsync(responseMessage);
             }
@@ -178,19 +197,30 @@ namespace Server_Manager___API
                 responseMessage = $"Bad Request: The mandatory field '{columnName}' was not provided (NOT NULL violation).";
             }
 
-            // Fallback for general errors remains 500 (set at the beginning)
+            else if (ErrorMessage.StartsWith("Need"))
+            {
+                statusCode = StatusCodes.Status400BadRequest;
+
+                // Pattern looks for "Need " followed by any word characters, ignoring the exclamation mark
+                Match needMatch = Regex.Match(ErrorMessage, @"Need\s+(\w+)");
+
+                string missingEntity = needMatch.Success ? 
+                    needMatch.Groups[1].Value : "required item";
+                responseMessage = $"Bad Request: The {missingEntity} was not provided.";
+            }
+
+            // Fallback for general errors remains 500 (was set at the beginning)
 
             // 3. Send the final response
-
             //context.Response.ContentType = "application/json";
             context.Response.ContentType = "text/plain";
             context.Response.StatusCode = statusCode;
 
-            var finalResult = JsonConvert.SerializeObject(new
-            {
-                StatusCode = statusCode,
-                Message = responseMessage
-            });
+            //var finalResult = JsonConvert.SerializeObject(new
+            //{
+            //    StatusCode = statusCode,
+            //    Message = responseMessage
+            //});
             //return context.Response.WriteAsync(finalResult);
             return context.Response.WriteAsync(responseMessage);
         }

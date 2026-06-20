@@ -1,10 +1,18 @@
+using Microsoft.AspNetCore.Mvc;
 using Server_Manager___API;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// Program.cs
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        // Suppress the automatic 400 JSON response so it hits our middleware instead
+        options.SuppressModelStateInvalidFilter = true;
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
