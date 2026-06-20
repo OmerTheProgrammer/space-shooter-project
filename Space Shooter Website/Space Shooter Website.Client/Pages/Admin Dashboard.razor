@@ -87,7 +87,7 @@
             </div>
         }
         else if (isLookupMode)
-     @*מסך Lookup של Insert*@ {
+            @*מסך Lookup *@ {
             <div class="lookup-backdrop">
                 <div class="lookup-modal shadow-lg">
                     <div class="lookup-header text-center" style="max-width:94%">
@@ -1214,13 +1214,13 @@
         @if (dataSource.TryGetValue(propName, out var val))
                 {
         <div class="mt-2 p-2 rounded bg-dark border border-success shadow-sm">
-            @if(val != "None" && val != null)
+                            @if (val != "None" && val != null)
                         {
             <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="badge bg-success">
                     <i class="fa fa-link-45deg"></i> Linked!
                 </span>
-                <button class="btn btn-sm btn-outline-danger border-0" @onclick="() => dataSource.Remove(propName)">
+                                    <button class="btn btn-sm btn-outline-danger border-0" @onclick='() => dataSource[propName] = "None"'>
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
