@@ -7,6 +7,7 @@
     [CurrentShieldLevel]  INT  DEFAULT 0 NOT NULL,
     [CurrentBlasterCount] INT   NOT NULL DEFAULT 1,
     [CurrentHP]           INT  DEFAULT 5 NOT NULL,
+    [IsSplitShot]         BIT DEFAULT 0 NOT NULL,
     [IsRunOver]           BIT  DEFAULT 0 NOT NULL,
     PRIMARY KEY CLUSTERED ([idx] ASC),
     FOREIGN KEY ([PlayerIdx]) REFERENCES [dbo].[PlayersTbl] ([idx]) ON DELETE CASCADE,

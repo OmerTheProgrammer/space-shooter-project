@@ -29,6 +29,7 @@ namespace ViewModel.DBs
             p.CurrentShieldLevel = int.Parse(reader["CurrentShieldLevel"].ToString());
             p.CurrentBlasterCount = int.Parse(reader["CurrentBlasterCount"].ToString());
             p.CurrentHp = int.Parse(reader["CurrentHp"].ToString());
+            p.IsSplitShot = bool.Parse(reader["IsSplitShot"].ToString());
             p.IsRunOver = bool.Parse(reader["IsRunOver"].ToString());
             base.CreateModel(entity);
             return p;
@@ -70,11 +71,11 @@ namespace ViewModel.DBs
             if (c != null)
             {
 
-                string sqlStr = $"INSERT INTO dbo.RunsInfoTbl(PlayerIdx, CurrentScore, CurrentLevel" +
-                    $", RunStopDate, CurrentShieldLevel, CurrentBlasterCount, CurrentHp," +
-                    $"IsRunOver) VALUES (@PlayerIdx, @CurrentScore, @CurrentLevel," +
+                string sqlStr = $"INSERT INTO dbo.RunsInfoTbl(PlayerIdx, CurrentScore, CurrentLevel, " +
+                    $" RunStopDate, CurrentShieldLevel, CurrentBlasterCount, CurrentHp, IsSplitShot, " +
+                    $" IsRunOver) VALUES (@PlayerIdx, @CurrentScore, @CurrentLevel," +
                     $" @RunStopDate, @CurrentShieldLevel, @CurrentBlasterCount," +
-                    $" @CurrentHp, @IsRunOver)";
+                    $" @CurrentHp, @IsSplitShot, @IsRunOver)";
                 command.CommandText = sqlStr;
 
                 if (c.Player != null)
@@ -92,6 +93,7 @@ namespace ViewModel.DBs
                 command.Parameters.Add(new SqlParameter("@CurrentShieldLevel", c.CurrentShieldLevel));
                 command.Parameters.Add(new SqlParameter("@CurrentBlasterCount", c.CurrentBlasterCount));
                 command.Parameters.Add(new SqlParameter("@CurrentHp", c.CurrentHp));
+                command.Parameters.Add(new SqlParameter("@IsSplitShot", c.IsSplitShot));
                 command.Parameters.Add(new SqlParameter("@IsRunOver", c.IsRunOver));
             }
         }
@@ -102,10 +104,11 @@ namespace ViewModel.DBs
             if (c != null)
             {
                 string sqlStr = $"UPDATE dbo.RunsInfoTbl SET PlayerIdx=@PlayerIdx, " +
-                    $"CurrentLevel=@CurrentLevel,RunStopDate=@RunStopDate," +
-                    $"CurrentShieldLevel=@CurrentShieldLevel," +
-                    $"CurrentBlasterCount=@CurrentBlasterCount, " +
-                    $"CurrentHp=@CurrentHp,IsRunOver=@IsRunOver WHERE Idx=@Idx";
+                    $"CurrentLevel = @CurrentLevel, RunStopDate = @RunStopDate," +
+                    $"CurrentShieldLevel = @CurrentShieldLevel," +
+                    $"CurrentBlasterCount = @CurrentBlasterCount, " +
+                    $"CurrentHp = @CurrentHp, IsSplitShot = @IsSplitShot," +
+                    $" IsRunOver = @IsRunOver WHERE Idx=@Idx";
                 command.CommandText = sqlStr;
 
                 command.Parameters.Add(new SqlParameter("@PlayerIdx", c.Player.Idx));
@@ -115,6 +118,7 @@ namespace ViewModel.DBs
                 command.Parameters.Add(new SqlParameter("@CurrentShieldLevel", c.CurrentShieldLevel));
                 command.Parameters.Add(new SqlParameter("@CurrentBlasterCount", c.CurrentBlasterCount));
                 command.Parameters.Add(new SqlParameter("@CurrentHp", c.CurrentHp));
+                command.Parameters.Add(new SqlParameter("@IsSplitShot", c.IsSplitShot));
                 command.Parameters.Add(new SqlParameter("@IsRunOver", c.IsRunOver));
                 command.Parameters.Add(new SqlParameter("@Idx", c.Idx));
 

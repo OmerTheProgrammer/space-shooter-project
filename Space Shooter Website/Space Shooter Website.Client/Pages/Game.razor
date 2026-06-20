@@ -97,7 +97,8 @@
                         session.CurrentRun.CurrentHp,
                         session.CurrentRun.CurrentScore,
                         session.CurrentRun.CurrentShieldLevel,
-                        session.CurrentRun.CurrentBlasterCount
+                        session.CurrentRun.CurrentBlasterCount,
+                        session.CurrentRun.IsSplitShot
                     );
                 }
             }
@@ -122,12 +123,13 @@
     }
 
     [JSInvokable]
-    public async void UpdateHUD(int hp, int score, int level, int shield, int blasters, int killed, int maxEnemies, bool isEndless)
+    public async void UpdateHUD(int hp, int score, int level, int shield, int blasters, int killed,
+        int maxEnemies, bool isSplitShot, bool isEndless)
     {
         await InvokeAsync(() =>
             {
                 // This is the logic inside your Session or Page that triggers StateHasChanged
-                session.UpdateGameStats(hp, score, level, shield, blasters, killed, maxEnemies, isEndless);
+                session.UpdateGameStats(hp, score, level, shield, blasters, killed, maxEnemies, isEndless, isSplitShot);
 
                 // Now StateHasChanged() will run safely on the UI thread
                 StateHasChanged();

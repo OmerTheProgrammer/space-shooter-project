@@ -252,26 +252,26 @@ BEGIN
     -- NOTE: Added IsRunOver to the column list.
     INSERT INTO dbo.RunsInfoTbl (PlayerIdx, CurrentScore,
     CurrentLevel, RunStopDate, CurrentShieldLevel, CurrentBlasterCount,
-    CurrentHP, IsRunOver) VALUES
+    CurrentHP, IsSplitShot, IsRunOver) VALUES
     -- Run 1 - Player 11 (StarPilot_Ace) -> True (1)
-    (11, 15000, 5, '2025-09-27', 2, 4, 85, 1),
+    (11, 15000, 5, '2025-09-27', 2, 4, 85, 0, 1),
     -- Run 2 - Player 12 (GalaxyRunner) -> True (1)
-    (12, 5500, 3, '2025-09-26', 1, 2, 50, 1),
+    (12, 5500, 3, '2025-09-26', 1, 2, 50, 0, 1),
     -- Run 3 - Player 13 (CosmicDrifter) -> True (1)
-    (13, 1000, 1, '2025-09-25', 0, 1, 100, 1),
+    (13, 1000, 1, '2025-09-25', 0, 1, 100, 0, 1),
     -- Run 4 - Player 14 (ZeroGravity) -> True (1)
-    (14, 45000, 8, '2025-09-28', 5, 9, 10, 1),
+    (14, 45000, 8, '2025-09-28', 5, 9, 10, 0, 1),
     -- Run 5 - Player 15 (CometChaser) -> False (0)
-    (15, 8200, 4, '2025-09-27', 3, 3, 75, 0),
+    (15, 8200, 4, '2025-09-27', 3, 3, 75, 0, 0),
     -- Run 6 - Player 16 (NebulaNomad) -> True (1)
-    (16, 22000, 6, '2025-09-28', 4, 5, 60, 1),
+    (16, 22000, 6, '2025-09-28', 4, 5, 60, 0, 1),
     -- Run 7 - Player 17 (HyperDriveHero) -> True (1)
-    (17, 33000, 7, '2025-09-27', 6, 7, 95, 1),
+    (17, 33000, 7, '2025-09-27', 6, 7, 95, 0, 1),
     -- Run 8 - Player 18 (AstroBlaster) -> True (1)
-    (18, 2500, 2, '2025-09-26', 1, 2, 30, 1),
+    (18, 2500, 2, '2025-09-26', 1, 2, 30, 0, 1),
     -- Run 9 - Player 19 (VoidVagabond) -> False (0)
-    (19, 61000, 9, '2025-09-28', 7, 8, 20, 0),
+    (19, 61000, 9, '2025-09-28', 7, 8, 20, 0, 0),
     -- Run 10 - Player 20 (OrbitalOutlaw) -> True (1)
-    (20, 12500, 5, '2025-09-25', 2, 4, 45, 1);
+    (20, 12500, 5, '2025-09-25', 2, 4, 45, 0, 1);
 END
 GO -- End of dbo.RunsInfoTbl IF block

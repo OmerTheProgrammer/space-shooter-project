@@ -132,30 +132,30 @@
                                 <div class="badge-container mt-3">
                                     @* --- CAREER RUNS --- *@
                                     @RenderBadge(totalRuns >= 10, "Veteran Pilot", "Complete 10 runs.", "info", $"({totalRuns}/10)")
-                                    @RenderBadge(totalRuns >= 50, "Galaxy Legend", "Complete 50 runs.", "info", $"({totalRuns}/50)")
+                                    @RenderBadge(totalRuns >= 50, "Galaxy Legend", "Complete 50 runs.", "warning", $"({totalRuns}/50)")
                                     @RenderBadge(totalRuns >= 100, "Stellar Admiral", "Command 100 successful runs.", "info", $"({totalRuns}/100)")
 
                                     @* --- CAREER COLLECTION --- *@
                                     @RenderBadge(totalBlasterCount >= 50, "Armory Master", "Collect 50 total Blaster PowerUps.", "info", $"({totalBlasterCount}/50)")
-                                    @RenderBadge(totalBlasterCount >= 250, "Lead Rain", "Amass 250 total Blaster PowerUps.", "info", $"({totalBlasterCount}/250)")
+                                    @RenderBadge(totalBlasterCount >= 250, "Lead Rain", "Amass 250 total Blaster PowerUps.", ""@* white *@, $"({totalBlasterCount}/250)")
 
-                                    @* attack power *@ 
+                                    @* Attack Power *@ 
+                                    @RenderBadge(hasSplitShot, "Split Shot", "Fire multiple projectiles at once.", "info", "(0/1)")
                                     @RenderBadge(maxBlastersReached >= 5, "Heavy Gunner", "Equip 5+ blasters.", "danger")
-                                    @RenderBadge(maxBlastersReached >= 9, "Full Battery", "Achieve maximum blaster saturation (9).", "danger", $"({maxBlastersReached}/9)")
+                                    @RenderBadge(maxBlastersReached >= 9, "Full Battery", "Achieve maximum blaster saturation (9).", ""@* white *@, $"({maxBlastersReached}/9)")
 
                                     @* --- SINGLE RUN SHIELD --- *@
                                     @RenderBadge(maxShieldReached >= 10, "Untouchable", "Reach 10 Shield HP in one run.", "success")
-                                    @RenderBadge(maxShieldReached >= 25, "Kinetic Ghost", "Stack 25 Shield layers in a single mission.", "success")
+                                    @RenderBadge(maxShieldReached >= 25, "Kinetic Ghost", "Stack 25 Shield layers in a single mission.", "info")
 
                                     @* --- CAREER SHIELD --- *@
                                     @RenderBadge(totalShieldHealth >= 20, "Iron Hull", "Earn 20 Shield PowerUps.", "success", $"({totalShieldHealth}/20)")
-                                    @RenderBadge(totalShieldHealth >= 100, "Titanium Aegis", "Absorb 100 Shield PowerUps.", "success", $"({totalShieldHealth}/100)")
+                                    @RenderBadge(totalShieldHealth >= 100, "Titanium Aegis", "Absorb 100 Shield PowerUps.", ""@* white *@, $"({totalShieldHealth}/100)")
 
                                     @* --- SECTOR PROGRESSION --- *@
                                     @RenderBadge(personalBestLevel?.CurrentLevel > 5, "Sector Specialist", "Advance past Sector 5.", "success", $"({personalBestLevel?.CurrentLevel}/5)")
                                     @RenderBadge(personalBestLevel?.CurrentLevel >= 15, "Deep Space Drifter", "Survive until Sector 15.", "warning", $"({personalBestLevel?.CurrentLevel}/15)")
                                     @RenderBadge(personalBestLevel?.CurrentLevel >= 30, "Void Walker", "Reach the legendary Sector 30.", ""@* white *@, $"({personalBestLevel?.CurrentLevel}/30)")
-                                    
 
                                     @* --- SCORE MILESTONES --- *@
                                     @RenderBadge(personalBestLevel?.CurrentScore >= 50_000, "High Roller", "Score 50,000 points in a single run.", "warning")
@@ -194,7 +194,19 @@
                                                 <td class="text-success align-middle">@run.CurrentScore</td>
                                                 <td class="text-danger align-middle">@run.CurrentHp</td>
                                                 <td class="text align-middle">@run.CurrentShieldLevel</td>
-                                                <td class="text-warning align-middle">@run.CurrentBlasterCount</td>
+                                                <td class="text-warning align-middle">
+                                                    <div class="d-inline-flex align-items-center gap-2">
+                                                        <span>@run.CurrentBlasterCount</span>
+
+                                                        @if (run.IsSplitShot)
+                                                        {
+                                                            <i class="fa-solid fa-code-branch text-info"
+                                                               title="Split Shot Enabled!"
+                                                               style="filter: drop-shadow(0 0 4px #0dcaf0); font-size: 1rem;"
+                                                               aria-hidden="true"></i>
+                                                        }
+                                                    </div>
+                                                </td>
                                                 <td class="text-center">
                                                     @if (!run.IsRunOver)
                                                     {
@@ -251,6 +263,7 @@
     private int maxBlastersReached = 0;
     private int maxShieldReached = 0;
     private int totalBlasterCount = 0;
+    private bool hasSplitShot => playerRuns.Any(r => r.IsSplitShot);
     private RunsInfoTable activeRuns = new();
 
 
