@@ -325,7 +325,7 @@
             await TriggerError("Too old, you are dead.");
             return;
         }
-        else if (birthday > now)
+        else if (birthday >= now.Date)
         {
             await TriggerError("Too young, you were never born.");
             return;
