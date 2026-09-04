@@ -1095,6 +1095,8 @@
             {
                 _tableData[key] = await _tableRegistry[key].GetAll();
             }
+            //updates update's presenting entity
+            SingleEntity = await _tableRegistry[activeTab].GetById(targetId);
         }
         finally { isLoading = false; }
     }
