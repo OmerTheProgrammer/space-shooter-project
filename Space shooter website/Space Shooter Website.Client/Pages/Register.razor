@@ -224,9 +224,9 @@
             await TriggerError("Email too short, shorter than 8 characters");
             return;
         }
-        else if (eLength > 25)
+        else if (eLength > 35)
         {
-            await TriggerError("Email too long, longer than 25 characters");
+            await TriggerError("Email too long, longer than 35 characters");
             return;
         }
         else if (attIndex < 2)

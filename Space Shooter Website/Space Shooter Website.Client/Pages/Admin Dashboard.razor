@@ -1464,9 +1464,9 @@
             {
                 brokenRules.Add($"Email must be at least 8 characters long (currently {eLength}).");
             }
-            if (eLength > 25)
+            if (eLength > 35)
             {
-                brokenRules.Add($"Email cannot exceed 25 characters (currently {eLength}).");
+                brokenRules.Add($"Email cannot exceed 35 characters (currently {eLength}).");
             }
             if (attIndex < 2)
             {
@@ -1502,30 +1502,38 @@
             }
 
             // --- COMPLEX ENCRYPTED PASSWORD VALIDATIONS ---
-            const int minPasswordLength = 8, maxPasswordLength = 20;
-            if (password.Length < minPasswordLength)
+            const int minPasswordLength = 8, maxPasswordLength = 20,
+                hashConstLength = 64;
+            if (password.Length == hashConstLength)//is hash 
             {
-                brokenRules.Add($"Password must be at least {minPasswordLength} characters long.");
+                brokenRules.Add($"Password is a Hash.\n THIS IS ONLY A NOTICE! \nNot necessarily an error.");
             }
-            if (password.Length > maxPasswordLength)
+            else
             {
-                brokenRules.Add($"Password cannot exceed {maxPasswordLength} characters.");
-            }
-            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[^\w\s]"))
-            {
-                brokenRules.Add("Password must contain at least one special character.");
-            }
-            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[\d]"))
-            {
-                brokenRules.Add("Password must contain at least one number.");
-            }
-            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[A-Z]"))
-            {
-                brokenRules.Add("Password must contain at least one uppercase letter.");
-            }
-            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[a-z]"))
-            {
-                brokenRules.Add("Password must contain at least one lowercase letter.");
+                if (password.Length < minPasswordLength)
+                {
+                    brokenRules.Add($"Password must be at least {minPasswordLength} characters long.");
+                }
+                if (password.Length > maxPasswordLength)
+                {
+                    brokenRules.Add($"Password cannot exceed {maxPasswordLength} characters.");
+                }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[^\w\s]"))
+                {
+                    brokenRules.Add("Password must contain at least one special character.");
+                }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[\d]"))
+                {
+                    brokenRules.Add("Password must contain at least one number.");
+                }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[A-Z]"))
+                {
+                    brokenRules.Add("Password must contain at least one uppercase letter.");
+                }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[a-z]"))
+                {
+                    brokenRules.Add("Password must contain at least one lowercase letter.");
+                }
             }
 
             // --- AGE VALIDATIONS ---

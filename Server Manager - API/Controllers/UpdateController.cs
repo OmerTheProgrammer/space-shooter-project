@@ -141,7 +141,7 @@ namespace Server_Manager___API.Controllers
                 {
                     if (entityName.StartsWith(rule.Key))
                     {
-                        // Replace singolar to prlural
+                        // Replace singular to plural
                         return entityName.Replace(rule.Key, rule.Value) + "DB";
                     }
                 }
